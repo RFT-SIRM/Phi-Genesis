@@ -1,8 +1,9 @@
 # Phi-Genesis: Spectral Core for Fractal Vacuum Substrate
 
-[![Tests](https://img.shields.io/badge/tests-12%2F13%20passing-brightgreen)]()
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-yellow)]()
+
+[![Lab](https://img.shields.io/badge/Lab-Phi--Genesis-dc2626?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Topology](https://img.shields.io/badge/Topology-U(1)%20Sweep-6366f1?style=for-the-badge)](README_topology_v3.md)
 
 Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
 
