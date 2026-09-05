@@ -3,7 +3,6 @@
 
 [![Lab](https://img.shields.io/badge/Lab-Phi--Genesis-dc2626?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Topology](https://img.shields.io/badge/Topology-U(1)%20Sweep-6366f1?style=for-the-badge)](README_topology_v3.md)
 [![License](https://img.shields.io/badge/License-MIT-eab308?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 
