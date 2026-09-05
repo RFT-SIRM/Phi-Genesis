@@ -11,7 +11,7 @@ Open Problem #1 remains open beyond this family.
 """
 import itertools
 import numpy as np
-from mobius import mobius_spectrum, gap_selected_indices
+from .mobius import mobius_spectrum, gap_selected_indices
 
 TARGET_INDICES = {1, 12, 17, 40}
 

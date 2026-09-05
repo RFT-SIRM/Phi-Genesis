@@ -15,7 +15,7 @@ HONEST STATUS:
     pre-fractal spectra.
 """
 import numpy as np
-from sg_laplacian import sierpinski_graph
+from .sg_laplacian import sierpinski_graph
 
 THEORY_EXPONENT = np.log(3) / np.log(5)
 LN5 = np.log(5)

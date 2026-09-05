@@ -10,7 +10,7 @@ the largest absolute gaps in the spectrum and confirming they cluster at
 the decimation fixed points (lambda ~ 3 and lambda ~ 5).
 """
 import numpy as np
-from sg_laplacian import graph_laplacian_spectrum
+from .sg_laplacian import graph_laplacian_spectrum
 
 
 def gap_locations(level=6, top_k=8):
