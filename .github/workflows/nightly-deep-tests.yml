@@ -1,0 +1,35 @@
+name: nightly-deep-tests
+
+# Runs the expensive/exploratory tests (level-9 spectral convergence
+# attempt, Gate-E statistical null-test sweep) once a day, separately
+# from the fast tests.yml suite that gates every push/PR.
+#
+# Schedule: 00:00 UTC daily = 03:00 Moscow time.
+# Timeout: 355 minutes, just under GitHub Actions' free-tier 360-minute
+# per-job ceiling, to give the level-9 dense eigensolve attempt as much
+# runway as possible before it is cut off.
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}   # allow manual "Run workflow" from the Actions tab
+
+jobs:
+  nightly-deep-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Install test deps
+        run: pip install pytest
+
+      - name: Run nightly deep tests (level-9 attempt + Gate-E null sweep)
+        run: pytest -v -s -m nightly

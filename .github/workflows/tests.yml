@@ -18,5 +18,5 @@ jobs:
         run: pip install -e .
       - name: Install test deps
         run: pip install pytest
-      - name: Run tests
-        run: pytest -v
+      - name: Run fast tests (nightly-marked deep tests run separately, see nightly-deep-tests.yml)
+        run: pytest -v -m "not nightly"

@@ -11,3 +11,8 @@ dependencies = ["numpy", "scipy"]
 
 [tool.setuptools]
 packages = ["phi_genesis"]
+
+[tool.pytest.ini_options]
+markers = [
+    "nightly: slow/expensive tests (level-9 spectral convergence attempt, Gate-E Monte-Carlo null-test sweep) run once a day via .github/workflows/nightly-deep-tests.yml, not on every push/PR.",
+]
