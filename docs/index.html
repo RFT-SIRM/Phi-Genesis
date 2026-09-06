@@ -420,8 +420,8 @@ footer {
       <div class="status-verified">Verified</div>
       <div class="card-icon" style="background: rgba(245,158,11,0.08); color: var(--amber);">≈</div>
       <div class="card-title">Scale Consistency Audit</div>
-      <div class="card-text">Fitted scale A = 104.63 MeV. Formula A = v·α/Φ⁶ gives 100.13 MeV — 3.4% below fitted. Discrepancy confirmed. Relative spread of per-fermion implied scales: 0.58%.</div>
-      <div class="card-value" style="color:var(--amber)">3.4% discrepancy</div>
+      <div class="card-text">Fitted scale A = 104.63 MeV. Formula A = v·α/Φ⁶ gives 100.13 MeV — 4.3% below fitted. Discrepancy confirmed. Relative spread of per-fermion implied scales: 0.58%.</div>
+      <div class="card-value" style="color:var(--amber)">4.3% discrepancy</div>
     </div>
     <div class="card">
       <div class="status-rejected">Rejected</div>
@@ -514,7 +514,7 @@ footer {
       </thead>
       <tbody>
         <tr><td>A (integer fit)</td><td class="highlight">104.63 MeV</td><td>Best fit to μ/τ/c/b with integer n</td></tr>
-        <tr><td>A (formula)</td><td class="num">100.13 MeV</td><td>v·α/Φ⁶ — 3.4% below fitted</td></tr>
+        <tr><td>A (formula)</td><td class="num">100.13 MeV</td><td>v·α/Φ⁶ — 4.3% below fitted</td></tr>
         <tr><td>d_s/2 (theory)</td><td class="num">0.6826</td><td>ln(3)/ln(5)</td></tr>
         <tr><td>d_s/2 (naive, level 6)</td><td>0.7051</td><td>3.3% above theory</td></tr>
         <tr><td>d_s/2 (naive, level 8)</td><td>0.7019</td><td>2.8% above theory</td></tr>
@@ -711,7 +711,7 @@ pytest -v
 test_honest.py::test_decimation_factor_5 ... <span class="success">PASSED</span><br>
 test_honest.py::test_weyl_exponent ... <span class="success">PASSED</span><br>
 test_honest.py::test_eta_claim_fails ... <span class="success">PASSED</span> <span class="comment"># −4 never observed; asym = +1</span><br>
-test_honest.py::test_a_formula_discrepancy_is_real ... <span class="success">PASSED</span> <span class="comment"># 3.4% gap, formula v·α/Φ⁶</span><br>
+test_honest.py::test_a_formula_discrepancy_is_real ... <span class="success">PASSED</span> <span class="comment"># 4.3% gap, formula v·α/Φ⁶</span><br>
 test_honest.py::test_no_single_scale ... <span class="success">PASSED</span> <span class="comment"># 0.58% spread across fermions</span><br>
 test_mobius.py::test_mobius_gaps_the_spectrum ... <span class="success">PASSED</span><br>
 test_mobius.py::test_gap_selection_not_particles ... <span class="success">PASSED</span><br>
@@ -778,45 +778,59 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
   renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // Icosahedron — gold/cyan wireframe
-  const icoGeom = new THREE.IcosahedronGeometry(2.4, 1);
-  const icoEdges = new THREE.EdgesGeometry(icoGeom);
-  const icoMat = new THREE.LineBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.18 });
-  const ico = new THREE.LineSegments(icoEdges, icoMat);
-  scene.add(ico);
+  // ---- Sierpiński tetrahedron (chaos game) — THE actual fractal, bright & additive ----
+  const sierpVerts = [
+    new THREE.Vector3( 1,  1,  1),
+    new THREE.Vector3( 1, -1, -1),
+    new THREE.Vector3(-1,  1, -1),
+    new THREE.Vector3(-1, -1,  1),
+  ].map(v => v.multiplyScalar(3.3));
 
-  // TorusKnot
-  const torusGeom = new THREE.TorusKnotGeometry(1.5, 0.3, 128, 32, 2, 3);
-  const torusEdges = new THREE.EdgesGeometry(torusGeom);
-  const torusMat = new THREE.LineBasicMaterial({ color: 0x5eead4, transparent: true, opacity: 0.12 });
-  const torus = new THREE.LineSegments(torusEdges, torusMat);
-  scene.add(torus);
+  const fractalCount = 22000;
+  const fGeom = new THREE.BufferGeometry();
+  const fPos = new Float32Array(fractalCount * 3);
+  const fCol = new Float32Array(fractalCount * 3);
+  const cGold   = new THREE.Color(0xf3c876); // brighter than --gold for additive glow
+  const cCyan   = new THREE.Color(0x8ff5e4); // brighter than --cyan
+  const cViolet = new THREE.Color(0xb3a4f0);
 
-  // Particles — Fibonacci spiral
-  const particleCount = 500;
-  const pGeom = new THREE.BufferGeometry();
-  const pPos = new Float32Array(particleCount * 3);
-  const pCol = new Float32Array(particleCount * 3);
-  const colors = [new THREE.Color(0xd4a853), new THREE.Color(0x5eead4), new THREE.Color(0x8b7ec8), new THREE.Color(0xf59e0b)];
-  for (let i = 0; i < particleCount; i++) {
-    const phi = Math.acos(1 - 2 * (i + 0.5) / particleCount);
-    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-    const r = 3.0;
-    pPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
-    pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-    pPos[i*3+2] = r * Math.cos(phi);
-    const c = colors[i % colors.length];
-    pCol[i*3] = c.r; pCol[i*3+1] = c.g; pCol[i*3+2] = c.b;
+  let p = new THREE.Vector3(
+    (Math.random()-0.5)*2, (Math.random()-0.5)*2, (Math.random()-0.5)*2
+  );
+  const warmup = 40;
+  for (let i = 0; i < fractalCount + warmup; i++) {
+    const v = sierpVerts[(Math.random() * 4) | 0];
+    p.lerp(v, 0.5); // chaos-game midpoint jump -> Sierpiński tetrahedron
+    if (i >= warmup) {
+      const idx = i - warmup;
+      fPos[idx*3]   = p.x;
+      fPos[idx*3+1] = p.y;
+      fPos[idx*3+2] = p.z;
+      const t = Math.min(1, p.length() / 5.7);
+      const mix = cGold.clone().lerp(cCyan, t);
+      if (Math.random() < 0.12) mix.lerp(cViolet, 0.5);
+      fCol[idx*3] = mix.r; fCol[idx*3+1] = mix.g; fCol[idx*3+2] = mix.b;
+    }
   }
-  pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  pGeom.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-  const pMat = new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
-  const particles = new THREE.Points(pGeom, pMat);
-  scene.add(particles);
+  fGeom.setAttribute('position', new THREE.BufferAttribute(fPos, 3));
+  fGeom.setAttribute('color', new THREE.BufferAttribute(fCol, 3));
+  const fMat = new THREE.PointsMaterial({
+    size: 0.05, vertexColors: true, transparent: true, opacity: 0.95,
+    blending: THREE.AdditiveBlending, sizeAttenuation: true, depthWrite: false,
+  });
+  const fractal = new THREE.Points(fGeom, fMat);
+  scene.add(fractal);
 
-  // Central sphere
-  const sphereGeom = new THREE.SphereGeometry(0.3, 32, 32);
-  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.25 });
+  // Faint wireframe cage around it for scale/structure cues (very subtle now)
+  const cageGeom = new THREE.TetrahedronGeometry(3.3, 0);
+  const cageEdges = new THREE.EdgesGeometry(cageGeom);
+  const cageMat = new THREE.LineBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.1 });
+  const cage = new THREE.LineSegments(cageEdges, cageMat);
+  scene.add(cage);
+
+  // Central glow sphere — pulsing core
+  const sphereGeom = new THREE.SphereGeometry(0.32, 32, 32);
+  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xf3c876, transparent: true, opacity: 0.55 });
   const sphere = new THREE.Mesh(sphereGeom, sphereMat);
   scene.add(sphere);
 
@@ -830,14 +844,13 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
   function animate() {
     requestAnimationFrame(animate);
     time += 0.004;
-    ico.rotation.x = time * 0.25;
-    ico.rotation.y = time * 0.4;
-    torus.rotation.x = time * 0.35;
-    torus.rotation.y = time * 0.5;
-    particles.rotation.y = time * 0.15;
+    fractal.rotation.x = time * 0.28;
+    fractal.rotation.y = time * 0.42;
+    cage.rotation.x = fractal.rotation.x;
+    cage.rotation.y = fractal.rotation.y;
     const s = 1 + Math.sin(time * 2.5) * 0.12;
     sphere.scale.set(s, s, s);
-    sphereMat.opacity = 0.2 + Math.sin(time * 2.5) * 0.15;
+    sphereMat.opacity = 0.4 + Math.sin(time * 2.5) * 0.2;
     camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.03;
     camera.position.y += (mouseY * 0.6 - camera.position.y) * 0.03;
     camera.lookAt(scene.position);
