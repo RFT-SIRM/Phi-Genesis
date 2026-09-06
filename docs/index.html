@@ -343,6 +343,7 @@ footer {
     <li><a href="#open">Open Problems</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#repo">Structure</a></li>
+    <li><a href="#infra">Infra</a></li>
     <li><a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
 </nav>
@@ -625,6 +626,53 @@ footer {
     &nbsp;&nbsp;<span class="file">test_fukushima_shima.py</span> <span class="comment">— 1 gap test (~1.6s)</span><br>
     &nbsp;&nbsp;<span class="file">test_convergence_and_selection.py</span> <span class="comment">— 5 deep tests (~110s, includes level-8 dense solver)</span>
   </div>
+</section>
+
+<section id="infra" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Infrastructure</div>
+    <h2 class="section-title">The Repo Audited Itself</h2>
+    <p class="section-desc">Same discipline the physics gets: when the test infrastructure broke, it went in the changelog instead of getting quietly deleted.</p>
+  </div>
+
+  <div class="terminal" style="margin-bottom: 1.5rem;">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">pytest -v — before the fix (commit aee047d)</span>
+    </div>
+    <div class="terminal-body" style="font-size: 0.78rem;">
+<span class="comment">collected 462 items</span><br><br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+<span class="warn">... 33 levels deep, same 14 tests each time ...</span><br>
+phi_genesis/phi_genesis/test_honest.py::test_decimation_factor_5 <span class="success">PASSED</span><br><br>
+<span class="error">======================== 462 passed in 2025.82s (0:33:45) ========================</span>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-rejected">Broken</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">∞</div>
+      <div class="card-title">Self-Referential Symlink</div>
+      <div class="card-text">Commit <code>aee047d</code> shipped a git-tracked symlink <code>phi_genesis → .</code> as an import workaround. pytest's directory walker recursed into it infinitely: the same 14 tests rediscovered 33 times over, inflating a ~2 minute run to 33m45s before the OS-level symlink-depth limit finally cut it off.</div>
+      <div class="card-value" style="color:var(--red)">462 collected</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Fixed</div>
+      <div class="card-icon" style="background: rgba(52,211,153,0.08); color: var(--green);">✓</div>
+      <div class="card-title">Real Package Directory</div>
+      <div class="card-text">Commit <code>a1a66c9</code> replaced the symlink with an actual <code>phi_genesis/</code> package, relative imports, and a proper <code>pyproject.toml</code> — installable regardless of what the checkout folder is named, no recursion possible.</div>
+      <div class="card-value" style="color:var(--green)">14 collected</div>
+    </div>
+  </div>
+
+  <p style="text-align:center; color: var(--text-muted); font-size: 0.85rem; margin-top: 1.5rem;">
+    462 ÷ 14 = 33 — not a coincidence. If a future run ever collects anything other than 14 items, check for a reintroduced symlink first.
+  </p>
 </section>
 
 <section id="quickstart" class="reveal">
