@@ -4,6 +4,7 @@
 [![Lab](https://img.shields.io/badge/Lab-Phi--Genesis-dc2626?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-eab308?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Visualization](https://img.shields.io/badge/Visualization-Live%20Demo-06b6d4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/)
 
 
 
