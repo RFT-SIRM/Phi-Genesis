@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phi-Genesis v2.0 — Spectral Core for Fractal Vacuum Substrate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --bg-deep: #02040a;
+  --bg-primary: #070a14;
+  --bg-card: rgba(10, 14, 26, 0.75);
+  --bg-glass: rgba(14, 18, 32, 0.55);
+  --border: rgba(212, 168, 83, 0.12);
+  --border-glow: rgba(212, 168, 83, 0.35);
+  --text-primary: #e8e4dc;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --gold: #d4a853;
+  --gold-dim: #b8944a;
+  --cyan: #5eead4;
+  --cyan-dim: #2dd4bf;
+  --violet: #8b7ec8;
+  --pink: #d19b9b;
+  --amber: #f59e0b;
+  --green: #34d399;
+  --red: #f87171;
+  --indigo: #6366f1;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  line-height: 1.65;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none; opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Subtle grid */
+.grid-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(212, 168, 83, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 168, 83, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+}
+
+.content { position: relative; z-index: 10; }
+
+/* Navigation */
+nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+  padding: 1rem 2.5rem; display: flex; justify-content: space-between; align-items: center;
+  background: rgba(2, 4, 10, 0.88); backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+.nav-logo span { color: var(--cyan); }
+.nav-links { display: flex; gap: 2.2rem; list-style: none; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.3s; position: relative; }
+.nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.3s ease; }
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+/* Hero */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden;
+}
+#hero-3d { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.hero-content { position: relative; z-index: 5; max-width: 900px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.4rem 1.2rem; border-radius: 100px;
+  background: rgba(212, 168, 83, 0.06); border: 1px solid rgba(212, 168, 83, 0.2);
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 2rem;
+}
+.hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+.hero-title {
+  font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.05;
+  font-family: var(--font-serif); letter-spacing: -1px;
+  background: linear-gradient(135deg, #e8e4dc 0%, var(--gold) 50%, var(--cyan-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 1.2rem;
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.25rem); color: var(--text-secondary); max-width: 680px;
+  margin: 0 auto 3rem; font-weight: 300; line-height: 1.7;
+}
+.hero-stats {
+  display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
+}
+.hero-stat {
+  text-align: center; padding: 1.4rem 1.8rem;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+  min-width: 150px; transition: all 0.4s ease;
+  backdrop-filter: blur(12px);
+  position: relative; overflow: hidden;
+}
+.hero-stat::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212,168,83,0.06), transparent);
+  transition: left 0.7s ease;
+}
+.hero-stat:hover::before { left: 100%; }
+.hero-stat:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(212,168,83,0.1); }
+.hero-stat-value {
+  font-family: var(--font-mono); font-size: 1.9rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 0.4rem; }
+
+/* Section styles */
+section { padding: 5rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+.section-header { margin-bottom: 3rem; text-align: center; }
+.section-tag {
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.6rem; display: inline-block;
+  border-bottom: 1px solid rgba(212,168,83,0.2); padding-bottom: 0.3rem;
+}
+.section-title {
+  font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2;
+  color: var(--text-primary); font-family: var(--font-serif); letter-spacing: -0.5px;
+}
+.section-desc { color: var(--text-secondary); margin-top: 0.8rem; max-width: 650px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+
+/* Pipeline */
+.pipeline {
+  display: flex; justify-content: center; align-items: center; gap: 0; flex-wrap: wrap;
+  margin: 2.5rem 0; padding: 1.8rem;
+  background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  position: relative; overflow: hidden;
+}
+.pipeline::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), var(--gold), transparent);
+  animation: pipelineShimmer 4s infinite linear;
+}
+@keyframes pipelineShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.pipeline-step { padding: 1rem 1.4rem; text-align: center; position: relative; }
+.pipeline-step-num { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 0.3rem; }
+.pipeline-step-name { font-family: var(--font-mono); font-weight: 600; font-size: 0.78rem; color: var(--text-primary); }
+.pipeline-arrow { color: var(--text-muted); font-size: 1.1rem; padding: 0 0.4rem; animation: arrowPulse 2.5s infinite; }
+@keyframes arrowPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.9; } }
+
+/* Cards */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.4rem; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1.6rem; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  transition: all 0.4s ease; position: relative; overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), transparent); opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(212,168,83,0.1); }
+.card:hover::before { opacity: 1; }
+.card-icon {
+  width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem;
+  position: relative; z-index: 2;
+}
+.card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); position: relative; z-index: 2; }
+.card-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; position: relative; z-index: 2; }
+.card-value { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; margin-top: 0.8rem; position: relative; z-index: 2; }
+
+/* Status badges */
+.status-verified { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--green); background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-verified::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.status-rejected { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--red); background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-rejected::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--red); }
+.status-open { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-open::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+
+/* Tables */
+.data-table-container {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  background: rgba(212, 168, 83, 0.06); padding: 1rem 1.2rem; text-align: left;
+  font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 600;
+}
+.data-table td {
+  padding: 1rem 1.2rem; border-bottom: 1px solid rgba(212, 168, 83, 0.06);
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover { background: rgba(212, 168, 83, 0.03); }
+.data-table .num { color: var(--cyan); font-weight: 600; }
+.data-table .highlight { color: var(--gold); font-weight: 600; }
+.data-table .good { color: var(--green); }
+.data-table .warn { color: var(--amber); }
+.data-table .bad { color: var(--red); }
+
+/* Formula block */
+.formula-block {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; margin: 1rem 0; font-family: var(--font-mono);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.formula-block::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--gold), var(--cyan));
+}
+.formula-block .label { color: var(--text-muted); margin-bottom: 0.8rem; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; display: block; }
+.formula-block .math { color: var(--cyan); font-size: 1rem; line-height: 2; font-weight: 600; }
+.formula-block .math-gold { color: var(--gold); font-size: 1rem; line-height: 2; font-weight: 600; }
+
+/* Terminal */
+.terminal {
+  background: #010206; border-radius: 12px; overflow: hidden;
+  font-family: var(--font-mono); font-size: 0.78rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+}
+.terminal-header {
+  background: rgba(255,255,255,0.02); padding: 0.6rem 1rem; display: flex; gap: 0.5rem; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot.red { background: #ff5f56; }
+.terminal-dot.yellow { background: #ffbd2e; }
+.terminal-dot.green { background: #27c93f; }
+.terminal-body { padding: 1.5rem; color: #5eead4; line-height: 1.8; overflow-x: auto; }
+.terminal-body .comment { color: #4b5563; }
+.terminal-body .success { color: #34d399; }
+.terminal-body .warn { color: #f59e0b; }
+.terminal-body .error { color: #f87171; }
+
+/* Open problem cards */
+.problem-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1.8rem; transition: all 0.4s ease;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.problem-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--red)); opacity: 0.5;
+}
+.problem-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-3px); }
+.problem-card .num { font-family: var(--font-mono); font-size: 2rem; font-weight: 700; color: var(--amber); opacity: 0.3; position: absolute; top: 1rem; right: 1.5rem; }
+.problem-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-primary); }
+.problem-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
+.problem-card ul { margin-top: 0.6rem; padding-left: 1.2rem; }
+.problem-card li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+/* Roadmap */
+.roadmap-item {
+  display: flex; gap: 1.2rem; padding: 1.2rem 1.5rem;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.8rem;
+  transition: all 0.3s ease; align-items: flex-start;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+.roadmap-item:hover { border-color: var(--border-glow); transform: translateX(4px); }
+.roadmap-num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold); font-weight: 700; min-width: 24px; }
+.roadmap-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; }
+.roadmap-content p { font-size: 0.85rem; color: var(--text-secondary); }
+
+/* File tree */
+.file-tree {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; font-family: var(--font-mono); font-size: 0.82rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  color: var(--text-secondary); line-height: 1.9;
+}
+.file-tree .dir { color: var(--gold); font-weight: 600; }
+.file-tree .file { color: var(--cyan); }
+.file-tree .comment { color: var(--text-muted); margin-left: 1rem; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border); padding: 3rem 2rem; text-align: center;
+  background: rgba(2, 4, 10, 0.9);
+}
+.footer-copy { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); line-height: 1.8; }
+.footer-copy strong { color: var(--gold); font-weight: 500; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-stats { gap: 0.8rem; }
+  .pipeline { flex-direction: column; }
+  .pipeline-arrow { transform: rotate(90deg); }
+  section { padding: 3rem 1.2rem; }
+  .hero { padding-top: 6rem; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* Reveal animations */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+<div class="grid-overlay"></div>
+<div class="content">
+
+<nav>
+  <div class="nav-logo">Phi<span>-</span>Genesis</div>
+  <ul class="nav-links">
+    <li><a href="#verified">Verified</a></li>
+    <li><a href="#masses">Masses</a></li>
+    <li><a href="#numbers">Key Numbers</a></li>
+    <li><a href="#open">Open Problems</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#repo">Structure</a></li>
+    <li><a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <canvas id="hero-3d"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">v2.0 — Core Mathematics Verified</div>
+    <h1 class="hero-title">Phi-Genesis</h1>
+    <p class="hero-subtitle">Spectral Core for Fractal Vacuum Substrate.<br>Reproducible spectral computations on the Sierpiński gasket. All claims tested against code. No black boxes.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-value" id="c1">104.63</div><div class="hero-stat-label">MeV — Scale A</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c2">0.68</div><div class="hero-stat-label">% Mean Error</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c3">4</div><div class="hero-stat-label">Fermions</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c4">14</div><div class="hero-stat-label">Tests Passing</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Methodology</div>
+    <h2 class="section-title">Research Pipeline</h2>
+  </div>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="pipeline-step-num">01</div><div class="pipeline-step-name" style="color:var(--cyan)">POSTULATE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">02</div><div class="pipeline-step-name" style="color:var(--gold)">GEOMETRY</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">03</div><div class="pipeline-step-name" style="color:var(--violet)">SPECTRUM</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">04</div><div class="pipeline-step-name" style="color:var(--amber)">COMPUTE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">05</div><div class="pipeline-step-name" style="color:var(--green)">VERIFY</div></div>
+  </div>
+</section>
+
+<section id="verified" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Verified Results</div>
+    <h2 class="section-title">Reproducible via Code</h2>
+    <p class="section-desc">All results below are generated directly from the repository test suite. One continuous scale A is fit to the data — the four spectral indices {1, 12, 17, 40} are chosen to match the masses too, not derived from an independent rule (Open Problem #1, below).</p>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(94,234,212,0.08); color: var(--cyan);">△⁵</div>
+      <div class="card-title">Sierpiński Gasket Spectral Theory</div>
+      <div class="card-text">Spectral decimation ×5 — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ). Weyl law N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Log-periodic oscillations with period ln(5).</div>
+      <div class="card-value" style="color:var(--cyan)">d_s/2 = 0.6826</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(212,168,83,0.08); color: var(--gold);">M</div>
+      <div class="card-title">Möbius (π-Flux) Boundary Conditions</div>
+      <div class="card-text">Full π-flux through all holes opens a mass gap: first eigenvalue jumps from ~0.006 to ~0.46 at level 5. Partial twists also gap the spectrum. Gap-selected indices follow lacunary 3^k − 1 structure.</div>
+      <div class="card-value" style="color:var(--gold)">Δλ₁ ≈ 0.454</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(139,92,246,0.08); color: var(--violet);">2⁵</div>
+      <div class="card-title">Exhaustive Twist Search</div>
+      <div class="card-text">All 2⁵ = 32 generation-twist configurations at level 5 tested. Max simultaneous hits on {1, 12, 17, 40}: 1 of 4. Index 40 never appears as gap-selected under any configuration.</div>
+      <div class="card-value" style="color:var(--violet)">32 configs · 1/4 max</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(52,211,153,0.08); color: var(--green);">ℤ</div>
+      <div class="card-title">Integer Mass Formula</div>
+      <div class="card-text">Using integer indices n = {1, 12, 17, 40} with single scale A = 104.63 MeV. Mean relative error 0.68% — beats fitted non-integer values (0.87%). The decimals in earlier versions were noise around integers.</div>
+      <div class="card-value" style="color:var(--green)">0.68% mean error</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(245,158,11,0.08); color: var(--amber);">≈</div>
+      <div class="card-title">Scale Consistency Audit</div>
+      <div class="card-text">Fitted scale A = 104.63 MeV. Formula A = v·α/Φ⁶ gives 100.13 MeV — 3.4% below fitted. Discrepancy confirmed. Relative spread of per-fermion implied scales: 0.58%.</div>
+      <div class="card-value" style="color:var(--amber)">3.4% discrepancy</div>
+    </div>
+    <div class="card">
+      <div class="status-rejected">Rejected</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">η</div>
+      <div class="card-title">η-Invariant Claim — REJECTED</div>
+      <div class="card-text">RFT-String v8.7 claim that η̄(0) = −4 for boundary potential V(i) = 0.5·(4y/√3 − 1) is not reproduced. Value −4 never observed. Asymmetry is an O(1) finite-size artifact, not a topological invariant.</div>
+      <div class="card-value" style="color:var(--red)">−4 never observed</div>
+    </div>
+  </div>
+</section>
+
+<section id="masses" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Mass Spectrum</div>
+    <h2 class="section-title">Integer Mass Formula</h2>
+    <p class="section-desc">Four heavy fermion masses matched using a single scale A = 104.63 MeV with integer spectral indices — no non-integer fudge factors per fermion. The indices themselves are picked to fit, not predicted in advance (see Open Problems).</p>
+  </div>
+  <div class="formula-block" style="text-align:center; margin-bottom:2rem;">
+    <span class="label">Mass Generation</span>
+    <span class="math-gold" style="font-size:1.3rem;">m_f = A · n_f &nbsp;&nbsp; where &nbsp;&nbsp; A = 104.63 MeV &nbsp;&nbsp; and &nbsp;&nbsp; n_f ∈ {1, 12, 17, 40}</span>
+  </div>
+  <div class="data-table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fermion</th>
+          <th>Integer n</th>
+          <th>M_pred (MeV)</th>
+          <th>M_exp (MeV)</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="color:var(--cyan); font-weight:600;">μ</span> <span style="color:var(--text-muted); font-size:0.75rem;">(muon)</span></td>
+          <td class="num">1</td>
+          <td class="num">104.63</td>
+          <td>105.658</td>
+          <td class="good">0.97%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--violet); font-weight:600;">c</span> <span style="color:var(--text-muted); font-size:0.75rem;">(charm)</span></td>
+          <td class="num">12</td>
+          <td class="num">1255.56</td>
+          <td>1275.00</td>
+          <td class="warn">1.52%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink); font-weight:600;">τ</span> <span style="color:var(--text-muted); font-size:0.75rem;">(tau)</span></td>
+          <td class="num">17</td>
+          <td class="num">1778.71</td>
+          <td>1776.86</td>
+          <td class="good">0.10%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--gold); font-weight:600;">b</span> <span style="color:var(--text-muted); font-size:0.75rem;">(bottom)</span></td>
+          <td class="num">40</td>
+          <td class="num">4185.20</td>
+          <td>4180.00</td>
+          <td class="good">0.12%</td>
+        </tr>
+        <tr style="background: rgba(212,168,83,0.04);">
+          <td colspan="3" style="text-align:right; color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">Mean Relative Error</td>
+          <td colspan="2" class="highlight" style="font-size:1.1rem;">0.68%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; gap:1.5rem; margin-top:2rem; flex-wrap:wrap; justify-content:center;">
+    <div class="hero-stat" style="min-width:160px;">
+      <div class="hero-stat-value" style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0.68%</div>
+      <div class="hero-stat-label">Integer n, 4 fermions</div>
+    </div>
+    <div class="hero-stat" style="min-width:160px;">
+      <div class="hero-stat-value" style="background: linear-gradient(135deg, var(--amber), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0.87%</div>
+      <div class="hero-stat-label">Fitted n, 5 fermions (old)</div>
+    </div>
+  </div>
+</section>
+
+<section id="numbers" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Key Numbers</div>
+    <h2 class="section-title">Quantities at a Glance</h2>
+  </div>
+  <div class="data-table-container">
+    <table class="data-table">
+      <thead>
+        <tr><th>Quantity</th><th>Value</th><th>Source / Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>A (integer fit)</td><td class="highlight">104.63 MeV</td><td>Best fit to μ/τ/c/b with integer n</td></tr>
+        <tr><td>A (formula)</td><td class="num">100.13 MeV</td><td>v·α/Φ⁶ — 3.4% below fitted</td></tr>
+        <tr><td>d_s/2 (theory)</td><td class="num">0.6826</td><td>ln(3)/ln(5)</td></tr>
+        <tr><td>d_s/2 (naive, level 6)</td><td>0.7051</td><td>3.3% above theory</td></tr>
+        <tr><td>d_s/2 (naive, level 8)</td><td>0.7019</td><td>2.8% above theory</td></tr>
+        <tr><td>Mean error (integer n, 4 fermions)</td><td class="good">0.68%</td><td>Better than fitted decimals (0.87%)</td></tr>
+        <tr><td>Mean error (fitted n, 5 fermions)</td><td class="warn">0.87%</td><td>Old non-integer values</td></tr>
+        <tr><td>η-asymmetry (claimed potential)</td><td class="bad">+1</td><td>Not −4. Value −4 never observed.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="open" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Open Problems</div>
+    <h2 class="section-title">What Remains Unsolved</h2>
+    <p class="section-desc">The mass formula m = A·n is numerically accurate, but n is not yet derived from spectral properties. These are the priority research directions.</p>
+  </div>
+  <div class="card-grid">
+    <div class="problem-card">
+      <div class="num">#1</div>
+      <div class="status-open">Priority</div>
+      <h3>Selection Rule for n_f</h3>
+      <p>We need a boundary condition or operator on SG × S¹ that selects n ∈ {1, 12, 17, 40} independently of experimental input.</p>
+      <ul>
+        <li>Scalar vertex potentials V(x) on SG</li>
+        <li>Mixed boundary conditions (Dirichlet/Neumann)</li>
+        <li>Other fractals: Sierpiński carpet, random dendrites</li>
+        <li>SG × S¹ with different S¹ topologies and fluxes</li>
+        <li>Higher-genus or branched coverings of SG</li>
+      </ul>
+    </div>
+    <div class="problem-card">
+      <div class="num">#2</div>
+      <div class="status-open">Open</div>
+      <h3>Finite-Level Convergence of d_s/2</h3>
+      <p>Naive Weyl fit shows ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step.</p>
+      <ul>
+        <li>Level 9+ via sparse optimization or GPU</li>
+        <li>Analytical finite-size correction from decimation theory</li>
+      </ul>
+    </div>
+    <div class="problem-card">
+      <div class="num">#3</div>
+      <div class="status-open">Open</div>
+      <h3>Light Fermions</h3>
+      <p>Electron, up, down, strange quarks not yet addressed. A fractal NJL mechanism is sketched but not implemented.</p>
+      <ul>
+        <li>Implement fractal NJL integral</li>
+        <li>Connect light sector to heavy sector via RG flow</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Roadmap</div>
+    <h2 class="section-title">Planned Research</h2>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div class="roadmap-item">
+      <div class="roadmap-num">01</div>
+      <div class="roadmap-content">
+        <h4>Selection Rule Search</h4>
+        <p>Scalar potentials, mixed boundary conditions, other fractals, twisted S¹</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">02</div>
+      <div class="roadmap-content">
+        <h4>Deeper Levels</h4>
+        <p>Level 9+ via sparse optimization or GPU acceleration</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">03</div>
+      <div class="roadmap-content">
+        <h4>Light Fermions</h4>
+        <p>Implement fractal NJL integral for electron and light quarks</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">04</div>
+      <div class="roadmap-content">
+        <h4>Physical Bridge</h4>
+        <p>Connect A = 104.63 MeV to electroweak scale via renormalisation group</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="repo" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Repository</div>
+    <h2 class="section-title">Repository Structure</h2>
+  </div>
+  <div class="file-tree">
+    <span class="dir">phi_genesis/</span><br>
+    &nbsp;&nbsp;<span class="file">__init__.py</span> <span class="comment">— module exports</span><br>
+    &nbsp;&nbsp;<span class="file">sg_laplacian.py</span> <span class="comment">— SG graph, Laplacian, decimation, Weyl</span><br>
+    &nbsp;&nbsp;<span class="file">dirac_eta.py</span> <span class="comment">— Graph Dirac operator, η-invariant test</span><br>
+    &nbsp;&nbsp;<span class="file">mass_check.py</span> <span class="comment">— Scale consistency audit</span><br>
+    &nbsp;&nbsp;<span class="file">mobius.py</span> <span class="comment">— π-flux signed Laplacian (Z₂ cocycle)</span><br>
+    &nbsp;&nbsp;<span class="file">mobius_selection_search.py</span> <span class="comment">— Exhaustive twist search (32 configs)</span><br>
+    &nbsp;&nbsp;<span class="file">fukushima_shima.py</span> <span class="comment">— Gap structure verification</span><br>
+    &nbsp;&nbsp;<span class="file">spectral_convergence.py</span> <span class="comment">— Dense solver, Weyl fits, window sensitivity</span><br>
+    &nbsp;&nbsp;<span class="file">test_honest.py</span> <span class="comment">— 5 core tests (~4s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_mobius.py</span> <span class="comment">— 3 twist/integer tests (~0.1s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_fukushima_shima.py</span> <span class="comment">— 1 gap test (~1.6s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_convergence_and_selection.py</span> <span class="comment">— 5 deep tests (~110s, includes level-8 dense solver)</span>
+  </div>
+</section>
+
+<section id="quickstart" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Quick Start</div>
+    <h2 class="section-title">Installation & Tests</h2>
+  </div>
+  <div class="terminal" style="margin-bottom:1.5rem;">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">install.sh</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Clone and install (editable, so `phi_genesis` imports from anywhere)</span><br>
+git clone https://github.com/RFT-SIRM/Phi-Genesis.git<br>
+cd Phi-Genesis<br>
+pip install -e .<br>
+pip install pytest<br><br>
+<span class="comment"># Verify import</span><br>
+python -c "import phi_genesis; print('OK')"<br><br>
+<span class="comment"># Full suite — 14 tests, ~110s (level-8 dense solver included)</span><br>
+pytest -v
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">test output</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># pytest -v   (actual output, phi_genesis v2.1)</span><br><br>
+test_honest.py::test_decimation_factor_5 ... <span class="success">PASSED</span><br>
+test_honest.py::test_weyl_exponent ... <span class="success">PASSED</span><br>
+test_honest.py::test_eta_claim_fails ... <span class="success">PASSED</span> <span class="comment"># −4 never observed; asym = +1</span><br>
+test_honest.py::test_a_formula_discrepancy_is_real ... <span class="success">PASSED</span> <span class="comment"># 3.4% gap, formula v·α/Φ⁶</span><br>
+test_honest.py::test_no_single_scale ... <span class="success">PASSED</span> <span class="comment"># 0.58% spread across fermions</span><br>
+test_mobius.py::test_mobius_gaps_the_spectrum ... <span class="success">PASSED</span><br>
+test_mobius.py::test_gap_selection_not_particles ... <span class="success">PASSED</span><br>
+test_mobius.py::test_integer_rounding_quality ... <span class="success">PASSED</span> <span class="comment"># 0.68% mean error</span><br>
+test_fukushima_shima.py::test_gap_structure ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_dense_solver_matches_sparse_at_level_6 ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_naive_fit_stays_above_one_percent_at_level_8 ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_window_averaging_is_not_a_stable_correction ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_no_generation_twist_selects_all_four_targets ... <span class="success">PASSED</span> <span class="comment"># 32 configs, index 40 absent</span><br>
+test_convergence_and_selection.py::test_forty_never_selected_by_generation_twists ... <span class="success">PASSED</span><br><br>
+<span class="success">======================== 14 passed in ~110s =========================</span><br><br>
+<span class="comment"># All 14 tests reproducible from a clean checkout: pip install -e . && pytest -v</span>
+    </div>
+  </div>
+</section>
+
+<section id="citation" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Reference</div>
+    <h2 class="section-title">Citation</h2>
+  </div>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">citation.bib</span>
+    </div>
+    <div class="terminal-body" style="color: #9ca3af;">
+@software{phi-genesis-2024,<br>
+&nbsp;&nbsp;title = {Phi-Genesis: Spectral Core for Fractal Vacuum Substrate},<br>
+&nbsp;&nbsp;author = {RFT-SIRM},<br>
+&nbsp;&nbsp;year = {2024},<br>
+&nbsp;&nbsp;url = {https://github.com/RFT-SIRM/Phi-Genesis},<br>
+&nbsp;&nbsp;note = {v2.0 — Reproducible spectral computations on the Sierpiński<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gasket. The mass formula m = A·n currently lacks an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;independent selection rule.}<br>
+}
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:2rem; color:var(--text-muted); font-size:0.85rem; max-width:600px; margin-left:auto; margin-right:auto;">
+    If you use this code, please cite the RFT research programme and acknowledge that the mass formula <span style="color:var(--gold); font-family:var(--font-mono);">m = A·n</span> currently lacks an independent selection rule.
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">
+    <strong>Phi-Genesis v2.0</strong> — Spectral Core for Fractal Vacuum Substrate<br>
+    RFT-SIRM Research · All computations reproducible · All claims tested against code · No black boxes
+  </div>
+</footer>
+</div>
+
+<script>
+// ============================================
+// THREE.JS HERO BACKGROUND
+// ============================================
+(function() {
+  const canvas = document.getElementById('hero-3d');
+  if (!canvas) return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Icosahedron — gold/cyan wireframe
+  const icoGeom = new THREE.IcosahedronGeometry(2.4, 1);
+  const icoEdges = new THREE.EdgesGeometry(icoGeom);
+  const icoMat = new THREE.LineBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.18 });
+  const ico = new THREE.LineSegments(icoEdges, icoMat);
+  scene.add(ico);
+
+  // TorusKnot
+  const torusGeom = new THREE.TorusKnotGeometry(1.5, 0.3, 128, 32, 2, 3);
+  const torusEdges = new THREE.EdgesGeometry(torusGeom);
+  const torusMat = new THREE.LineBasicMaterial({ color: 0x5eead4, transparent: true, opacity: 0.12 });
+  const torus = new THREE.LineSegments(torusEdges, torusMat);
+  scene.add(torus);
+
+  // Particles — Fibonacci spiral
+  const particleCount = 500;
+  const pGeom = new THREE.BufferGeometry();
+  const pPos = new Float32Array(particleCount * 3);
+  const pCol = new Float32Array(particleCount * 3);
+  const colors = [new THREE.Color(0xd4a853), new THREE.Color(0x5eead4), new THREE.Color(0x8b7ec8), new THREE.Color(0xf59e0b)];
+  for (let i = 0; i < particleCount; i++) {
+    const phi = Math.acos(1 - 2 * (i + 0.5) / particleCount);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const r = 3.0;
+    pPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+    pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    pPos[i*3+2] = r * Math.cos(phi);
+    const c = colors[i % colors.length];
+    pCol[i*3] = c.r; pCol[i*3+1] = c.g; pCol[i*3+2] = c.b;
+  }
+  pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  pGeom.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+  const pMat = new THREE.PointsMaterial({ size: 0.035, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+  const particles = new THREE.Points(pGeom, pMat);
+  scene.add(particles);
+
+  // Central sphere
+  const sphereGeom = new THREE.SphereGeometry(0.3, 32, 32);
+  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.25 });
+  const sphere = new THREE.Mesh(sphereGeom, sphereMat);
+  scene.add(sphere);
+
+  camera.position.z = 7.5;
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.004;
+    ico.rotation.x = time * 0.25;
+    ico.rotation.y = time * 0.4;
+    torus.rotation.x = time * 0.35;
+    torus.rotation.y = time * 0.5;
+    particles.rotation.y = time * 0.15;
+    const s = 1 + Math.sin(time * 2.5) * 0.12;
+    sphere.scale.set(s, s, s);
+    sphereMat.opacity = 0.2 + Math.sin(time * 2.5) * 0.15;
+    camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.03;
+    camera.position.y += (mouseY * 0.6 - camera.position.y) * 0.03;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  }
+  animate();
+  window.addEventListener('resize', () => {
+    camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  });
+})();
+
+// ============================================
+// COUNTER ANIMATION
+// ============================================
+function animateCounter(id, target, duration, isFloat) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = 0;
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = (currentTime - startTime) / 1000;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = start + (target - start) * eased;
+    el.textContent = isFloat ? current.toFixed(2) : Math.floor(current).toString();
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+window.addEventListener('load', () => {
+  animateCounter('c1', 104.63, 2, true);
+  animateCounter('c2', 0.68, 2, true);
+  animateCounter('c3', 4, 1.5, false);
+  animateCounter('c4', 14, 1, false);
+});
+
+// ============================================
+// INTERSECTION OBSERVER — Section Reveal
+// ============================================
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelector('.hero').classList.add('visible');
+
+// ============================================
+// NAV SCROLL SPY
+// ============================================
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.style.color = '';
+    if (link.getAttribute('href') === '#' + current) link.style.color = 'var(--gold)';
+  });
+});
+</script>
+</body>
+</html>
