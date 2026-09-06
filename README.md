@@ -48,7 +48,7 @@ This beats the fitted non-integer values (0.87% mean error). The decimals in ear
 
 ### 5. Scale consistency audit
 - Fitted scale `A = 104.63` MeV (from integer fit).
-- Formula `A = v·α/Φ⁶` gives **100.13** MeV — 3.4% below fitted. Discrepancy confirmed.
+- Formula `A = v·α/Φ⁶` gives **100.13** MeV — 4.3% below fitted. Discrepancy confirmed.
 - Relative spread of per-fermion implied scales: **0.58%**.
 
 ### 6. η-invariant claim — REJECTED
@@ -131,7 +131,7 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 | Quantity | Value | Source |
 |----------|-------|--------|
 | A (integer fit) | 104.63 MeV | Best fit to μ/τ/c/b with integer n |
-| A (formula) | 100.13 MeV | v·α/Φ⁶ — 3.4% below fitted |
+| A (formula) | 100.13 MeV | v·α/Φ⁶ — 4.3% below fitted |
 | d_s/2 (theory) | 0.6826 | ln(3)/ln(5) |
 | d_s/2 (naive, level 6) | 0.7051 | 3.3% above theory |
 | d_s/2 (naive, level 8) | 0.7019 | 2.8% above theory |

@@ -16,7 +16,7 @@ def test_eta_claim_fails():
     assert abs(a) <= 4 and a != -4
 
 def test_a_formula_discrepancy_is_real():
-    assert abs(a_from_formula() - 103.63) / 103.63 > 0.03
+    assert abs(a_from_formula() - 104.63) / 104.63 > 0.03
 
 def test_no_single_scale():
     assert scale_consistency() > 0.001
