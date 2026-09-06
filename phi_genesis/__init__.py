@@ -11,3 +11,4 @@ from .spectral_convergence import (dense_laplacian_spectrum, naive_weyl_fit,
                          convergence_table, THEORY_EXPONENT)
 from .mobius_selection_search import (exhaustive_twist_search, search_summary,
                          TARGET_INDICES)
+from .sierpinski_carpet import (build_carpet_graph, spectrum_from_graph, carpet_laplacian_spectrum, carpet_weyl_check, gap_selected_indices)
