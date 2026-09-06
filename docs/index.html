@@ -82,7 +82,21 @@ nav {
   min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
   text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden;
 }
-#hero-3d { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+#hero-3d { display: block; width: 100%; height: 100%; }
+
+.fractal-showcase {
+  position: relative; width: 100%; height: 100vh; min-height: 560px;
+  background: var(--bg-deep); overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.fractal-caption {
+  position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); z-index: 5; text-align: center; white-space: nowrap;
+  background: rgba(2,4,10,0.55); padding: 0.4rem 1rem; border-radius: 100px;
+  border: 1px solid var(--border); backdrop-filter: blur(8px);
+}
 .hero-content { position: relative; z-index: 5; max-width: 900px; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 0.6rem;
@@ -349,7 +363,6 @@ footer {
 </nav>
 
 <section class="hero">
-  <canvas id="hero-3d"></canvas>
   <div class="hero-content">
     <div class="hero-badge">v2.0 — Core Mathematics Verified</div>
     <h1 class="hero-title">Phi-Genesis</h1>
@@ -361,6 +374,11 @@ footer {
       <div class="hero-stat"><div class="hero-stat-value" id="c4">14</div><div class="hero-stat-label">Tests Passing</div></div>
     </div>
   </div>
+</section>
+
+<section class="fractal-showcase">
+  <canvas id="hero-3d"></canvas>
+  <div class="fractal-caption">Sierpiński tetrahedron — chaos game, 22,000 points, rotating live</div>
 </section>
 
 <section id="pipeline" class="reveal">
@@ -741,10 +759,10 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
       <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">citation.bib</span>
     </div>
     <div class="terminal-body" style="color: #9ca3af;">
-@software{phi-genesis-2024,<br>
+@software{phi-genesis-2026,<br>
 &nbsp;&nbsp;title = {Phi-Genesis: Spectral Core for Fractal Vacuum Substrate},<br>
 &nbsp;&nbsp;author = {RFT-SIRM},<br>
-&nbsp;&nbsp;year = {2024},<br>
+&nbsp;&nbsp;year = {2026},<br>
 &nbsp;&nbsp;url = {https://github.com/RFT-SIRM/Phi-Genesis},<br>
 &nbsp;&nbsp;note = {v2.0 — Reproducible spectral computations on the Sierpiński<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gasket. The mass formula m = A·n currently lacks an<br>
