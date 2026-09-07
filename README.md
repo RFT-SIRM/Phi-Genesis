@@ -80,6 +80,23 @@ improving on. No single n_t is asserted as correct here; the
 inconsistency itself is the finding, guarded against regressing
 silently by the three tests in `test_top_quark_consistency.py`.
 
+### 8. Index-1 triviality caveat — affects the CORE result, not just carpet
+Verified in `test_sg_index_triviality.py` on the actual SG graph (not
+the abandoned carpet branch): under thousands of random on-site
+potentials (unrelated to any specific flux/twist mechanism), index 1
+appears in the gap-selected set **~95% of the time**, regardless of
+what the potential is. For comparison: index 12 ~37%, index 17 ~22%,
+index 40 ~3.4%.
+
+This means the μ↔n=1 correspondence (section 4) and the "1 of 4" hit
+reported for the exhaustive Möbius twist search (section 3) carry much
+less evidential weight than they appear to at face value — index 1 is
+close to a structural artifact of the ratio-based gap-selection rule
+itself, not a signature of the π-flux mechanism specifically. An index
+40 hit would be far more meaningful (only ~3.4% base rate) than an
+index 1 hit (~95% base rate) — the four "hits" in this repo are not
+equally strong evidence, and should not be reported as if they were.
+
 ---
 
 ## Open Problems
