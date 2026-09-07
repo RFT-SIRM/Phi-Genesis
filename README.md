@@ -58,6 +58,28 @@ The RFT-String v8.7 claim that `η̄(0) = −4` for the boundary potential `V(i)
 - For zero potential: −2
 - Value −4 **never observed**. The asymmetry is an O(1) finite-size artifact, not a topological invariant.
 
+### 7. Top-quark n_t inconsistency — NOT RESOLVED
+The top quark is intentionally absent from the 4-fermion integer table above.
+Reason (verified in `test_top_quark_consistency.py`): the historically
+advertised `n_t = 1680 = 8·7#` was computed under an OLDER scale
+(A ≈ 103.63 MeV), not the A = 104.63 MeV used everywhere else in this
+section. Recomputing at the current A gives three genuinely different
+candidates:
+
+| Candidate | n_t | How it's obtained |
+|---|---|---|
+| Advertised ("8×7#") | 1680 | `v/(√2·A)` at the *old* A ≈ 103.63 |
+| Formula, current A | 1664 | `v/(√2·A)` at A = 104.63 |
+| Best integer fit, current A | 1654 | `round(m_top / A)` at A = 104.63 |
+
+Using the advertised n_t = 1680 with the current A gives a top-quark
+error of **1.55%** — more than double the 4-fermion mean (0.68%).
+Including it would raise the reported mean to ~0.85%, back to the
+level of the old fitted decimals the integer fit is presented as
+improving on. No single n_t is asserted as correct here; the
+inconsistency itself is the finding, guarded against regressing
+silently by the three tests in `test_top_quark_consistency.py`.
+
 ---
 
 ## Open Problems
