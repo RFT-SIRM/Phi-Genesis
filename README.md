@@ -10,11 +10,11 @@
 
 Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
 
-**Status:** v2.0 — all core mathematics verified; selection rule for fermion masses remains an open problem.
+**Status:** v2.0 — all core mathematics numerically verified (computational evidence; not machine-checked); selection rule for fermion masses remains an open problem.
 
 ---
 
-## Verified Results (reproducible via code)
+## Verified Results (numerical; reproducible via code)
 
 ### 1. Sierpiński gasket spectral theory
 - **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ).
@@ -186,6 +186,14 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 2. **Deeper levels** — level 9+ via sparse optimization or GPU
 3. **Light fermions** — implement fractal NJL integral
 4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG
+
+---
+
+## Scope: relation to Evgeny's Theorem
+
+Nothing in the code or documentation of this repository uses [Evgeny's Theorem](https://github.com/RFT-SIRM/Evgeny-Theorem), and no result here depends on it. That theorem is an exact trace-defect identity for a non-Abelian SU(2) connection on Sierpiński-gasket graphs; it is machine-checked in Lean 4 for every level m ≥ 1 (fourth moment, concrete operators). Phi-Genesis instead computes spectral properties of Abelian (Z₂, π-flux) signed Laplacians and a mass-index formula. The two differ in gauge group (Z₂ versus SU(2)), in observable (low-lying spectrum and gaps versus a fourth-moment trace defect), and in evidence (numerical versus formally proved).
+
+Consequently the machine-checked status of Evgeny's Theorem does **not** transfer to any claim in this repository. Everything here is computational evidence (Level B in the [Unified Foundations verification policy](https://github.com/RFT-SIRM/Unified-Foundations-Mathematics-Physics/blob/main/VERIFICATION_POLICY.md)) unless stated otherwise, and the mass formula `m = A·n` still lacks an independent selection rule.
 
 ---
 
