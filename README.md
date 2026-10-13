@@ -18,7 +18,7 @@ Reproducible spectral computations on the Sierpiński gasket (SG) and related st
 
 ### 1. Sierpiński gasket spectral theory
 - **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ).
-- **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Finite-level bias ~3% at level 6, ~2.8% at level 8.
+- **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Finite-level bias ~3% at level 6, ~2.8% at level 8; levels 9-10 and window sensitivity: see Open Problem #2.
 - **Log-periodic oscillations** — period ln(5), signature of decimation.
 - **Fukushima–Shima gaps** — forbidden zones cluster at decimation fixed points λ ≈ 2.5 and λ ≈ 3.
 
@@ -97,6 +97,9 @@ itself, not a signature of the π-flux mechanism specifically. An index
 index 1 hit (~95% base rate) — the four "hits" in this repo are not
 equally strong evidence, and should not be reported as if they were.
 
+### 9. Structural coincidence involving the index 40 — NOT evidence
+On the untwisted SG the multiplicities of the special eigenvalues are, at levels 3-7: mult(3) = (3^(m-1)-3)/2, mult(5) = (3^(m-1)-1)/2, mult(6) = (3^m-3)/2 (checked at levels 3-6 in `test_sg_inertia.py`; levels 3-7 numerically). In particular mult(5) = 40 at level 5, and (3^k-1)/2 = 1, 4, 13, 40 contains two of the four mass indices {1, 12, 17, 40}. A random 4-subset of {1,...,40} contains at least two of {1, 4, 13, 40} with probability 4.3%. This is not evidence: the form (3^k-1)/2 was chosen after seeing the indices (a look-elsewhere effect over many possible integer forms); the repository's selection rule uses gap positions, not multiplicities (at level 5 the multiplicity-40 cluster occupies nonzero-eigenvalue positions 203-242); and the other two indices (12, 17) do not have this form. Recorded so that the coincidence is not later reported as support.
+
 ---
 
 ## Open Problems
@@ -114,10 +117,19 @@ The formula `m = A·n` is numerically accurate, but `n` is not yet derived from 
 ### #2 — Finite-level convergence of d_s/2
 Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step — not yet a unique correction.
 
-**Path forward:** level 9+ (needs optimization), or analytical finite-size correction from decimation theory.
+**Update (exact counts to level 10).** `phi_genesis/sg_inertia.py` counts the eigenvalues below any sigma exactly by Sylvester's law of inertia, with no eigensolver. It agrees with dense spectra at levels 5-6 (tests) and needs ~0.6 s and ~250 MB per count at level 9 (29,526 vertices) and ~700 MB at level 10 (88,575 vertices) on one CPU core. Findings:
+
+- Fixed window sigma in [3e-3, 0.375] (3 log-periods, phase-averaged): deviation of the fitted exponent from ln3/ln5 is -2.19% (level 6), -0.61% (7), +0.07% (8), +0.32% (9), +0.41% (10).
+- Window sensitivity (sigma in [2e-3, 0.45], windows of k log-periods sliding in steps of ln5/16), level 9: k=1 gives slopes 0.545...0.857 (mean +1.00%); k=2 gives 0.645...0.730 (mean +0.44%); k=3 gives 0.672...0.704 (mean +0.78%).
+- Interpretation: the number of levels is no longer the bottleneck; the estimate is set by the window choice (log-periodic oscillation of order +-2-3% around the mean). The mean also drifts upward with level at a fixed window, consistent with the window top lying outside the asymptotic regime (not separately tested). The exponent d_s/2 = ln3/ln5 is known exactly from theory, so these numbers are consistency checks, not new information.
+- Not tested: level 11 and above (fill-in memory is the expected limit, unverified).
+
+**Path forward:** an analytical finite-size correction from decimation theory, or an estimator that is stable under window choice. More levels alone will not remove the window dependence.
 
 ### #3 — Light fermions
 Electron, up, down, strange quarks not yet addressed. A fractal NJL mechanism is sketched but not implemented.
+
+Note: with A = 104.63 MeV the integer formula `m = A·n` would need n ≈ 0.005 (electron), ≈ 0.02 (up), ≈ 0.04 (down) and ≈ 0.9 (strange) (approximate PDG masses), i.e. not integers ≥ 1. Light fermions therefore require a mechanism beyond the integer-index formula; any such mechanism brings its own parameters, which must be counted against the number of masses it is meant to explain.
 
 ---
 
@@ -133,10 +145,12 @@ phi_genesis/
   mobius_selection_search.py          — Exhaustive twist search (32 configs)
   fukushima_shima.py                  — Gap structure verification
   spectral_convergence.py           — Dense solver, Weyl fits, window sensitivity
+  sg_inertia.py                     — Exact eigenvalue counts via inertia (levels 9-10, no eigensolver)
   test_honest.py                      — 5 core tests (~4s)
   test_mobius.py                      — 3 twist/integer tests (~0.1s)
   test_fukushima_shima.py             — 1 gap test (~1.6s)
   test_convergence_and_selection.py   — 4 deep tests (~13s, level 8 skipped in CI)
+  test_sg_inertia.py                  — 4 fast tests (~1.2s) + nightly window sweep (levels 8-9)
 ```
 
 ---
@@ -182,10 +196,10 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 
 ## Roadmap
 
-1. **Selection rule search** — scalar potentials, mixed BCs, other fractals, twisted S¹
-2. **Deeper levels** — level 9+ via sparse optimization or GPU
-3. **Light fermions** — implement fractal NJL integral
-4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG
+1. **Selection rule search** — scalar potentials, mixed BCs, other fractals, twisted S¹ (not started for these families; needs a pre-registered null protocol first, since the target set was fixed after the fit and look-elsewhere effects are already documented here)
+2. **Deeper levels** — levels 9-10 done via exact inertia counting, no GPU needed (see Open Problem #2); more levels do not remove the window dependence
+3. **Light fermions** — implement fractal NJL integral (a toy at best: an NJL gap equation brings its own coupling and cutoff; parameters must be counted against the number of masses)
+4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG (blocked: no Lagrangian or beta functions are defined in this repository, so there is nothing to run; a specified model is needed first)
 
 ---
 
