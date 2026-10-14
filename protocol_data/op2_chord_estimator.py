@@ -1,7 +1,7 @@
 """Open Problem #2, exploratory (theory-motivated): window-free chord estimator of the Weyl exponent.
 
-Spectral decimation gives N_{L+1}(s) = N_L(phi(s)), phi(x) = x (5 - x), and the count at fixed s grows by a factor 3
-per level up to a small bounded offset. Hence the chord exponent
+Spectral decimation (phi(x) = x (5 - x)) holds for this Laplacian (corner degree 2) only up to corner-defect corrections;
+in the points inspected N_{L+1}(s) = N_L(phi(s)) and N_{L+1}(s) = 3 N_L(s) - delta with delta <= 3 (not proven). Hence the chord exponent
     d(s) = ln( N_L(phi(s)) / N_L(s) ) / ln( phi(s) / s )
 equals ln 3 / ln(5 - s) up to an O(1/N) counting offset, with no window and no phase; ln3/ln(5 - s) -> ln3/ln5 as s -> 0.
 Output: deviation (%) of d(s) from the exact chord ln3/ln(5 - s), binned by N(s), on the sigma grid of op2_window_bias.py.
