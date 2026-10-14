@@ -125,12 +125,17 @@ On the untwisted SG the multiplicities of the special eigenvalues are, at levels
 ### #1 — Selection rule for n_f (priority)
 The formula `m = A·n` is numerically accurate, but `n` is not yet derived from spectral properties. We need a boundary condition or operator on SG × S¹ that selects `n ∈ {1, 12, 17, 40}` independently of experimental input.
 
-**Untested families:**
-- Scalar vertex potentials V(x) on SG
-- Mixed boundary conditions (Dirichlet on some holes, Neumann on others)
-- Other fractals: Sierpiński carpet, random dendrites
-- SG × S¹ with different S¹ topologies and fluxes
-- Higher-genus or branched coverings of SG
+**Tried (no evidence; 193 configuration evaluations, see [`protocol_ledger.md`](protocol_ledger.md)):**
+- Z2 twists by generation (32 configurations)
+- Scalar vertex potentials V(x) on SG and Dirichlet conditions at corners (pre-registered v1.0, v1.1)
+- SG × S¹ with a lattice circle (v1.0, v1.1) and with a continuum circle and both spin structures (v1.2.1)
+- Sierpiński carpet (branch abandoned, counts not recorded)
+
+**Still untested:**
+- Random dendrites, higher-genus or branched coverings of SG
+- A derivation of the indices from an invariant of the operator (instead of a statistical search over families)
+
+Any further family needs a new pre-registered protocol version, with a null-only power check, before it is evaluated.
 
 ### #2 — Finite-level convergence of d_s/2
 Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step — not yet a unique correction.
@@ -214,7 +219,7 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 
 ## Roadmap
 
-1. **Selection rule search** — scalar potentials, mixed BCs, other fractals, twisted S¹ (not started for these families; needs a pre-registered null protocol first, since the target set was fixed after the fit and look-elsewhere effects are already documented here)
+1. **Selection rule search** — tried so far: Z2 twists, scalar potentials, Dirichlet corners, SG × S¹ (lattice and continuum circle), carpet; no evidence after 193 configuration evaluations (see ledger). Next: only a derivation of the indices or a new family under a new pre-registered version (the target set was fixed after the fit, so look-elsewhere effects apply)
 2. **Deeper levels** — levels 9-10 done via exact inertia counting, no GPU needed (see Open Problem #2); more levels do not remove the window dependence
 3. **Light fermions** — implement fractal NJL integral (a toy at best: an NJL gap equation brings its own coupling and cutoff; parameters must be counted against the number of masses)
 4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG (blocked: no Lagrangian or beta functions are defined in this repository, so there is nothing to run; a specified model is needed first)
