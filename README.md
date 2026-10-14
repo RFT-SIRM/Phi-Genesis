@@ -10,7 +10,24 @@
 
 Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
 
-**Status:** v2.0 — all core mathematics numerically verified (computational evidence; not machine-checked); selection rule for fermion masses remains an open problem.
+**Status (2026-10-14):** v2.0 — core mathematics numerically verified (computational evidence; not machine-checked). **No selection rule for the mass indices {1, 12, 17, 40} has been found.** Two pre-registered look-elsewhere tests (v1.0, v1.1) returned *no evidence*; see [Selection protocol status](#selection-protocol-status).
+
+## Selection protocol status
+
+The question tested: does any operator family on the Sierpiński gasket *select* the mass indices {1, 12, 17, 40} more often than chance, after correcting for the number of configurations tried (look-elsewhere effect)? Rules, null pools and thresholds were fixed and committed **before** each evaluation.
+
+| Version | Rule | Configurations | Result | Commits |
+|---|---|---|---|---|
+| v1.0 | k = 12, window 60 | 75 | **no evidence** (p = 0.922 N-pot, 0.968 N-edge; threshold p <= 0.01). Post-hoc power check: the test could not have reached the threshold for any outcome, so this negative is uninformative. | c7e0c7f |
+| v1.1 | k = 6, window 60 | 75 | **no evidence** (p = 0.966 N-pot, 0.997 N-edge). Max 2 of 4 targets in any configuration; index 40 selected by 0 of 75. This test *could* reach p <= 0.01, so the negative is informative for these 75 configurations. | d3605df, e9ffe15, 77e82ba, 743c415 |
+
+Cumulative configuration evaluations across all families tried: **182** (full list in [`protocol_ledger.md`](protocol_ledger.md)).
+
+**What this means for the results below.** The integer indices and the scale `A` in section 4 are not derived from any selection rule; the mass formula is a numerical match, not a prediction. Agreement should be read with the number of tried configurations in mind.
+
+**Open blockers.** The top-quark index (about 1650) lies outside the window of 60 and cannot be selected by the current rule. Any Stage 2 needs a new operator family or rule, fixed in a new protocol version before it is evaluated.
+
+Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.md`](PREREGISTRATION_v1.1_DRAFT.md), [`protocol_ledger.md`](protocol_ledger.md), `protocol_data/` (null pools, results, seeds), `phi_genesis/selection_protocol*.py`.
 
 ---
 
