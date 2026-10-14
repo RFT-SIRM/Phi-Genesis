@@ -149,6 +149,14 @@ Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding w
 
 **Path forward:** an analytical finite-size correction from decimation theory, or an estimator that is stable under window choice. More levels alone will not remove the window dependence.
 
+**Update (window bias vs finite-level error; exploratory, `protocol_data/op2_window_bias.py`, exact counts levels 6-9 cached in `protocol_data/op2_counts.json`).**
+
+- The estimators and windows of the first table were fixed before the run: 24 grid points per log-period, windows of 3 log-periods shifted by factors of 5, plain OLS slope (E1) and OLS with the first harmonic of the log-period (E2). Sliding windows and 2-3 harmonics were added after seeing that table (post hoc).
+- Shifting the window down by a factor 5 gives (almost exactly) the same deviation as going down one level: e(L, j) ~ e(L-j, 0) (for example (7,1), (8,2), (9,3) all give +0.68% for E1). So at a fixed window the level-to-level change is the same effect as moving the window; the two cannot be separated by shifting windows.
+- Plain OLS on one window position (3 log-periods, level 9) deviates by +2.94% from ln3/ln5; over all 52 valid window positions at level 9 the OLS deviation has mean -0.38% and range [-3.93%, +3.20%]. The window dependence is mostly a property of the estimator on a log-periodic staircase, not of finite level.
+- Adding harmonics of the log-period shrinks the spread: at level 9 the deviation over the same 52 windows is -0.49% [-2.03%, +0.46%] with 1 harmonic and -0.47% [-1.28%, +0.06%] with 3 harmonics (levels 7 and 8: -0.74% and -0.67% for 3 harmonics; windows near the finite-graph boundary are excluded by the rule N(sigma_min) >= 9).
+- What is still open: a single window-independent number. The remaining spread at level 9 is about 1.3% (3 harmonics) and the mean offset about -0.5%. The ln3/ln5 value itself is not in question (proved for the gasket); this concerns how well finite-level counts reproduce it. Level 10 would tighten the table and has not been run here.
+
 ### #3 — Light fermions
 Electron, up, down, strange quarks not yet addressed. A fractal NJL mechanism is sketched but not implemented.
 
