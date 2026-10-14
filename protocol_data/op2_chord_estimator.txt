@@ -1,0 +1,11 @@
+level 8: chord estimate vs exact chord ln3/ln(5-sigma), deviation in %
+   N(sigma) >=   10:  86 points  mean -0.570  range [-6.280, +1.117]
+   N(sigma) >=   30:  62 points  mean -0.254  range [-2.193, +1.117]
+   N(sigma) >=  100:  38 points  mean -0.144  range [-0.743, +0.374]
+   N(sigma) >=  300:  14 points  mean -0.090  range [-0.249, +0.210]
+level 9: chord estimate vs exact chord ln3/ln(5-sigma), deviation in %
+   N(sigma) >=   10: 110 points  mean -0.454  range [-6.280, +0.374]
+   N(sigma) >=   30:  86 points  mean -0.194  range [-2.193, +0.374]
+   N(sigma) >=  100:  62 points  mean -0.086  range [-0.743, +0.374]
+   N(sigma) >=  300:  38 points  mean -0.048  range [-0.249, +0.125]
+   N(sigma) >= 1000:  14 points  mean -0.030  range [-0.083, +0.070]
