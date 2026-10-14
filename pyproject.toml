@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "phi-genesis"
-version = "2.1.0"
+version = "2.2.0"
 description = "Honest spectral computation on the Sierpinski gasket + fermion mass-formula audit"
 requires-python = ">=3.10"
 dependencies = ["numpy", "scipy"]

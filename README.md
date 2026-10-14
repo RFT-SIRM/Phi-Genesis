@@ -10,7 +10,18 @@
 
 Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
 
-**Status (2026-10-14):** v2.0 — core mathematics numerically verified (computational evidence; not machine-checked). **No selection rule for the mass indices {1, 12, 17, 40} has been found.** Two pre-registered look-elsewhere tests (v1.0, v1.1) returned *no evidence*; see [Selection protocol status](#selection-protocol-status).
+**Status (2026-10-14):** v2.2.0, closed in its current form. See [Final status](#final-status).
+
+## Final status
+
+| | |
+|---|---|
+| **Established (numerical, reproducible; not machine-checked)** | Spectral decimation and the Fukushima-Shima gap structure on the Sierpinski gasket; the log-periodic Weyl law with exponent ln3/ln5, recovered from finite-level counts without any window to better than 0.1% (chord estimator, level 9, N >= 1000; Open Problem #2); pi-flux boundary conditions open a spectral gap; the eta-invariant claim of RFT-String v8.7 is not reproduced. |
+| **Searched for, not found** | A spectral rule that selects the mass indices {1, 12, 17, 40}. Three pre-registered look-elsewhere tests (v1.0, v1.1, v1.2.1) gave *no evidence*; 193 configuration evaluations are recorded in the ledger, plus the earlier carpet search (about 128 more), so at least about 321 in all. The two tests able to reach the threshold (v1.1, v1.2.1) did not. |
+| **Therefore** | The mass formula `m = A*n` matches four masses with one fitted scale and four integers chosen with the masses in view. It is a numerical coincidence, not a prediction. The top-quark index is unresolved (1654, 1664 or 1680). |
+| **Not addressed** | Light fermions (needs a specified model whose parameters are counted against the masses it explains); a bridge from A to the electroweak scale (no Lagrangian is defined in this repository). |
+
+**What would reopen it.** Only (a) a derivation of the indices from an invariant of the operator, stated before any comparison with masses, or (b) a new operator family with an a-priori rationale, under a new pre-registered protocol version with a null-only power check. Re-running the same searches on the same four targets would only raise the look-elsewhere correction.
 
 ## Selection protocol status
 
@@ -28,7 +39,7 @@ Cumulative configuration evaluations across all families tried: **193** (182 thr
 
 **Open blockers.** The top-quark index (about 1650) lies outside the window of 60 and cannot be selected by the current rule. Any Stage 2 needs a new operator family or rule, fixed in a new protocol version before it is evaluated.
 
-Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.md`](PREREGISTRATION_v1.1_DRAFT.md), [`protocol_ledger.md`](protocol_ledger.md), `protocol_data/` (null pools, results, seeds), `phi_genesis/selection_protocol*.py`.
+Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.md`](PREREGISTRATION_v1.1_DRAFT.md), [`PREREGISTRATION_v1.2_DRAFT.md`](PREREGISTRATION_v1.2_DRAFT.md), [`PREREGISTRATION_v1.2.1.md`](PREREGISTRATION_v1.2.1.md), [`protocol_ledger.md`](protocol_ledger.md), `protocol_data/` (null pools, results, seeds), `phi_genesis/selection_protocol*.py`.
 
 ---
 
@@ -36,7 +47,7 @@ Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.
 
 ### 1. Sierpiński gasket spectral theory
 - **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ).
-- **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Finite-level bias ~3% at level 6, ~2.8% at level 8; levels 9-10 and window sensitivity: see Open Problem #2.
+- **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Naive window fits carry a finite-level and window bias of about 3%; a window-free chord estimator recovers the exponent to better than 0.1% (level 9, N >= 1000), see Open Problem #2.
 - **Log-periodic oscillations** — period ln(5), signature of decimation.
 - **Fukushima–Shima gaps** — forbidden zones cluster at decimation fixed points λ ≈ 2.5 and λ ≈ 3.
 
@@ -129,7 +140,7 @@ The formula `m = A·n` is numerically accurate, but `n` is not yet derived from 
 - Z2 twists by generation (32 configurations)
 - Scalar vertex potentials V(x) on SG and Dirichlet conditions at corners (pre-registered v1.0, v1.1)
 - SG × S¹ with a lattice circle (v1.0, v1.1) and with a continuum circle and both spin structures (v1.2.1)
-- Sierpiński carpet (branch abandoned, counts not recorded)
+- Sierpiński carpet (about 128 configurations at level 3 plus an unrecorded level-4 sweep; an initial "4/4" match was diagnosed as a look-elsewhere effect; branch abandoned)
 
 **Still untested:**
 - Random dendrites, higher-genus or branched coverings of SG
@@ -184,6 +195,11 @@ phi_genesis/
   test_fukushima_shima.py             — 1 gap test (~1.6s)
   test_convergence_and_selection.py   — 4 deep tests (~13s, level 8 skipped in CI)
   test_sg_inertia.py                  — 4 fast tests (~1.2s) + nightly window sweep (levels 8-9)
+  selection_protocol.py, selection_protocol_v11.py, selection_protocol_v121.py
+                                      — pre-registered selection tests (v1.0, v1.1, v1.2.1)
+PREREGISTRATION*.md, protocol_ledger.md — protocol documents and the cumulative search ledger
+protocol_data/                        — null pools, results, design outputs, Open Problem #2 scripts
+CHANGELOG.md
 ```
 
 ---
@@ -198,17 +214,21 @@ python -c "import phi_genesis; print('OK')"
 ### Run tests
 
 ```bash
-# Fast suite (~6s)
-python test_honest.py
-python test_mobius.py
-python test_fukushima_shima.py
-
-# Deep suite (~13s, excludes level-8 dense solver)
-python test_convergence_and_selection.py
-
-# Level-8 dense solver manually (~60s, 9843 vertices)
-python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spectrum(8)"
+pip install -e . pytest
+pytest -q -m "not nightly"      # fast suite; the level-8 test dominates (about 2-3 minutes on one core)
 ```
+
+### Reproduce the protocol and Open Problem #2 results
+
+```bash
+python -m phi_genesis.selection_protocol_v121 stepA   # null pools (seeds fixed in the code; about 15 minutes)
+python -m phi_genesis.selection_protocol_v121 stepB   # evaluation; compare with protocol_data/results_v1_2_1.json
+python protocol_data/op2_window_bias.py table         # window study from the cached exact counts
+python protocol_data/op2_window_bias.py sliding
+python protocol_data/op2_chord_estimator.py 8 9       # window-free chord estimator
+```
+
+`stepA` rewrites `protocol_data/null_pools_v1_2_1.json`; the seeds are fixed, so a reproduction should regenerate the committed file. Run it on a copy if you want to keep the committed one untouched.
 
 ---
 
@@ -221,6 +241,7 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 | d_s/2 (theory) | 0.6826 | ln(3)/ln(5) |
 | d_s/2 (naive, level 6) | 0.7051 | 3.3% above theory |
 | d_s/2 (naive, level 8) | 0.7019 | 2.8% above theory |
+| d_s/2 (chord estimator, level 9, N >= 1000) | within 0.1% of ln3/ln(5 - sigma) | Open Problem #2 |
 | Mean error (integer n, 4 fermions) | **0.68%** | Better than fitted decimals (0.87%) |
 | Mean error (fitted n, 5 fermions) | 0.87% | Old non-integer values |
 | η-asymmetry (claimed potential) | +1 | Not −4 |
@@ -230,7 +251,7 @@ python -c "from phi_genesis import dense_laplacian_spectrum; dense_laplacian_spe
 ## Roadmap
 
 1. **Selection rule search** — tried so far: Z2 twists, scalar potentials, Dirichlet corners, SG × S¹ (lattice and continuum circle), carpet; no evidence after 193 configuration evaluations (see ledger). Next: only a derivation of the indices or a new family under a new pre-registered version (the target set was fixed after the fit, so look-elsewhere effects apply)
-2. **Deeper levels** — levels 9-10 done via exact inertia counting, no GPU needed (see Open Problem #2); more levels do not remove the window dependence
+2. **Deeper levels** — levels 9-10 done via exact inertia counting, no GPU needed (see Open Problem #2); more levels do not remove the window dependence of regression fits, but the window-free chord estimator does
 3. **Light fermions** — implement fractal NJL integral (a toy at best: an NJL gap equation brings its own coupling and cutoff; parameters must be counted against the number of masses)
 4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG (blocked: no Lagrangian or beta functions are defined in this repository, so there is nothing to run; a specified model is needed first)
 
