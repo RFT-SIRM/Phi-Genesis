@@ -23,6 +23,8 @@ Reproducible spectral computations on the Sierpiński gasket (SG) and related st
 
 **What would reopen it.** Only (a) a derivation of the indices from an invariant of the operator, stated before any comparison with masses, or (b) a new operator family with an a-priori rationale, under a new pre-registered protocol version with a null-only power check. Re-running the same searches on the same four targets would only raise the look-elsewhere correction.
 
+Method write-up (one page): [`METHODOLOGY.md`](METHODOLOGY.md). Live page: https://rft-sirm.github.io/Phi-Genesis/
+
 ## Selection protocol status
 
 The question tested: does any operator family on the Sierpiński gasket *select* the mass indices {1, 12, 17, 40} more often than chance, after correcting for the number of configurations tried (look-elsewhere effect)? Rules, null pools and thresholds were fixed and committed **before** each evaluation.

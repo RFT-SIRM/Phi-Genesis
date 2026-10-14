@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.1 (2026-10-14) - documentation
+
+- `METHODOLOGY.md`: one-page write-up of the pre-registered look-elsewhere method and the results.
+- Live page (`docs/index.html`) brought in line with the repository: final status section, open problems and roadmap updated, test and fit-error labels corrected.
+
 ## 2.2.0 (2026-10-14) - closed in its current form
 
 - Selection-protocol results: v1.0 and v1.1 (k = 12 and k = 6) and v1.2.1 (SG x S^1 with spin structure, 10 configurations, k = 8) all gave *no evidence*; v1.1 and v1.2.1 could have reached the threshold. Ledger: 193 recorded configuration evaluations, plus the earlier carpet search (about 128), so at least about 321.

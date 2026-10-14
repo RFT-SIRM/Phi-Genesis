@@ -351,6 +351,7 @@ footer {
 <nav>
   <div class="nav-logo">Phi<span>-</span>Genesis</div>
   <ul class="nav-links">
+    <li><a href="#final">Final Status</a></li>
     <li><a href="#verified">Verified</a></li>
     <li><a href="#masses">Masses</a></li>
     <li><a href="#numbers">Key Numbers</a></li>
@@ -364,14 +365,14 @@ footer {
 
 <section class="hero">
   <div class="hero-content">
-    <div class="hero-badge">v2.0 — Core Mathematics Verified</div>
+    <div class="hero-badge">v2.2.0 — Closed: no selection rule found</div>
     <h1 class="hero-title">Phi-Genesis</h1>
     <p class="hero-subtitle">Spectral Core for Fractal Vacuum Substrate.<br>Reproducible spectral computations on the Sierpiński gasket. All claims tested against code. No black boxes.</p>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-value" id="c1">104.63</div><div class="hero-stat-label">MeV — Scale A</div></div>
-      <div class="hero-stat"><div class="hero-stat-value" id="c2">0.68</div><div class="hero-stat-label">% Mean Error</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c2">0.68</div><div class="hero-stat-label">% Mean Fit Error</div></div>
       <div class="hero-stat"><div class="hero-stat-value" id="c3">4</div><div class="hero-stat-label">Fermions</div></div>
-      <div class="hero-stat"><div class="hero-stat-value" id="c4">14</div><div class="hero-stat-label">Tests Passing</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c4">35</div><div class="hero-stat-label">Fast Tests Passing</div></div>
     </div>
   </div>
 </section>
@@ -379,6 +380,42 @@ footer {
 <section class="fractal-showcase">
   <canvas id="hero-3d"></canvas>
   <div class="fractal-caption">Sierpiński tetrahedron — chaos game, 22,000 points, rotating live</div>
+</section>
+
+<section id="final" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Final Status · v2.2.0</div>
+    <h2 class="section-title">Closed in Its Current Form</h2>
+    <p class="section-desc">What the repository establishes, what it searched for and did not find, and what stays open.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-verified">Established</div>
+      <div class="card-icon" style="background: rgba(94,234,212,0.08); color: var(--cyan);">✓</div>
+      <div class="card-title">Spectral Results (numerical)</div>
+      <div class="card-text">Spectral decimation and Fukushima–Shima gaps on the gasket; log-periodic Weyl law with exponent ln3/ln5, recovered from finite-level counts without any window to better than 0.1% (level 9, N ≥ 1000); π-flux opens a gap; the η-invariant claim is not reproduced.</div>
+      <div class="card-value" style="color:var(--cyan)">Weyl exponent to &lt; 0.1%</div>
+    </div>
+    <div class="card">
+      <div class="status-rejected">Not found</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">∅</div>
+      <div class="card-title">Selection Rule for {1, 12, 17, 40}</div>
+      <div class="card-text">Three pre-registered look-elsewhere tests (v1.0, v1.1, v1.2.1) gave no evidence. 193 configuration evaluations are in the ledger, plus the earlier carpet search (about 128): at least about 321 in all. The two tests able to reach the threshold did not.</div>
+      <div class="card-value" style="color:var(--red)">3 protocols · no evidence</div>
+    </div>
+    <div class="card">
+      <div class="status-open">Not established</div>
+      <div class="card-icon" style="background: rgba(245,158,11,0.08); color: var(--amber);">?</div>
+      <div class="card-title">Mass Formula and Open Items</div>
+      <div class="card-text">m = A·n matches four masses with one fitted scale and four integers chosen with the masses in view: a numerical coincidence, not a prediction. Top-quark index unresolved (1654, 1664 or 1680). Light fermions and the electroweak bridge need a specified model.</div>
+      <div class="card-value" style="color:var(--amber)">coincidence, not prediction</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:1.5rem; color:var(--text-muted); font-size:0.85rem;">
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">Method write-up</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md" target="_blank" rel="noopener">Search ledger</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis#final-status" target="_blank" rel="noopener">README</a>
+  </div>
 </section>
 
 <section id="pipeline" class="reveal">
@@ -410,7 +447,7 @@ footer {
       <div class="status-verified">Verified</div>
       <div class="card-icon" style="background: rgba(94,234,212,0.08); color: var(--cyan);">△⁵</div>
       <div class="card-title">Sierpiński Gasket Spectral Theory</div>
-      <div class="card-text">Spectral decimation ×5 — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ). Weyl law N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Log-periodic oscillations with period ln(5).</div>
+      <div class="card-text">Spectral decimation ×5 — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ). Weyl law N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Log-periodic oscillations with period ln(5). A window-free chord estimator recovers the exponent to better than 0.1% (level 9, N ≥ 1000).</div>
       <div class="card-value" style="color:var(--cyan)">d_s/2 = 0.6826</div>
     </div>
     <div class="card">
@@ -536,6 +573,7 @@ footer {
         <tr><td>d_s/2 (theory)</td><td class="num">0.6826</td><td>ln(3)/ln(5)</td></tr>
         <tr><td>d_s/2 (naive, level 6)</td><td>0.7051</td><td>3.3% above theory</td></tr>
         <tr><td>d_s/2 (naive, level 8)</td><td>0.7019</td><td>2.8% above theory</td></tr>
+        <tr><td>d_s/2 (chord estimator, level 9, N ≥ 1000)</td><td class="good">&lt; 0.1% off ln3/ln(5 − σ)</td><td>Window-free; Open Problem #2</td></tr>
         <tr><td>Mean error (integer n, 4 fermions)</td><td class="good">0.68%</td><td>Better than fitted decimals (0.87%)</td></tr>
         <tr><td>Mean error (fitted n, 5 fermions)</td><td class="warn">0.87%</td><td>Old non-integer values</td></tr>
         <tr><td>η-asymmetry (claimed potential)</td><td class="bad">+1</td><td>Not −4. Value −4 never observed.</td></tr>
@@ -548,40 +586,36 @@ footer {
   <div class="section-header">
     <div class="section-tag">Open Problems</div>
     <h2 class="section-title">What Remains Unsolved</h2>
-    <p class="section-desc">The mass formula m = A·n is numerically accurate, but n is not yet derived from spectral properties. These are the priority research directions.</p>
+    <p class="section-desc">The mass formula m = A·n is numerically accurate, but n is not derived from spectral properties. Status of each item as of v2.2.0.</p>
   </div>
   <div class="card-grid">
     <div class="problem-card">
       <div class="num">#1</div>
-      <div class="status-open">Priority</div>
+      <div class="status-rejected">Searched · no evidence</div>
       <h3>Selection Rule for n_f</h3>
-      <p>We need a boundary condition or operator on SG × S¹ that selects n ∈ {1, 12, 17, 40} independently of experimental input.</p>
+      <p>Three pre-registered look-elsewhere tests found no operator configuration that selects n ∈ {1, 12, 17, 40} more often than chance. Reopen only with a derivation of the indices, or a new family with an a-priori rationale under a new pre-registered protocol.</p>
       <ul>
-        <li>Scalar vertex potentials V(x) on SG</li>
-        <li>Mixed boundary conditions (Dirichlet/Neumann)</li>
-        <li>Other fractals: Sierpiński carpet, random dendrites</li>
-        <li>SG × S¹ with different S¹ topologies and fluxes</li>
-        <li>Higher-genus or branched coverings of SG</li>
+        <li>Tried: Z₂ twists, scalar potentials, Dirichlet corners, SG × S¹ (lattice and continuum circle), carpet</li>
+        <li>Untested: random dendrites, higher-genus or branched coverings</li>
       </ul>
     </div>
     <div class="problem-card">
       <div class="num">#2</div>
-      <div class="status-open">Open</div>
+      <div class="status-verified">Resolved</div>
       <h3>Finite-Level Convergence of d_s/2</h3>
-      <p>Naive Weyl fit shows ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step.</p>
+      <p>Regression fits depend on the window phase (spread about ±3.5% for a 3-period window), a property of the estimator, not of the level. A window-free chord estimator recovers ln3/ln5 to better than 0.1% (level 9, N ≥ 1000).</p>
       <ul>
-        <li>Level 9+ via sparse optimization or GPU</li>
-        <li>Analytical finite-size correction from decimation theory</li>
+        <li>Exact counts up to level 10</li>
+        <li>Decimation holds only up to corner-defect corrections for this Laplacian</li>
       </ul>
     </div>
     <div class="problem-card">
       <div class="num">#3</div>
       <div class="status-open">Open</div>
       <h3>Light Fermions</h3>
-      <p>Electron, up, down, strange quarks not yet addressed. A fractal NJL mechanism is sketched but not implemented.</p>
+      <p>Electron, up, down, strange quarks are not addressed. They need a specified model whose parameters are counted against the masses it explains; no Lagrangian is defined in this repository.</p>
       <ul>
-        <li>Implement fractal NJL integral</li>
-        <li>Connect light sector to heavy sector via RG flow</li>
+        <li>Not started</li>
       </ul>
     </div>
   </div>
@@ -590,35 +624,35 @@ footer {
 <section id="roadmap" class="reveal">
   <div class="section-header">
     <div class="section-tag">Roadmap</div>
-    <h2 class="section-title">Planned Research</h2>
+    <h2 class="section-title">Status and Next Steps</h2>
   </div>
   <div style="max-width: 800px; margin: 0 auto;">
     <div class="roadmap-item">
       <div class="roadmap-num">01</div>
       <div class="roadmap-content">
         <h4>Selection Rule Search</h4>
-        <p>Scalar potentials, mixed boundary conditions, other fractals, twisted S¹</p>
+        <p>Closed: no evidence after three pre-registered tests. Reopen only via a derivation or a new pre-registered family</p>
       </div>
     </div>
     <div class="roadmap-item">
       <div class="roadmap-num">02</div>
       <div class="roadmap-content">
         <h4>Deeper Levels</h4>
-        <p>Level 9+ via sparse optimization or GPU acceleration</p>
+        <p>Done: exact counts to level 10 by inertia, no GPU needed</p>
       </div>
     </div>
     <div class="roadmap-item">
       <div class="roadmap-num">03</div>
       <div class="roadmap-content">
         <h4>Light Fermions</h4>
-        <p>Implement fractal NJL integral for electron and light quarks</p>
+        <p>Needs a specified model (an NJL gap equation brings its own coupling and cutoff, which count against the masses)</p>
       </div>
     </div>
     <div class="roadmap-item">
       <div class="roadmap-num">04</div>
       <div class="roadmap-content">
         <h4>Physical Bridge</h4>
-        <p>Connect A = 104.63 MeV to electroweak scale via renormalisation group</p>
+        <p>Blocked: no Lagrangian or beta functions are defined in this repository</p>
       </div>
     </div>
   </div>
@@ -764,7 +798,7 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
 &nbsp;&nbsp;author = {RFT-SIRM},<br>
 &nbsp;&nbsp;year = {2026},<br>
 &nbsp;&nbsp;url = {https://github.com/RFT-SIRM/Phi-Genesis},<br>
-&nbsp;&nbsp;note = {v2.0 — Reproducible spectral computations on the Sierpiński<br>
+&nbsp;&nbsp;note = {v2.2.0 — Reproducible spectral computations on the Sierpiński<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gasket. The mass formula m = A·n currently lacks an<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;independent selection rule.}<br>
 }
@@ -904,7 +938,7 @@ window.addEventListener('load', () => {
   animateCounter('c1', 104.63, 2, true);
   animateCounter('c2', 0.68, 2, true);
   animateCounter('c3', 4, 1.5, false);
-  animateCounter('c4', 14, 1, false);
+  animateCounter('c4', 35, 1, false);
 });
 
 // ============================================
