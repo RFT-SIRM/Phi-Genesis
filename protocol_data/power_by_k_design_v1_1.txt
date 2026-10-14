@@ -1,0 +1,40 @@
+
+=== N-pot  (draws 100000, weights from first 50000, null scores from last 50000) ===
+k= 3  weights T: 1:0.17, 12:4.17, 17:5.11, 40:6.10 | base rates: 1:0.843, 12:0.015, 17:0.006, 40:0.002
+      all four: W=15.56  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 40), (17, 40), (1, 12, 17), (1, 12, 40), (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 4  weights T: 1:0.13, 12:3.37, 17:4.38, 40:5.75 | base rates: 1:0.882, 12:0.035, 17:0.012, 40:0.003
+      all four: W=13.62  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 40), (17, 40), (1, 12, 40), (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 5  weights T: 1:0.10, 12:2.69, 17:3.76, 40:5.30 | base rates: 1:0.905, 12:0.068, 17:0.023, 40:0.005
+      all four: W=11.85  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 40), (17, 40), (1, 12, 40), (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 6  weights T: 1:0.08, 12:2.22, 17:3.20, 40:4.98 | base rates: 1:0.920, 12:0.109, 17:0.041, 40:0.007
+      all four: W=10.49  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 17, 40), (1, 12, 17, 40)
+k= 8  weights T: 1:0.06, 12:1.58, 17:2.39, 40:4.42 | base rates: 1:0.939, 12:0.207, 17:0.092, 40:0.012
+      all four: W=8.45  null hits 1/50000  q=4.00e-05  p(M=75)=0.0030   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 17, 40), (1, 12, 17, 40)
+k=12  weights T: 1:0.04, 12:0.95, 17:1.48, 40:3.39 | base rates: 1:0.959, 12:0.387, 17:0.228, 40:0.034
+      all four: W=5.86  null hits 65/50000  q=1.32e-03  p(M=75)=0.0943
+      patterns that would reach p<=0.01: none
+
+=== N-edge  (draws 100000, weights from first 50000, null scores from last 50000) ===
+k= 3  weights T: 1:0.41, 12:3.01, 17:3.80, 40:7.99 | base rates: 1:0.662, 12:0.049, 17:0.022, 40:0.000
+      all four: W=15.21  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 40), (17, 40), (1, 12, 40), (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 4  weights T: 1:0.34, 12:2.50, 17:3.18, 40:6.69 | base rates: 1:0.714, 12:0.082, 17:0.042, 40:0.001
+      all four: W=12.71  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (17, 40), (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 5  weights T: 1:0.29, 12:2.14, 17:2.70, 40:5.83 | base rates: 1:0.751, 12:0.118, 17:0.067, 40:0.003
+      all four: W=10.96  null hits 0/50000  q=2.00e-05  p(M=75)=0.0015   <-- reaches 0.01
+      patterns that would reach p<=0.01: (1, 17, 40), (12, 17, 40), (1, 12, 17, 40)
+k= 6  weights T: 1:0.25, 12:1.88, 17:2.38, 40:5.20 | base rates: 1:0.778, 12:0.152, 17:0.093, 40:0.006
+      all four: W=9.71  null hits 1/50000  q=4.00e-05  p(M=75)=0.0030   <-- reaches 0.01
+      patterns that would reach p<=0.01: (12, 17, 40), (1, 12, 17, 40)
+k= 8  weights T: 1:0.20, 12:1.53, 17:1.91, 40:4.21 | base rates: 1:0.817, 12:0.217, 17:0.148, 40:0.015
+      all four: W=7.85  null hits 11/50000  q=2.40e-04  p(M=75)=0.0178
+      patterns that would reach p<=0.01: none
+k=12  weights T: 1:0.15, 12:1.11, 17:1.38, 40:3.05 | base rates: 1:0.862, 12:0.328, 17:0.252, 40:0.047
+      all four: W=5.69  null hits 143/50000  q=2.88e-03  p(M=75)=0.1945
+      patterns that would reach p<=0.01: none
