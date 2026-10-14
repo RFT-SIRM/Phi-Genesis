@@ -22,7 +22,7 @@ The question tested: does any operator family on the Sierpiński gasket *select*
 | v1.1 | k = 6, window 60 | 75 | **no evidence** (p = 0.966 N-pot, 0.997 N-edge). Max 2 of 4 targets in any configuration; index 40 selected by 0 of 75. This test *could* reach p <= 0.01, so the negative is informative for these 75 configurations. | d3605df, e9ffe15, 77e82ba, 743c415 |
 | v1.2.1 | k = 8, window 60; SG x S^1 with spin structure (continuum circle, R^2 = 5^j) | 10 | **no evidence** (p = 0.953 N-circ, 0.926 N-circpot). Max 1 of 4 targets in any configuration (index 12); indices 1, 17, 40 never selected. Informative negative: the threshold was reachable. Not independent of F3 (lattice circle). | 1d9ed45, 1a71e0c, 3b7fa82 |
 
-Cumulative configuration evaluations across all families tried: **193** (182 through v1.1, plus 1 exploratory rule check, plus 10 in v1.2.1) (full list in [`protocol_ledger.md`](protocol_ledger.md)).
+Cumulative configuration evaluations across all families tried: **193** (182 through v1.1, plus 1 exploratory rule check, plus 10 in v1.2.1; a lower bound, since the carpet search of ledger row 2, about 128 configurations at level 3 plus an unrecorded level-4 sweep, is not included) (full list in [`protocol_ledger.md`](protocol_ledger.md)).
 
 **What this means for the results below.** The integer indices and the scale `A` in section 4 are not derived from any selection rule; the mass formula is a numerical match, not a prediction. Agreement should be read with the number of tried configurations in mind.
 
