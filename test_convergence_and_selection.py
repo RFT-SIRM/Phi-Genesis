@@ -48,3 +48,10 @@ def test_forty_never_selected_by_generation_twists():
     results = exhaustive_twist_search(level=5)
     s = search_summary(results)
     assert not s["index_40_ever_selected"]
+
+def test_phase_averaged_estimator_uses_available_dense_solver():
+    from math import isfinite
+    from phi_genesis.spectral_convergence import weyl_exponent_phase_averaged
+
+    estimate = weyl_exponent_phase_averaged(level=6)
+    assert isfinite(estimate)

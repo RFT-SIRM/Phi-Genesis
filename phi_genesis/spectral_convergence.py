@@ -52,7 +52,7 @@ def weyl_exponent_phase_averaged(level=6, lam_min=1e-4, lam_max=0.5,
 
     NOTE: this is ONE point in an unstable family of estimators.
     See window_choice_sensitivity() for the full spread."""
-    spec = graph_laplacian_spectrum(level)
+    spec = dense_laplacian_spectrum(level)
     nz = spec[spec > 1e-8]
     N = np.arange(1, len(nz) + 1)
     ln_lam, ln_N = np.log(nz), np.log(N)

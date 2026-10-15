@@ -10,7 +10,7 @@
 
 Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
 
-**Status (2026-10-14):** v2.2.0, closed in its current form. See [Final status](#final-status).
+**Status (2026-10-15):** package version 2.2.1; current results and limitations are documented below. See [Final status](#final-status).
 
 ## Final status
 
@@ -48,7 +48,7 @@ Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.
 ## Verified Results (numerical; reproducible via code)
 
 ### 1. Sierpiński gasket spectral theory
-- **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ).
+- **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (subject to corner-defect corrections for the corner-degree-2 Laplacian).
 - **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Naive window fits carry a finite-level and window bias of about 3%; a window-free chord estimator recovers the exponent to better than 0.1% (level 9, N >= 1000), see Open Problem #2.
 - **Log-periodic oscillations** — period ln(5), signature of decimation.
 - **Fukushima–Shima gaps** — forbidden zones cluster at decimation fixed points λ ≈ 2.5 and λ ≈ 3.
@@ -153,7 +153,7 @@ Any further family needs a new pre-registered protocol version, with a null-only
 ### #2 — Finite-level convergence of d_s/2
 Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step — not yet a unique correction.
 
-**Update (exact counts to level 10).** `phi_genesis/sg_inertia.py` counts the eigenvalues below any sigma exactly by Sylvester's law of inertia, with no eigensolver. It agrees with dense spectra at levels 5-6 (tests) and needs ~0.6 s and ~250 MB per count at level 9 (29,526 vertices) and ~700 MB at level 10 (88,575 vertices) on one CPU core. Findings:
+**Update (numerical inertia counts computed using floating-point sparse LU to level 10).** `phi_genesis/sg_inertia.py` counts the eigenvalues below any sigma exactly by Sylvester's law of inertia, with no eigensolver. It agrees with dense spectra at levels 5-6 (tests) and needs ~0.6 s and ~250 MB per count at level 9 (29,526 vertices) and ~700 MB at level 10 (88,575 vertices) on one CPU core. Findings:
 
 - Fixed window sigma in [3e-3, 0.375] (3 log-periods, phase-averaged): deviation of the fitted exponent from ln3/ln5 is -2.19% (level 6), -0.61% (7), +0.07% (8), +0.32% (9), +0.41% (10).
 - Window sensitivity (sigma in [2e-3, 0.45], windows of k log-periods sliding in steps of ln5/16), level 9: k=1 gives slopes 0.545...0.857 (mean +1.00%); k=2 gives 0.645...0.730 (mean +0.44%); k=3 gives 0.672...0.704 (mean +0.78%).
@@ -162,13 +162,13 @@ Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding w
 
 **Path forward:** an analytical finite-size correction from decimation theory, or an estimator that is stable under window choice. More levels alone will not remove the window dependence.
 
-**Update (window bias vs finite-level error; exploratory, `protocol_data/op2_window_bias.py`, exact counts levels 6-9 cached in `protocol_data/op2_counts.json`).**
+**Update (window bias vs finite-level error; exploratory, `protocol_data/op2_window_bias.py`, numerical inertia counts computed using floating-point sparse LU levels 6-9 cached in `protocol_data/op2_counts.json`).**
 
 - The estimators and windows of the first table were fixed before the run: 24 grid points per log-period, windows of 3 log-periods shifted by factors of 5, plain OLS slope (E1) and OLS with the first harmonic of the log-period (E2). Sliding windows and 2-3 harmonics were added after seeing that table (post hoc).
 - Shifting the window down by a factor 5 gives (almost exactly) the same deviation as going down one level: e(L, j) ~ e(L-j, 0) (for example (7,1), (8,2), (9,3) all give +0.68% for E1). So at a fixed window the level-to-level change is the same effect as moving the window; the two cannot be separated by shifting windows.
 - Plain OLS on one window position (3 log-periods, level 9) deviates by +2.94% from ln3/ln5; over all 52 valid window positions at level 9 the OLS deviation has mean -0.38% and range [-3.93%, +3.20%]. The window dependence is mostly a property of the estimator on a log-periodic staircase, not of finite level.
 - Adding harmonics of the log-period shrinks the spread: at level 9 the deviation over the same 52 windows is -0.49% [-2.03%, +0.46%] with 1 harmonic and -0.47% [-1.28%, +0.06%] with 3 harmonics (levels 7 and 8: -0.74% and -0.67% for 3 harmonics; windows near the finite-graph boundary are excluded by the rule N(sigma_min) >= 9).
-- Level 10 (exact counts, 73 valid windows): OLS -0.30% [-3.93%, +3.38%]; 1, 2 and 3 harmonics -0.32% [-2.03%, +0.60%], -0.32% [-1.57%, +0.38%], -0.32% [-1.28%, +0.21%]. The extremes did **not** shrink with level (the 3-harmonic minimum is -1.28% at levels 9 and 10): windows at a lower level recur, shifted, at the next level, so the phase-dependent spread of a 3-period window is a property of the estimator, not of the level. Only the mean moves: for 3 harmonics -0.74%, -0.67%, -0.47%, -0.32% at levels 7-10 (the set of windows changes with the level, so this is not extrapolated).
+- Level 10 (numerical inertia counts computed using floating-point sparse LU, 73 valid windows): OLS -0.30% [-3.93%, +3.38%]; 1, 2 and 3 harmonics -0.32% [-2.03%, +0.60%], -0.32% [-1.57%, +0.38%], -0.32% [-1.28%, +0.21%]. The extremes did **not** shrink with level (the 3-harmonic minimum is -1.28% at levels 9 and 10): windows at a lower level recur, shifted, at the next level, so the phase-dependent spread of a 3-period window is a property of the estimator, not of the level. Only the mean moves: for 3 harmonics -0.74%, -0.67%, -0.47%, -0.32% at levels 7-10 (the set of windows changes with the level, so this is not extrapolated).
 - What is still open: a single window-independent number. With 3 harmonics the spread is about 1.5% and the mean offset about -0.3% at level 10. The ln3/ln5 value itself is not in question (proved for the gasket); this concerns how well finite-level counts reproduce it. The next bullet addresses this.
 - **Window-free estimator (exploratory, theory-motivated; `protocol_data/op2_chord_estimator.py`, output in `protocol_data/op2_chord_estimator.txt`).** For the Laplacian used here (D - A with degree 2 at the three corners) spectral decimation with phi(x) = x(5 - x) holds only up to corner-defect corrections: comparing the level-5 and level-6 spectra, the decimation images differ from the level-6 eigenvalues by about 1% at the low end, and two 3-fold modes of level 6 (at 0.637 and 2.250) have no counterpart among the images (0.500 and 2.0). The counts nevertheless satisfy N_{L+1}(sigma) = N_L(phi(sigma)) at 47 of 49 sampled points of level 8, and the count at fixed sigma grows by a factor 3 per level up to a small offset (N_{L+1} = 3 N_L - delta, delta <= 3 in the points inspected, which would fit three corner defects; not proven). So the chord exponent ln(N(phi(sigma)) / N(sigma)) / ln(phi(sigma) / sigma) equals ln3/ln(5 - sigma) up to an O(1/N) counting offset, with no window and no phase; ln3/ln(5 - sigma) tends to ln3/ln5 as sigma tends to 0 (relative difference about 0.12 sigma, analytic). At level 9 the chord estimate deviates from ln3/ln(5 - sigma) by -0.45% on average over 110 points with N(sigma) >= 10 (range -6.3% to +0.4%), by -0.05% (range -0.25% to +0.13%) for N >= 300 (38 points) and by -0.03% (range -0.08% to +0.07%) for N >= 1000 (14 points). Unlike the regression spread, the range shrinks as N grows. So the exponent can be read off finite-level counts to better than 0.1% (N >= 1000, level 9) without a window; the regression numbers above describe the estimator, not the gasket. This was found after the regression study and is not pre-registered; it is a consistency check of spectral decimation, not new physics.
 
@@ -225,7 +225,7 @@ pytest -q -m "not nightly"      # fast suite; the level-8 test dominates (about 
 ```bash
 python -m phi_genesis.selection_protocol_v121 stepA   # null pools (seeds fixed in the code; about 15 minutes)
 python -m phi_genesis.selection_protocol_v121 stepB   # evaluation; compare with protocol_data/results_v1_2_1.json
-python protocol_data/op2_window_bias.py table         # window study from the cached exact counts
+python protocol_data/op2_window_bias.py table         # window study from the cached numerical inertia counts computed using floating-point sparse LU
 python protocol_data/op2_window_bias.py sliding
 python protocol_data/op2_chord_estimator.py 8 9       # window-free chord estimator
 ```
@@ -273,4 +273,4 @@ If you use this code, please cite the RFT research programme and acknowledge tha
 
 ---
 
-*All computations are reproducible. All claims are tested against code. No black boxes.*
+*Computational results are documented with their methods and limitations; unresolved claims remain explicitly open.*
