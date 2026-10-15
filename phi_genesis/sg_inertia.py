@@ -1,21 +1,44 @@
-"""Exact eigenvalue counting on the Sierpinski-gasket graph Laplacian
-WITHOUT an eigensolver (Sylvester's law of inertia).
+"""Eigenvalue counting on the Sierpinski-gasket graph Laplacian with a sparse LU
+factorization (Sylvester's law of inertia), without an eigensolver.
 
-For a symmetric matrix M, the number of negative pivots of its LU (equivalently
-LDL^T) factorization without pivoting equals the number of negative
-eigenvalues of M. Applied to M = L - sigma*I this gives N(sigma) = #{eigenvalues < sigma}
-exactly, from one sparse factorization, with no eigenvectors and no
-dense matrix. Memory stays small because a reverse-Cuthill-McKee ordering keeps the
-factor banded (the gasket has bandwidth ~ 2^level).
+Mathematics (exact arithmetic). For a real symmetric matrix M whose leading principal minors
+are all nonzero, the LU factorization without pivoting exists and the number of negative
+pivots (diagonal entries of U) equals the number of negative eigenvalues of M (Sylvester's
+law of inertia, via M = L D L^T). With M = L - sigma*I this is N(sigma) = #{eigenvalues < sigma}.
 
-Measured on one CPU core (see README, Open Problem #2): level 9 (29,526 vertices)
-~0.6 s per count and ~250 MB; level 10 (88,575 vertices) a few seconds per count and ~700 MB.
+Implementation (floating point). scipy.sparse.linalg.splu (SuperLU) is run on a reverse
+Cuthill-McKee ordering with diag_pivot_thresh=0 (diagonal pivots preferred) and natural column
+order, in double precision. The computed pivots are those of a nearby matrix M + E. The count
+equals the true N(sigma) when E does not change the inertia, which is guaranteed (Weyl's
+inequality) if ||E||_2 < min_i |lambda_i - sigma|. No bound on ||E|| is computed here, and
+without row pivoting its growth is not bounded a priori. The returned integer is therefore a
+numerical result whose reliability depends on how far sigma is from the spectrum; it is not an
+exact certificate. The only guard is a ValueError when the factorization fails or the smallest
+|pivot| is below 1e-12.
 
-LIMITS (honest):
-  * sigma must not be (numerically) an eigenvalue: the factorization is singular there and
-    a ValueError is raised.
+Measured behaviour (levels 5-7; reference: dense numpy.linalg.eigvalsh; sigma = lambda +- delta
+for every distinct eigenvalue lambda; 992 sigma per delta):
+  * delta from 1e-1 to 1e-8: the count was correct in every one of the 7936 tests.
+  * delta = 1e-9 and 1e-10: 18 wrong counts were returned WITHOUT a ValueError (of 1984 tests),
+    all next to the eigenvalue 3 (multiplicity 39, 120, 363 at levels 5, 6, 7) or the simple
+    eigenvalue 4; the largest error was 65 (for example 1041 instead of 1095 at level 7,
+    sigma = 3 + 1e-9). The smallest pivot in those cases was between 3.5e-11 and 1.7e-8, so the
+    pivot guard is NOT a reliable detector of an unreliable count (a stricter threshold of
+    1e-8 reduced but did not remove such cases: level 5, sigma = 3 + 1e-9, smallest pivot
+    1.7e-8, count 121 instead of 123).
+  * the sigma grids used for Open Problem #2 at levels 8 and 9 (and phi of each sigma) have a
+    smallest pivot of at least 4e-5; level 10 was not checked.
+Keep sigma well away from eigenvalues (the tests use at least 1e-6) or confirm a count by
+repeating it at slightly shifted sigma.
+
+LIMITS:
+  * sigma must be separated from the spectrum; near an eigenvalue the result can be wrong
+    without an error.
   * This removes the eigensolver bottleneck. It does NOT supply a window-independent estimator
     of the Weyl exponent; see window_slopes() and README Open Problem #2.
+
+Cost, measured on one CPU core (see README, Open Problem #2): level 9 (29,526 vertices)
+~0.6 s per count and ~250 MB; level 10 (88,575 vertices) a few seconds per count and ~700 MB.
 """
 import numpy as np
 import scipy.sparse as sp
@@ -42,7 +65,13 @@ def sparse_laplacian(level):
 
 
 def count_below(L, sigma):
-    """Number of eigenvalues of L strictly below sigma (exact, via inertia)."""
+    """Numerical inertia count of the eigenvalues of L strictly below sigma.
+
+    Mathematically N(sigma) = #{lambda < sigma} (Sylvester's law of inertia); computed in floating
+    point, so reliable only for sigma separated from the spectrum (see the module docstring for the
+    measured limits). Raises ValueError if the factorization fails or the smallest |pivot| is below
+    1e-12; that guard does not catch every wrong count near an eigenvalue.
+    """
     M = (L - sigma * sp.identity(L.shape[0], format="csc")).tocsc()
     try:
         lu = splu(M, permc_spec="NATURAL", diag_pivot_thresh=0.0,

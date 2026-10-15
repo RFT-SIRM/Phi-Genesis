@@ -1,4 +1,4 @@
-"""Tests for exact inertia counting on the SG Laplacian and for the (verified, small-level)
+"""Tests for numerical inertia counting on the SG Laplacian and for the (verified, small-level)
 multiplicity structure of its special eigenvalues. Fast tests run in CI; the window-sweep
 data collection is nightly and, per this repo's policy, asserts only sanity -- never that a
 particular estimator has converged."""
@@ -21,6 +21,32 @@ def test_inertia_matches_dense_levels_5_and_6():
         ev = _dense_spectrum(level)
         for s in sig:
             assert count_below(L, s) == int(np.sum(ev < s)), (level, s)
+
+
+def _distinct_eigenvalues(ev, tol=1e-8):
+    out, i = [], 0
+    while i < len(ev):
+        j = i
+        while j + 1 < len(ev) and abs(ev[j + 1] - ev[i]) < tol:
+            j += 1
+        out.append(float(ev[i:j + 1].mean()))
+        i = j + 1
+    return out
+
+
+def test_inertia_matches_dense_near_every_eigenvalue_levels_5_and_6():
+    """Measured reliable regime: sigma = lambda +- delta for every distinct eigenvalue lambda,
+    delta = 1e-3 and 1e-6, compared with the dense spectrum. (The count was also correct for
+    delta down to 1e-8 at levels 5-7, but not at 1e-9; see the sg_inertia module docstring. The
+    tests stay two decades away from that boundary.) This checks a measured regime; it is not a
+    proof of correctness of the floating-point factorization."""
+    for level in (5, 6):
+        L, _ = sparse_laplacian(level)
+        ev = _dense_spectrum(level)
+        for lam in _distinct_eigenvalues(ev):
+            for delta in (1e-3, 1e-6):
+                for s in (lam - delta, lam + delta):
+                    assert count_below(L, s) == int(np.sum(ev < s)), (level, lam, delta, s)
 
 
 def test_eigenvalue_sigma_is_rejected():
