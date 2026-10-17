@@ -1,0 +1,106 @@
+:root {
+  --md-primary-fg-color: #174ea6;
+  --md-primary-fg-color--light: #3974ce;
+  --md-primary-fg-color--dark: #10377b;
+  --md-accent-fg-color: #70d8ff;
+}
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #f5f8ff;
+  --md-default-fg-color: #14233b;
+  --md-typeset-a-color: #174ea6;
+}
+[data-md-color-scheme="slate"] {
+  --md-hue: 224;
+  --md-primary-fg-color: #173e83;
+  --md-accent-fg-color: #79dfff;
+}
+.md-header, .md-tabs { background: linear-gradient(110deg, #10377b, #1759b4 58%, #147fba); }
+.md-header { box-shadow: 0 2px 18px #061b4430; }
+.md-typeset h1 { font-weight: 750; letter-spacing: -.035em; }
+.md-typeset h2 { margin-top: 1.7em; font-weight: 700; }
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  border-radius: .8rem;
+  border-color: var(--md-default-fg-color--lightest);
+  box-shadow: 0 5px 22px #153c7410;
+}
+.md-typeset .grid.cards > ul > li:hover { border-color: var(--md-accent-fg-color); }
+.md-typeset .lg.middle { color: var(--md-accent-fg-color); }
+.md-typeset .md-button--primary { background: #174ea6; border-color: #174ea6; }
+.md-typeset .md-button--primary:hover { background: #10377b; border-color: #10377b; }
+.md-footer { background: #0c2349; }
+
+
+
+
+/* Shared UltraCore-RFT documentation behavior: keep the standard Material article layout. */
+.md-typeset a { overflow-wrap: anywhere; }
+.md-typeset p, .md-typeset li, .md-typeset td, .md-typeset th { overflow-wrap: anywhere; }
+.md-typeset .md-button { white-space: normal; overflow-wrap: anywhere; max-width: 100%; }
+.md-typeset table { max-width: 100%; }
+.md-typeset .grid.cards > ul > li, .md-typeset .grid > .card { min-width: 0; max-width: 100%; }
+
+
+/* Shared article system: consistent spacing, legible mathematics, and reusable navigation. */
+.md-typeset h1 {
+  font-size: clamp(1.9rem, 3.3vw, 2.65rem);
+  line-height: 1.12;
+  padding-bottom: .55rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset h2 {
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset h3 { font-weight: 700; }
+.md-typeset p, .md-typeset li { line-height: 1.72; }
+.md-typeset table:not([class]) {
+  display: table;
+  width: 100%;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .55rem;
+  overflow: hidden;
+  font-size: .88rem;
+}
+.md-typeset table:not([class]) th {
+  color: var(--md-primary-bg-color);
+  background: var(--md-primary-fg-color);
+  font-weight: 700;
+}
+.md-typeset table:not([class]) tr:nth-child(even) { background: var(--md-code-bg-color); }
+.md-typeset .arithmatex, .md-typeset .MathJax, .md-typeset .MathJax_Display {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.md-typeset .admonition, .md-typeset details {
+  border-radius: .65rem;
+  box-shadow: 0 3px 14px #153c740b;
+}
+.md-typeset pre {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .65rem;
+}
+.md-typeset img[src*="img.shields.io/badge"] {
+  display: inline-block;
+  vertical-align: middle;
+  margin: .1rem .15rem .25rem 0;
+}
+.phi-doc-nav {
+  margin-top: 1.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: .25rem solid var(--md-accent-fg-color);
+  border-radius: .7rem;
+  background: var(--md-code-bg-color);
+  line-height: 2;
+}
+.phi-doc-nav strong {
+  display: inline-block;
+  margin-bottom: .2rem;
+  color: var(--md-primary-fg-color);
+}
+.phi-doc-nav a { font-weight: 600; }
+@media (max-width: 600px) {
+  .md-typeset table:not([class]) { font-size: .78rem; }
+  .phi-doc-nav { padding: .8rem; }
+}
