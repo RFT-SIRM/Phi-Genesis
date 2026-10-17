@@ -4,8 +4,8 @@
   window.location.replace("/Phi-Genesis/interactive/");
 </script>
 
-The interactive visual research portal has moved to its canonical address:
+The full interactive research portal is available here:
 
 **[Open the interactive Phi-Genesis portal](https://rft-sirm.github.io/Phi-Genesis/interactive/)**
 
-The mathematical anchor, formulas, and evidence-bounded research summary are preserved on the [Research Home & Mathematical Anchor](research-home.md) page.
+For the mathematical anchor and the original research summary, see the [Research Home & Mathematical Anchor](https://rft-sirm.github.io/Phi-Genesis/research-home.html).
