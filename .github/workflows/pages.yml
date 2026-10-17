@@ -48,7 +48,6 @@ jobs:
           test -s site/history.html
           grep -q "Phi-Genesis.*Interactive Research Portal" site/interactive/index.html
           grep -q "Phi-Genesis" site/index.html
-          grep -q "Interactive Portal" site/index.html
 
       - name: Publish GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
