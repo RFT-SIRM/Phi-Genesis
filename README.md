@@ -4,7 +4,7 @@
 [![Lab](https://img.shields.io/badge/Lab-Phi--Genesis-dc2626?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-eab308?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Visualization](https://img.shields.io/badge/Visualization-Live%20Demo-06b6d4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/)
+[![Visualization](https://img.shields.io/badge/Visualization-Live%20Demo-06b6d4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/interactive/)
 
 
 
@@ -27,7 +27,7 @@ Reproducible spectral computations on the Sierpiński gasket (SG) and related st
 
 **What would reopen it.** Only (a) a derivation of the indices from an invariant of the operator, stated before any comparison with masses, or (b) a new operator family with an a-priori rationale, under a new pre-registered protocol version with a null-only power check. Re-running the same searches on the same four targets would only raise the look-elsewhere correction.
 
-Method write-up (one page): [`METHODOLOGY.md`](METHODOLOGY.md). Live page: https://rft-sirm.github.io/Phi-Genesis/
+Method write-up (one page): [`METHODOLOGY.md`](METHODOLOGY.md). Live page: https://rft-sirm.github.io/Phi-Genesis/interactive/
 
 ## Selection protocol status
 
