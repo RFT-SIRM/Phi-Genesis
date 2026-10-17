@@ -1,8 +1,6 @@
 site_name: Phi-Genesis
-site_description: Reproducible spectral research on the Sierpiński gasket, with explicit evidence boundaries and an auditable research history.
 site_url: https://rft-sirm.github.io/Phi-Genesis/
-repo_url: https://github.com/RFT-SIRM/Phi-Genesis
-repo_name: RFT-SIRM/Phi-Genesis
+
 theme:
   name: material
   palette:
@@ -22,34 +20,20 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
-    - navigation.top
     - search.suggest
     - search.highlight
     - content.code.copy
   icon:
     logo: material/atom-variant
-    repo: fontawesome/brands/github
-nav:
-  - Home: index.md
-  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
-  - Research Map: research-map.md
-  - Results & Evidence: verified-results.md
-  - Selection Protocol: selection-protocol.md
-  - Open Problems: open-problems.md
-  - Methods & Reproducibility:
-      - Methodology: methodology.md
-      - Reproducibility: reproducibility.md
-      - Computational Architecture: computational-architecture.md
-      - Data & Provenance: data-and-provenance.md
-  - History: https://rft-sirm.github.io/Phi-Genesis/history.html
-  - Primary Records:
-      - Project README: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md
-      - Methodology source: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md
-      - Protocol Ledger: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md
-      - Preregistration v1.2.1: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md
-      - Changelog: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/RFT-SIRM/Phi-Genesis
+
 plugins:
   - search
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -67,13 +51,24 @@ markdown_extensions:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/RFT-SIRM/Phi-Genesis
-    - icon: fontawesome/solid/envelope
-      link: mailto:evgeniyzaprudnov@gmail.com
+
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-extra_css:
-  - stylesheets/phi-genesis.css
+
+nav:
+  - Home: index.md
+  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
+  - Research Map: research-map.md
+  - Verified Results: verified-results.md
+  - Selection Protocol: selection-protocol.md
+  - Open Problems: open-problems.md
+  - Methodology: methodology.md
+  - Reproducibility: reproducibility.md
+  - Computational Architecture: computational-architecture.md
+  - Data & Provenance: data-and-provenance.md
+  - History: history.html
+  - Protocol Ledger: protocol-ledger.md
+  - Preregistration: preregistration.md
+  - Changelog: changelog.md
+  - Glossary: glossary.md
+  - Support: support.md
