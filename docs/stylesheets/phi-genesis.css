@@ -39,3 +39,68 @@
 .md-typeset .md-button { white-space: normal; overflow-wrap: anywhere; max-width: 100%; }
 .md-typeset table { max-width: 100%; }
 .md-typeset .grid.cards > ul > li, .md-typeset .grid > .card { min-width: 0; max-width: 100%; }
+
+
+/* Shared article system: consistent spacing, legible mathematics, and reusable navigation. */
+.md-typeset h1 {
+  font-size: clamp(1.9rem, 3.3vw, 2.65rem);
+  line-height: 1.12;
+  padding-bottom: .55rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset h2 {
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset h3 { font-weight: 700; }
+.md-typeset p, .md-typeset li { line-height: 1.72; }
+.md-typeset table:not([class]) {
+  display: table;
+  width: 100%;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .55rem;
+  overflow: hidden;
+  font-size: .88rem;
+}
+.md-typeset table:not([class]) th {
+  color: var(--md-primary-bg-color);
+  background: var(--md-primary-fg-color);
+  font-weight: 700;
+}
+.md-typeset table:not([class]) tr:nth-child(even) { background: var(--md-code-bg-color); }
+.md-typeset .arithmatex, .md-typeset .MathJax, .md-typeset .MathJax_Display {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.md-typeset .admonition, .md-typeset details {
+  border-radius: .65rem;
+  box-shadow: 0 3px 14px #153c740b;
+}
+.md-typeset pre {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .65rem;
+}
+.md-typeset img[src*="img.shields.io/badge"] {
+  display: inline-block;
+  vertical-align: middle;
+  margin: .1rem .15rem .25rem 0;
+}
+.phi-doc-nav {
+  margin-top: 1.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: .25rem solid var(--md-accent-fg-color);
+  border-radius: .7rem;
+  background: var(--md-code-bg-color);
+  line-height: 2;
+}
+.phi-doc-nav strong {
+  display: inline-block;
+  margin-bottom: .2rem;
+  color: var(--md-primary-fg-color);
+}
+.phi-doc-nav a { font-weight: 600; }
+@media (max-width: 600px) {
+  .md-typeset table:not([class]) { font-size: .78rem; }
+  .phi-doc-nav { padding: .8rem; }
+}
