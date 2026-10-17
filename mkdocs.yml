@@ -60,10 +60,10 @@ nav:
   - Research Map: research-map.md
   - Application Programmes: application-programmes.md
   - Ecosystem Control: ecosystem-control.md
-  - History: history.html
+  - History: history.md
   - Origin Chronology: origin-chronology.md
   - Platform: platform.md
-  - Architecture: computational-architecture.md
+  - Architecture: architecture.md
   - Foundations: foundations.md
   - Strategy: strategy.md
   - Implementation: implementation.md
