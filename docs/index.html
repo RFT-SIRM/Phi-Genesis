@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phi-Genesis v2.2.1 — Spectral Research Archive</title>
+<meta name="theme-color" content="#080b19">
+<meta name="build-revision" content="2026-10-17-research-portal-1">
+<meta name="description" content="Phi-Genesis: reproducible spectral research on the Sierpiński gasket, with preregistered tests, a complete research history, reproducibility records, and explicit limits on current conclusions.">
+<title>Phi-Genesis · Spectral Research Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -367,6 +370,68 @@ nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-sh
 @media(max-width:900px){.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-links{gap:1rem}}
 @media(max-width:600px){.history-grid{grid-template-columns:1fr}.history-card{min-height:0}.history-cta{align-items:flex-start;flex-direction:column}.history-button{width:100%;justify-content:center}nav{padding:.85rem 1rem}.nav-links{gap:.6rem;flex-wrap:wrap}.nav-links a{font-size:.62rem;letter-spacing:.5px}}
 
+
+/* Research portal visual system — aligned with the UltraCore-RFT portal. */
+:root{
+  color-scheme:dark;
+  --bg-deep:#080b19;--bg-primary:#080b19;
+  --bg-card:rgba(16,23,48,.82);--bg-glass:rgba(16,23,48,.66);
+  --border:rgba(154,184,255,.16);--border-glow:rgba(86,229,240,.42);
+  --text-primary:#f1f5ff;--text-secondary:#a8b4d2;--text-muted:#7482a8;
+  --gold:#56e5f0;--gold-dim:#87a1ff;--cyan:#56e5f0;--cyan-dim:#87a1ff;
+  --violet:#c8a0ff;--pink:#c8a0ff;--amber:#ffd28c;--green:#75e4b3;
+  --red:#ff9b9b;--indigo:#87a1ff;
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{background:radial-gradient(ellipse at 50% -12%,#1b2753 0%,transparent 48%),linear-gradient(180deg,#080b19 0%,#0a1020 56%,#080b19 100%)}
+.grid-overlay{background-image:linear-gradient(rgba(135,161,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(135,161,255,.035) 1px,transparent 1px)}
+nav{gap:1.2rem;padding:.95rem clamp(1rem,3vw,2.5rem);background:rgba(8,11,25,.9);border-bottom-color:var(--border);box-shadow:0 8px 30px rgba(0,0,0,.22)}
+.nav-logo{color:var(--text-primary);font-size:.86rem;letter-spacing:.12em;white-space:nowrap}
+.nav-logo span{color:var(--cyan)}
+.nav-links{gap:clamp(.7rem,1.45vw,1.45rem);align-items:center}
+.nav-links a{font-size:.62rem;letter-spacing:.07em;color:var(--text-secondary);white-space:nowrap}
+.nav-links a::after{background:var(--cyan)}
+.nav-links a:hover{color:#fff}
+.hero{background:radial-gradient(ellipse at 50% 15%,rgba(86,229,240,.09),transparent 58%);min-height:88vh}
+.hero-badge{background:rgba(21,29,59,.7);border-color:rgba(86,229,240,.28);color:var(--cyan);letter-spacing:.12em}
+.hero-title{font-family:var(--font-sans);font-size:clamp(3.1rem,8vw,6.7rem);font-weight:850;letter-spacing:-.065em;line-height:.98;background:linear-gradient(105deg,#fff 4%,#c4d2ff 38%,var(--cyan) 68%,var(--violet));-webkit-background-clip:text;background-clip:text}
+.hero-subtitle{max-width:790px;font-weight:400;line-height:1.85}
+.hero-stat,.card,.pipeline,.roadmap-item,.file-tree,.terminal,.result-table,.table-wrap,.citation-box,.problem-card{background:linear-gradient(145deg,rgba(16,23,48,.91),rgba(9,15,31,.96));border-color:var(--border);box-shadow:0 12px 34px rgba(0,0,0,.2)}
+.hero-stat{border-radius:15px}
+.hero-stat:hover,.card:hover,.history-card:hover,.problem-card:hover{border-color:rgba(86,229,240,.42);box-shadow:0 16px 40px rgba(0,0,0,.3),0 0 24px rgba(86,229,240,.06)}
+.hero-stat-value{background:linear-gradient(120deg,#75e4b3,#56e5f0,#c8a0ff);-webkit-background-clip:text;background-clip:text}
+.section-tag{color:var(--cyan);border-bottom-color:rgba(86,229,240,.22)}
+.section-title{font-family:var(--font-sans);letter-spacing:-.035em;font-weight:760}
+.section-desc{max-width:760px}
+.fractal-showcase{background:linear-gradient(180deg,#0b1427,#080b19);border-color:rgba(86,229,240,.2)}
+.fractal-caption{color:#c3d5ee;background:rgba(8,11,25,.88);border-color:var(--border)}
+.pipeline::after{background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),var(--green),transparent)}
+.history-card{background:linear-gradient(150deg,rgba(16,23,48,.97),rgba(9,15,31,.98));border-color:var(--border)}
+.history-number,.history-link{color:var(--cyan)}
+.history-card h3,.history-cta strong{font-family:var(--font-sans);letter-spacing:-.02em}
+.history-cta{border-color:rgba(86,229,240,.22);background:linear-gradient(110deg,rgba(16,23,48,.98),rgba(14,28,45,.98))}
+.history-button{background:linear-gradient(110deg,#164657,#30234e);border:1px solid rgba(86,229,240,.35)}
+.history-button:hover{background:linear-gradient(110deg,#1b6171,#453268)}
+.hero-actions{display:flex;justify-content:center;align-items:center;gap:.75rem;flex-wrap:wrap;margin:1.7rem auto 0}
+.portal-button{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.78rem 1rem;border:1px solid var(--border);border-radius:10px;background:rgba(16,23,48,.72);color:var(--text-primary);font:600 .72rem/1.4 var(--font-mono);text-decoration:none;transition:transform .2s,border-color .2s,background .2s}
+.portal-button:hover{transform:translateY(-2px);border-color:rgba(86,229,240,.55);background:rgba(25,42,70,.9);color:#fff;text-decoration:none}
+.portal-button-primary{border-color:rgba(86,229,240,.45);background:linear-gradient(115deg,rgba(22,70,87,.82),rgba(48,35,78,.82))}
+.hero-note{margin:1.1rem auto 0;max-width:740px;color:var(--text-muted);font: .64rem/1.8 var(--font-mono);letter-spacing:.035em}
+.contact-section{padding-bottom:3.5rem}
+.contact-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem;align-items:center;padding:clamp(1.3rem,3vw,2.2rem);border:1px solid rgba(86,229,240,.24);border-radius:18px;background:radial-gradient(ellipse at 10% 0%,rgba(86,229,240,.09),transparent 52%),linear-gradient(130deg,rgba(16,23,48,.97),rgba(14,28,45,.98));box-shadow:0 18px 45px rgba(0,0,0,.2)}
+.contact-label{font:600 .64rem var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--green)}
+.contact-panel h3{font:750 clamp(1.2rem,2.2vw,1.6rem)/1.2 var(--font-sans);letter-spacing:-.03em;margin:.7rem 0}
+.contact-panel p{max-width:620px;color:var(--text-secondary);font-size:.91rem;line-height:1.8}
+.contact-actions{display:flex;flex-direction:column;align-items:stretch;gap:.6rem;min-width:230px}
+.footer-copy{font-family:var(--font-mono);color:var(--text-muted);font-size:.7rem;line-height:1.9}
+.footer-copy strong{color:var(--cyan);font-weight:600}
+.footer-links{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.footer-links a{color:var(--text-secondary);text-decoration:none}
+.footer-links a:hover{color:var(--cyan)}
+@media(max-width:1000px){nav{align-items:flex-start}.nav-links{max-width:calc(100% - 150px);overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.nav-links::-webkit-scrollbar{display:none}}
+@media(max-width:768px){nav{padding:.85rem 1rem;gap:.7rem;align-items:center}.nav-logo{font-size:.72rem;letter-spacing:.07em}.nav-links{max-width:calc(100% - 120px);gap:.9rem}.nav-links a{font-size:.58rem}.hero{min-height:auto;padding:8rem 1.1rem 3.8rem}.hero-title{font-size:clamp(3rem,15vw,5rem)}.hero-subtitle{margin-bottom:2rem}.hero-stat{min-width:calc(50% - .5rem);padding:1rem .75rem}.hero-stat-value{font-size:1.55rem}.hero-stat-label{font-size:.58rem;letter-spacing:.08em}.hero-actions{width:100%;max-width:420px}.portal-button{width:100%;font-size:.68rem}.contact-panel{grid-template-columns:1fr}.contact-actions{min-width:0}.fractal-showcase{height:72vh;min-height:440px}.fractal-caption{max-width:calc(100% - 2rem);white-space:normal;width:max-content;font-size:.6rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+
 </style>
 </head>
 <body>
@@ -376,16 +441,13 @@ nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-sh
 
 <nav>
   <div class="nav-logo">Phi<span>-</span>Genesis</div>
-  <ul class="nav-links">
-    <li><a href="#final">Final Status</a></li>
-    <li><a href="#verified">Verified</a></li>
-    <li><a href="#masses">Masses</a></li>
-    <li><a href="#numbers">Key Numbers</a></li>
-    <li><a href="#open">Open Problems</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#repo">Structure</a></li>
-    <li><a href="#infra">Infra</a></li>
-    <li><a href="history.html">Research History ↗</a></li>
+  <ul class="nav-links" aria-label="Primary navigation">
+    <li><a href="#final">Status</a></li>
+    <li><a href="#verified">Evidence</a></li>
+    <li><a href="#open">Open questions</a></li>
+    <li><a href="history.html">Interactive history ↗</a></li>
+    <li><a href="#repo">Repository</a></li>
+    <li><a href="#contact">Contact</a></li>
     <li><a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
 </nav>
@@ -395,12 +457,18 @@ nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-sh
     <a class="hero-badge" href="history.html" style="text-decoration:none">v2.2.1 · Research history & methods ↗</a>
     <h1 class="hero-title">Phi-Genesis</h1>
     <p class="hero-subtitle">A reproducible spectral research programme on the Sierpiński gasket.<br>From an intriguing numerical pattern to preregistered tests, methodological corrections, and a clearly bounded negative result.</p>
-    <div class="hero-stats">
+    <div class="hero-stats" aria-label="Research status at a glance">
       <div class="hero-stat"><div class="hero-stat-value" id="c1">193</div><div class="hero-stat-label">Recorded evaluations</div></div>
       <div class="hero-stat"><div class="hero-stat-value" id="c2">3</div><div class="hero-stat-label">Protocol versions</div></div>
       <div class="hero-stat"><div class="hero-stat-value" id="c3">0</div><div class="hero-stat-label">Independent rules found</div></div>
       <div class="hero-stat"><div class="hero-stat-value" id="c4">v2.2.1</div><div class="hero-stat-label">Current research status</div></div>
     </div>
+    <div class="hero-actions">
+      <a class="portal-button portal-button-primary" href="history.html">Explore the interactive research history <span aria-hidden="true">↗</span></a>
+      <a class="portal-button" href="#final">Read the evidence status <span aria-hidden="true">↓</span></a>
+      <a class="portal-button" href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">Open source repository <span aria-hidden="true">↗</span></a>
+    </div>
+    <p class="hero-note">Numerical results are labelled as numerical. Unresolved claims remain unresolved; the page does not present the mass formula as a prediction.</p>
   </div>
 </section>
 
@@ -411,7 +479,7 @@ nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-sh
 
 <section id="final" class="reveal">
   <div class="section-header">
-    <div class="section-tag">Final Status · v2.2.0</div>
+    <div class="section-tag">Final Status · v2.2.1</div>
     <h2 class="section-title">Closed in Its Current Form</h2>
     <p class="section-desc">What the repository establishes, what it searched for and did not find, and what stays open.</p>
   </div>
@@ -442,6 +510,7 @@ nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-sh
     <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">Method write-up</a> ·
     <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md" target="_blank" rel="noopener">Search ledger</a> ·
     <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION.md" target="_blank" rel="noopener">Pre-registration v1.0</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md" target="_blank" rel="noopener">Binding protocol v1.2.1</a> ·
     <a href="https://github.com/RFT-SIRM/Phi-Genesis#final-status" target="_blank" rel="noopener">README</a>
   </div>
 </section>
@@ -852,10 +921,36 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
   </div>
 </section>
 
+<section id="contact" class="reveal contact-section" aria-labelledby="contact-title">
+  <div class="section-header">
+    <div class="section-tag">Research correspondence</div>
+    <h2 class="section-title" id="contact-title">Continue the conversation with the research record in view.</h2>
+    <p class="section-desc">For technical questions, reproducibility notes, or substantive research proposals, identify the relevant document, result, or commit so the discussion remains precise and traceable.</p>
+  </div>
+  <div class="contact-panel">
+    <div>
+      <div class="contact-label">Author contact</div>
+      <h3>Phi-Genesis · RFT-SIRM</h3>
+      <p>For questions about the methods, numerical results, or documented limitations, please include the specific section or source file you are referring to.</p>
+    </div>
+    <div class="contact-actions">
+      <a class="portal-button portal-button-primary" href="mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry">Email the research author ↗</a>
+      <a class="portal-button" href="history.html">Read the interactive history ↗</a>
+      <a class="portal-button" href="https://github.com/RFT-SIRM/Phi-Genesis/issues" target="_blank" rel="noopener">Repository issues ↗</a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="footer-copy">
-    <strong>Phi-Genesis v2.2.1</strong> — Spectral Research Archive<br>
-    RFT-SIRM Research · All computations reproducible · All claims tested against code · No black boxes
+    <strong>Phi-Genesis v2.2.1</strong> — Spectral Research Portal<br>
+    RFT-SIRM Research · Source-linked methods · Explicit evidence boundaries
+    <div class="footer-links">
+      <a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">Repository</a>
+      <a href="history.html">Interactive research history</a>
+      <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">Methodology</a>
+      <a href="mailto:evgeniyzaprudnov@gmail.com">Contact</a>
+    </div>
   </div>
 </footer>
 </div>
