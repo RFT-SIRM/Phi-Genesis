@@ -38,8 +38,8 @@ jobs:
       - name: Restore the original full HTML visualizations
         run: |
           mkdir -p site/interactive
-          cp docs/index.html site/index.html
-          cp docs/interactive/index.html site/interactive/index.html
+          cp visual/index.html site/index.html
+          cp visual/interactive/index.html site/interactive/index.html
           cp docs/history.html site/history.html
 
       - name: Verify visual HTML entry points
