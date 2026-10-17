@@ -72,7 +72,7 @@ The work centres on five connected strands:
 4. **Statistical selection audit.** Test whether a spectral rule independently selects the proposed indices \(\{1,12,17,40\}\), with preregistered null ensembles and correction for the number of configurations tried.
 5. **Evidence and provenance.** Preserve the protocol history, including negative and exploratory results, so that earlier coincidences are not later mistaken for independent predictions.
 
-## Current evidence at a glance
+## Current evidence at a glance { #verified }
 
 | Research question | Documented position |
 |---|---|
