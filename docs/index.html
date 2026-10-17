@@ -836,11 +836,11 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
     </div>
     <div class="terminal-body" style="color: #9ca3af;">
 @software{phi-genesis-2026,<br>
-&nbsp;&nbsp;title = {Phi-Genesis: Spectral Core for Fractal Vacuum Substrate},<br>
+&nbsp;&nbsp;title = {Phi-Genesis: Spectral Research Archive}, <br>
 &nbsp;&nbsp;author = {RFT-SIRM},<br>
 &nbsp;&nbsp;year = {2026},<br>
 &nbsp;&nbsp;url = {https://github.com/RFT-SIRM/Phi-Genesis},<br>
-&nbsp;&nbsp;note = {v2.2.0 — Reproducible spectral computations on the Sierpiński<br>
+&nbsp;&nbsp;note = {v2.2.1 — Reproducible spectral research on the Sierpiński<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gasket. The mass formula m = A·n currently lacks an<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;independent selection rule.}<br>
 }
@@ -853,7 +853,7 @@ test_convergence_and_selection.py::test_forty_never_selected_by_generation_twist
 
 <footer>
   <div class="footer-copy">
-    <strong>Phi-Genesis v2.0</strong> — Spectral Core for Fractal Vacuum Substrate<br>
+    <strong>Phi-Genesis v2.2.1</strong> — Spectral Research Archive<br>
     RFT-SIRM Research · All computations reproducible · All claims tested against code · No black boxes
   </div>
 </footer>
@@ -977,10 +977,11 @@ function animateCounter(id, target, duration, isFloat) {
   requestAnimationFrame(update);
 }
 window.addEventListener('load', () => {
-  animateCounter('c1', 104.63, 2, true);
-  animateCounter('c2', 0.68, 2, true);
-  animateCounter('c3', 4, 1.5, false);
-  animateCounter('c4', 35, 1, false);
+  animateCounter('c1', 193, 2, false);
+  animateCounter('c2', 3, 2, false);
+  animateCounter('c3', 0, 1.5, false);
+  const version = document.getElementById('c4');
+  if (version) version.textContent = 'v2.2.1';
 });
 
 // ============================================
