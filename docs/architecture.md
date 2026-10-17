@@ -1,5 +1,8 @@
 # Phi-Genesis Architecture
 
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+
+
 **Purpose:** describe the components and evidence flow of the spectral audit, using the same article layout and navigation role as the Architecture section in UltraCore-RFT.
 
 ## System overview
@@ -38,3 +41,10 @@ See [Computational Architecture](computational-architecture.md) for the module-b
 ## Scientific boundary
 
 The target indices \(\{1,12,17,40\}\) have not been independently derived from a spectral invariant. The relation \(m=A n\) is a fit, not an independent prediction. The claimed \(\eta\)-invariant value \(-4\) was not reproduced in the documented tests. Open Problem #2 remains open. None of these statuses is changed by the documentation architecture or a successful CI run.
+
+---
+
+<div class="phi-doc-nav">
+<strong>Explore Phi-Genesis</strong><br>
+<a href="https://rft-sirm.github.io/Phi-Genesis/interactive/">Interactive portal</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/research-map.html">Research map</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/verified-results.html">Verified results</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/open-problems.html">Open problems</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/reproducibility.html">Reproducibility</a> · <a href="https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md">Dissertation</a> · <a href="https://github.com/RFT-SIRM/Phi-Genesis">Source repository</a>
+</div>

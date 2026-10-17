@@ -1,5 +1,8 @@
 # Data, Provenance and Research Records
 
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+
+
 Phi-Genesis maintains a distinction between source code, committed numerical artifacts, protocol commitments and later interpretation. This separation is essential because the research includes negative findings and reassessments of earlier apparent matches.
 
 ## Authoritative record hierarchy
@@ -33,3 +36,10 @@ The carpet branch is marked abandoned after a null analysis reassessed its initi
 - [Protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md)
 - [Preregistration v1.2.1](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md)
 - [Research history and field notes](https://rft-sirm.github.io/Phi-Genesis/history.html)
+
+---
+
+<div class="phi-doc-nav">
+<strong>Explore Phi-Genesis</strong><br>
+<a href="https://rft-sirm.github.io/Phi-Genesis/interactive/">Interactive portal</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/research-map.html">Research map</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/verified-results.html">Verified results</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/open-problems.html">Open problems</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/reproducibility.html">Reproducibility</a> · <a href="https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md">Dissertation</a> · <a href="https://github.com/RFT-SIRM/Phi-Genesis">Source repository</a>
+</div>
