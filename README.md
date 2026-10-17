@@ -447,7 +447,7 @@ If you use this code or cite the reported numerical results, cite the repository
 - [Commit history](https://github.com/RFT-SIRM/Phi-Genesis/commits/main/)
 - [Research history timeline](https://rft-sirm.github.io/Phi-Genesis/history.html)
 - [Issue tracker](https://github.com/RFT-SIRM/Phi-Genesis/issues)
-- [License](https://github.com/RFT-SIRM/Phi-Genesis)
+- [Project files and declared reuse terms](https://github.com/RFT-SIRM/Phi-Genesis) — check the repository's actual license metadata before reusing code or text.
 
 ---
 
