@@ -58,16 +58,16 @@ nav:
   - Home: index.md
   - Interactive Portal: interactive.md
   - Research Map: research-map.md
-  - Verified Results: verified-results.md
-  - Selection Protocol: selection-protocol.md
-  - Open Problems: open-problems.md
+  - Application Programmes: application-programmes.md
+  - Ecosystem Control: ecosystem-control.md
   - History: history.html
-  - Methodology: methodology.md
-  - Reproducibility: reproducibility.md
+  - Origin Chronology: origin-chronology.md
+  - Platform: platform.md
   - Architecture: computational-architecture.md
-  - Data & Provenance: data-and-provenance.md
-  - Protocol Ledger: protocol-ledger.md
-  - Preregistration: preregistration.md
-  - Changelog: changelog.md
+  - Foundations: foundations.md
+  - Strategy: strategy.md
+  - Implementation: implementation.md
+  - Field Trials: field_trials.md
+  - seL4 CDT Verification: field_trials_sel4.md
   - Glossary: glossary.md
   - Support: support.md
