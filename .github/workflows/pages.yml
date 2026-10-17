@@ -49,6 +49,21 @@ jobs:
           grep -q "Phi-Genesis" site/interactive/index.html
           grep -q "Phi-Genesis" site/index.html
 
+      - name: Verify research-record routes and cross-links
+        run: |
+          test -s site/methodology/index.html
+          test -s site/protocol-ledger/index.html
+          test -s site/preregistration/index.html
+          grep -q 'href="methodology/"' site/history.html
+          grep -q 'href="protocol-ledger/"' site/history.html
+          grep -q 'href="preregistration/"' site/history.html
+          grep -q 'protocol_ledger.md' site/protocol-ledger/index.html
+          grep -q 'PREREGISTRATION_v1.2.1.md' site/preregistration/index.html
+          grep -q 'METHODOLOGY.md' site/methodology/index.html
+          grep -q 'protocol_ledger.md' site/interactive/index.html
+          grep -q 'PREREGISTRATION_v1.2.1.md' site/interactive/index.html
+          grep -q 'METHODOLOGY.md' site/interactive/index.html
+
       - name: Publish GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
