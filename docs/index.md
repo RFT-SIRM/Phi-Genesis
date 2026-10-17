@@ -13,7 +13,7 @@ Phi-Genesis is the RFT-SIRM spectral research programme for the Sierpiński gask
 - [**Research map — follow the evidence**](research-map.md)
 - [Verified spectral results and limitations](verified-results.md)
 - [Selection protocol and negative results](selection-protocol.md)
-- [Interactive spectral research portal](interactive/index.html)
+- [Interactive spectral research portal](https://rft-sirm.github.io/Phi-Genesis/interactive/)
 - [Research history and chronology](history.html)
 - [Project README and source repository](https://github.com/RFT-SIRM/Phi-Genesis)
 
