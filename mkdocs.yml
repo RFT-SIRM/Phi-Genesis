@@ -1,14 +1,10 @@
 site_name: Phi-Genesis
-exclude_docs: |
-  /index.html
 site_description: Reproducible spectral research on the Sierpiński gasket, with explicit evidence boundaries and an auditable research history.
 site_url: https://rft-sirm.github.io/Phi-Genesis/
 repo_url: https://github.com/RFT-SIRM/Phi-Genesis
 repo_name: RFT-SIRM/Phi-Genesis
 theme:
   name: material
-  icon:
-    logo: material/atom-variant
   palette:
     - scheme: default
       primary: indigo
@@ -30,11 +26,12 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
-    - content.action.edit
   icon:
+    logo: material/atom-variant
     repo: fontawesome/brands/github
 nav:
   - Home: index.md
+  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
   - Research Map: research-map.md
   - Results & Evidence: verified-results.md
   - Selection Protocol: selection-protocol.md
@@ -44,25 +41,30 @@ nav:
       - Reproducibility: reproducibility.md
       - Computational Architecture: computational-architecture.md
       - Data & Provenance: data-and-provenance.md
-  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
-  - Research History: https://rft-sirm.github.io/Phi-Genesis/history.html
+  - History: https://rft-sirm.github.io/Phi-Genesis/history.html
   - Primary Records:
-      - README and current status: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md
+      - Project README: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md
       - Methodology source: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md
       - Protocol Ledger: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md
       - Preregistration v1.2.1: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md
       - Changelog: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md
+plugins:
+  - search
 markdown_extensions:
-  - attr_list
-  - md_in_html
-  - tables
-  - toc:
-      permalink: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
   - pymdownx.arithmatex:
       generic: true
 extra:
@@ -75,5 +77,3 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 extra_css:
   - stylesheets/phi-genesis.css
-plugins:
-  - search
