@@ -29,3 +29,52 @@
 .md-typeset .md-button--primary { background: #174ea6; border-color: #174ea6; }
 .md-typeset .md-button--primary:hover { background: #10377b; border-color: #10377b; }
 .md-footer { background: #0c2349; }
+
+
+/* Responsive documentation layout: long contact links must never escape cards. */
+.md-typeset, .md-content, .md-content__inner, .md-typeset .grid, .md-typeset .grid > *, .md-typeset .grid.cards > ul, .md-typeset .grid.cards > ul > li {
+  min-width: 0;
+}
+.md-typeset a {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.md-typeset p, .md-typeset li, .md-typeset td, .md-typeset th {
+  overflow-wrap: anywhere;
+}
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid > .card {
+  min-width: 0;
+  max-width: 100%;
+}
+.md-typeset .md-button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  text-align: center;
+}
+.md-typeset table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.md-typeset code {
+  overflow-wrap: anywhere;
+  white-space: break-spaces;
+}
+.md-typeset .grid.cards > ul > li > p:last-child {
+  margin-bottom: 0;
+}
+.md-typeset h1 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset .grid > .card {
+    padding: .8rem;
+  }
+  .md-typeset .md-button {
+    display: inline-block;
+  }
+}
