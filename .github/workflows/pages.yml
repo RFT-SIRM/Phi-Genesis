@@ -37,6 +37,13 @@ jobs:
       - name: Build supporting research documentation
         run: mkdocs build --strict --site-dir site
 
+      - name: Add .html aliases for branch-based GitHub Pages
+        run: |
+          for page in research-home research-map verified-results open-problems selection-protocol reproducibility data-and-provenance methodology protocol-ledger preregistration; do
+            test -s "site/${page}/index.html"
+            cp "site/${page}/index.html" "site/${page}.html"
+          done
+
       - name: Restore the original full HTML visualizations
         run: |
           mkdir -p site/interactive
@@ -54,14 +61,16 @@ jobs:
           grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-root-1' site/index.html
           grep -q '<canvas id="field"' site/index.html
           grep -q 'data-title=' site/index.html
-          grep -q 'href="verified-results/"' site/index.html
-          ! grep -q 'href="../verified-results/"' site/index.html
+          grep -q 'href="verified-results.html"' site/index.html
+          ! grep -q 'href="../verified-results/' site/index.html
           grep -q "Interactive Research Portal" site/interactive/index.html
           grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-1' site/interactive/index.html
           grep -q '<canvas id="field"' site/interactive/index.html
           grep -q 'data-title=' site/interactive/index.html
           grep -q "Phi-Genesis" site/interactive/index.html
           grep -q 'href="../history.html"' site/interactive/index.html
+          grep -q 'href="../verified-results.html"' site/interactive/index.html
+          grep -q 'href="../research-map.html"' site/interactive/index.html
           grep -q "Phi-Genesis" site/history.html
 
       - name: Verify supporting research-record routes
@@ -69,9 +78,13 @@ jobs:
           test -s site/methodology/index.html
           test -s site/protocol-ledger/index.html
           test -s site/preregistration/index.html
-          grep -q 'href="methodology/"' site/history.html
-          grep -q 'href="protocol-ledger/"' site/history.html
-          grep -q 'href="preregistration/"' site/history.html
+          test -s site/research-home.html
+          test -s site/methodology.html
+          test -s site/protocol-ledger.html
+          test -s site/preregistration.html
+          grep -q 'href="methodology.html"' site/history.html
+          grep -q 'href="protocol-ledger.html"' site/history.html
+          grep -q 'href="preregistration.html"' site/history.html
           grep -q 'protocol_ledger.md' site/protocol-ledger/index.html
           grep -q 'PREREGISTRATION_v1.2.1.md' site/preregistration/index.html
           grep -q 'METHODOLOGY.md' site/methodology/index.html
