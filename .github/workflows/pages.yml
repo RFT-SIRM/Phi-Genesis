@@ -1,4 +1,4 @@
-name: Deploy Phi-Genesis documentation
+name: Deploy Phi-Genesis visual research site
 
 on:
   push:
@@ -32,24 +32,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build Material documentation strictly
+      - name: Build supporting research documentation
         run: mkdocs build --strict --site-dir site
 
-      - name: Copy standalone interactive and history pages
+      - name: Restore the original full HTML visualizations
         run: |
           mkdir -p site/interactive
+          cp docs/index.html site/index.html
           cp docs/interactive/index.html site/interactive/index.html
           cp docs/history.html site/history.html
 
-      - name: Verify published entry points
+      - name: Verify visual HTML entry points
         run: |
           test -s site/index.html
           test -s site/interactive/index.html
           test -s site/history.html
-          grep -q "Phi-Genesis" site/interactive/index.html
           grep -q "Phi-Genesis" site/index.html
+          grep -q "Spectral Research Portal" site/index.html
+          grep -q "three.min.js" site/index.html
+          grep -q "Phi-Genesis" site/interactive/index.html
+          grep -q 'href="../history.html"' site/interactive/index.html
+          grep -q "Phi-Genesis" site/history.html
 
-      - name: Verify research-record routes and cross-links
+      - name: Verify supporting research-record routes
         run: |
           test -s site/methodology/index.html
           test -s site/protocol-ledger/index.html
@@ -60,9 +65,6 @@ jobs:
           grep -q 'protocol_ledger.md' site/protocol-ledger/index.html
           grep -q 'PREREGISTRATION_v1.2.1.md' site/preregistration/index.html
           grep -q 'METHODOLOGY.md' site/methodology/index.html
-          grep -q 'protocol_ledger.md' site/interactive/index.html
-          grep -q 'PREREGISTRATION_v1.2.1.md' site/interactive/index.html
-          grep -q 'METHODOLOGY.md' site/interactive/index.html
 
       - name: Publish GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
