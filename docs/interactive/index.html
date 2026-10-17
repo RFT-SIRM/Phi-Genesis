@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b19">
+<meta name="build-revision" content="2026-10-17-research-portal-1">
+<meta name="description" content="Phi-Genesis: reproducible spectral research on the Sierpiński gasket, with preregistered tests, a complete research history, reproducibility records, and explicit limits on current conclusions.">
+<title>Phi-Genesis · Spectral Research Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --bg-deep: #02040a;
+  --bg-primary: #070a14;
+  --bg-card: rgba(10, 14, 26, 0.75);
+  --bg-glass: rgba(14, 18, 32, 0.55);
+  --border: rgba(212, 168, 83, 0.12);
+  --border-glow: rgba(212, 168, 83, 0.35);
+  --text-primary: #e8e4dc;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --gold: #d4a853;
+  --gold-dim: #b8944a;
+  --cyan: #5eead4;
+  --cyan-dim: #2dd4bf;
+  --violet: #8b7ec8;
+  --pink: #d19b9b;
+  --amber: #f59e0b;
+  --green: #34d399;
+  --red: #f87171;
+  --indigo: #6366f1;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  line-height: 1.65;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none; opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Subtle grid */
+.grid-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(212, 168, 83, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 168, 83, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 75%);
+}
+
+.content { position: relative; z-index: 10; }
+
+/* Navigation */
+nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+  padding: 1rem 2.5rem; display: flex; justify-content: space-between; align-items: center;
+  background: rgba(2, 4, 10, 0.88); backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+.nav-logo span { color: var(--cyan); }
+.nav-links { display: flex; gap: 2.2rem; list-style: none; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.3s; position: relative; }
+.nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.3s ease; }
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+/* Hero */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden;
+}
+#hero-3d { display: block; width: 100%; height: 100%; }
+
+.fractal-showcase {
+  position: relative; width: 100%; height: 100vh; min-height: 560px;
+  background: var(--bg-deep); overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.fractal-caption {
+  position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); z-index: 5; text-align: center; white-space: nowrap;
+  background: rgba(2,4,10,0.55); padding: 0.4rem 1rem; border-radius: 100px;
+  border: 1px solid var(--border); backdrop-filter: blur(8px);
+}
+.hero-content { position: relative; z-index: 5; max-width: 900px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.4rem 1.2rem; border-radius: 100px;
+  background: rgba(212, 168, 83, 0.06); border: 1px solid rgba(212, 168, 83, 0.2);
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 2rem;
+}
+.hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+.hero-title {
+  font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.05;
+  font-family: var(--font-serif); letter-spacing: -1px;
+  background: linear-gradient(135deg, #e8e4dc 0%, var(--gold) 50%, var(--cyan-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 1.2rem;
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.25rem); color: var(--text-secondary); max-width: 680px;
+  margin: 0 auto 3rem; font-weight: 300; line-height: 1.7;
+}
+.hero-stats {
+  display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
+}
+.hero-stat {
+  text-align: center; padding: 1.4rem 1.8rem;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+  min-width: 150px; transition: all 0.4s ease;
+  backdrop-filter: blur(12px);
+  position: relative; overflow: hidden;
+}
+.hero-stat::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(212,168,83,0.06), transparent);
+  transition: left 0.7s ease;
+}
+.hero-stat:hover::before { left: 100%; }
+.hero-stat:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(212,168,83,0.1); }
+.hero-stat-value {
+  font-family: var(--font-mono); font-size: 1.9rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 0.4rem; }
+
+/* Section styles */
+section { padding: 5rem 2.5rem; max-width: 1100px; margin: 0 auto; }
+.section-header { margin-bottom: 3rem; text-align: center; }
+.section-tag {
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.6rem; display: inline-block;
+  border-bottom: 1px solid rgba(212,168,83,0.2); padding-bottom: 0.3rem;
+}
+.section-title {
+  font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2;
+  color: var(--text-primary); font-family: var(--font-serif); letter-spacing: -0.5px;
+}
+.section-desc { color: var(--text-secondary); margin-top: 0.8rem; max-width: 650px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+
+/* Pipeline */
+.pipeline {
+  display: flex; justify-content: center; align-items: center; gap: 0; flex-wrap: wrap;
+  margin: 2.5rem 0; padding: 1.8rem;
+  background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  position: relative; overflow: hidden;
+}
+.pipeline::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), var(--gold), transparent);
+  animation: pipelineShimmer 4s infinite linear;
+}
+@keyframes pipelineShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.pipeline-step { padding: 1rem 1.4rem; text-align: center; position: relative; }
+.pipeline-step-num { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 0.3rem; }
+.pipeline-step-name { font-family: var(--font-mono); font-weight: 600; font-size: 0.78rem; color: var(--text-primary); }
+.pipeline-arrow { color: var(--text-muted); font-size: 1.1rem; padding: 0 0.4rem; animation: arrowPulse 2.5s infinite; }
+@keyframes arrowPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.9; } }
+
+/* Cards */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.4rem; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1.6rem; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  transition: all 0.4s ease; position: relative; overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), transparent); opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.card:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(212,168,83,0.1); }
+.card:hover::before { opacity: 1; }
+.card-icon {
+  width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem;
+  position: relative; z-index: 2;
+}
+.card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); position: relative; z-index: 2; }
+.card-text { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; position: relative; z-index: 2; }
+.card-value { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; margin-top: 0.8rem; position: relative; z-index: 2; }
+
+/* Status badges */
+.status-verified { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--green); background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-verified::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.status-rejected { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--red); background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-rejected::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--red); }
+.status-open { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.6rem; }
+.status-open::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
+
+/* Tables */
+.data-table-container {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  background: rgba(212, 168, 83, 0.06); padding: 1rem 1.2rem; text-align: left;
+  font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 600;
+}
+.data-table td {
+  padding: 1rem 1.2rem; border-bottom: 1px solid rgba(212, 168, 83, 0.06);
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-secondary);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover { background: rgba(212, 168, 83, 0.03); }
+.data-table .num { color: var(--cyan); font-weight: 600; }
+.data-table .highlight { color: var(--gold); font-weight: 600; }
+.data-table .good { color: var(--green); }
+.data-table .warn { color: var(--amber); }
+.data-table .bad { color: var(--red); }
+
+/* Formula block */
+.formula-block {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; margin: 1rem 0; font-family: var(--font-mono);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.formula-block::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--gold), var(--cyan));
+}
+.formula-block .label { color: var(--text-muted); margin-bottom: 0.8rem; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; display: block; }
+.formula-block .math { color: var(--cyan); font-size: 1rem; line-height: 2; font-weight: 600; }
+.formula-block .math-gold { color: var(--gold); font-size: 1rem; line-height: 2; font-weight: 600; }
+
+/* Terminal */
+.terminal {
+  background: #010206; border-radius: 12px; overflow: hidden;
+  font-family: var(--font-mono); font-size: 0.78rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+}
+.terminal-header {
+  background: rgba(255,255,255,0.02); padding: 0.6rem 1rem; display: flex; gap: 0.5rem; align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot.red { background: #ff5f56; }
+.terminal-dot.yellow { background: #ffbd2e; }
+.terminal-dot.green { background: #27c93f; }
+.terminal-body { padding: 1.5rem; color: #5eead4; line-height: 1.8; overflow-x: auto; }
+.terminal-body .comment { color: #4b5563; }
+.terminal-body .success { color: #34d399; }
+.terminal-body .warn { color: #f59e0b; }
+.terminal-body .error { color: #f87171; }
+
+/* Open problem cards */
+.problem-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1.8rem; transition: all 0.4s ease;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.problem-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--red)); opacity: 0.5;
+}
+.problem-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-3px); }
+.problem-card .num { font-family: var(--font-mono); font-size: 2rem; font-weight: 700; color: var(--amber); opacity: 0.3; position: absolute; top: 1rem; right: 1.5rem; }
+.problem-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-primary); }
+.problem-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
+.problem-card ul { margin-top: 0.6rem; padding-left: 1.2rem; }
+.problem-card li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+/* Roadmap */
+.roadmap-item {
+  display: flex; gap: 1.2rem; padding: 1.2rem 1.5rem;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.8rem;
+  transition: all 0.3s ease; align-items: flex-start;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+.roadmap-item:hover { border-color: var(--border-glow); transform: translateX(4px); }
+.roadmap-num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold); font-weight: 700; min-width: 24px; }
+.roadmap-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; }
+.roadmap-content p { font-size: 0.85rem; color: var(--text-secondary); }
+
+/* File tree */
+.file-tree {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; font-family: var(--font-mono); font-size: 0.82rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+  color: var(--text-secondary); line-height: 1.9;
+}
+.file-tree .dir { color: var(--gold); font-weight: 600; }
+.file-tree .file { color: var(--cyan); }
+.file-tree .comment { color: var(--text-muted); margin-left: 1rem; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border); padding: 3rem 2rem; text-align: center;
+  background: rgba(2, 4, 10, 0.9);
+}
+.footer-copy { color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); line-height: 1.8; }
+.footer-copy strong { color: var(--gold); font-weight: 500; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-stats { gap: 0.8rem; }
+  .pipeline { flex-direction: column; }
+  .pipeline-arrow { transform: rotate(90deg); }
+  section { padding: 3rem 1.2rem; }
+  .hero { padding-top: 6rem; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* Reveal animations */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* RFT-SIRM visual language: deep graphite, emerald, and electric blue; keep the live fractal canvas intact. */
+:root{--bg-deep:#05090d;--bg-primary:#080f15;--bg-card:rgba(12,22,30,.92);--bg-glass:rgba(9,20,29,.84);--border:rgba(71,190,151,.20);--border-glow:rgba(37,167,255,.38);--text-primary:#e8f2f8;--text-secondary:#a9bfcc;--text-muted:#7e99a9;--gold:#75d7aa;--gold-dim:#48b987;--cyan:#45b9ff;--cyan-dim:#36a7e8;--violet:#a69bff;--pink:#ff7baf;--amber:#e8bd68;--green:#45d99a;--red:#ff7886;--indigo:#7194ff}
+body{background:radial-gradient(ellipse at 50% 0%,rgba(18,95,106,.18),transparent 43%),linear-gradient(180deg,#05090d 0%,#081119 48%,#05090d 100%);color:var(--text-primary)}
+.noise-overlay{opacity:.035}.grid-overlay{background-image:linear-gradient(rgba(55,164,202,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(55,164,202,.055) 1px,transparent 1px)}
+nav{background:rgba(5,11,16,.91);border-bottom-color:rgba(71,190,151,.18);box-shadow:0 5px 26px rgba(0,0,0,.24);backdrop-filter:blur(16px)}.nav-links a{color:#a9bfcc}.nav-links a:hover{color:#45d99a}
+.hero{background:radial-gradient(ellipse at 50% 16%,rgba(22,135,153,.18),transparent 56%)}.hero-title{background:linear-gradient(115deg,#e8f5fb 0%,#54dca4 43%,#4abfff 78%,#b3a6ff 100%);-webkit-background-clip:text;background-clip:text}
+.hero-badge{background:rgba(10,24,31,.92);border-color:rgba(69,217,154,.35);color:#8ce8ba;box-shadow:0 0 26px rgba(37,167,255,.06)}.hero-badge::before{background:#45d99a;box-shadow:0 0 9px rgba(69,217,154,.55)}
+.hero-stat,.card,.pipeline,.roadmap-item,.file-tree,.terminal,.result-table,.table-wrap,.citation-box{background:linear-gradient(145deg,rgba(14,27,37,.94),rgba(8,17,25,.94));border-color:rgba(91,163,183,.19);box-shadow:0 12px 34px rgba(0,0,0,.17)}
+.hero-stat{backdrop-filter:blur(8px)}.hero-stat-value{background:linear-gradient(120deg,#5de0a6,#48bdff);-webkit-background-clip:text;background-clip:text}
+.hero-stat-label,.section-desc,.card-text,.comment,.roadmap-content p{color:#a9bfcc}.section-title,.card-title,.roadmap-content h4{color:#e8f2f8}.section-tag{color:#57dba6;border-bottom-color:rgba(69,217,154,.24)}
+.pipeline-step-name{color:#e0edf5}.pipeline-arrow,.pipeline-step-num{color:#7796a8}.card:hover,.hero-stat:hover,.history-card:hover{border-color:rgba(69,217,154,.46);box-shadow:0 16px 40px rgba(0,0,0,.28),0 0 24px rgba(37,167,255,.07)}
+.fractal-showcase{background:linear-gradient(180deg,#07151e,#081018);border-color:rgba(69,185,255,.24)}.fractal-caption{color:#b8d2df;background:rgba(6,15,22,.91);border-color:rgba(69,185,255,.18)}
+.terminal-header{background:#101e28;border-bottom-color:#263e4c}.terminal-body{background:#071018;color:#b6cbd7}.file-tree{color:#b6cbd7}.file-tree .dir{color:#5bdca7}.file-tree .file{color:#76c9ff}
+.status-verified{color:#65e5aa;background:rgba(30,170,104,.12);border-color:rgba(69,217,154,.27)}.status-rejected{color:#ff9ca6;background:rgba(179,52,69,.13);border-color:rgba(255,120,134,.25)}
+.history-section{padding-top:5.5rem;padding-bottom:5.5rem}.history-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2rem}
+.history-card{display:flex;flex-direction:column;align-items:flex-start;min-height:250px;padding:1.5rem;text-decoration:none;color:inherit;background:linear-gradient(150deg,rgba(15,30,40,.97),rgba(8,17,25,.97));border:1px solid rgba(91,163,183,.22);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.18);transition:transform .25s,border-color .25s,box-shadow .25s}
+.history-card:hover{transform:translateY(-4px);text-decoration:none}.history-number{font:600 .67rem var(--font-mono);letter-spacing:1.5px;color:#5de0a6;margin-bottom:1.2rem}
+.history-card h3{font:700 1.2rem var(--font-serif);color:#e7f3f8;line-height:1.25;margin-bottom:.7rem}.history-card p{color:#a9bfcc;font-size:.91rem;line-height:1.65;margin-bottom:1.2rem}.history-link{margin-top:auto;color:#67c9ff;font:600 .78rem var(--font-mono)}
+.history-cta{display:flex;justify-content:space-between;align-items:center;gap:1.5rem;margin-top:1.25rem;padding:1.6rem 1.8rem;border-radius:16px;border:1px solid rgba(69,217,154,.24);background:linear-gradient(110deg,rgba(13,32,39,.98),rgba(9,23,34,.98))}
+.history-cta strong{display:block;font:700 1.15rem var(--font-serif);color:#e7f3f8;margin-bottom:.3rem}.history-cta p{color:#a9bfcc;font-size:.9rem}
+.history-button{flex-shrink:0;display:inline-flex;align-items:center;gap:.7rem;padding:.85rem 1.1rem;border-radius:10px;background:linear-gradient(110deg,#087e61,#126f9d);color:#fff;font-weight:600;font-size:.88rem;text-decoration:none;box-shadow:0 5px 20px rgba(0,0,0,.22)}
+.history-button:hover{background:linear-gradient(110deg,#0b9a73,#1688ba);color:#fff;text-decoration:none}footer{color:#7894a4}
+@media(max-width:900px){.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-links{gap:1rem}}
+@media(max-width:600px){.history-grid{grid-template-columns:1fr}.history-card{min-height:0}.history-cta{align-items:flex-start;flex-direction:column}.history-button{width:100%;justify-content:center}nav{padding:.85rem 1rem}.nav-links{gap:.6rem;flex-wrap:wrap}.nav-links a{font-size:.62rem;letter-spacing:.5px}}
+
+
+/* Research portal visual system — aligned with the UltraCore-RFT portal. */
+:root{
+  color-scheme:dark;
+  --bg-deep:#080b19;--bg-primary:#080b19;
+  --bg-card:rgba(16,23,48,.82);--bg-glass:rgba(16,23,48,.66);
+  --border:rgba(154,184,255,.16);--border-glow:rgba(86,229,240,.42);
+  --text-primary:#f1f5ff;--text-secondary:#a8b4d2;--text-muted:#7482a8;
+  --gold:#56e5f0;--gold-dim:#87a1ff;--cyan:#56e5f0;--cyan-dim:#87a1ff;
+  --violet:#c8a0ff;--pink:#c8a0ff;--amber:#ffd28c;--green:#75e4b3;
+  --red:#ff9b9b;--indigo:#87a1ff;
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{background:radial-gradient(ellipse at 50% -12%,#1b2753 0%,transparent 48%),linear-gradient(180deg,#080b19 0%,#0a1020 56%,#080b19 100%)}
+.grid-overlay{background-image:linear-gradient(rgba(135,161,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(135,161,255,.035) 1px,transparent 1px)}
+nav{gap:1.2rem;padding:.95rem clamp(1rem,3vw,2.5rem);background:rgba(8,11,25,.9);border-bottom-color:var(--border);box-shadow:0 8px 30px rgba(0,0,0,.22)}
+.nav-logo{color:var(--text-primary);font-size:.86rem;letter-spacing:.12em;white-space:nowrap}
+.nav-logo span{color:var(--cyan)}
+.nav-links{gap:clamp(.7rem,1.45vw,1.45rem);align-items:center}
+.nav-links a{font-size:.62rem;letter-spacing:.07em;color:var(--text-secondary);white-space:nowrap}
+.nav-links a::after{background:var(--cyan)}
+.nav-links a:hover{color:#fff}
+.hero{background:radial-gradient(ellipse at 50% 15%,rgba(86,229,240,.09),transparent 58%);min-height:88vh}
+.hero-badge{background:rgba(21,29,59,.7);border-color:rgba(86,229,240,.28);color:var(--cyan);letter-spacing:.12em}
+.hero-title{font-family:var(--font-sans);font-size:clamp(3.1rem,8vw,6.7rem);font-weight:850;letter-spacing:-.065em;line-height:.98;background:linear-gradient(105deg,#fff 4%,#c4d2ff 38%,var(--cyan) 68%,var(--violet));-webkit-background-clip:text;background-clip:text}
+.hero-subtitle{max-width:790px;font-weight:400;line-height:1.85}
+.hero-stat,.card,.pipeline,.roadmap-item,.file-tree,.terminal,.result-table,.table-wrap,.citation-box,.problem-card{background:linear-gradient(145deg,rgba(16,23,48,.91),rgba(9,15,31,.96));border-color:var(--border);box-shadow:0 12px 34px rgba(0,0,0,.2)}
+.hero-stat{border-radius:15px}
+.hero-stat:hover,.card:hover,.history-card:hover,.problem-card:hover{border-color:rgba(86,229,240,.42);box-shadow:0 16px 40px rgba(0,0,0,.3),0 0 24px rgba(86,229,240,.06)}
+.hero-stat-value{background:linear-gradient(120deg,#75e4b3,#56e5f0,#c8a0ff);-webkit-background-clip:text;background-clip:text}
+.section-tag{color:var(--cyan);border-bottom-color:rgba(86,229,240,.22)}
+.section-title{font-family:var(--font-sans);letter-spacing:-.035em;font-weight:760}
+.section-desc{max-width:760px}
+.fractal-showcase{background:linear-gradient(180deg,#0b1427,#080b19);border-color:rgba(86,229,240,.2)}
+.fractal-caption{color:#c3d5ee;background:rgba(8,11,25,.88);border-color:var(--border)}
+.pipeline::after{background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),var(--green),transparent)}
+.history-card{background:linear-gradient(150deg,rgba(16,23,48,.97),rgba(9,15,31,.98));border-color:var(--border)}
+.history-number,.history-link{color:var(--cyan)}
+.history-card h3,.history-cta strong{font-family:var(--font-sans);letter-spacing:-.02em}
+.history-cta{border-color:rgba(86,229,240,.22);background:linear-gradient(110deg,rgba(16,23,48,.98),rgba(14,28,45,.98))}
+.history-button{background:linear-gradient(110deg,#164657,#30234e);border:1px solid rgba(86,229,240,.35)}
+.history-button:hover{background:linear-gradient(110deg,#1b6171,#453268)}
+.hero-actions{display:flex;justify-content:center;align-items:center;gap:.75rem;flex-wrap:wrap;margin:1.7rem auto 0}
+.portal-button{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.78rem 1rem;border:1px solid var(--border);border-radius:10px;background:rgba(16,23,48,.72);color:var(--text-primary);font:600 .72rem/1.4 var(--font-mono);text-decoration:none;transition:transform .2s,border-color .2s,background .2s}
+.portal-button:hover{transform:translateY(-2px);border-color:rgba(86,229,240,.55);background:rgba(25,42,70,.9);color:#fff;text-decoration:none}
+.portal-button-primary{border-color:rgba(86,229,240,.45);background:linear-gradient(115deg,rgba(22,70,87,.82),rgba(48,35,78,.82))}
+.hero-note{margin:1.1rem auto 0;max-width:740px;color:var(--text-muted);font: .64rem/1.8 var(--font-mono);letter-spacing:.035em}
+.contact-section{padding-bottom:3.5rem}
+.contact-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2rem;align-items:center;padding:clamp(1.3rem,3vw,2.2rem);border:1px solid rgba(86,229,240,.24);border-radius:18px;background:radial-gradient(ellipse at 10% 0%,rgba(86,229,240,.09),transparent 52%),linear-gradient(130deg,rgba(16,23,48,.97),rgba(14,28,45,.98));box-shadow:0 18px 45px rgba(0,0,0,.2)}
+.contact-label{font:600 .64rem var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--green)}
+.contact-panel h3{font:750 clamp(1.2rem,2.2vw,1.6rem)/1.2 var(--font-sans);letter-spacing:-.03em;margin:.7rem 0}
+.contact-panel p{max-width:620px;color:var(--text-secondary);font-size:.91rem;line-height:1.8}
+.contact-actions{display:flex;flex-direction:column;align-items:stretch;gap:.6rem;min-width:230px}
+.footer-copy{font-family:var(--font-mono);color:var(--text-muted);font-size:.7rem;line-height:1.9}
+.footer-copy strong{color:var(--cyan);font-weight:600}
+.footer-links{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-top:1rem}
+.footer-links a{color:var(--text-secondary);text-decoration:none}
+.footer-links a:hover{color:var(--cyan)}
+@media(max-width:1000px){nav{align-items:flex-start}.nav-links{max-width:calc(100% - 150px);overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.nav-links::-webkit-scrollbar{display:none}}
+@media(max-width:768px){nav{padding:.85rem 1rem;gap:.7rem;align-items:center}.nav-logo{font-size:.72rem;letter-spacing:.07em}.nav-links{max-width:calc(100% - 120px);gap:.9rem}.nav-links a{font-size:.58rem}.hero{min-height:auto;padding:8rem 1.1rem 3.8rem}.hero-title{font-size:clamp(3rem,15vw,5rem)}.hero-subtitle{margin-bottom:2rem}.hero-stat{min-width:calc(50% - .5rem);padding:1rem .75rem}.hero-stat-value{font-size:1.55rem}.hero-stat-label{font-size:.58rem;letter-spacing:.08em}.hero-actions{width:100%;max-width:420px}.portal-button{width:100%;font-size:.68rem}.contact-panel{grid-template-columns:1fr}.contact-actions{min-width:0}.fractal-showcase{height:72vh;min-height:440px}.fractal-caption{max-width:calc(100% - 2rem);white-space:normal;width:max-content;font-size:.6rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
+
+</style>
+</head>
+<body>
+<div class="noise-overlay"></div>
+<div class="grid-overlay"></div>
+<div class="content">
+
+<nav>
+  <div class="nav-logo">Phi<span>-</span>Genesis</div>
+  <ul class="nav-links" aria-label="Primary navigation">
+    <li><a href="#final">Status</a></li>
+    <li><a href="#verified">Evidence</a></li>
+    <li><a href="#open">Open questions</a></li>
+    <li><a href="history.html">Interactive history ↗</a></li>
+    <li><a href="#repo">Repository</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-content">
+    <a class="hero-badge" href="history.html" style="text-decoration:none">v2.2.1 · Research history & methods ↗</a>
+    <h1 class="hero-title">Phi-Genesis</h1>
+    <p class="hero-subtitle">A reproducible spectral research programme on the Sierpiński gasket.<br>From an intriguing numerical pattern to preregistered tests, methodological corrections, and a clearly bounded negative result.</p>
+    <div class="hero-stats" aria-label="Research status at a glance">
+      <div class="hero-stat"><div class="hero-stat-value" id="c1">193</div><div class="hero-stat-label">Recorded evaluations</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c2">3</div><div class="hero-stat-label">Protocol versions</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c3">0</div><div class="hero-stat-label">Independent rules found</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c4">v2.2.1</div><div class="hero-stat-label">Current research status</div></div>
+    </div>
+    <div class="hero-actions">
+      <a class="portal-button portal-button-primary" href="history.html">Explore the interactive research history <span aria-hidden="true">↗</span></a>
+      <a class="portal-button" href="#final">Read the evidence status <span aria-hidden="true">↓</span></a>
+      <a class="portal-button" href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">Open source repository <span aria-hidden="true">↗</span></a>
+    </div>
+    <p class="hero-note">Numerical results are labelled as numerical. Unresolved claims remain unresolved; the page does not present the mass formula as a prediction.</p>
+  </div>
+</section>
+
+<section class="fractal-showcase">
+  <canvas id="hero-3d"></canvas>
+  <div class="fractal-caption">Sierpiński tetrahedron — chaos game, 22,000 points, rotating live</div>
+</section>
+
+<section id="final" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Final Status · v2.2.1</div>
+    <h2 class="section-title">Closed in Its Current Form</h2>
+    <p class="section-desc">What the repository establishes, what it searched for and did not find, and what stays open.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-verified">Established</div>
+      <div class="card-icon" style="background: rgba(94,234,212,0.08); color: var(--cyan);">✓</div>
+      <div class="card-title">Spectral Results (numerical)</div>
+      <div class="card-text">Spectral decimation and Fukushima–Shima gaps on the gasket; log-periodic Weyl law with exponent ln3/ln5, recovered from finite-level counts without any window to better than 0.1% (level 9, N ≥ 1000); π-flux opens a gap; the η-invariant claim is not reproduced.</div>
+      <div class="card-value" style="color:var(--cyan)">Weyl exponent to &lt; 0.1%</div>
+    </div>
+    <div class="card">
+      <div class="status-rejected">Not found</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">∅</div>
+      <div class="card-title">Selection Rule for {1, 12, 17, 40}</div>
+      <div class="card-text">Three pre-registered look-elsewhere tests (v1.0, v1.1, v1.2.1) gave no evidence. 193 configuration evaluations are in the ledger, plus the earlier carpet search (about 128): at least about 321 in all. The two tests able to reach the threshold did not.</div>
+      <div class="card-value" style="color:var(--red)">3 protocols · no evidence</div>
+    </div>
+    <div class="card">
+      <div class="status-open">Not established</div>
+      <div class="card-icon" style="background: rgba(245,158,11,0.08); color: var(--amber);">?</div>
+      <div class="card-title">Mass Formula and Open Items</div>
+      <div class="card-text">m = A·n matches four masses with one fitted scale and four integers chosen with the masses in view: a numerical coincidence, not a prediction. Top-quark index unresolved (1654, 1664 or 1680). Light fermions and the electroweak bridge need a specified model.</div>
+      <div class="card-value" style="color:var(--amber)">coincidence, not prediction</div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:1.5rem; color:var(--text-muted); font-size:0.85rem;">
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">Method write-up</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md" target="_blank" rel="noopener">Search ledger</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION.md" target="_blank" rel="noopener">Pre-registration v1.0</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md" target="_blank" rel="noopener">Binding protocol v1.2.1</a> ·
+    <a href="https://github.com/RFT-SIRM/Phi-Genesis#final-status" target="_blank" rel="noopener">README</a>
+  </div>
+</section>
+
+<section id="pipeline" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Methodology</div>
+    <h2 class="section-title">Research Pipeline</h2>
+  </div>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="pipeline-step-num">01</div><div class="pipeline-step-name" style="color:var(--cyan)">POSTULATE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">02</div><div class="pipeline-step-name" style="color:var(--gold)">GEOMETRY</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">03</div><div class="pipeline-step-name" style="color:var(--violet)">SPECTRUM</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">04</div><div class="pipeline-step-name" style="color:var(--amber)">COMPUTE</div></div>
+    <div class="pipeline-arrow">→</div>
+    <div class="pipeline-step"><div class="pipeline-step-num">05</div><div class="pipeline-step-name" style="color:var(--green)">VERIFY</div></div>
+  </div>
+</section>
+
+<section id="verified" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Verified Results</div>
+    <h2 class="section-title">Reproducible via Code</h2>
+    <p class="section-desc">All results below are generated directly from the repository test suite. One continuous scale A is fit to the data — the four spectral indices {1, 12, 17, 40} are chosen to match the masses too, not derived from an independent rule (Open Problem #1, below). "Verified" here means numerically verified by the test suite; none of it is machine-checked. The Lean-checked <a href="https://github.com/RFT-SIRM/Evgeny-Theorem" style="color:var(--gold)">Evgeny's Theorem</a> is a separate result (non-Abelian SU(2), fourth-moment trace defect) and does not bear on these claims.</p>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(94,234,212,0.08); color: var(--cyan);">△⁵</div>
+      <div class="card-title">Sierpiński Gasket Spectral Theory</div>
+      <div class="card-text">Spectral decimation ×5 — eigenvalues scale by factor ~5 between consecutive levels (exact for small λ). Weyl law N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Log-periodic oscillations with period ln(5). A window-free chord estimator recovers the exponent to better than 0.1% (level 9, N ≥ 1000).</div>
+      <div class="card-value" style="color:var(--cyan)">d_s/2 = 0.6826</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(212,168,83,0.08); color: var(--gold);">M</div>
+      <div class="card-title">Möbius (π-Flux) Boundary Conditions</div>
+      <div class="card-text">Full π-flux through all holes opens a mass gap: first eigenvalue jumps from ~0.006 to ~0.46 at level 5. Partial twists also gap the spectrum. Gap-selected indices follow lacunary 3^k − 1 structure.</div>
+      <div class="card-value" style="color:var(--gold)">Δλ₁ ≈ 0.454</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(139,92,246,0.08); color: var(--violet);">2⁵</div>
+      <div class="card-title">Exhaustive Twist Search</div>
+      <div class="card-text">All 2⁵ = 32 generation-twist configurations at level 5 tested. Max simultaneous hits on {1, 12, 17, 40}: 1 of 4. Index 40 never appears as gap-selected under any configuration.</div>
+      <div class="card-value" style="color:var(--violet)">32 configs · 1/4 max</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(52,211,153,0.08); color: var(--green);">ℤ</div>
+      <div class="card-title">Integer Mass Formula</div>
+      <div class="card-text">Using integer indices n = {1, 12, 17, 40} with single scale A = 104.63 MeV. Mean relative error 0.68% — beats fitted non-integer values (0.87%). The decimals in earlier versions were noise around integers.</div>
+      <div class="card-value" style="color:var(--green)">0.68% mean error</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Verified</div>
+      <div class="card-icon" style="background: rgba(245,158,11,0.08); color: var(--amber);">≈</div>
+      <div class="card-title">Scale Consistency Audit</div>
+      <div class="card-text">Fitted scale A = 104.63 MeV. Formula A = v·α/Φ⁶ gives 100.13 MeV — 4.3% below fitted. Discrepancy confirmed. Relative spread of per-fermion implied scales: 0.58%.</div>
+      <div class="card-value" style="color:var(--amber)">4.3% discrepancy</div>
+    </div>
+    <div class="card">
+      <div class="status-rejected">Rejected</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">η</div>
+      <div class="card-title">η-Invariant Claim — REJECTED</div>
+      <div class="card-text">RFT-String v8.7 claim that η̄(0) = −4 for boundary potential V(i) = 0.5·(4y/√3 − 1) is not reproduced. Value −4 never observed. Asymmetry is an O(1) finite-size artifact, not a topological invariant.</div>
+      <div class="card-value" style="color:var(--red)">−4 never observed</div>
+    </div>
+  </div>
+</section>
+
+<section id="masses" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Mass Spectrum</div>
+    <h2 class="section-title">Integer Mass Formula</h2>
+    <p class="section-desc">Four heavy fermion masses matched using a single scale A = 104.63 MeV with integer spectral indices — no non-integer fudge factors per fermion. The indices themselves are picked to fit, not predicted in advance (see Open Problems).</p>
+  </div>
+  <div class="formula-block" style="text-align:center; margin-bottom:2rem;">
+    <span class="label">Mass Generation</span>
+    <span class="math-gold" style="font-size:1.3rem;">m_f = A · n_f &nbsp;&nbsp; where &nbsp;&nbsp; A = 104.63 MeV &nbsp;&nbsp; and &nbsp;&nbsp; n_f ∈ {1, 12, 17, 40}</span>
+  </div>
+  <div class="data-table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fermion</th>
+          <th>Integer n</th>
+          <th>M_pred (MeV)</th>
+          <th>M_exp (MeV)</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="color:var(--cyan); font-weight:600;">μ</span> <span style="color:var(--text-muted); font-size:0.75rem;">(muon)</span></td>
+          <td class="num">1</td>
+          <td class="num">104.63</td>
+          <td>105.658</td>
+          <td class="good">0.97%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--violet); font-weight:600;">c</span> <span style="color:var(--text-muted); font-size:0.75rem;">(charm)</span></td>
+          <td class="num">12</td>
+          <td class="num">1255.56</td>
+          <td>1275.00</td>
+          <td class="warn">1.52%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--pink); font-weight:600;">τ</span> <span style="color:var(--text-muted); font-size:0.75rem;">(tau)</span></td>
+          <td class="num">17</td>
+          <td class="num">1778.71</td>
+          <td>1776.86</td>
+          <td class="good">0.10%</td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--gold); font-weight:600;">b</span> <span style="color:var(--text-muted); font-size:0.75rem;">(bottom)</span></td>
+          <td class="num">40</td>
+          <td class="num">4185.20</td>
+          <td>4180.00</td>
+          <td class="good">0.12%</td>
+        </tr>
+        <tr style="background: rgba(212,168,83,0.04);">
+          <td colspan="3" style="text-align:right; color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:1px;">Mean Relative Error</td>
+          <td colspan="2" class="highlight" style="font-size:1.1rem;">0.68%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex; gap:1.5rem; margin-top:2rem; flex-wrap:wrap; justify-content:center;">
+    <div class="hero-stat" style="min-width:160px;">
+      <div class="hero-stat-value" style="background: linear-gradient(135deg, var(--green), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0.68%</div>
+      <div class="hero-stat-label">Integer n, 4 fermions</div>
+    </div>
+    <div class="hero-stat" style="min-width:160px;">
+      <div class="hero-stat-value" style="background: linear-gradient(135deg, var(--amber), var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">0.87%</div>
+      <div class="hero-stat-label">Fitted n, 5 fermions (old)</div>
+    </div>
+  </div>
+</section>
+
+<section id="numbers" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Key Numbers</div>
+    <h2 class="section-title">Quantities at a Glance</h2>
+  </div>
+  <div class="data-table-container">
+    <table class="data-table">
+      <thead>
+        <tr><th>Quantity</th><th>Value</th><th>Source / Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>A (integer fit)</td><td class="highlight">104.63 MeV</td><td>Best fit to μ/τ/c/b with integer n</td></tr>
+        <tr><td>A (formula)</td><td class="num">100.13 MeV</td><td>v·α/Φ⁶ — 4.3% below fitted</td></tr>
+        <tr><td>d_s/2 (theory)</td><td class="num">0.6826</td><td>ln(3)/ln(5)</td></tr>
+        <tr><td>d_s/2 (naive, level 6)</td><td>0.7051</td><td>3.3% above theory</td></tr>
+        <tr><td>d_s/2 (naive, level 8)</td><td>0.7019</td><td>2.8% above theory</td></tr>
+        <tr><td>d_s/2 (chord estimator, level 9, N ≥ 1000)</td><td class="good">&lt; 0.1% off ln3/ln(5 − σ)</td><td>Window-free; Open Problem #2</td></tr>
+        <tr><td>Mean error (integer n, 4 fermions)</td><td class="good">0.68%</td><td>Better than fitted decimals (0.87%)</td></tr>
+        <tr><td>Mean error (fitted n, 5 fermions)</td><td class="warn">0.87%</td><td>Old non-integer values</td></tr>
+        <tr><td>η-asymmetry (claimed potential)</td><td class="bad">+1</td><td>Not −4. Value −4 never observed.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="open" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Open Problems</div>
+    <h2 class="section-title">What Remains Unsolved</h2>
+    <p class="section-desc">The mass formula m = A·n is numerically accurate, but n is not derived from spectral properties. Status of each item as of v2.2.0.</p>
+  </div>
+  <div class="card-grid">
+    <div class="problem-card">
+      <div class="num">#1</div>
+      <div class="status-rejected">Searched · no evidence</div>
+      <h3>Selection Rule for n_f</h3>
+      <p>Three pre-registered look-elsewhere tests found no operator configuration that selects n ∈ {1, 12, 17, 40} more often than chance. Reopen only with a derivation of the indices, or a new family with an a-priori rationale under a new pre-registered protocol.</p>
+      <ul>
+        <li>Tried: Z₂ twists, scalar potentials, Dirichlet corners, SG × S¹ (lattice and continuum circle), carpet</li>
+        <li>Untested: random dendrites, higher-genus or branched coverings</li>
+      </ul>
+    </div>
+    <div class="problem-card">
+      <div class="num">#2</div>
+      <div class="status-verified">Resolved</div>
+      <h3>Finite-Level Convergence of d_s/2</h3>
+      <p>Regression fits depend on the window phase (spread about ±3.5% for a 3-period window), a property of the estimator, not of the level. A window-free chord estimator recovers ln3/ln5 to better than 0.1% (level 9, N ≥ 1000).</p>
+      <ul>
+        <li>Exact counts up to level 10</li>
+        <li>Decimation holds only up to corner-defect corrections for this Laplacian</li>
+      </ul>
+    </div>
+    <div class="problem-card">
+      <div class="num">#3</div>
+      <div class="status-open">Open</div>
+      <h3>Light Fermions</h3>
+      <p>Electron, up, down, strange quarks are not addressed. They need a specified model whose parameters are counted against the masses it explains; no Lagrangian is defined in this repository.</p>
+      <ul>
+        <li>Not started</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Roadmap</div>
+    <h2 class="section-title">Status and Next Steps</h2>
+  </div>
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div class="roadmap-item">
+      <div class="roadmap-num">01</div>
+      <div class="roadmap-content">
+        <h4>Selection Rule Search</h4>
+        <p>Closed: no evidence after three pre-registered tests. Reopen only via a derivation or a new pre-registered family</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">02</div>
+      <div class="roadmap-content">
+        <h4>Deeper Levels</h4>
+        <p>Done: exact counts to level 10 by inertia, no GPU needed</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">03</div>
+      <div class="roadmap-content">
+        <h4>Light Fermions</h4>
+        <p>Needs a specified model (an NJL gap equation brings its own coupling and cutoff, which count against the masses)</p>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-num">04</div>
+      <div class="roadmap-content">
+        <h4>Physical Bridge</h4>
+        <p>Blocked: no Lagrangian or beta functions are defined in this repository</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="history" class="reveal history-section">
+  <div class="section-header">
+    <div class="section-tag">Research archive · 2026</div>
+    <h2 class="section-title">The history behind the numbers</h2>
+    <p class="section-desc">Phi-Genesis is not a claim of a completed mass-selection theory. It is a documented investigation into whether fractal spectral structure can independently select the proposed integer indices—and what careful testing found.</p>
+  </div>
+  <div class="history-grid">
+    <a class="history-card" href="history.html#timeline"><span class="history-number">01 / ORIGIN</span><h3>The original question</h3><p>Could spectral gaps on a self-similar graph select the target indices without using the measured masses to choose them?</p><span class="history-link">Explore the timeline ↗</span></a>
+    <a class="history-card" href="history.html#timeline"><span class="history-number">02 / REASSESSMENT</span><h3>The look-elsewhere problem</h3><p>An exciting exploratory match prompted a wider audit of how many configurations had been tried and how rare the result really was.</p><span class="history-link">Read the reassessment ↗</span></a>
+    <a class="history-card" href="history.html#lessons"><span class="history-number">03 / CORRECTION</span><h3>Power before interpretation</h3><p>The first protocol could not reach its own decision threshold, even under a perfect hit. Later designs checked power using null-only draws.</p><span class="history-link">See the methodological lessons ↗</span></a>
+    <a class="history-card" href="history.html#research-map"><span class="history-number">04 / CURRENT STATUS</span><h3>What the evidence supports</h3><p>The tested families did not establish an independent rule for {1, 12, 17, 40}. The record distinguishes this bounded negative result from a universal impossibility claim.</p><span class="history-link">Open the full archive ↗</span></a>
+  </div>
+  <div class="history-cta"><div><strong>Read the complete research history</strong><p>Milestones, protocol versions, limitations, reproducibility notes, and links to the connected RFT-SIRM projects.</p></div><a class="history-button" href="history.html">Explore Phi-Genesis history <span aria-hidden="true">→</span></a></div>
+</section>
+
+<section id="repo" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Repository</div>
+    <h2 class="section-title">Repository Structure</h2>
+  </div>
+  <div class="file-tree">
+    <span class="dir">phi_genesis/</span><br>
+    &nbsp;&nbsp;<span class="file">__init__.py</span> <span class="comment">— module exports</span><br>
+    &nbsp;&nbsp;<span class="file">sg_laplacian.py</span> <span class="comment">— SG graph, Laplacian, decimation, Weyl</span><br>
+    &nbsp;&nbsp;<span class="file">dirac_eta.py</span> <span class="comment">— Graph Dirac operator, η-invariant test</span><br>
+    &nbsp;&nbsp;<span class="file">mass_check.py</span> <span class="comment">— Scale consistency audit</span><br>
+    &nbsp;&nbsp;<span class="file">mobius.py</span> <span class="comment">— π-flux signed Laplacian (Z₂ cocycle)</span><br>
+    &nbsp;&nbsp;<span class="file">mobius_selection_search.py</span> <span class="comment">— Exhaustive twist search (32 configs)</span><br>
+    &nbsp;&nbsp;<span class="file">fukushima_shima.py</span> <span class="comment">— Gap structure verification</span><br>
+    &nbsp;&nbsp;<span class="file">spectral_convergence.py</span> <span class="comment">— Dense solver, Weyl fits, window sensitivity</span><br>
+    &nbsp;&nbsp;<span class="file">test_honest.py</span> <span class="comment">— 5 core tests (~4s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_mobius.py</span> <span class="comment">— 3 twist/integer tests (~0.1s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_fukushima_shima.py</span> <span class="comment">— 1 gap test (~1.6s)</span><br>
+    &nbsp;&nbsp;<span class="file">test_convergence_and_selection.py</span> <span class="comment">— 5 deep tests (~110s, includes level-8 dense solver)</span>
+  </div>
+</section>
+
+<section id="infra" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Infrastructure</div>
+    <h2 class="section-title">The Repo Audited Itself</h2>
+    <p class="section-desc">Same discipline the physics gets: when the test infrastructure broke, it went in the changelog instead of getting quietly deleted.</p>
+  </div>
+
+  <div class="terminal" style="margin-bottom: 1.5rem;">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">pytest -v — before the fix (commit aee047d)</span>
+    </div>
+    <div class="terminal-body" style="font-size: 0.78rem;">
+<span class="comment">collected 462 items</span><br><br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/phi_genesis/<br>
+<span class="warn">... 33 levels deep, same 14 tests each time ...</span><br>
+phi_genesis/phi_genesis/test_honest.py::test_decimation_factor_5 <span class="success">PASSED</span><br><br>
+<span class="error">======================== 462 passed in 2025.82s (0:33:45) ========================</span>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="status-rejected">Broken</div>
+      <div class="card-icon" style="background: rgba(248,113,113,0.08); color: var(--red);">∞</div>
+      <div class="card-title">Self-Referential Symlink</div>
+      <div class="card-text">Commit <code>aee047d</code> shipped a git-tracked symlink <code>phi_genesis → .</code> as an import workaround. pytest's directory walker recursed into it infinitely: the same 14 tests rediscovered 33 times over, inflating a ~2 minute run to 33m45s before the OS-level symlink-depth limit finally cut it off.</div>
+      <div class="card-value" style="color:var(--red)">462 collected</div>
+    </div>
+    <div class="card">
+      <div class="status-verified">Fixed</div>
+      <div class="card-icon" style="background: rgba(52,211,153,0.08); color: var(--green);">✓</div>
+      <div class="card-title">Real Package Directory</div>
+      <div class="card-text">Commit <code>a1a66c9</code> replaced the symlink with an actual <code>phi_genesis/</code> package, relative imports, and a proper <code>pyproject.toml</code> — installable regardless of what the checkout folder is named, no recursion possible.</div>
+      <div class="card-value" style="color:var(--green)">14 collected</div>
+    </div>
+  </div>
+
+  <p style="text-align:center; color: var(--text-muted); font-size: 0.85rem; margin-top: 1.5rem;">
+    462 ÷ 14 = 33 — not a coincidence. If a future run ever collects anything other than 14 items, check for a reintroduced symlink first.
+  </p>
+</section>
+
+<section id="quickstart" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Quick Start</div>
+    <h2 class="section-title">Installation & Tests</h2>
+  </div>
+  <div class="terminal" style="margin-bottom:1.5rem;">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">install.sh</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># Clone and install (editable, so `phi_genesis` imports from anywhere)</span><br>
+git clone https://github.com/RFT-SIRM/Phi-Genesis.git<br>
+cd Phi-Genesis<br>
+pip install -e .<br>
+pip install pytest<br><br>
+<span class="comment"># Verify import</span><br>
+python -c "import phi_genesis; print('OK')"<br><br>
+<span class="comment"># Full suite — 14 tests, ~110s (level-8 dense solver included)</span><br>
+pytest -v
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">test output</span>
+    </div>
+    <div class="terminal-body">
+<span class="comment"># pytest -v   (actual output, phi_genesis v2.1)</span><br><br>
+test_honest.py::test_decimation_factor_5 ... <span class="success">PASSED</span><br>
+test_honest.py::test_weyl_exponent ... <span class="success">PASSED</span><br>
+test_honest.py::test_eta_claim_fails ... <span class="success">PASSED</span> <span class="comment"># −4 never observed; asym = +1</span><br>
+test_honest.py::test_a_formula_discrepancy_is_real ... <span class="success">PASSED</span> <span class="comment"># 4.3% gap, formula v·α/Φ⁶</span><br>
+test_honest.py::test_no_single_scale ... <span class="success">PASSED</span> <span class="comment"># 0.58% spread across fermions</span><br>
+test_mobius.py::test_mobius_gaps_the_spectrum ... <span class="success">PASSED</span><br>
+test_mobius.py::test_gap_selection_not_particles ... <span class="success">PASSED</span><br>
+test_mobius.py::test_integer_rounding_quality ... <span class="success">PASSED</span> <span class="comment"># 0.68% mean error</span><br>
+test_fukushima_shima.py::test_gap_structure ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_dense_solver_matches_sparse_at_level_6 ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_naive_fit_stays_above_one_percent_at_level_8 ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_window_averaging_is_not_a_stable_correction ... <span class="success">PASSED</span><br>
+test_convergence_and_selection.py::test_no_generation_twist_selects_all_four_targets ... <span class="success">PASSED</span> <span class="comment"># 32 configs, index 40 absent</span><br>
+test_convergence_and_selection.py::test_forty_never_selected_by_generation_twists ... <span class="success">PASSED</span><br><br>
+<span class="success">======================== 14 passed in ~110s =========================</span><br><br>
+<span class="comment"># All 14 tests reproducible from a clean checkout: pip install -e . && pytest -v</span>
+    </div>
+  </div>
+</section>
+
+<section id="citation" class="reveal">
+  <div class="section-header">
+    <div class="section-tag">Reference</div>
+    <h2 class="section-title">Citation</h2>
+  </div>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span style="margin-left: 0.5rem; color: #4b5563; font-size: 0.75rem;">citation.bib</span>
+    </div>
+    <div class="terminal-body" style="color: #9ca3af;">
+@software{phi-genesis-2026,<br>
+&nbsp;&nbsp;title = {Phi-Genesis: Spectral Research Archive}, <br>
+&nbsp;&nbsp;author = {RFT-SIRM},<br>
+&nbsp;&nbsp;year = {2026},<br>
+&nbsp;&nbsp;url = {https://github.com/RFT-SIRM/Phi-Genesis},<br>
+&nbsp;&nbsp;note = {v2.2.1 — Reproducible spectral research on the Sierpiński<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gasket. The mass formula m = A·n currently lacks an<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;independent selection rule.}<br>
+}
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:2rem; color:var(--text-muted); font-size:0.85rem; max-width:600px; margin-left:auto; margin-right:auto;">
+    If you use this code, please cite the RFT research programme and acknowledge that the mass formula <span style="color:var(--gold); font-family:var(--font-mono);">m = A·n</span> currently lacks an independent selection rule.
+  </div>
+</section>
+
+<section id="contact" class="reveal contact-section" aria-labelledby="contact-title">
+  <div class="section-header">
+    <div class="section-tag">Research correspondence</div>
+    <h2 class="section-title" id="contact-title">Continue the conversation with the research record in view.</h2>
+    <p class="section-desc">For technical questions, reproducibility notes, or substantive research proposals, identify the relevant document, result, or commit so the discussion remains precise and traceable.</p>
+  </div>
+  <div class="contact-panel">
+    <div>
+      <div class="contact-label">Author contact</div>
+      <h3>Phi-Genesis · RFT-SIRM</h3>
+      <p>For questions about the methods, numerical results, or documented limitations, please include the specific section or source file you are referring to.</p>
+    </div>
+    <div class="contact-actions">
+      <a class="portal-button portal-button-primary" href="mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry">Email the research author ↗</a>
+      <a class="portal-button" href="history.html">Read the interactive history ↗</a>
+      <a class="portal-button" href="https://github.com/RFT-SIRM/Phi-Genesis/issues" target="_blank" rel="noopener">Repository issues ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">
+    <strong>Phi-Genesis v2.2.1</strong> — Spectral Research Portal<br>
+    RFT-SIRM Research · Source-linked methods · Explicit evidence boundaries
+    <div class="footer-links">
+      <a href="https://github.com/RFT-SIRM/Phi-Genesis" target="_blank" rel="noopener">Repository</a>
+      <a href="history.html">Interactive research history</a>
+      <a href="https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">Methodology</a>
+      <a href="mailto:evgeniyzaprudnov@gmail.com">Contact</a>
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+// ============================================
+// THREE.JS HERO BACKGROUND
+// ============================================
+(function() {
+  const canvas = document.getElementById('hero-3d');
+  if (!canvas) return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 100);
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // ---- Sierpiński tetrahedron (chaos game) — THE actual fractal, bright & additive ----
+  const sierpVerts = [
+    new THREE.Vector3( 1,  1,  1),
+    new THREE.Vector3( 1, -1, -1),
+    new THREE.Vector3(-1,  1, -1),
+    new THREE.Vector3(-1, -1,  1),
+  ].map(v => v.multiplyScalar(3.3));
+
+  const fractalCount = 22000;
+  const fGeom = new THREE.BufferGeometry();
+  const fPos = new Float32Array(fractalCount * 3);
+  const fCol = new Float32Array(fractalCount * 3);
+  const cGold   = new THREE.Color(0xf3c876); // brighter than --gold for additive glow
+  const cCyan   = new THREE.Color(0x8ff5e4); // brighter than --cyan
+  const cViolet = new THREE.Color(0xb3a4f0);
+
+  let p = new THREE.Vector3(
+    (Math.random()-0.5)*2, (Math.random()-0.5)*2, (Math.random()-0.5)*2
+  );
+  const warmup = 40;
+  for (let i = 0; i < fractalCount + warmup; i++) {
+    const v = sierpVerts[(Math.random() * 4) | 0];
+    p.lerp(v, 0.5); // chaos-game midpoint jump -> Sierpiński tetrahedron
+    if (i >= warmup) {
+      const idx = i - warmup;
+      fPos[idx*3]   = p.x;
+      fPos[idx*3+1] = p.y;
+      fPos[idx*3+2] = p.z;
+      const t = Math.min(1, p.length() / 5.7);
+      const mix = cGold.clone().lerp(cCyan, t);
+      if (Math.random() < 0.12) mix.lerp(cViolet, 0.5);
+      fCol[idx*3] = mix.r; fCol[idx*3+1] = mix.g; fCol[idx*3+2] = mix.b;
+    }
+  }
+  fGeom.setAttribute('position', new THREE.BufferAttribute(fPos, 3));
+  fGeom.setAttribute('color', new THREE.BufferAttribute(fCol, 3));
+  const fMat = new THREE.PointsMaterial({
+    size: 0.05, vertexColors: true, transparent: true, opacity: 0.95,
+    blending: THREE.AdditiveBlending, sizeAttenuation: true, depthWrite: false,
+  });
+  const fractal = new THREE.Points(fGeom, fMat);
+  scene.add(fractal);
+
+  // Faint wireframe cage around it for scale/structure cues (very subtle now)
+  const cageGeom = new THREE.TetrahedronGeometry(3.3, 0);
+  const cageEdges = new THREE.EdgesGeometry(cageGeom);
+  const cageMat = new THREE.LineBasicMaterial({ color: 0xd4a853, transparent: true, opacity: 0.1 });
+  const cage = new THREE.LineSegments(cageEdges, cageMat);
+  scene.add(cage);
+
+  // Central glow sphere — pulsing core
+  const sphereGeom = new THREE.SphereGeometry(0.32, 32, 32);
+  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xf3c876, transparent: true, opacity: 0.55 });
+  const sphere = new THREE.Mesh(sphereGeom, sphereMat);
+  scene.add(sphere);
+
+  camera.position.z = 7.5;
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.004;
+    fractal.rotation.x = time * 0.28;
+    fractal.rotation.y = time * 0.42;
+    cage.rotation.x = fractal.rotation.x;
+    cage.rotation.y = fractal.rotation.y;
+    const s = 1 + Math.sin(time * 2.5) * 0.12;
+    sphere.scale.set(s, s, s);
+    sphereMat.opacity = 0.4 + Math.sin(time * 2.5) * 0.2;
+    camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.03;
+    camera.position.y += (mouseY * 0.6 - camera.position.y) * 0.03;
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+  }
+  animate();
+  window.addEventListener('resize', () => {
+    camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+  });
+})();
+
+// ============================================
+// COUNTER ANIMATION
+// ============================================
+function animateCounter(id, target, duration, isFloat) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = 0;
+  const startTime = performance.now();
+  function update(currentTime) {
+    const elapsed = (currentTime - startTime) / 1000;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = start + (target - start) * eased;
+    el.textContent = isFloat ? current.toFixed(2) : Math.floor(current).toString();
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+window.addEventListener('load', () => {
+  animateCounter('c1', 193, 2, false);
+  animateCounter('c2', 3, 2, false);
+  animateCounter('c3', 0, 1.5, false);
+  const version = document.getElementById('c4');
+  if (version) version.textContent = 'v2.2.1';
+});
+
+// ============================================
+// INTERSECTION OBSERVER — Section Reveal
+// ============================================
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelector('.hero').classList.add('visible');
+
+// ============================================
+// NAV SCROLL SPY
+// ============================================
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    if (scrollY >= section.offsetTop - 200) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.style.color = '';
+    if (link.getAttribute('href') === '#' + current) link.style.color = 'var(--gold)';
+  });
+});
+</script>
+</body>
+</html>
