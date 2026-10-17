@@ -71,6 +71,7 @@ nav:
       - Overview: architecture.md
       - Computational Architecture: computational-architecture.md
   - Foundations:
+      - Overview: foundations.md
       - Verified Results: verified-results.md
       - Methodology: methodology.md
       - Glossary: glossary.md
