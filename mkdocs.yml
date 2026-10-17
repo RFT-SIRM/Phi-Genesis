@@ -7,7 +7,8 @@ repo_url: https://github.com/RFT-SIRM/Phi-Genesis
 repo_name: RFT-SIRM/Phi-Genesis
 theme:
   name: material
-  logo: null
+  icon:
+    logo: material/atom-variant
   palette:
     - scheme: default
       primary: indigo
