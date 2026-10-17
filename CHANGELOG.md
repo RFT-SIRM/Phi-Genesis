@@ -1,5 +1,8 @@
 # Changelog
 
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+
+
 ## Unreleased — research-history archive
 
 - Added `docs/history.html`, an interactive, filterable chronology of the research question, exploratory carpet result and its look-elsewhere reassessment, preregistered protocol versions, power-check correction, base-rate audit, and current bounded conclusions.
@@ -24,3 +27,7 @@
 ## 2.1.0 and earlier
 
 See the git history (`git log`).
+
+---
+
+**Explore Phi-Genesis:** [Interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/) · [Research map](https://rft-sirm.github.io/Phi-Genesis/research-map.html) · [Verified results](https://rft-sirm.github.io/Phi-Genesis/verified-results.html) · [Open problems](https://rft-sirm.github.io/Phi-Genesis/open-problems.html) · [Reproducibility](https://rft-sirm.github.io/Phi-Genesis/reproducibility.html) · [Dissertation](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md) · [Source repository](https://github.com/RFT-SIRM/Phi-Genesis)
