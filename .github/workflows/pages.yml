@@ -1,0 +1,59 @@
+name: Deploy Phi-Genesis documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install documentation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Material documentation strictly
+        run: mkdocs build --strict --site-dir site
+
+      - name: Copy standalone interactive and history pages
+        run: |
+          mkdir -p site/interactive
+          cp docs/interactive/index.html site/interactive/index.html
+          cp docs/history.html site/history.html
+
+      - name: Verify published entry points
+        run: |
+          test -s site/index.html
+          test -s site/interactive/index.html
+          test -s site/history.html
+          grep -q "Phi-Genesis.*Interactive Research Portal" site/interactive/index.html
+          grep -q "research history" site/index.html || grep -q "Research history" site/index.html
+
+      - name: Publish GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./site
+          force_orphan: true
+          enable_jekyll: false
