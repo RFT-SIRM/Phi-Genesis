@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Phi-Genesis v2.0 — Spectral Core for Fractal Vacuum Substrate</title>
+<title>Phi-Genesis v2.2.1 — Spectral Research Archive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -341,6 +341,32 @@ footer {
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Research-history refresh: lighter, readable surface while preserving the original fractal visualisation. */
+:root{--bg-deep:#edf3f8;--bg-primary:#f7f9fc;--bg-card:rgba(255,255,255,.92);--bg-glass:rgba(255,255,255,.86);--border:rgba(44,75,104,.16);--border-glow:rgba(26,117,143,.34);--text-primary:#172b40;--text-secondary:#4d6277;--text-muted:#647b90;--gold:#94651a;--gold-dim:#805719;--cyan:#087f8c;--cyan-dim:#087f8c;--violet:#6555a0;--pink:#a04b63;--amber:#98600a;--green:#167a53;--red:#b33445;--indigo:#4658bb}
+body{background:linear-gradient(180deg,#f8fbfe 0%,#edf3f8 45%,#f8fafc 100%);color:var(--text-primary)}
+.noise-overlay{opacity:.012}.grid-overlay{background-image:linear-gradient(rgba(26,88,122,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(26,88,122,.035) 1px,transparent 1px)}
+nav{background:rgba(248,251,254,.94);border-bottom-color:#d7e2ec;box-shadow:0 5px 22px rgba(28,53,78,.06)}.nav-links a{color:#526a80}.nav-links a:hover{color:#087f8c}
+.hero{background:radial-gradient(ellipse at 50% 18%,rgba(128,190,213,.22),transparent 55%)}.hero-title{background:linear-gradient(135deg,#18344e 0%,#94651a 52%,#087f8c 100%);-webkit-background-clip:text;background-clip:text}
+.hero-badge{background:#fff;border-color:#c8d9e5;color:#765015;box-shadow:0 5px 18px rgba(26,58,84,.06)}.hero-badge::before{background:#16855c;box-shadow:0 0 7px rgba(22,133,92,.3)}
+.hero-stat,.card,.pipeline,.roadmap-item,.file-tree,.terminal,.result-table,.table-wrap,.citation-box{background:rgba(255,255,255,.9);border-color:#d7e2ec;box-shadow:0 8px 26px rgba(28,53,78,.055)}
+.hero-stat{backdrop-filter:blur(8px)}.hero-stat-value{background:linear-gradient(135deg,#94651a,#087f8c);-webkit-background-clip:text;background-clip:text}
+.hero-stat-label,.section-desc,.card-text,.comment,.roadmap-content p{color:#5c7185}.section-title,.card-title,.roadmap-content h4{color:#1b334a}.section-tag{color:#087f8c;border-bottom-color:#c7dce6}
+.pipeline-step-name{color:#1b334a}.pipeline-arrow,.pipeline-step-num{color:#74899c}.card:hover,.hero-stat:hover,.history-card:hover{border-color:#85b5c8;box-shadow:0 14px 32px rgba(28,73,102,.1)}
+.fractal-showcase{background:linear-gradient(180deg,#e7f0f6,#dce9f2);border-color:#d0dfe9}.fractal-caption{color:#405a70;background:rgba(250,253,255,.9);border-color:#cadbe6}
+.terminal-header{background:#e8eef4;border-bottom-color:#d4e0e9}.terminal-body{background:#f8fafc;color:#40576d}.file-tree{color:#40576d}.file-tree .dir{color:#087f8c}.file-tree .file{color:#94651a}
+.status-verified{color:#146c4a;background:rgba(22,122,83,.1);border-color:rgba(22,122,83,.24)}.status-rejected{color:#a72f43;background:rgba(179,52,69,.09);border-color:rgba(179,52,69,.2)}
+.history-section{padding-top:5.5rem;padding-bottom:5.5rem}.history-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2rem}
+.history-card{display:flex;flex-direction:column;align-items:flex-start;min-height:250px;padding:1.5rem;text-decoration:none;color:inherit;background:rgba(255,255,255,.93);border:1px solid #d7e2ec;border-radius:16px;box-shadow:0 8px 24px rgba(28,53,78,.055);transition:transform .25s,border-color .25s,box-shadow .25s}
+.history-card:hover{transform:translateY(-4px);text-decoration:none}.history-number{font:600 .67rem var(--font-mono);letter-spacing:1.5px;color:#087f8c;margin-bottom:1.2rem}
+.history-card h3{font:700 1.2rem var(--font-serif);color:#1b334a;line-height:1.25;margin-bottom:.7rem}.history-card p{color:#586e82;font-size:.91rem;line-height:1.65;margin-bottom:1.2rem}.history-link{margin-top:auto;color:#8b5d15;font:600 .78rem var(--font-mono)}
+.history-cta{display:flex;justify-content:space-between;align-items:center;gap:1.5rem;margin-top:1.25rem;padding:1.6rem 1.8rem;border-radius:16px;border:1px solid #cbdde7;background:linear-gradient(110deg,#fff,#e8f4f7)}
+.history-cta strong{display:block;font:700 1.15rem var(--font-serif);color:#1b334a;margin-bottom:.3rem}.history-cta p{color:#586e82;font-size:.9rem}
+.history-button{flex-shrink:0;display:inline-flex;align-items:center;gap:.7rem;padding:.85rem 1.1rem;border-radius:10px;background:#123c56;color:#fff;font-weight:600;font-size:.88rem;text-decoration:none;box-shadow:0 5px 15px rgba(18,60,86,.13)}
+.history-button:hover{background:#087f8c;color:#fff;text-decoration:none}footer{color:#60778b}
+@media(max-width:900px){.history-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-links{gap:1rem}}
+@media(max-width:600px){.history-grid{grid-template-columns:1fr}.history-card{min-height:0}.history-cta{align-items:flex-start;flex-direction:column}.history-button{width:100%;justify-content:center}nav{padding:.85rem 1rem}.nav-links{gap:.6rem;flex-wrap:wrap}.nav-links a{font-size:.62rem;letter-spacing:.5px}}
+
 </style>
 </head>
 <body>
@@ -366,14 +392,14 @@ footer {
 
 <section class="hero">
   <div class="hero-content">
-    <a class="hero-badge" href="history.html" style="text-decoration:none">v2.2.1 — Explore the research history ↗</a>
+    <a class="hero-badge" href="history.html" style="text-decoration:none">v2.2.1 · Research history & methods ↗</a>
     <h1 class="hero-title">Phi-Genesis</h1>
-    <p class="hero-subtitle">Spectral Core for Fractal Vacuum Substrate.<br>Reproducible spectral computations on the Sierpiński gasket. All claims tested against code. No black boxes.</p>
+    <p class="hero-subtitle">A reproducible spectral research programme on the Sierpiński gasket.<br>From an intriguing numerical pattern to preregistered tests, methodological corrections, and a clearly bounded negative result.</p>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-value" id="c1">104.63</div><div class="hero-stat-label">MeV — Scale A</div></div>
-      <div class="hero-stat"><div class="hero-stat-value" id="c2">0.68</div><div class="hero-stat-label">% Mean Fit Error</div></div>
-      <div class="hero-stat"><div class="hero-stat-value" id="c3">4</div><div class="hero-stat-label">Fermions</div></div>
-      <div class="hero-stat"><div class="hero-stat-value" id="c4">35</div><div class="hero-stat-label">Fast Tests Passing</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c1">193</div><div class="hero-stat-label">Recorded evaluations</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c2">3</div><div class="hero-stat-label">Protocol versions</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c3">0</div><div class="hero-stat-label">Independent rules found</div></div>
+      <div class="hero-stat"><div class="hero-stat-value" id="c4">v2.2.1</div><div class="hero-stat-label">Current research status</div></div>
     </div>
   </div>
 </section>
@@ -657,6 +683,21 @@ footer {
       </div>
     </div>
   </div>
+</section>
+
+<section id="history" class="reveal history-section">
+  <div class="section-header">
+    <div class="section-tag">Research archive · 2026</div>
+    <h2 class="section-title">The history behind the numbers</h2>
+    <p class="section-desc">Phi-Genesis is not a claim of a completed mass-selection theory. It is a documented investigation into whether fractal spectral structure can independently select the proposed integer indices—and what careful testing found.</p>
+  </div>
+  <div class="history-grid">
+    <a class="history-card" href="history.html#timeline"><span class="history-number">01 / ORIGIN</span><h3>The original question</h3><p>Could spectral gaps on a self-similar graph select the target indices without using the measured masses to choose them?</p><span class="history-link">Explore the timeline ↗</span></a>
+    <a class="history-card" href="history.html#timeline"><span class="history-number">02 / REASSESSMENT</span><h3>The look-elsewhere problem</h3><p>An exciting exploratory match prompted a wider audit of how many configurations had been tried and how rare the result really was.</p><span class="history-link">Read the reassessment ↗</span></a>
+    <a class="history-card" href="history.html#lessons"><span class="history-number">03 / CORRECTION</span><h3>Power before interpretation</h3><p>The first protocol could not reach its own decision threshold, even under a perfect hit. Later designs checked power using null-only draws.</p><span class="history-link">See the methodological lessons ↗</span></a>
+    <a class="history-card" href="history.html#research-map"><span class="history-number">04 / CURRENT STATUS</span><h3>What the evidence supports</h3><p>The tested families did not establish an independent rule for {1, 12, 17, 40}. The record distinguishes this bounded negative result from a universal impossibility claim.</p><span class="history-link">Open the full archive ↗</span></a>
+  </div>
+  <div class="history-cta"><div><strong>Read the complete research history</strong><p>Milestones, protocol versions, limitations, reproducibility notes, and links to the connected RFT-SIRM projects.</p></div><a class="history-button" href="history.html">Explore Phi-Genesis history <span aria-hidden="true">→</span></a></div>
 </section>
 
 <section id="repo" class="reveal">
