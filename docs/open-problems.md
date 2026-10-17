@@ -1,5 +1,8 @@
 # Open Problems and Research Roadmap
 
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+
+
 This page distinguishes unresolved research questions from completed diagnostics. The current documented release is v2.2.1. Items below are not presented as solved.
 
 ## 1. Independent selection rule for the mass indices { #1-independent-selection-rule }
@@ -42,3 +45,10 @@ The repository does not currently define a Lagrangian or beta functions for the 
 6. Keep a negative result bounded to the tested family and parameter range.
 
 See [Methodology](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md), [Protocol Ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md), and [Changelog](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md).
+
+---
+
+<div class="phi-doc-nav">
+<strong>Explore Phi-Genesis</strong><br>
+<a href="https://rft-sirm.github.io/Phi-Genesis/interactive/">Interactive portal</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/research-map.html">Research map</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/verified-results.html">Verified results</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/open-problems.html">Open problems</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/reproducibility.html">Reproducibility</a> · <a href="https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md">Dissertation</a> · <a href="https://github.com/RFT-SIRM/Phi-Genesis">Source repository</a>
+</div>
