@@ -67,8 +67,8 @@ nav:
   - Computational Architecture: computational-architecture.md
   - Data & Provenance: data-and-provenance.md
   - History: history.html
-  - Protocol Ledger: protocol-ledger.md
-  - Preregistration: preregistration.md
-  - Changelog: changelog.md
+  - Protocol Ledger: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md
+  - Preregistration: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md
+  - Changelog: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md
   - Glossary: glossary.md
   - Support: support.md
