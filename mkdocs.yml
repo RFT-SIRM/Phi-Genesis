@@ -1,4 +1,6 @@
 site_name: Phi-Genesis
+exclude_docs: |
+  /index.html
 site_description: Reproducible spectral research on the Sierpiński gasket, with explicit evidence boundaries and an auditable research history.
 site_url: https://rft-sirm.github.io/Phi-Genesis/
 repo_url: https://github.com/RFT-SIRM/Phi-Genesis
