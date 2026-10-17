@@ -62,6 +62,10 @@ jobs:
           grep -q '<canvas id="field"' site/index.html
           grep -q 'data-title=' site/index.html
           grep -q 'href="verified-results.html"' site/index.html
+          grep -q 'data-link="research-map.html"' site/index.html
+          grep -q 'data-link="verified-results.html"' site/index.html
+          grep -q 'data-link="selection-protocol.html"' site/index.html
+          grep -q 'data-link="open-problems.html"' site/index.html
           ! grep -q 'href="../verified-results/' site/index.html
           grep -q "Interactive Research Portal" site/interactive/index.html
           grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-1' site/interactive/index.html
@@ -71,6 +75,10 @@ jobs:
           grep -q 'href="../history.html"' site/interactive/index.html
           grep -q 'href="../verified-results.html"' site/interactive/index.html
           grep -q 'href="../research-map.html"' site/interactive/index.html
+          grep -q 'data-link="../research-map.html"' site/interactive/index.html
+          grep -q 'data-link="../verified-results.html"' site/interactive/index.html
+          grep -q 'data-link="../selection-protocol.html"' site/interactive/index.html
+          grep -q 'data-link="../open-problems.html"' site/interactive/index.html
           grep -q "Phi-Genesis" site/history.html
 
       - name: Verify supporting research-record routes
