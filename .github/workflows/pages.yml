@@ -50,8 +50,16 @@ jobs:
           test -s site/interactive/index.html
           test -s site/history.html
           grep -q "Phi-Genesis" site/index.html
-          grep -q "Spectral Research Portal" site/index.html
-          grep -q "three.min.js" site/index.html
+          grep -q "Interactive Research Portal" site/index.html
+          grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-root-1' site/index.html
+          grep -q '<canvas id="field"' site/index.html
+          grep -q 'data-title=' site/index.html
+          grep -q 'href="verified-results/"' site/index.html
+          ! grep -q 'href="../verified-results/"' site/index.html
+          grep -q "Interactive Research Portal" site/interactive/index.html
+          grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-1' site/interactive/index.html
+          grep -q '<canvas id="field"' site/interactive/index.html
+          grep -q 'data-title=' site/interactive/index.html
           grep -q "Phi-Genesis" site/interactive/index.html
           grep -q 'href="../history.html"' site/interactive/index.html
           grep -q "Phi-Genesis" site/history.html
