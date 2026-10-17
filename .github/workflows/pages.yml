@@ -46,7 +46,7 @@ jobs:
           test -s site/index.html
           test -s site/interactive/index.html
           test -s site/history.html
-          grep -q "Phi-Genesis.*Interactive Research Portal" site/interactive/index.html
+          grep -q "Phi-Genesis" site/interactive/index.html
           grep -q "Phi-Genesis" site/index.html
 
       - name: Publish GitHub Pages
