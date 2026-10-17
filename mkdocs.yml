@@ -1,6 +1,5 @@
 site_name: Phi-Genesis
 site_url: https://rft-sirm.github.io/Phi-Genesis/
-
 theme:
   name: material
   palette:
@@ -57,18 +56,18 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
+  - Interactive Portal: interactive.md
   - Research Map: research-map.md
   - Verified Results: verified-results.md
   - Selection Protocol: selection-protocol.md
   - Open Problems: open-problems.md
+  - History: history.html
   - Methodology: methodology.md
   - Reproducibility: reproducibility.md
-  - Computational Architecture: computational-architecture.md
+  - Architecture: computational-architecture.md
   - Data & Provenance: data-and-provenance.md
-  - History: history.html
-  - Protocol Ledger: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md
-  - Preregistration: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md
-  - Changelog: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md
+  - Protocol Ledger: protocol-ledger.md
+  - Preregistration: preregistration.md
+  - Changelog: changelog.md
   - Glossary: glossary.md
   - Support: support.md
