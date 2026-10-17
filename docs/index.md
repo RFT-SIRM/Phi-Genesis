@@ -1,70 +1,78 @@
-# Phi-Genesis — Spectral Research Portal
+# Phi-Genesis — Spectral Research Laboratory
 
-**A reproducible research programme investigating spectral structure on the Sierpiński gasket, with explicit evidence boundaries and an auditable record of what has—and has not—been established.**
+**A reproducible investigation of spectral structure and decimation on graph approximations of the Sierpiński gasket.**
+
+Phi-Genesis is a research laboratory for testing spectral patterns against explicit calculations, reproducible code, and preregistered protocols. The site separates the research record from its visual presentation: numerical evidence is not automatically a theorem, and unresolved questions remain clearly marked.
+
+> **Current documented status · v2.2.1**
+>
+> The spectral audit is ongoing. Gate A is not presented as fully closed, Open Problem #2 remains unresolved, and the proposed special behaviour at indices \(\{1,12,17,40\}\) is not claimed as established.
+
+## Start here
 
 <div class="grid cards" markdown>
 
--   :material-chart-timeline-variant:{ .lg .middle } **Research status**
+-   :material-flask-outline:{ .lg .middle } **Research programme**
 
     ---
 
-    Current documented status: **v2.2.1**. The spectral audit remains an active investigation; the principal open question is not presented as solved.
+    Read the scope of the audit, its evidence boundaries, and the questions still open.
 
-    [Read the status and evidence](#status-and-evidence)
+    [Research status and questions](#research-status)
 
--   :material-animation-play:{ .lg .middle } **Interactive portal**
-
-    ---
-
-    Explore the visual research overview and the separate, detailed chronology.
-
-    [Open the interactive portal](interactive.md)
-
--   :material-clipboard-check-outline:{ .lg .middle } **Reproducibility**
+-   :material-animation-play-outline:{ .lg .middle } **Interactive portal**
 
     ---
 
-    Methods, protocol ledger, preregistration and computational tests remain the primary record.
+    Explore the separate animated visual overview. This is the site's single interactive research portal; it complements, rather than replaces, the source records.
 
-    [Review the research records](#research-records)
+    [Open the interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/){ .md-button .md-button--primary }
 
--   :material-email-outline:{ .lg .middle } **Research correspondence**
+-   :material-clipboard-check-outline:{ .lg .middle } **Methods and reproducibility**
 
     ---
 
-    Questions, critical review and reproducibility feedback are welcome.
+    Follow the methodology, protocol ledger, preregistration, and versioned records used to assess claims.
 
-    [Contact the researcher](#contact)
+    [Open the methodology](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md)
+
+-   :material-timeline-clock-outline:{ .lg .middle } **Research history**
+
+    ---
+
+    Read the chronological field notes and the reasoning behind the project's current evidence boundaries.
+
+    [Read research history](history.html)
 
 </div>
 
-## Research overview
+## Research programme
 
-Phi-Genesis studies spectral and decimation behaviour associated with graph approximations of the Sierpiński gasket. Its purpose is to test proposed structural patterns against explicit computational checks and documented protocols—not to elevate an attractive numerical coincidence into a theorem without sufficient evidence.
+The project studies spectral and decimation behaviour associated with finite graph approximations of the Sierpiński gasket. Candidate patterns are checked against computational evidence and documented protocols before being assigned any stronger status.
 
-The project separates three things:
+The public record distinguishes:
 
-- **Established statements:** results supported by the relevant mathematical definitions, derivations, or formal/computational checks.
-- **Numerical evidence:** observations that hold for the tested levels, parameters and implementation, but do not automatically imply a universal law.
-- **Open questions:** claims for which the current evidence is incomplete, negative, or not yet decisive.
+- **Established results** — statements supported by their definitions, derivations, or formal verification.
+- **Finite-level numerical evidence** — observations reproduced for specified graph levels, parameters, and implementations; these do not alone prove an all-level identity.
+- **Open questions** — claims for which the current evidence remains incomplete, negative, or inconclusive.
 
-## Status and evidence
+## Research status
 
 <div class="grid" markdown>
 
 <div class="card" markdown>
 
-### Current status · v2.2.1
+### Gate A · Decimation diagnostics
 
-The current public documentation records the status of the spectral investigation and its known limitations. The Gate A decimation question remains open; do not interpret diagnostic progress as a complete proof.
+The diagnostic work identifies where low-level matching fails to reach a complete match. The current record does not claim that the full recursively generated exceptional set has been eliminated or that Gate A is closed.
 
 </div>
 
 <div class="card" markdown>
 
-### Numerical inertia work
+### Spectral inertia
 
-The repository includes a reproducible computational path for spectral-inertia experiments on finite graph approximations. Reported finite-level computations are evidence for those tested instances, not a proof of an all-level identity.
+The repository contains a reproducible computational path for inertia experiments on finite graph approximations. Results are bounded to the tested instances and numerical method.
 
 </div>
 
@@ -72,7 +80,7 @@ The repository includes a reproducible computational path for spectral-inertia e
 
 ### Open Problem #2
 
-The window-free chord-estimator question remains unresolved. The documented spread across three-period windows must not be described as eliminated by smoothing.
+The window-free chord-estimator question remains unresolved. Smoothing does not erase the documented spread across three-period windows.
 
 </div>
 
@@ -80,39 +88,30 @@ The window-free chord-estimator question remains unresolved. The documented spre
 
 ### Targeted mass indices
 
-The proposed special behaviour at indices \(\{1,12,17,40\}\) is not promoted to a confirmed result. The repository's current status and test records define what can responsibly be claimed.
+The proposed special behaviour at indices \(\{1,12,17,40\}\) is not treated as a confirmed result. The current test and protocol records govern what can be claimed.
 
 </div>
 
 </div>
 
-## Research records
+## Primary research records
 
-These source records—not the portal's visualizations—are authoritative for methods, protocol state and reproducibility.
+The repository's documents, code, tests, and protocol history are the authoritative record. Use these links to inspect the research rather than relying on a summary or visualization.
 
-| Record | Purpose |
+| Record | What it documents |
 |---|---|
-| [README and project overview](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md) | Scope, current project status and reproduction entry points |
+| [README and project overview](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md) | Scope, current status, and reproduction entry points |
 | [Methodology](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md) | Computational approach and methodological limits |
-| [Protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md) | Audit trail for protocol and analysis decisions |
+| [Protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md) | Audit trail of protocol and analysis decisions |
 | [Preregistration v1.2.1](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md) | Versioned preregistered research plan |
-| [Preregistration archive](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION.md) | Earlier protocol record retained for historical context |
+| [Earlier preregistration record](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION.md) | Historical protocol context |
 | [Changelog](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md) | Version history |
-| [Repository tests](https://github.com/RFT-SIRM/Phi-Genesis) | Executable tests and source artifacts |
-
-## Explore the project
-
-- **[Interactive research portal](interactive.md)** — visual overview and entry to the research chronology.
-- **[Research history and field notes](history.html)** — chronological record, interpretations and lessons learned.
-- **[Source repository](https://github.com/RFT-SIRM/Phi-Genesis)** — code, tests, data and primary documentation.
-- **[Open a research issue](https://github.com/RFT-SIRM/Phi-Genesis/issues)** — report a reproducibility issue or propose a concrete correction.
+| [Source and tests](https://github.com/RFT-SIRM/Phi-Genesis) | Code, test suite, data, and implementation |
 
 ## Contact
 
-For scientific correspondence, methodological criticism, or reproducibility questions:
-
-**[evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry)**
+For scientific correspondence, methodological criticism, or reproducibility questions, contact [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry).
 
 ---
 
-*Phi-Genesis · Spectral Research Portal · documented project status v2.2.1. Visual pages are navigational aids; scientific claims should be checked against the linked source records.*
+*Phi-Genesis · Spectral Research Laboratory · documented project status v2.2.1. Visual pages are navigational aids; scientific claims should be checked against the linked source records.*
