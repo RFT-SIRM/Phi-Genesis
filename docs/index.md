@@ -1,115 +1,76 @@
 # Phi-Genesis — Spectral Research Laboratory
 
-**Spectral structure, decimation and reproducible computation on Sierpiński-gasket graph approximations.**
+**Spectral decimation, graph spectra, boundary conditions, and reproducible numerical research on the Sierpiński gasket.**
 
-Phi-Genesis is an independent computational research programme. It tests proposed spectral patterns against explicit calculations, preregistered protocols and an auditable history of both positive and negative results. The laboratory's central discipline is to distinguish a mathematical statement from a finite numerical observation, a fitted relationship and an open conjecture.
-
-> **Current documented status · v2.2.1**
+> 🟢 **CURRENT RESEARCH STATUS · v2.2.1**
 >
-> The spectral audit remains bounded by its evidence. The tested search families have not established an independent selection rule for the target indices \(\{1,12,17,40\}\); Open Problem #2 remains open; and numerical results are not presented as machine-checked theorems.
+> Phi-Genesis records reproducible computations and bounded negative results. The tested search families have **not** established an independent spectral selection rule for the target indices \(\{1,12,17,40\}\). Open Problem #2 remains open. Numerical evidence is not presented as a machine-checked theorem.
 
-## Laboratory navigation
+Phi-Genesis is the RFT-SIRM spectral research programme. This site is its main documentation home: begin with the research map, inspect the mathematical and numerical evidence, follow the preregistered selection audit, and then explore the separate interactive portal.
 
-<div class="grid cards" markdown>
+- [**Open the Interactive Portal**](https://rft-sirm.github.io/Phi-Genesis/interactive/)
+- [Research History](https://rft-sirm.github.io/Phi-Genesis/history.html)
+- [Source repository](https://github.com/RFT-SIRM/Phi-Genesis)
 
--   :material-map-outline:{ .lg .middle } **Research map**
+## Research map
 
-    ---
+Use the [Research Map](research-map.md) to navigate the project’s main strands, current status and recommended reading order. It connects spectral decimation, spectral counting, boundary twists, target-index selection and reproducibility records.
 
-    A structured overview of the research strands, status labels, and the recommended reading order.
+## The mathematical anchor
 
-    [Explore the research map](research-map.md)
+For the Sierpiński gasket, the theoretical spectral exponent is
 
--   :material-chart-box-outline:{ .lg .middle } **Results and evidence**
+\[
+\frac{d_s}{2}=\frac{\ln 3}{\ln 5}\approx0.6826.
+\]
 
-    ---
+The factor-5 decimation structure is documented with corner-defect corrections for the corner-degree-2 graph Laplacian used in this project. The Fukushima–Shima gaps are numerically reproduced in the documented finite-level checks. See [Verified Results](verified-results.md) for the exact scope and limitations.
 
-    Spectral gaps, decimation, Weyl estimates, π-flux experiments, and what each result does—and does not—establish.
+## Research strands
 
-    [Review verified results](verified-results.md)
+| Strand | Primary page | Current status |
+|---|---|---|
+| Spectral decimation and gap structure | [Verified Results](verified-results.md) | Supported with stated corner-defect corrections |
+| Spectral dimension and counting | [Open Problem #2](open-problems.md#2-finite-level-convergence-of-the-spectral-exponent) | Finite-window sensitivity remains open |
+| Möbius / π-flux boundary conditions | [Selection Protocol](selection-protocol.md) | Gap observed in tested cases; target selection not established |
+| Selection of \(\{1,12,17,40\}\) | [Protocol Audit](selection-protocol.md) | Preregistered tests did not meet the decision threshold |
+| Reproducibility and provenance | [Reproducibility](reproducibility.md) | Code, tests and versioned records remain primary |
 
--   :material-clipboard-check-outline:{ .lg .middle } **Selection protocol**
+## Documentation
 
-    ---
-
-    Preregistered families, null models, power checks, p-values, and the cumulative search ledger.
-
-    [Read the protocol audit](selection-protocol.md)
-
--   :material-puzzle-outline:{ .lg .middle } **Open problems**
-
-    ---
-
-    The missing independent index-selection rule, finite-level estimator sensitivity, and model requirements for further physics-facing work.
-
-    [Review open problems](open-problems.md)
-
--   :material-console-line:{ .lg .middle } **Computational architecture**
-
-    ---
-
-    Source modules, numerical pathways, tests, protocol data, and how the evidence artifacts fit together.
-
-    [Explore the code architecture](computational-architecture.md)
-
--   :material-play-circle-outline:{ .lg .middle } **Interactive portal**
-
-    ---
-
-    A single, separate animated visualization of the research. It complements this documentation and does not replace source records.
-
-    [Open the interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/){ .md-button .md-button--primary }
-
-</div>
-
-## Research programme
-
-The work centres on five connected strands:
-
-1. **Spectral decimation and gap structure.** Investigate the factor-5 spectral structure of finite Sierpiński-gasket graph approximations, including corner-defect corrections and the documented Fukushima–Shima gaps.
-2. **Spectral dimension and counting.** Compare eigenvalue-counting estimates and study how finite graph level and log-periodic fitting windows affect exponent estimates.
-3. **Boundary conditions and flux.** Test how Möbius / π-flux conditions and generation twists alter the low-lying spectrum and gap-selected positions.
-4. **Statistical selection audit.** Test whether a spectral rule independently selects the proposed indices \(\{1,12,17,40\}\), with preregistered null ensembles and correction for the number of configurations tried.
-5. **Evidence and provenance.** Preserve the protocol history, including negative and exploratory results, so that earlier coincidences are not later mistaken for independent predictions.
-
-## Current evidence at a glance { #verified }
-
-| Research question | Documented position |
+| Document | Purpose |
 |---|---|
-| Factor-5 spectral decimation | Supported with corner-defect corrections for the documented Laplacian |
-| Fukushima–Shima gap structure | Numerically reproduced in the documented tests |
-| Full π-flux condition | Opens a gap in the tested level-5 instance |
-| Selection of \(\{1,12,17,40\}\) | Not established; preregistered tests did not meet the threshold |
-| Window-free chord estimator | Reported within 0.1% of its stated comparison expression at level 9 for \(N\ge1000\) |
-| Robust finite-level convergence | Still open; regression results depend on window choice |
-| Claimed η-invariant value −4 | Not reproduced in the documented tests |
+| [Research Map](research-map.md) | Research hierarchy, status and reading order |
+| [Verified Results](verified-results.md) | Numerical observations, fits and evidence boundaries |
+| [Selection Protocol](selection-protocol.md) | Preregistered families, null models, power checks and results |
+| [Open Problems](open-problems.md) | Unresolved questions and criteria for future work |
+| [Methodology](methodology.md) | Statistical design and look-elsewhere correction |
+| [Reproducibility](reproducibility.md) | Test commands and fixed-seed computation instructions |
+| [Computational Architecture](computational-architecture.md) | Source modules, test layers and data artifacts |
+| [Data and Provenance](data-and-provenance.md) | Source-of-truth hierarchy and cumulative search record |
+| [Research History](https://rft-sirm.github.io/Phi-Genesis/history.html) | Chronology and reassessment of earlier results |
 
-These summaries are scoped to the tested graph levels, operator definitions, numerical procedures and protocol families. Full details and caveats are on [Verified Results](verified-results.md), [Selection Protocol](selection-protocol.md), and [Open Problems](open-problems.md).
+## Primary research records
 
-## Methods, protocols and provenance
+The versioned records in the source repository are authoritative. This website organises and explains them but does not supersede them.
 
-The laboratory uses separate records for different purposes:
+- [README and final status](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md)
+- [Methodology source](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md)
+- [Protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md)
+- [Binding preregistration v1.2.1](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md)
+- [Changelog](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md)
+- [Code and tests](https://github.com/RFT-SIRM/Phi-Genesis)
 
-- [Methodology](methodology.md) — why the search uses null models, target base rates, maximum-over-family statistics and null-only power checks.
-- [Reproducibility](reproducibility.md) — test commands, fixed-seed protocol commands, estimator scripts and data-preservation cautions.
-- [Computational Architecture](computational-architecture.md) — modules, test layers and data artifacts.
-- [Data and Provenance](data-and-provenance.md) — source-of-truth hierarchy, cumulative counts and interpretation safeguards.
-- [Research History](history.html) — chronological field notes and reassessment of earlier results.
+## Scope and evidence discipline
 
-The versioned primary records remain authoritative: [README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md), [METHODOLOGY.md](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md), [protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md), [preregistration v1.2.1](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md), and [changelog](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/CHANGELOG.md).
+The documented mass relationship \(m=A n\) is a fit, not a spectral prediction: the target indices have not been independently derived by an operator invariant. The tested search families do not satisfy the preregistered selection criterion, and this negative result is bounded to the families and parameter ranges tested.
 
-## Scope and scientific discipline
-
-Phi-Genesis is a computational spectral audit, not a formalization of Evgeny's Theorem. That theorem has its own operator definitions, observable and Lean verification record; its formal status does not transfer to this repository's spectral calculations or mass-index search.
-
-The mass relationship \(m=A n\) remains a numerical fit rather than a spectral prediction because the target indices have not been independently derived by an operator invariant. The repository records this limitation explicitly.
+Phi-Genesis is not a formalization of Evgeny's Theorem. Its numerical status does not inherit the Lean verification status of that separate theorem; the operators, observables and evidence types differ.
 
 ## Research correspondence
 
-For scientific correspondence, methodological criticism, or reproducibility feedback, use the email link below. The address is intentionally displayed as a short action rather than a long raw string so it remains contained on narrow screens.
-
-[**Contact the laboratory**](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry){ .md-button }
+For scientific correspondence, methodological criticism or reproducibility feedback, contact [**the Phi-Genesis research team**](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry).
 
 ---
 
-*Phi-Genesis · Spectral Research Laboratory · documented project status v2.2.1. Visual pages are navigational aids; claims should be checked against the linked primary records.*
+_Copyright 2026 · RFT-SIRM · Phi-Genesis Spectral Research Laboratory._
