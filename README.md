@@ -1,280 +1,458 @@
-# Phi-Genesis: Spectral Core for Fractal Vacuum Substrate
+# Phi-Genesis — Spectral Research on the Sierpiński Gasket
 
+[![Research programme](https://img.shields.io/badge/RFT--SIRM-Phi--Genesis-5b4bc4?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/Tests-Pytest-168f83?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/RFT-SIRM/Phi-Genesis/actions)
+[![Interactive portal](https://img.shields.io/badge/Explore-Interactive%20Portal-087ea4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/interactive/)
+[![Research history](https://img.shields.io/badge/Read-Research%20History-0f766e?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/history.html)
 
-[![Lab](https://img.shields.io/badge/Lab-Phi--Genesis-dc2626?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![License](https://img.shields.io/badge/License-MIT-eab308?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Visualization](https://img.shields.io/badge/Visualization-Live%20Demo-06b6d4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/interactive/)
+**Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed \(\mathbb{Z}_2\)-flux / \(\pi\)-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
 
+> [!IMPORTANT]
+> **Scientific status, not marketing status:** spectral and gap observations are numerical results scoped to the implemented operators and tested levels. The proposed mass-index selection rule \(\{1,12,17,40\}\) has **not** been established. The formula \(m=A n\) is a numerical fit, not a prediction, until an independent rule derives the indices without looking at the masses. Gate A—the full characterization of spectral-decimation exceptions for the implemented corner-degree-2 Laplacian—also remains open.
 
+<div align="center">
 
-Reproducible spectral computations on the Sierpiński gasket (SG) and related structures. This is the computational backbone of the RFT (Reality Fractal Theory) research programme.
+[**Open the interactive research portal →**](https://rft-sirm.github.io/Phi-Genesis/interactive/) · [**Browse the research map →**](https://rft-sirm.github.io/Phi-Genesis/research-map.html) · [**Read the dissertation →**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
 
-**Status (2026-10-15):** package version 2.2.1; current results and limitations are documented below. See [Final status](#final-status).
-
-> **Research history:** [Explore the interactive Phi-Genesis timeline](https://rft-sirm.github.io/Phi-Genesis/history.html) — the early spectral question, the carpet-search reassessment, preregistered tests, methodological corrections, and the current evidence limits.
-
-[![Research history](https://img.shields.io/badge/Research-History%20%26%20Methods-0f766e?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/history.html)
-
-## Final status
-
-| | |
-|---|---|
-| **Established (numerical, reproducible; not machine-checked)** | Spectral decimation and the Fukushima-Shima gap structure on the Sierpinski gasket; the log-periodic Weyl law with exponent ln3/ln5, recovered from finite-level counts without any window to better than 0.1% (chord estimator, level 9, N >= 1000; Open Problem #2); pi-flux boundary conditions open a spectral gap; the eta-invariant claim of RFT-String v8.7 is not reproduced. |
-| **Searched for, not found** | A spectral rule that selects the mass indices {1, 12, 17, 40}. Three pre-registered look-elsewhere tests (v1.0, v1.1, v1.2.1) gave *no evidence*; 193 configuration evaluations are recorded in the ledger, plus the earlier carpet search (about 128 more), so at least about 321 in all. The two tests able to reach the threshold (v1.1, v1.2.1) did not. |
-| **Therefore** | The mass formula `m = A*n` matches four masses with one fitted scale and four integers chosen with the masses in view. It is a numerical coincidence, not a prediction. The top-quark index is unresolved (1654, 1664 or 1680). |
-| **Not addressed** | Light fermions (needs a specified model whose parameters are counted against the masses it explains); a bridge from A to the electroweak scale (no Lagrangian is defined in this repository). |
-
-**What would reopen it.** Only (a) a derivation of the indices from an invariant of the operator, stated before any comparison with masses, or (b) a new operator family with an a-priori rationale, under a new pre-registered protocol version with a null-only power check. Re-running the same searches on the same four targets would only raise the look-elsewhere correction.
-
-Method write-up (one page): [`METHODOLOGY.md`](METHODOLOGY.md). Live page: https://rft-sirm.github.io/Phi-Genesis/interactive/
-
-## Selection protocol status
-
-The question tested: does any operator family on the Sierpiński gasket *select* the mass indices {1, 12, 17, 40} more often than chance, after correcting for the number of configurations tried (look-elsewhere effect)? Rules, null pools and thresholds were fixed and committed **before** each evaluation.
-
-| Version | Rule | Configurations | Result | Commits |
-|---|---|---|---|---|
-| v1.0 | k = 12, window 60 | 75 | **no evidence** (p = 0.922 N-pot, 0.968 N-edge; threshold p <= 0.01). Post-hoc power check: the test could not have reached the threshold for any outcome, so this negative is uninformative. | c7e0c7f |
-| v1.1 | k = 6, window 60 | 75 | **no evidence** (p = 0.966 N-pot, 0.997 N-edge). Max 2 of 4 targets in any configuration; index 40 selected by 0 of 75. This test *could* reach p <= 0.01, so the negative is informative for these 75 configurations. | d3605df, e9ffe15, 77e82ba, 743c415 |
-| v1.2.1 | k = 8, window 60; SG x S^1 with spin structure (continuum circle, R^2 = 5^j) | 10 | **no evidence** (p = 0.953 N-circ, 0.926 N-circpot). Max 1 of 4 targets in any configuration (index 12); indices 1, 17, 40 never selected. Informative negative: the threshold was reachable. Not independent of F3 (lattice circle). | 1d9ed45, 1a71e0c, 3b7fa82 |
-
-Cumulative configuration evaluations across all families tried: **193** (182 through v1.1, plus 1 exploratory rule check, plus 10 in v1.2.1; a lower bound, since the carpet search of ledger row 2, about 128 configurations at level 3 plus an unrecorded level-4 sweep, is not included) (full list in [`protocol_ledger.md`](protocol_ledger.md)).
-
-**What this means for the results below.** The integer indices and the scale `A` in section 4 are not derived from any selection rule; the mass formula is a numerical match, not a prediction. Agreement should be read with the number of tried configurations in mind.
-
-**Open blockers.** The top-quark index (about 1650) lies outside the window of 60 and cannot be selected by the current rule. Any Stage 2 needs a new operator family or rule, fixed in a new protocol version before it is evaluated.
-
-Files: [`PREREGISTRATION.md`](PREREGISTRATION.md), [`PREREGISTRATION_v1.1_DRAFT.md`](PREREGISTRATION_v1.1_DRAFT.md), [`PREREGISTRATION_v1.2_DRAFT.md`](PREREGISTRATION_v1.2_DRAFT.md), [`PREREGISTRATION_v1.2.1.md`](PREREGISTRATION_v1.2.1.md), [`protocol_ledger.md`](protocol_ledger.md), `protocol_data/` (null pools, results, seeds), `phi_genesis/selection_protocol*.py`.
+</div>
 
 ---
 
-## Verified Results (numerical; reproducible via code)
+## Contents
 
-### 1. Sierpiński gasket spectral theory
-- **Spectral decimation ×5** — eigenvalues scale by factor ~5 between consecutive levels (subject to corner-defect corrections for the corner-degree-2 Laplacian).
-- **Weyl law** — counting function N(λ) ~ λ^{d_s/2} with d_s/2 = ln(3)/ln(5) ≈ 0.6826. Naive window fits carry a finite-level and window bias of about 3%; a window-free chord estimator recovers the exponent to better than 0.1% (level 9, N >= 1000), see Open Problem #2.
-- **Log-periodic oscillations** — period ln(5), signature of decimation.
-- **Fukushima–Shima gaps** — forbidden zones cluster at decimation fixed points λ ≈ 2.5 and λ ≈ 3.
+- [At a glance](#at-a-glance)
+- [Evidence dashboard](#evidence-dashboard)
+- [Mathematical core](#mathematical-core)
+- [Key numerical results](#key-numerical-results)
+- [Mass-index audit](#mass-index-audit)
+- [Preregistered selection tests](#preregistered-selection-tests)
+- [Open problems and Gate A](#open-problems-and-gate-a)
+- [Test and reproducibility guide](#test-and-reproducibility-guide)
+- [Repository map](#repository-map)
+- [How this connects to the wider RFT-SIRM programme](#how-this-connects-to-the-wider-rft-sirm-programme)
+- [Research standards and citation](#research-standards-and-citation)
 
-### 2. Möbius (π-flux) boundary conditions
-- Full π-flux through all holes **opens a mass gap**: first eigenvalue jumps from ~0.006 to ~0.46 at level 5.
-- Partial twists also gap the spectrum.
-- **Selection-rule test:** gap-selected indices follow the lacunary `3^k − 1` structure. The mass indices `{1, 12, 17, 40}` are **not** selected by gap rules.
+## At a glance
 
-### 3. Exhaustive twist search (32 configurations)
-- All `2^5 = 32` generation-twist configurations at level 5 tested.
-- **Max simultaneous hits on {1, 12, 17, 40}: 1 of 4.**
-- **Index 40 never appears** as gap-selected under any configuration.
-- This **closes the twist-by-generation family** as a candidate selection rule.
-
-### 4. Integer mass formula
-Using **integer** indices `n = {1, 12, 17, 40}` with a single scale `A = 104.63` MeV:
-
-| Fermion | n | M_pred (MeV) | M_exp (MeV) | Error |
-|---------|---|--------------|-------------|-------|
-| μ | 1 | 104.63 | 105.658 | 0.97% |
-| τ | 17 | 1778.71 | 1776.86 | 0.10% |
-| c | 12 | 1255.56 | 1275.00 | 1.52% |
-| b | 40 | 4185.20 | 4180.00 | 0.12% |
-| **Mean** | | | | **0.68%** |
-
-This beats the fitted non-integer values (0.87% mean error). The decimals in earlier versions were noise around integers.
-
-### 5. Scale consistency audit
-- Fitted scale `A = 104.63` MeV (from integer fit).
-- Formula `A = v·α/Φ⁶` gives **100.13** MeV — 4.3% below fitted. Discrepancy confirmed.
-- Relative spread of per-fermion implied scales: **0.58%**.
-
-### 6. η-invariant claim — REJECTED
-The RFT-String v8.7 claim that `η̄(0) = −4` for the boundary potential `V(i) = 0.5·(4y/√3 − 1)` is **not reproduced**:
-- For the claimed potential: asymmetry = +1
-- For random potential: −1
-- For zero potential: −2
-- Value −4 **never observed**. The asymmetry is an O(1) finite-size artifact, not a topological invariant.
-
-### 7. Top-quark n_t inconsistency — NOT RESOLVED
-The top quark is intentionally absent from the 4-fermion integer table above.
-Reason (verified in `test_top_quark_consistency.py`): the historically
-advertised `n_t = 1680 = 8·7#` was computed under an OLDER scale
-(A ≈ 103.63 MeV), not the A = 104.63 MeV used everywhere else in this
-section. Recomputing at the current A gives three genuinely different
-candidates:
-
-| Candidate | n_t | How it's obtained |
+| Research question | Current answer | Evidence label |
 |---|---|---|
-| Advertised ("8×7#") | 1680 | `v/(√2·A)` at the *old* A ≈ 103.63 |
-| Formula, current A | 1664 | `v/(√2·A)` at A = 104.63 |
-| Best integer fit, current A | 1654 | `round(m_top / A)` at A = 104.63 |
+| Does the Sierpiński-gasket spectrum show the expected decimation and gap structure? | Reproduced numerically on finite graph levels, with explicit corner-defect qualifications. | **NUMERICALLY REPRODUCED** |
+| Can the spectral dimension be recovered from finite-level counts? | The theoretical exponent is \(d_s/2=\ln 3/\ln 5\). A theory-motivated chord estimator approaches \(\ln 3/\ln(5-\sigma)\) to better than 0.1% on the reported level-9 subset with \(N\ge1000\). | **NUMERICAL CONSISTENCY CHECK** |
+| Does a \(\pi\)-flux boundary condition open a gap? | The tested full \(\pi\)-flux case opens a gap; the first level-5 eigenvalue changes from approximately 0.006 to 0.46. | **NUMERICALLY REPRODUCED** |
+| Has a spectral rule independently selected \(\{1,12,17,40\}\)? | No. Preregistered families did not produce evidence above the specified null thresholds. | **NOT ESTABLISHED** |
+| Is \(m=A n\) a predictive mass law? | Not at present: the four integer indices were chosen with the target masses in view, and no independent selection mechanism has been derived. | **FIT, NOT PREDICTION** |
+| Is Gate A closed? | No. Matched eigenvalue pairs can be at machine precision, but the full recursively generated exceptional set and complete correspondence are not yet characterized. | **OPEN** |
+| Does the project reproduce the reported \(\eta\)-invariant value \(-4\)? | No. The tested potential gives asymmetry \(+1\); \(-4\) was not observed in the reported checks. | **NOT REPRODUCED** |
 
-Using the advertised n_t = 1680 with the current A gives a top-quark
-error of **1.55%** — more than double the 4-fermion mean (0.68%).
-Including it would raise the reported mean to ~0.85%, back to the
-level of the old fitted decimals the integer fit is presented as
-improving on. No single n_t is asserted as correct here; the
-inconsistency itself is the finding, guarded against regressing
-silently by the three tests in `test_top_quark_consistency.py`.
+### Evidence labels used here
 
-### 8. Index-1 triviality caveat — affects the CORE result, not just carpet
-Verified in `test_sg_index_triviality.py` on the actual SG graph (not
-the abandoned carpet branch): under thousands of random on-site
-potentials (unrelated to any specific flux/twist mechanism), index 1
-appears in the gap-selected set **~95% of the time**, regardless of
-what the potential is. For comparison: index 12 ~37%, index 17 ~22%,
-index 40 ~3.4%.
-
-This means the μ↔n=1 correspondence (section 4) and the "1 of 4" hit
-reported for the exhaustive Möbius twist search (section 3) carry much
-less evidential weight than they appear to at face value — index 1 is
-close to a structural artifact of the ratio-based gap-selection rule
-itself, not a signature of the π-flux mechanism specifically. An index
-40 hit would be far more meaningful (only ~3.4% base rate) than an
-index 1 hit (~95% base rate) — the four "hits" in this repo are not
-equally strong evidence, and should not be reported as if they were.
-
-### 9. Structural coincidence involving the index 40 — NOT evidence
-On the untwisted SG the multiplicities of the special eigenvalues are, at levels 3-7: mult(3) = (3^(m-1)-3)/2, mult(5) = (3^(m-1)-1)/2, mult(6) = (3^m-3)/2 (checked at levels 3-6 in `test_sg_inertia.py`; levels 3-7 numerically). In particular mult(5) = 40 at level 5, and (3^k-1)/2 = 1, 4, 13, 40 contains two of the four mass indices {1, 12, 17, 40}. A random 4-subset of {1,...,40} contains at least two of {1, 4, 13, 40} with probability 4.3%. This is not evidence: the form (3^k-1)/2 was chosen after seeing the indices (a look-elsewhere effect over many possible integer forms); the repository's selection rule uses gap positions, not multiplicities (at level 5 the multiplicity-40 cluster occupies nonzero-eigenvalue positions 203-242); and the other two indices (12, 17) do not have this form. Recorded so that the coincidence is not later reported as support.
+| Label | Meaning |
+|---|---|
+| **FORMALIZED** | A stated proposition is accepted by a specified proof assistant and build. This label is not used for the numerical claims below. |
+| **NUMERICALLY REPRODUCED** | A computation can be rerun for stated code, parameters, and finite inputs. It does not prove a universal theorem. |
+| **CERTIFIED FINITE-LEVEL** | A certificate establishes a finite case or coefficient under stated bounds; it does not automatically prove all levels. |
+| **NOT ESTABLISHED** | The available evidence does not establish the stronger claim. |
+| **NOT REPRODUCED / REJECTED** | A named claim did not survive the documented reproduction attempt or conflicts with the reported checks. |
+| **OPEN** | A derivation, proof, independent replication, or decisive experiment remains incomplete. |
 
 ---
 
-## Open Problems
+## Evidence dashboard
 
-### #1 — Selection rule for n_f (priority)
-The formula `m = A·n` is numerically accurate, but `n` is not yet derived from spectral properties. We need a boundary condition or operator on SG × S¹ that selects `n ∈ {1, 12, 17, 40}` independently of experimental input.
+<details>
+<summary><strong>Established numerically: spectral structure and boundary experiments</strong></summary>
 
-**Tried (no evidence; 193 configuration evaluations, see [`protocol_ledger.md`](protocol_ledger.md)):**
-- Z2 twists by generation (32 configurations)
-- Scalar vertex potentials V(x) on SG and Dirichlet conditions at corners (pre-registered v1.0, v1.1)
-- SG × S¹ with a lattice circle (v1.0, v1.1) and with a continuum circle and both spin structures (v1.2.1)
-- Sierpiński carpet (about 128 configurations at level 3 plus an unrecorded level-4 sweep; an initial "4/4" match was diagnosed as a look-elsewhere effect; branch abandoned)
+- **Spectral decimation:** the polynomial map \(\phi(\lambda)=\lambda(5-\lambda)\) describes the expected structure, but for the implemented graph Laplacian with degree-2 corners the correspondence includes boundary/corner-defect corrections. Gate A is deliberately not marked closed.
+- **Fukushima–Shima gap structure:** forbidden spectral zones cluster around the documented decimation fixed-point region, including \(\lambda\approx2.5\) and \(\lambda\approx3\).
+- **Log-periodicity:** the spectrum exhibits the scale signature associated with factor-5 decimation, with period \(\ln 5\) in the log-spectral variable.
+- **Weyl exponent:** the theoretical exponent is \(\ln3/\ln5\approx0.6826\). Finite-level regression estimates depend on the selected window; the chord-estimator result is a separate, theory-motivated numerical consistency check.
+- **Full \(\pi\)-flux:** the tested level-5 first eigenvalue changes from about 0.006 to about 0.46, consistent with a gap opening in that setup.
+- **Exhaustive generation-twist search:** all \(2^5=32\) level-5 configurations were checked. No configuration selected more than one of the four target indices; index 40 was not selected.
 
-**Still untested:**
-- Random dendrites, higher-genus or branched coverings of SG
-- A derivation of the indices from an invariant of the operator (instead of a statistical search over families)
+These are scoped to the operators, graph conventions, levels, and numerical procedures actually used. They are not a proof of a mass-index law.
 
-Any further family needs a new pre-registered protocol version, with a null-only power check, before it is evaluated.
+</details>
 
-### #2 — Finite-level convergence of d_s/2
-Naive Weyl fit: ~2.8% error at level 8 (9843 vertices). Phase-averaged sliding windows can dip below 1%, but the result depends on window width and step — not yet a unique correction.
+<details>
+<summary><strong>Negative results and caveats that must remain visible</strong></summary>
 
-**Update (numerical inertia counts computed using floating-point sparse LU to level 10).** `phi_genesis/sg_inertia.py` counts the eigenvalues below any sigma exactly by Sylvester's law of inertia, with no eigensolver. It agrees with dense spectra at levels 5-6 (tests) and needs ~0.6 s and ~250 MB per count at level 9 (29,526 vertices) and ~700 MB at level 10 (88,575 vertices) on one CPU core. Findings:
+- The three documented preregistered selection protocols did not establish a selection rule for \(\{1,12,17,40\}\).
+- The earliest protocol, v1.0, could not reach its target significance threshold even under its best possible hit pattern. Its negative result is therefore **uninformative**. Later v1.1 and v1.2.1 protocols passed the null-only power check and still did not reach the threshold.
+- The earlier Sierpiński-carpet search produced an apparent four-index match, later identified as vulnerable to a look-elsewhere effect. It is retained in the research history rather than promoted as supporting evidence.
+- Index 1 is selected by the ratio-based gap rule very frequently under random on-site potentials (about 95% in the reported audit); index 40 appears much less often (about 3.4%). These hits do not carry equal evidential weight.
+- The top-quark index remains inconsistent across the historical estimate, the current scale formula, and the best integer fit: 1680, 1664, and 1654 respectively.
+- The reported \(\eta\)-invariant value \(-4\) was not reproduced for the specified potential.
+- Gate A is not closed merely because a subset of predicted/observed eigenvalue pairs match to machine precision.
 
-- Fixed window sigma in [3e-3, 0.375] (3 log-periods, phase-averaged): deviation of the fitted exponent from ln3/ln5 is -2.19% (level 6), -0.61% (7), +0.07% (8), +0.32% (9), +0.41% (10).
-- Window sensitivity (sigma in [2e-3, 0.45], windows of k log-periods sliding in steps of ln5/16), level 9: k=1 gives slopes 0.545...0.857 (mean +1.00%); k=2 gives 0.645...0.730 (mean +0.44%); k=3 gives 0.672...0.704 (mean +0.78%).
-- Interpretation: the number of levels is no longer the bottleneck; the estimate is set by the window choice (log-periodic oscillation of order +-2-3% around the mean). The mean also drifts upward with level at a fixed window, consistent with the window top lying outside the asymptotic regime (not separately tested). The exponent d_s/2 = ln3/ln5 is known exactly from theory, so these numbers are consistency checks, not new information.
-- Not tested: level 11 and above (fill-in memory is the expected limit, unverified).
+</details>
 
-**Path forward:** an analytical finite-size correction from decimation theory, or an estimator that is stable under window choice. More levels alone will not remove the window dependence.
+## Mathematical core
 
-**Update (window bias vs finite-level error; exploratory, `protocol_data/op2_window_bias.py`, numerical inertia counts computed using floating-point sparse LU levels 6-9 cached in `protocol_data/op2_counts.json`).**
+### 1. Sierpiński-gasket spectral decimation
 
-- The estimators and windows of the first table were fixed before the run: 24 grid points per log-period, windows of 3 log-periods shifted by factors of 5, plain OLS slope (E1) and OLS with the first harmonic of the log-period (E2). Sliding windows and 2-3 harmonics were added after seeing that table (post hoc).
-- Shifting the window down by a factor 5 gives (almost exactly) the same deviation as going down one level: e(L, j) ~ e(L-j, 0) (for example (7,1), (8,2), (9,3) all give +0.68% for E1). So at a fixed window the level-to-level change is the same effect as moving the window; the two cannot be separated by shifting windows.
-- Plain OLS on one window position (3 log-periods, level 9) deviates by +2.94% from ln3/ln5; over all 52 valid window positions at level 9 the OLS deviation has mean -0.38% and range [-3.93%, +3.20%]. The window dependence is mostly a property of the estimator on a log-periodic staircase, not of finite level.
-- Adding harmonics of the log-period shrinks the spread: at level 9 the deviation over the same 52 windows is -0.49% [-2.03%, +0.46%] with 1 harmonic and -0.47% [-1.28%, +0.06%] with 3 harmonics (levels 7 and 8: -0.74% and -0.67% for 3 harmonics; windows near the finite-graph boundary are excluded by the rule N(sigma_min) >= 9).
-- Level 10 (numerical inertia counts computed using floating-point sparse LU, 73 valid windows): OLS -0.30% [-3.93%, +3.38%]; 1, 2 and 3 harmonics -0.32% [-2.03%, +0.60%], -0.32% [-1.57%, +0.38%], -0.32% [-1.28%, +0.21%]. The extremes did **not** shrink with level (the 3-harmonic minimum is -1.28% at levels 9 and 10): windows at a lower level recur, shifted, at the next level, so the phase-dependent spread of a 3-period window is a property of the estimator, not of the level. Only the mean moves: for 3 harmonics -0.74%, -0.67%, -0.47%, -0.32% at levels 7-10 (the set of windows changes with the level, so this is not extrapolated).
-- What is still open: a single window-independent number. With 3 harmonics the spread is about 1.5% and the mean offset about -0.3% at level 10. The ln3/ln5 value itself is not in question (proved for the gasket); this concerns how well finite-level counts reproduce it. The next bullet addresses this.
-- **Window-free estimator (exploratory, theory-motivated; `protocol_data/op2_chord_estimator.py`, output in `protocol_data/op2_chord_estimator.txt`).** For the Laplacian used here (D - A with degree 2 at the three corners) spectral decimation with phi(x) = x(5 - x) holds only up to corner-defect corrections: comparing the level-5 and level-6 spectra, the decimation images differ from the level-6 eigenvalues by about 1% at the low end, and two 3-fold modes of level 6 (at 0.637 and 2.250) have no counterpart among the images (0.500 and 2.0). The counts nevertheless satisfy N_{L+1}(sigma) = N_L(phi(sigma)) at 47 of 49 sampled points of level 8, and the count at fixed sigma grows by a factor 3 per level up to a small offset (N_{L+1} = 3 N_L - delta, delta <= 3 in the points inspected, which would fit three corner defects; not proven). So the chord exponent ln(N(phi(sigma)) / N(sigma)) / ln(phi(sigma) / sigma) equals ln3/ln(5 - sigma) up to an O(1/N) counting offset, with no window and no phase; ln3/ln(5 - sigma) tends to ln3/ln5 as sigma tends to 0 (relative difference about 0.12 sigma, analytic). At level 9 the chord estimate deviates from ln3/ln(5 - sigma) by -0.45% on average over 110 points with N(sigma) >= 10 (range -6.3% to +0.4%), by -0.05% (range -0.25% to +0.13%) for N >= 300 (38 points) and by -0.03% (range -0.08% to +0.07%) for N >= 1000 (14 points). Unlike the regression spread, the range shrinks as N grows. So the exponent can be read off finite-level counts to better than 0.1% (N >= 1000, level 9) without a window; the regression numbers above describe the estimator, not the gasket. This was found after the regression study and is not pre-registered; it is a consistency check of spectral decimation, not new physics.
+The working decimation map is
 
-### #3 — Light fermions
-Electron, up, down, strange quarks not yet addressed. A fractal NJL mechanism is sketched but not implemented.
+\[
+\boxed{\phi(\lambda)=\lambda(5-\lambda)}
+\]
 
-Note: with A = 104.63 MeV the integer formula `m = A·n` would need n ≈ 0.005 (electron), ≈ 0.02 (up), ≈ 0.04 (down) and ≈ 0.9 (strange) (approximate PDG masses), i.e. not integers ≥ 1. Light fermions therefore require a mechanism beyond the integer-index formula; any such mechanism brings its own parameters, which must be counted against the number of masses it is meant to explain.
+For the idealized decimation relation, inverse branches are used to compare candidate preimages across graph levels. In the actual implementation, the graph Laplacian has degree-2 corner vertices, and this boundary convention produces exceptional pairs and residuals that must be characterized rather than hidden.
+
+**Gate A status:** some pairs match to floating-point machine precision; the simple exclusion of exceptional values \(\{2,5,6\}\) does not account for every mismatch. The nightly diagnostic checks that the machine-exact subset really is exact at numerical precision and that its match rate increases across levels 5–7. This is evidence about the checked pairs and trend—not proof that the full decimation correspondence is closed.
+
+- [Gate A diagnostic test](test_decimation_gate_a.py)
+- [Residual-statistics tests](test_decimation_residual_summary.py)
+- [Spectral decimation implementation](phi_genesis/sg_laplacian.py)
+- [Fukushima–Shima checks](test_fukushima_shima.py)
+
+### 2. Spectral dimension and the Weyl exponent
+
+For the Sierpiński gasket, the theoretical exponent is
+
+\[
+\boxed{\frac{d_s}{2}=\frac{\ln 3}{\ln 5}\approx0.682606}
+\]
+
+The counting function \(N(\lambda)\) counts eigenvalues below a threshold \(\lambda\), with the precise convention defined by the implementation. Finite-level regressions are sensitive to the fitting window because the counting staircase has log-periodic structure.
+
+The exploratory chord estimator compares a count at \(\sigma\) with a count at its decimation image \(\phi(\sigma)\):
+
+\[
+\widehat{d_s/2}(\sigma)=
+\frac{\ln\!\left[N(\phi(\sigma))/N(\sigma)\right]}
+{\ln\!\left[\phi(\sigma)/\sigma\right]}
+\]
+
+Under the working count relation, this tends toward
+
+\[
+\frac{\ln 3}{\ln(5-\sigma)}
+\longrightarrow
+\frac{\ln 3}{\ln 5}
+\qquad (\sigma\to0)
+\]
+
+**Reported numerical result:** at level 9, for the 14 sampled points with \(N\ge1000\), the chord estimate differs from \(\ln3/\ln(5-\sigma)\) by an average of about \(-0.03\%\), with a range of approximately \(-0.08\%\) to \(+0.07\%\). This is an exploratory consistency check added after the regression study—not a preregistered discovery and not new physical evidence. The exact theoretical exponent itself is not in question; the open problem is stable finite-level estimation and full control of the corner correction.
+
+- [Inertia counting implementation](phi_genesis/sg_inertia.py)
+- [Window-bias experiment](protocol_data/op2_window_bias.py)
+- [Chord-estimator experiment](protocol_data/op2_chord_estimator.py)
+- [Open Problem #2 data and discussion](protocol_data/)
+
+### 3. Boundary conditions and \(\pi\)-flux
+
+The project studies signed graph operators representing \(\mathbb{Z}_2\)-flux / Möbius-style boundary twists. The reported level-5 full-\(\pi\)-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
+
+This establishes a gap in the tested numerical setup; it does **not** establish that the target fermion indices are selected by the gap. The exhaustive 32-configuration generation-twist search reached at most one of the four target indices, and index 40 was never selected.
+
+- [Signed-flux operator](phi_genesis/mobius.py)
+- [Exhaustive twist search](phi_genesis/mobius_selection_search.py)
+- [Twist tests](test_mobius.py)
 
 ---
 
-## Repository Structure
+## Key numerical results
 
-```
-phi_genesis/
-  __init__.py                         — module exports
-  sg_laplacian.py                     — SG graph, Laplacian, decimation, Weyl
-  dirac_eta.py                        — Graph Dirac operator, η-invariant test
-  mass_check.py                       — Scale consistency audit
-  mobius.py                           — π-flux signed Laplacian (Z₂ cocycle)
-  mobius_selection_search.py          — Exhaustive twist search (32 configs)
-  fukushima_shima.py                  — Gap structure verification
-  spectral_convergence.py           — Dense solver, Weyl fits, window sensitivity
-  sg_inertia.py                     — Exact eigenvalue counts via inertia (levels 9-10, no eigensolver)
-  test_honest.py                      — 5 core tests (~4s)
-  test_mobius.py                      — 3 twist/integer tests (~0.1s)
-  test_fukushima_shima.py             — 1 gap test (~1.6s)
-  test_convergence_and_selection.py   — 4 deep tests (~13s, level 8 skipped in CI)
-  test_sg_inertia.py                  — 4 fast tests (~1.2s) + nightly window sweep (levels 8-9)
-  selection_protocol.py, selection_protocol_v11.py, selection_protocol_v121.py
-                                      — pre-registered selection tests (v1.0, v1.1, v1.2.1)
-PREREGISTRATION*.md, protocol_ledger.md — protocol documents and the cumulative search ledger
-protocol_data/                        — null pools, results, design outputs, Open Problem #2 scripts
-CHANGELOG.md
-```
+### Spectral estimates
+
+| Quantity | Reported value | Interpretation |
+|---|---:|---|
+| Theoretical \(d_s/2\) | \(\ln3/\ln5\approx0.6826\) | Theoretical reference exponent |
+| Naive regression, level 6 | 0.7051 | About 3.3% above reference |
+| Naive regression, level 8 | 0.7019 | About 2.8% above reference |
+| Level-9 chord estimate, \(N\ge1000\) | Within 0.1% of \(\ln3/\ln(5-\sigma)\) | 14 sampled points; exploratory consistency check |
+| Full \(\pi\)-flux first eigenvalue, level 5 | About 0.46 | Compared with about 0.006 in the untwisted case |
+| Claimed \(\eta\)-asymmetry, specified potential | +1 | The advertised value \(-4\) was not reproduced |
+
+### What the scale audit says
+
+The current four-fermion integer fit uses \(A=104.63\,\text{MeV}\). A separate expression \(A=v\alpha/\Phi^6\) gives about 100.13 MeV, approximately 4.3% lower. The discrepancy is documented, not reconciled.
+
+| Scale or statistic | Value | Status |
+|---|---:|---|
+| Integer-fit scale \(A\) | 104.63 MeV | Fitted to the four selected masses |
+| Formula-derived scale \(v\alpha/\Phi^6\) | 100.13 MeV | 4.3% below fitted value |
+| Relative spread of implied per-fermion scales | 0.58% | Descriptive fit statistic |
+| Mean error for four selected integer indices | 0.68% | In-sample agreement; not predictive validation |
+| Earlier fitted-decimal mean error | 0.87% | Different fit, not an independent test |
 
 ---
 
-## Quick Start
+## Mass-index audit
 
-```bash
-pip install numpy scipy
-python -c "import phi_genesis; print('OK')"
-```
+The explored formula is
 
-### Run tests
+\[
+\boxed{m=A\,n}
+\]
 
-```bash
-pip install -e . pytest
-pytest -q -m "not nightly"      # fast suite; the level-8 test dominates (about 2-3 minutes on one core)
-```
+where \(A\) is a common scale and \(n\) is an integer index. The table below reports the project's current integer fit for four heavy fermions.
 
-### Reproduce the protocol and Open Problem #2 results
+| Fermion | Index \(n\) | Predicted mass (MeV) | Comparison mass (MeV) | Relative error |
+|---|---:|---:|---:|---:|
+| Muon (\(\mu\)) | 1 | 104.63 | 105.658 | 0.97% |
+| Tau (\(\tau\)) | 17 | 1778.71 | 1776.86 | 0.10% |
+| Charm (\(c\)) | 12 | 1255.56 | 1275.00 | 1.52% |
+| Bottom (\(b\)) | 40 | 4185.20 | 4180.00 | 0.12% |
+| **Mean** | — | — | — | **0.68%** |
 
-```bash
-python -m phi_genesis.selection_protocol_v121 stepA   # null pools (seeds fixed in the code; about 15 minutes)
-python -m phi_genesis.selection_protocol_v121 stepB   # evaluation; compare with protocol_data/results_v1_2_1.json
-python protocol_data/op2_window_bias.py table         # window study from the cached numerical inertia counts computed using floating-point sparse LU
+> [!WARNING]
+> The small mean error is not independent evidence for the index pattern. Four integers were selected with the four masses in view, then one scale was fitted. Without a rule that selects \(n\) independently of those masses, the result remains a numerical match, not a prediction.
+
+### Top-quark consistency: unresolved
+
+| Candidate | \(n_t\) | Origin |
+|---|---:|---|
+| Historical advertised value | 1680 | Derived using an older scale of approximately 103.63 MeV |
+| Current formula-based candidate | 1664 | \(v/(\sqrt2 A)\) using \(A=104.63\) MeV |
+| Current best integer fit | 1654 | \(\operatorname{round}(m_t/A)\) using \(A=104.63\) MeV |
+
+The three candidates are not interchangeable. With the current scale, using 1680 gives a top-quark error of about 1.55%, more than twice the four-fermion mean error. No single top index is asserted as correct.
+
+The index-1 triviality audit is another important caveat: under random on-site potentials, the ratio-based selection rule selects index 1 about 95% of the time, compared with about 37% for index 12, 22% for index 17, and 3.4% for index 40 in the reported experiment. A hit on index 1 is therefore much weaker evidence for a mechanism than a hit on a rare index.
+
+- [Mass-scale audit](phi_genesis/mass_check.py)
+- [Top-quark consistency tests](test_top_quark_consistency.py)
+- [Index-1 base-rate audit](test_sg_index_triviality.py)
+
+---
+
+## Preregistered selection tests
+
+The central statistical question is not whether a configuration can be found that matches the target set after enough experimentation. It is whether a predeclared operator family selects \(\{1,12,17,40\}\) more often than chance after accounting for all configurations searched—the **look-elsewhere effect**.
+
+| Protocol | Search rule | Configurations | Result | Power-check interpretation |
+|---|---|---:|---|---|
+| v1.0 | \(k=12\), window 60 | 75 | \(p=0.922\) and \(0.968\) in the two null ensembles | **Uninformative negative:** even the best hit pattern could not reach the threshold |
+| v1.1 | \(k=6\), window 60 | 75 | \(p=0.966\) and \(0.997\) | **Informative negative:** threshold was reachable; at most 2/4 targets selected, index 40 selected by none |
+| v1.2.1 | \(k=8\), window 60; continuum-circle/spin-structure family | 10 | \(p=0.953\) and \(0.926\) | **Informative negative:** threshold was reachable; at most 1/4 target selected |
+
+Across the three protocols, the ledger records 193 configuration evaluations, plus the earlier carpet search (about 128 level-3 configurations and an unrecorded level-4 sweep). The combined count is therefore a **lower bound of about 321**, not an exact exhaustive count of every historical exploratory attempt.
+
+The carpet's early apparent 4/4 match was subsequently reassessed using null controls and the look-elsewhere effect. The record keeps that episode visible so that it cannot later be cited as clean confirmation.
+
+### Protocol rules
+
+1. State the target indices, selection statistic, null ensembles, seeds, and significance threshold before evaluation.
+2. Check statistical power using the null distribution alone. If the threshold cannot be reached, a negative result is uninformative.
+3. Use the maximum score across all configurations in a family, rather than reporting only the best-looking configuration.
+4. Account for the base rate of each target index; common hits and rare hits do not have equal evidential weight.
+5. Keep abandoned branches and exploratory attempts in the ledger, and label post-hoc analyses explicitly.
+
+**Current conclusion:** the tested families did not establish a spectral rule. This does not prove that no such rule exists; it means the tested rules failed to provide the required evidence.
+
+- [Protocol overview](PREREGISTRATION.md)
+- [v1.1 draft / record](PREREGISTRATION_v1.1_DRAFT.md)
+- [v1.2 draft / record](PREREGISTRATION_v1.2_DRAFT.md)
+- [v1.2.1 protocol](PREREGISTRATION_v1.2.1.md)
+- [Complete protocol ledger](protocol_ledger.md)
+- [Null pools, outputs, and seeds](protocol_data/)
+- [Methodology: a worked negative example](METHODOLOGY.md)
+- [Selection test code](phi_genesis/)
+
+---
+
+## Open problems and Gate A
+
+<details open>
+<summary><strong>Open Problem 1 — derive the mass indices independently</strong></summary>
+
+**Question.** Can an operator invariant, boundary condition, or independently motivated construction select \(n\in\{1,12,17,40\}\) before the masses are compared?
+
+**Tried:** generation-wise \(\mathbb{Z}_2\) twists, scalar vertex potentials, Dirichlet corner conditions, SG \(\times S^1\) with lattice and continuum-circle variants, and the earlier Sierpiński-carpet search. The preregistered protocols did not establish the target rule.
+
+**Required next step:** a genuinely motivated new operator family or an analytical derivation of the indices, committed under a new preregistered protocol with a null-only power check. Repeating the same searches against the same targets would increase the look-elsewhere correction, not the evidence.
+
+</details>
+
+<details>
+<summary><strong>Open Problem 2 — finite-level estimation of the spectral exponent</strong></summary>
+
+Naive regression and sliding-window estimates vary with the log-spectral window. The level-9 chord estimator improves agreement on the reported high-count subset, but it is exploratory, has a finite sampled domain, and depends on the working decimation/count relation.
+
+The exact theoretical exponent \(\ln3/\ln5\) is the reference. The open issue is a robust finite-level estimator with controlled corner corrections and a clearly stated domain—not a new determination of the theoretical exponent.
+
+</details>
+
+<details>
+<summary><strong>Gate A — characterize the complete decimation exceptional set</strong></summary>
+
+The map \(\phi(\lambda)=\lambda(5-\lambda)\) is correct for the matched pairs checked, and the largest reported residual among the machine-exact subset at levels 5–7 is approximately \(1.2\times10^{-14}\), \(2.0\times10^{-14}\), and \(5.2\times10^{-14}\), respectively.
+
+That does **not** mean every expected preimage has a one-to-one match. A broader residual threshold can include near-misses; therefore the arithmetic mean over all broadly matched pairs must not be described as machine precision. The diagnostic explicitly separates:
+- broad matches (residual below \(10^{-4}\));
+- machine-exact matches (residual below \(10^{-10}\));
+- near-misses that pass the broad threshold but not the machine-exact threshold.
+
+The working explanation is that the full exceptional set is recursively generated and/or affected by the implemented corner boundary. Its complete structure remains uncharacterized. The nightly check guards the observed machine-precision subset and increasing-rate trend; it does not close Gate A.
+
+</details>
+
+<details>
+<summary><strong>Open Problem 3 — light fermions and a physical bridge</strong></summary>
+
+The electron, up, down, and strange fermions are not explained by the integer-index formula in its current form. A proposed fractal/NJL-style mechanism is not implemented as a fully specified predictive model here. Any additional coupling, cutoff, or other free parameter must be counted against the masses it is meant to explain.
+
+The repository also does not define a Lagrangian and beta functions that derive the fitted scale \(A\) from the electroweak scale. Without those ingredients, a renormalization-group calculation cannot be used to claim that bridge has been established.
+
+</details>
+
+---
+
+## Test and reproducibility guide
+
+### Requirements
+
+- Python 3.10 or later
+- NumPy
+- SciPy
+- pytest for tests
+
+### Install
+
+From a clone of this repository:
+
+~~~bash
+python -m venv .venv
+source .venv/bin/activate       # macOS / Linux
+python -m pip install --upgrade pip
+python -m pip install -e .
+python -m pip install pytest
+~~~
+
+A minimal import check:
+
+~~~bash
+python -c "import phi_genesis; print('Phi-Genesis import OK')"
+~~~
+
+### Run the normal test suite
+
+~~~bash
+pytest -q -m "not nightly"
+~~~
+
+Nightly tests are marked separately because they can involve deeper spectra, larger memory use, or Monte Carlo sweeps. To run all tests, including nightly diagnostics:
+
+~~~bash
+pytest -q
+~~~
+
+Use the workflow logs to distinguish a completed pass from a still-running job:
+
+- [GitHub Actions — all workflows](https://github.com/RFT-SIRM/Phi-Genesis/actions)
+- [Tests workflow](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/tests.yml)
+- [Nightly deep tests](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/nightly-deep-tests.yml)
+
+### Reproduce the v1.2.1 selection protocol
+
+> [!CAUTION]
+> The protocol's Step A rewrites the committed null-pool file. If you want to preserve the repository's checked-in output unchanged, run this on a clean disposable clone or back up the file first.
+
+~~~bash
+python -m phi_genesis.selection_protocol_v121 stepA
+python -m phi_genesis.selection_protocol_v121 stepB
+~~~
+
+Compare the output with `protocol_data/results_v1_2_1.json` and the written protocol/ledger.
+
+### Reproduce the finite-level estimator studies
+
+~~~bash
+python protocol_data/op2_window_bias.py table
 python protocol_data/op2_window_bias.py sliding
-python protocol_data/op2_chord_estimator.py 8 9       # window-free chord estimator
-```
+python protocol_data/op2_chord_estimator.py 8 9
+~~~
 
-`stepA` rewrites `protocol_data/null_pools_v1_2_1.json`; the seeds are fixed, so a reproduction should regenerate the committed file. Run it on a copy if you want to keep the committed one untouched.
+These computations use the committed cached count data and/or perform numerical sparse-LU inertia counts. Resource use depends on level and environment; level 10 has been reported at roughly 700 MB for a count. Higher levels have not been asserted to work within a fixed memory budget.
 
----
+### Reproducibility checklist
 
-## Key Numbers
-
-| Quantity | Value | Source |
-|----------|-------|--------|
-| A (integer fit) | 104.63 MeV | Best fit to μ/τ/c/b with integer n |
-| A (formula) | 100.13 MeV | v·α/Φ⁶ — 4.3% below fitted |
-| d_s/2 (theory) | 0.6826 | ln(3)/ln(5) |
-| d_s/2 (naive, level 6) | 0.7051 | 3.3% above theory |
-| d_s/2 (naive, level 8) | 0.7019 | 2.8% above theory |
-| d_s/2 (chord estimator, level 9, N >= 1000) | within 0.1% of ln3/ln(5 - sigma) | Open Problem #2 |
-| Mean error (integer n, 4 fermions) | **0.68%** | Better than fitted decimals (0.87%) |
-| Mean error (fitted n, 5 fermions) | 0.87% | Old non-integer values |
-| η-asymmetry (claimed potential) | +1 | Not −4 |
+- [ ] Record the commit SHA, Python version, dependency versions, and operating system.
+- [ ] Preserve the preregistration and null pools used by the run.
+- [ ] Distinguish fast CI from nightly/deep tests.
+- [ ] Report the full configuration family and null comparison, not only the best match.
+- [ ] Keep residual means, medians, maxima, and thresholds distinct.
+- [ ] Do not replace an unresolved discrepancy with a badge, fit statistic, or unqualified success statement.
 
 ---
 
-## Roadmap
+## Repository map
 
-1. **Selection rule search** — tried so far: Z2 twists, scalar potentials, Dirichlet corners, SG × S¹ (lattice and continuum circle), carpet; no evidence after 193 configuration evaluations (see ledger). Next: only a derivation of the indices or a new family under a new pre-registered version (the target set was fixed after the fit, so look-elsewhere effects apply)
-2. **Deeper levels** — levels 9-10 done via exact inertia counting, no GPU needed (see Open Problem #2); more levels do not remove the window dependence of regression fits, but the window-free chord estimator does
-3. **Light fermions** — implement fractal NJL integral (a toy at best: an NJL gap equation brings its own coupling and cutoff; parameters must be counted against the number of masses)
-4. **Physical bridge** — connect A = 104.63 MeV to electroweak scale via RG (blocked: no Lagrangian or beta functions are defined in this repository, so there is nothing to run; a specified model is needed first)
+| Path | Purpose |
+|---|---|
+| `phi_genesis/sg_laplacian.py` | Sierpiński-gasket graph Laplacian, spectral tools, and decimation-related routines |
+| `phi_genesis/mobius.py` | Signed \(\mathbb{Z}_2\)-flux / \(\pi\)-flux operator |
+| `phi_genesis/mobius_selection_search.py` | Exhaustive generation-twist search |
+| `phi_genesis/fukushima_shima.py` | Fukushima–Shima gap-structure analysis |
+| `phi_genesis/sg_inertia.py` | Eigenvalue counting through Sylvester inertia and sparse factorization |
+| `phi_genesis/spectral_convergence.py` | Dense spectra, Weyl fits, and window sensitivity |
+| `phi_genesis/mass_check.py` | Mass-scale and consistency audit |
+| `phi_genesis/dirac_eta.py` | Graph Dirac operator and \(\eta\)-invariant experiment |
+| `test_decimation_gate_a.py` | Nightly Gate A diagnostic |
+| `test_decimation_residual_summary.py` | Mean/median/threshold semantics and residual-statistics tests |
+| `test_fukushima_shima.py` | Gap-structure checks |
+| `test_mobius.py` | Flux/twist and integer-related tests |
+| `test_sg_inertia.py` | Inertia-count checks and numerical cross-checks |
+| `test_selection_protocol.py`, `test_selection_protocol_v121.py` | Preregistered selection-protocol checks |
+| `test_sg_index_triviality.py` | Base-rate caveat for index 1 and other target indices |
+| `test_top_quark_consistency.py` | Guards against silently mixing top-index candidates/scales |
+| `protocol_data/` | Null pools, results, cached counts, and Open Problem #2 scripts |
+| `PREREGISTRATION*.md`, `protocol_ledger.md` | Protocol specifications and cumulative search history |
+| `METHODOLOGY.md` | Worked explanation of the look-elsewhere effect and negative results |
+| `CHANGELOG.md` | Versioned project history |
+
+For the documentation site, start at [the documentation home](https://rft-sirm.github.io/Phi-Genesis/), then use the [research map](https://rft-sirm.github.io/Phi-Genesis/research-map.html), [verified results](https://rft-sirm.github.io/Phi-Genesis/verified-results.html), [protocol ledger](https://rft-sirm.github.io/Phi-Genesis/protocol-ledger.html), [open problems](https://rft-sirm.github.io/Phi-Genesis/open-problems.html), or [research history](https://rft-sirm.github.io/Phi-Genesis/history.html).
 
 ---
 
-## Scope: relation to Evgeny's Theorem
+## How this connects to the wider RFT-SIRM programme
 
-Nothing in the code or documentation of this repository uses [Evgeny's Theorem](https://github.com/RFT-SIRM/Evgeny-Theorem), and no result here depends on it. That theorem is an exact trace-defect identity for a non-Abelian SU(2) connection on Sierpiński-gasket graphs; it is machine-checked in Lean 4 for every level m ≥ 1 (fourth moment, concrete operators). Phi-Genesis instead computes spectral properties of Abelian (Z₂, π-flux) signed Laplacians and a mass-index formula. The two differ in gauge group (Z₂ versus SU(2)), in observable (low-lying spectrum and gaps versus a fourth-moment trace defect), and in evidence (numerical versus formally proved).
+Phi-Genesis is part of a family of related research repositories. Their topics are connected by broad questions about recursive structures, invariants, and reproducible evidence, but **their mathematical objects and evidence status are not interchangeable**.
 
-Consequently the machine-checked status of Evgeny's Theorem does **not** transfer to any claim in this repository. Everything here is computational evidence (Level B in the [Unified Foundations verification policy](https://github.com/RFT-SIRM/Unified-Foundations-Mathematics-Physics/blob/main/VERIFICATION_POLICY.md)) unless stated otherwise, and the mass formula `m = A·n` still lacks an independent selection rule.
+| Programme | What it studies | What must not be inferred |
+|---|---|---|
+| [**Evgeny-Theorem**](https://github.com/RFT-SIRM/Evgeny-Theorem) | A specified SU(2)-connected Sierpiński-gasket operator and a fourth-moment trace-defect identity; the source repository reports a Lean 4 formalization for its stated concrete operators. | Its formal proof does not transfer to Phi-Genesis's signed \(\mathbb{Z}_2\)-flux Laplacian or its mass-index conjecture. |
+| [**Evgeny's Theory of Everything**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything) | A broader research programme and dissertation covering recursive operators, trace defects, finite-level higher-moment certificates, numerical holdouts, and open recurrence questions. | The title describes the programme's scope; it is not a claim that a complete physical Theory of Everything has been established. Finite-level evidence does not automatically prove an all-level recurrence. |
+| [**UltraCore-RFT**](https://github.com/RFT-SIRM/UltraCore-RFT) | A research and engineering hub for invariant systems, deterministic execution, mathematical foundations, and runtime architecture, with an evidence ledger across workstreams. | An engineering result, stress test, or application prototype is not automatically a mathematical theorem or independent validation of Phi-Genesis. |
+
+### Mathematical relationship: explicit, not assumed
+
+The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed \(\mathbb{Z}_2\)-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
+
+The dissertation is useful context and a source of related mathematical questions, not a shortcut around Phi-Genesis's own unresolved tests.
+
+- [Complete dissertation](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
+- [Fourth-moment theorem statement](https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/THEOREM.md)
+- [Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/tree/main/formalization)
+- [UltraCore-RFT research hub](https://github.com/RFT-SIRM/UltraCore-RFT)
 
 ---
 
-## Citation
+## Research standards and citation
 
-If you use this code, please cite the RFT research programme and acknowledge that the mass formula `m = A·n` currently lacks an independent selection rule.
+This repository aims to make the computational record auditable:
+
+1. **State the operator and conventions.** Boundary degrees, graph level, signed edges, and the definition of the counted spectrum matter.
+2. **Keep methods and results together.** Link every important number to code, a test, protocol, or data artifact.
+3. **Preserve negative results.** Failed searches and uninformative tests are part of the record.
+4. **Control selection effects.** Count all configurations tried and use null ensembles and power checks defined before evaluation.
+5. **Distinguish evidence types.** Passing a test supports only the assertions that test actually executes.
+6. **Do not silently promote claims.** A fit is not a prediction; a finite computation is not an all-level proof; related projects are not automatically equivalent.
+
+If you use this code or cite the reported numerical results, cite the repository and identify the commit, environment, and relevant protocol/data version. Acknowledge explicitly that the mass-index formula currently lacks an independent selection rule.
+
+- [Repository](https://github.com/RFT-SIRM/Phi-Genesis)
+- [Commit history](https://github.com/RFT-SIRM/Phi-Genesis/commits/main/)
+- [Research history timeline](https://rft-sirm.github.io/Phi-Genesis/history.html)
+- [Issue tracker](https://github.com/RFT-SIRM/Phi-Genesis/issues)
+- [Project files and declared reuse terms](https://github.com/RFT-SIRM/Phi-Genesis) — check the repository's actual license metadata before reusing code or text.
 
 ---
 
-*Computational results are documented with their methods and limitations; unresolved claims remain explicitly open.*
+<p align="center">
+
+**Evidence first. Reproducibility always. Open problems stay open until they are resolved.**
+
+</p>
