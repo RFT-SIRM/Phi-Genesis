@@ -1,5 +1,8 @@
 # Research Map — Phi-Genesis
 
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+
+
 Phi-Genesis is the spectral-computation branch of the RFT-SIRM research programme. It investigates spectral decimation, spectral gaps, finite-level spectral counts, and whether a proposed set of integer indices can be selected by a spectral rule on Sierpiński-gasket graph approximations.
 
 This map is an evidence-first guide to the project. The [interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/) is a visual overview; the source repository, code, preregistration and ledger remain authoritative.
@@ -81,3 +84,10 @@ This map is an evidence-first guide to the project. The [interactive portal](htt
 ## Scope boundary
 
 Phi-Genesis is not a formal proof repository for Evgeny's Theorem, and its computational status does not inherit the Lean verification status of that separate theorem. The theorem and this spectral audit concern different operators, observables and evidence types. See the [project README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md#scope-relation-to-evgenys-theorem).
+
+---
+
+<div class="phi-doc-nav">
+<strong>Explore Phi-Genesis</strong><br>
+<a href="https://rft-sirm.github.io/Phi-Genesis/interactive/">Interactive portal</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/research-map.html">Research map</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/verified-results.html">Verified results</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/open-problems.html">Open problems</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/reproducibility.html">Reproducibility</a> · <a href="https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md">Dissertation</a> · <a href="https://github.com/RFT-SIRM/Phi-Genesis">Source repository</a>
+</div>
