@@ -5,7 +5,7 @@ Open the [animated Phi-Genesis spectral research portal](https://rft-sirm.github
 The portal is a separate, animated research navigation surface for the Sierpiński-gasket spectral audit, boundary-condition experiments, selection-protocol results, and open problems. It is a navigational visualization; the source repository, versioned protocol records, and reproducibility instructions remain authoritative.
 
 - [Open the interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/)
-- [Source HTML](interactive/index.html)
+- [Portal HTML source on GitHub](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/visual/interactive/index.html)
 - [Research map](research-map.md)
 - [Verified results and evidence boundaries](verified-results.md)
 - [Selection protocol and negative results](selection-protocol.md)
