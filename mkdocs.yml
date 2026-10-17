@@ -34,7 +34,7 @@ theme:
     repo: fontawesome/brands/github
 nav:
   - Home: index.md
-  - Interactive Portal: interactive.md
+  - Interactive Portal: https://rft-sirm.github.io/Phi-Genesis/interactive/
   - Research History: https://rft-sirm.github.io/Phi-Genesis/history.html
   - Research Records:
       - Methodology: https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md
