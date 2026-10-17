@@ -19,6 +19,7 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.top
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -62,12 +63,26 @@ nav:
   - Ecosystem Control: ecosystem-control.md
   - History: history.md
   - Origin Chronology: origin-chronology.md
-  - Platform: platform.md
-  - Architecture: architecture.md
-  - Foundations: foundations.md
-  - Strategy: strategy.md
-  - Implementation: implementation.md
+  - Platform:
+      - Overview: platform.md
+      - Reproducibility: reproducibility.md
+      - Data & Provenance: data-and-provenance.md
+  - Architecture:
+      - Overview: architecture.md
+      - Computational Architecture: computational-architecture.md
+  - Foundations:
+      - Verified Results: verified-results.md
+      - Methodology: methodology.md
+      - Glossary: glossary.md
+  - Strategy:
+      - Overview: strategy.md
+      - Selection Protocol: selection-protocol.md
+      - Preregistration: preregistration.md
+      - Protocol Ledger: protocol-ledger.md
+      - Open Problems: open-problems.md
+  - Implementation:
+      - Overview: implementation.md
+      - Changelog: changelog.md
   - Field Trials: field_trials.md
   - seL4 CDT Verification: field_trials_sel4.md
-  - Glossary: glossary.md
   - Support: support.md
