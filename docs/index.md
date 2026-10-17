@@ -18,7 +18,7 @@
 
     Explore the visual research overview and the separate, detailed chronology.
 
-    [Open the interactive portal](interactive/)
+    [Open the interactive portal](interactive.md)
 
 -   :material-clipboard-check-outline:{ .lg .middle } **Reproducibility**
 
@@ -102,7 +102,7 @@ These source records—not the portal's visualizations—are authoritative for m
 
 ## Explore the project
 
-- **[Interactive research portal](interactive/)** — visual overview and entry to the research chronology.
+- **[Interactive research portal](interactive.md)** — visual overview and entry to the research chronology.
 - **[Research history and field notes](history.html)** — chronological record, interpretations and lessons learned.
 - **[Source repository](https://github.com/RFT-SIRM/Phi-Genesis)** — code, tests, data and primary documentation.
 - **[Open a research issue](https://github.com/RFT-SIRM/Phi-Genesis/issues)** — report a reproducibility issue or propose a concrete correction.
