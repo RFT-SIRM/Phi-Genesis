@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — research-history archive
+
+- Added `docs/history.html`, an interactive, filterable chronology of the research question, exploratory carpet result and its look-elsewhere reassessment, preregistered protocol versions, power-check correction, base-rate audit, and current bounded conclusions.
+- Added cross-links to the methodology, protocol ledger, preregistration records, Evgeny's Theorem, Evgeny's Theory of Everything, and UltraCore-RFT. The archive distinguishes numerical evidence from machine-checked results and does not present the mass-index formula as a prediction.
+- Linked the historical archive from the README; the existing live results page and scientific records remain intact.
+
+# Changelog
+
 ## 2.2.1 (2026-10-14) - documentation
 
 - `METHODOLOGY.md`: one-page write-up of the pre-registered look-elsewhere method and the results.
