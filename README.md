@@ -12,6 +12,10 @@ Reproducible spectral computations on the Sierpiński gasket (SG) and related st
 
 **Status (2026-10-15):** package version 2.2.1; current results and limitations are documented below. See [Final status](#final-status).
 
+> **Research history:** [Explore the interactive Phi-Genesis timeline](docs/history.html) — the early spectral question, the carpet-search reassessment, preregistered tests, methodological corrections, and the current evidence limits.
+
+[![Research history](https://img.shields.io/badge/Research-History%20%26%20Methods-0f766e?style=for-the-badge)](docs/history.html)
+
 ## Final status
 
 | | |
