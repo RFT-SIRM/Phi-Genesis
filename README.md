@@ -92,7 +92,7 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 
 The repository now includes a reproducible exact-integer computation module for the scalar signed operator
 $$
-L_m=D_m-A_{s,m},\qquad D_m^{(10)}=\operatorname{Tr}(L_{\pi,m}^{10})-\operatorname{Tr}(L_{0,m}^{10}).
+L_m=D_m-A_{s,m},\qquad D_m^{(10)}=\mathrm{Tr}(L_{\pi,m}^{10})-\mathrm{Tr}(L_{0,m}^{10}).
 $$
 Here the signs are the deterministic GF(2) representative produced by the project's hole-boundary solver (non-pivot edge variables set to zero). These results are **not** invariant under all cocycles with the same prescribed hole parities.
 
