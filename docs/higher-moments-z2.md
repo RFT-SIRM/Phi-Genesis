@@ -18,7 +18,7 @@ For a generation mask t, bit i-1 specifies whether holes of generation i have od
 
 Define
 $$
-D_m^{(10)}=\operatorname{Tr}(L_{\pi,m}^{10})-\operatorname{Tr}(L_{0,m}^{10}).
+D_m^{(10)}=\mathrm{Tr}(L_{\pi,m}^{10})-\mathrm{Tr}(L_{0,m}^{10}).
 $$
 
 | m | Vertices | Edges | Holes | D_m^(10) | D_m^(10)-3D_(m-1)^(10) |
@@ -44,7 +44,7 @@ for the checked transitions m=4,...,10 only. This is finite evidence, not a theo
 
 Let
 $$
-F_m(t_1,\ldots,t_m)=\operatorname{Tr}(L_m(t_1,\ldots,t_m)^{10}).
+F_m(t_1,\ldots,t_m)=\mathrm{Tr}(L_m(t_1,\ldots,t_m)^{10}).
 $$
 
 Complete exact sweeps were computed for every mask at levels 4--9 (16, 32, 64, 128, 256, and 512 masks). All 1,008 transitions from level 3 to level 9 satisfy a common correction polynomial:
@@ -70,7 +70,7 @@ Hole-boundary parities do not uniquely determine all elementary-triangle holonom
 
 For symmetric real L,
 $$
-\operatorname{Tr}(L^{10})=\|L^5\|_F^2.
+\mathrm{Tr}(L^{10})=\|L^5\|_F^2.
 $$
 The implementation uses integer sparse arithmetic and checks a conservative int64 bound. The optimized boundary walk and packed GF(2) solver are compared with the original geometric boundary scan and dense RREF solver through level 5, including all generation masks at those levels. The regression tests also compare Frobenius and sequential sparse-power traces.
 
@@ -78,7 +78,7 @@ The implementation uses integer sparse arithmetic and checks a conservative int6
 
 The central lift identity
 $$
-\operatorname{Tr}((L\otimes I_2)^{10})=2\operatorname{Tr}(L^{10})
+\mathrm{Tr}((L\otimes I_2)^{10})=2\mathrm{Tr}(L^{10})
 $$
 is valid for this scalar L. It does not identify the scalar Z2-flux defect with the SU(2) axis-orientation defect. These are different operators and proof obligations; their coefficients must not be interchanged.
 
