@@ -1,0 +1,36 @@
+{
+  "full_flux_trace_levels": "1-10 direct exact integer calculation",
+  "full_flux_constant_residual": 12387360,
+  "constant_residual_transitions": "3->4 through 9->10",
+  "generation_mask_levels": {
+    "3": 8,
+    "4": 16,
+    "5": 32,
+    "6": 64,
+    "7": 128,
+    "8": 256,
+    "9": 512
+  },
+  "generation_mask_trace_count": 1016,
+  "generation_transition_checks": 1008,
+  "generation_transition_checks_passed": 1008,
+  "three_copy_parent_levels": [
+    4,
+    5,
+    6
+  ],
+  "three_copy_decomposition_checks": 112,
+  "corner_moment_observations": 336,
+  "stable_corner_moment_signatures": 48,
+  "level5_hole_parity_preserving_edge_flips": 243,
+  "distinct_tenth_trace_changes": 48,
+  "fixed_edge_direct_trace_checks_levels": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "fixed_edge_direct_trace_change": 111750160,
+  "all_level_recurrence_proved": false,
+  "lean4_formalization_complete": false
+}

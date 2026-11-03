@@ -23,3 +23,13 @@ The module computes the signed Laplacian using the project's deterministic GF(2)
 
 - `phi_genesis/higher_moments_z2.py`: graph construction, packed GF(2) solver, signed Laplacian, exact trace routines, and Boolean correction.
 - `test_higher_moments_z2.py`: finite regression tests.
+
+
+## Follow-up structural audit (3 November 2026)
+
+- Detailed finite audit: FOLLOWUP_2026-11-03.md
+- Full-flux exact traces: full_flux_h10_levels_1_10.csv
+- Correction truth table: Q_truth_table_16.csv
+- Alternative local-perturbation residuals: edge2_alternative_residuals_transitions_4_7.csv
+
+The follow-up includes 1,016 directly computed generation-mask traces at levels 3–9, 1,008 exact transition checks, and a three-copy decomposition checked on 112 masks at parent levels 4–6. The all-level recurrence remains unproved and is not formalized in Lean 4.

@@ -74,6 +74,16 @@ $$
 $$
 The implementation uses integer sparse arithmetic and checks a conservative int64 bound. The optimized boundary walk and packed GF(2) solver are compared with the original geometric boundary scan and dense RREF solver through level 5, including all generation masks at those levels. The regression tests also compare Frobenius and sequential sparse-power traces.
 
+## Follow-up structural audit — 3 November 2026
+
+The follow-up extended direct generation-mask calculations to every mask at levels 3–9: 1,016 exact traces and 1,008 transition checks. Every checked transition agrees with one correction polynomial \(Q(t_1,t_2,t_3,t_{m+1})\).
+
+A separate three-copy audit checked all 112 masks at parent levels 4–6. It decomposes the correction as \(Q=P+G\): local child-restriction changes give \(P\), while the three pairwise junction-word sums give \(G\). The corner-moment audit contains 336 observations and 48 stable signatures.
+
+At level 5, 243 individual edge flips preserve the prescribed hole parities, yet every one changes H10. Thus 12,387,360 belongs to the chosen deterministic representative family, not to hole flux alone. The exact switching invariant belongs to the full signed-graph switching class.
+
+These remain finite structural checks, not an all-level theorem or a Lean 4 formalization. See the [follow-up note](../computational/higher_moments_z2/FOLLOWUP_2026-11-03.md), [full-flux table](../computational/higher_moments_z2/full_flux_h10_levels_1_10.csv), [Q truth table](../computational/higher_moments_z2/Q_truth_table_16.csv), and [local perturbation audit](../computational/higher_moments_z2/edge2_alternative_residuals_transitions_4_7.csv).
+
 ## Relation to SU(2) H10
 
 The central lift identity
