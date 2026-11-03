@@ -90,10 +90,10 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 
 ## Exact finite H10 calculations for the signed `Z_2`-flux Laplacian
 
-The repository now includes a reproducible exact-integer computation module for the scalar signed operator
-$$
-L_m=D_m-A_{s,m},\qquad D_m^{(10)}=\mathrm{Tr}(L_{\pi,m}^{10})-\mathrm{Tr}(L_{0,m}^{10}).
-$$
+The repository now includes a reproducible exact-integer computation module for the scalar signed operator:
+
+<p>L<sub>m</sub> = D<sub>m</sub> − A<sub>s,m</sub>; &nbsp; D<sub>m</sub><sup>(10)</sup> = Tr(L<sub>π,m</sub><sup>10</sup>) − Tr(L<sub>0,m</sub><sup>10</sup>).</p>
+
 Here the signs are the deterministic GF(2) representative produced by the project's hole-boundary solver (non-pivot edge variables set to zero). These results are **not** invariant under all cocycles with the same prescribed hole parities.
 
 For this representative, exact sparse-integer calculations give:
