@@ -31,7 +31,19 @@ For the tested level-5 graph, the documented full π-flux configuration raises t
 
 This does **not** establish a selection mechanism for \(\{1,12,17,40\}\). In the exhaustive search of all \(2^5=32\) generation-twist configurations, the maximum simultaneous target hit was 1 of 4 and index 40 was never selected.
 
-## 4. Integer mass fit — a fit, not a prediction
+## 4. Signed-Z2 H10 finite computation
+
+For the deterministic GF(2) representative used by the hole-boundary solver, exact sparse-integer calculations give
+\[
+D_m^{(10)}=\operatorname{Tr}(L_{\pi,m}^{10})-\operatorname{Tr}(L_{0,m}^{10}).
+\]
+The traces are computed through level 10. The residual \(D_m^{(10)}-3D_{m-1}^{(10)}\) equals 12,387,360 on transitions 3→4 through 9→10. Complete generation-twist sweeps were computed at levels 4–9, with 1,008 transition checks; 156 level-10 samples agree with the recurrence. The recurrence is not yet an all-level theorem.
+
+Crucially, the hole-boundary parities do not determine a unique cocycle. At level 5, 243 elementary-triangle holonomy degrees of freedom remain, and changing the local representative while preserving hole parities changes H10. This is not a topological invariant of hole flux alone. The scalar signed operator is distinct from the SU(2) operator in Evgeny-Theorem.
+
+See the [full finite H10 note](higher-moments-z2.md), implementation, and reproduction instructions.
+
+## 5. Integer mass fit — a fit, not a prediction
 
 The repository records a single-scale fit \(m=A n\), with \(A=104.63\) MeV and integer indices \(n=\{1,12,17,40\}\), matching four selected masses with a mean error of about 0.68%.
 
@@ -39,11 +51,11 @@ The index set was chosen with the masses in view. Because no independent spectra
 
 The top-quark index is unresolved: the repository documents candidates 1654, 1664 and 1680 arising from different procedures/scales. No single candidate is endorsed.
 
-## 5. η-invariant claim — not reproduced
+## 6. η-invariant claim — not reproduced
 
 The RFT-String v8.7 claim \(\bar\eta(0)=-4\) for the stated boundary potential was not reproduced. The documented test reports asymmetry +1 for the claimed potential, −1 for a random potential, and −2 for zero potential; −4 was not observed in the tested cases. The repository interprets the observed asymmetry as a finite-size effect, not as a demonstrated topological invariant.
 
-## 6. How to read the evidence { #how-to-read-the-evidence }
+## 7. How to read the evidence { #how-to-read-the-evidence }
 
 | Label | Interpretation |
 |---|---|
