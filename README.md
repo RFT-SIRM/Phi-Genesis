@@ -6,7 +6,7 @@
 [![Interactive portal](https://img.shields.io/badge/Explore-Interactive%20Portal-087ea4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/interactive/)
 [![Research history](https://img.shields.io/badge/Read-Research%20History-0f766e?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/history.html)
 
-**Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed $\mathbb{Z}_2$-flux / $\pi$-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
+**Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed Z₂-flux / π-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
 
 > [!IMPORTANT]
 > **Scientific status, not marketing status:** spectral and gap observations are numerical results scoped to the implemented operators and tested levels. The proposed mass-index selection rule $\{1,12,17,40\}$ has **not** been established. The formula $m=A n$ is a numerical fit, not a prediction, until an independent rule derives the indices without looking at the masses. Gate A—the full characterization of spectral-decimation exceptions for the implemented corner-degree-2 Laplacian—also remains open.
@@ -39,11 +39,11 @@
 |---|---|---|
 | Does the Sierpiński-gasket spectrum show the expected decimation and gap structure? | Reproduced numerically on finite graph levels, with explicit corner-defect qualifications. | **NUMERICALLY REPRODUCED** |
 | Can the spectral dimension be recovered from finite-level counts? | The theoretical exponent is $d_s/2=\ln 3/\ln 5$. A theory-motivated chord estimator approaches $\ln 3/\ln(5-\sigma)$ to better than 0.1% on the reported level-9 subset with $N\ge1000$. | **NUMERICAL CONSISTENCY CHECK** |
-| Does a $\pi$-flux boundary condition open a gap? | The tested full $\pi$-flux case opens a gap; the first level-5 eigenvalue changes from approximately 0.006 to 0.46. | **NUMERICALLY REPRODUCED** |
+| Does a π-flux boundary condition open a gap? | The tested full π-flux case opens a gap; the first level-5 eigenvalue changes from approximately 0.006 to 0.46. | **NUMERICALLY REPRODUCED** |
 | Has a spectral rule independently selected $\{1,12,17,40\}$? | No. Preregistered families did not produce evidence above the specified null thresholds. | **NOT ESTABLISHED** |
 | Is $m=A n$ a predictive mass law? | Not at present: the four integer indices were chosen with the target masses in view, and no independent selection mechanism has been derived. | **FIT, NOT PREDICTION** |
 | Is Gate A closed? | No. Matched eigenvalue pairs can be at machine precision, but the full recursively generated exceptional set and complete correspondence are not yet characterized. | **OPEN** |
-| Does the project reproduce the reported $\eta$-invariant value $-4$? | No. The tested potential gives asymmetry $+1$; $-4$ was not observed in the reported checks. | **NOT REPRODUCED** |
+| Does the project reproduce the reported η-invariant value $-4$? | No. The tested potential gives asymmetry $+1$; $-4$ was not observed in the reported checks. | **NOT REPRODUCED** |
 
 ### Evidence labels used here
 
@@ -67,7 +67,7 @@
 - **Fukushima–Shima gap structure:** forbidden spectral zones cluster around the documented decimation fixed-point region, including $\lambda\approx2.5$ and $\lambda\approx3$.
 - **Log-periodicity:** the spectrum exhibits the scale signature associated with factor-5 decimation, with period $\ln 5$ in the log-spectral variable.
 - **Weyl exponent:** the theoretical exponent is $\ln3/\ln5\approx0.6826$. Finite-level regression estimates depend on the selected window; the chord-estimator result is a separate, theory-motivated numerical consistency check.
-- **Full $\pi$-flux:** the tested level-5 first eigenvalue changes from about 0.006 to about 0.46, consistent with a gap opening in that setup.
+- **Full π-flux:** the tested level-5 first eigenvalue changes from about 0.006 to about 0.46, consistent with a gap opening in that setup.
 - **Exhaustive generation-twist search:** all $2^5=32$ level-5 configurations were checked. No configuration selected more than one of the four target indices; index 40 was not selected.
 
 These are scoped to the operators, graph conventions, levels, and numerical procedures actually used. They are not a proof of a mass-index law.
@@ -82,7 +82,7 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 - The earlier Sierpiński-carpet search produced an apparent four-index match, later identified as vulnerable to a look-elsewhere effect. It is retained in the research history rather than promoted as supporting evidence.
 - Index 1 is selected by the ratio-based gap rule very frequently under random on-site potentials (about 95% in the reported audit); index 40 appears much less often (about 3.4%). These hits do not carry equal evidential weight.
 - The top-quark index remains inconsistent across the historical estimate, the current scale formula, and the best integer fit: 1680, 1664, and 1654 respectively.
-- The reported $\eta$-invariant value $-4$ was not reproduced for the specified potential.
+- The reported η-invariant value $-4$ was not reproduced for the specified potential.
 - Gate A is not closed merely because a subset of predicted/observed eigenvalue pairs match to machine precision.
 
 </details>
@@ -176,9 +176,9 @@ $$
 - [Chord-estimator experiment](protocol_data/op2_chord_estimator.py)
 - [Open Problem #2 data and discussion](protocol_data/)
 
-### 3. Boundary conditions and $\pi$-flux
+### 3. Boundary conditions and π-flux
 
-The project studies signed graph operators representing $\mathbb{Z}_2$-flux / Möbius-style boundary twists. The reported level-5 full-$\pi$-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
+The project studies signed graph operators representing Z₂-flux / Möbius-style boundary twists. The reported level-5 full-π-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
 
 This establishes a gap in the tested numerical setup; it does **not** establish that the target fermion indices are selected by the gap. The exhaustive 32-configuration generation-twist search reached at most one of the four target indices, and index 40 was never selected.
 
@@ -198,8 +198,8 @@ This establishes a gap in the tested numerical setup; it does **not** establish 
 | Naive regression, level 6 | 0.7051 | About 3.3% above reference |
 | Naive regression, level 8 | 0.7019 | About 2.8% above reference |
 | Level-9 chord estimate, $N\ge1000$ | Within 0.1% of $\ln3/\ln(5-\sigma)$ | 14 sampled points; exploratory consistency check |
-| Full $\pi$-flux first eigenvalue, level 5 | About 0.46 | Compared with about 0.006 in the untwisted case |
-| Claimed $\eta$-asymmetry, specified potential | +1 | The advertised value $-4$ was not reproduced |
+| Full π-flux first eigenvalue, level 5 | About 0.46 | Compared with about 0.006 in the untwisted case |
+| Claimed η-asymmetry, specified potential | +1 | The advertised value $-4$ was not reproduced |
 
 ### What the scale audit says
 
@@ -242,7 +242,7 @@ where $A$ is a common scale and $n$ is an integer index. The table below reports
 |---|---:|---|
 | Historical advertised value | 1680 | Derived using an older scale of approximately 103.63 MeV |
 | Current formula-based candidate | 1664 | $v/(\sqrt2 A)$ using $A=104.63$ MeV |
-| Current best integer fit | 1654 | $\operatorname{round}(m_t/A)$ using $A=104.63$ MeV |
+| Current best integer fit | 1654 | round(m_t/A) using $A=104.63$ MeV |
 
 The three candidates are not interchangeable. With the current scale, using 1680 gives a top-quark error of about 1.55%, more than twice the four-fermion mean error. No single top index is asserted as correct.
 
@@ -296,7 +296,7 @@ The carpet's early apparent 4/4 match was subsequently reassessed using null con
 
 **Question.** Can an operator invariant, boundary condition, or independently motivated construction select $n\in\{1,12,17,40\}$ before the masses are compared?
 
-**Tried:** generation-wise $\mathbb{Z}_2$ twists, scalar vertex potentials, Dirichlet corner conditions, SG $\times S^1$ with lattice and continuum-circle variants, and the earlier Sierpiński-carpet search. The preregistered protocols did not establish the target rule.
+**Tried:** generation-wise Z₂ twists, scalar vertex potentials, Dirichlet corner conditions, SG $\times S^1$ with lattice and continuum-circle variants, and the earlier Sierpiński-carpet search. The preregistered protocols did not establish the target rule.
 
 **Required next step:** a genuinely motivated new operator family or an analytical derivation of the indices, committed under a new preregistered protocol with a null-only power check. Repeating the same searches against the same targets would increase the look-elsewhere correction, not the evidence.
 
@@ -419,13 +419,13 @@ These computations use the committed cached count data and/or perform numerical 
 | Path | Purpose |
 |---|---|
 | `phi_genesis/sg_laplacian.py` | Sierpiński-gasket graph Laplacian, spectral tools, and decimation-related routines |
-| `phi_genesis/mobius.py` | Signed $\mathbb{Z}_2$-flux / $\pi$-flux operator |
+| `phi_genesis/mobius.py` | Signed Z₂-flux / π-flux operator |
 | `phi_genesis/mobius_selection_search.py` | Exhaustive generation-twist search |
 | `phi_genesis/fukushima_shima.py` | Fukushima–Shima gap-structure analysis |
 | `phi_genesis/sg_inertia.py` | Eigenvalue counting through Sylvester inertia and sparse factorization |
 | `phi_genesis/spectral_convergence.py` | Dense spectra, Weyl fits, and window sensitivity |
 | `phi_genesis/mass_check.py` | Mass-scale and consistency audit |
-| `phi_genesis/dirac_eta.py` | Graph Dirac operator and $\eta$-invariant experiment |
+| `phi_genesis/dirac_eta.py` | Graph Dirac operator and η-invariant experiment |
 | `test_decimation_gate_a.py` | Nightly Gate A diagnostic |
 | `test_decimation_residual_summary.py` | Mean/median/threshold semantics and residual-statistics tests |
 | `test_fukushima_shima.py` | Gap-structure checks |
@@ -449,13 +449,13 @@ Phi-Genesis is part of a family of related research repositories. Their topics a
 
 | Programme | What it studies | What must not be inferred |
 |---|---|---|
-| [**Evgeny-Theorem**](https://github.com/RFT-SIRM/Evgeny-Theorem) | A specified SU(2)-connected Sierpiński-gasket operator and a fourth-moment trace-defect identity; the source repository reports a Lean 4 formalization for its stated concrete operators. | Its formal proof does not transfer to Phi-Genesis's signed $\mathbb{Z}_2$-flux Laplacian or its mass-index conjecture. |
+| [**Evgeny-Theorem**](https://github.com/RFT-SIRM/Evgeny-Theorem) | A specified SU(2)-connected Sierpiński-gasket operator and a fourth-moment trace-defect identity; the source repository reports a Lean 4 formalization for its stated concrete operators. | Its formal proof does not transfer to Phi-Genesis's signed Z₂-flux Laplacian or its mass-index conjecture. |
 | [**Evgeny's Theory of Everything**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything) | A broader research programme and dissertation covering recursive operators, trace defects, finite-level higher-moment certificates, numerical holdouts, and open recurrence questions. | The title describes the programme's scope; it is not a claim that a complete physical Theory of Everything has been established. Finite-level evidence does not automatically prove an all-level recurrence. |
 | [**UltraCore-RFT**](https://github.com/RFT-SIRM/UltraCore-RFT) | A research and engineering hub for invariant systems, deterministic execution, mathematical foundations, and runtime architecture, with an evidence ledger across workstreams. | An engineering result, stress test, or application prototype is not automatically a mathematical theorem or independent validation of Phi-Genesis. |
 
 ### Mathematical relationship: explicit, not assumed
 
-The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed $\mathbb{Z}_2$-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
+The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed Z₂-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
 
 The dissertation is useful context and a source of related mathematical questions, not a shortcut around Phi-Genesis's own unresolved tests.
 
