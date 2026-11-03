@@ -91,9 +91,9 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 ## Exact finite H10 calculations for the signed `Z_2`-flux Laplacian
 
 The repository now includes a reproducible exact-integer computation module for the scalar signed operator
-$
+$$
 L_m=D_m-A_{s,m},\qquad D_m^{(10)}=\operatorname{Tr}(L_{\pi,m}^{10})-\operatorname{Tr}(L_{0,m}^{10}).
-$
+$$
 Here the signs are the deterministic GF(2) representative produced by the project's hole-boundary solver (non-pivot edge variables set to zero). These results are **not** invariant under all cocycles with the same prescribed hole parities.
 
 For this representative, exact sparse-integer calculations give:
@@ -112,9 +112,9 @@ For this representative, exact sparse-integer calculations give:
 | 10 | 88,575 | 177,147 | 29,524 | 1,213,880,370,600 | 12,387,360 |
 
 The observed affine law is verified on levels $3$ through $10$ only:
-$
+$$
 D_m^{(10)}=3D_{m-1}^{(10)}+12,387,360.
-$
+$$
 It is a finite computational result, **not yet an all-level theorem**.
 
 A second exact sweep evaluates every generation-twist mask at levels 4--9 (16, 32, 64, 128, 256, and 512 masks). All 1,008 transition checks from level 3 to 9 agree with the same Boolean correction $Q(t_1,t_2,t_3,t_{m+1})$. At level 10, 156 directly evaluated masks agree with the recurrence; the remaining masks at that level are predictions, not direct matrix-power calculations. The full polynomial, data tables, finite audits, and mathematical caveats are in [the H10 research note](docs/higher-moments-z2.md).
@@ -129,9 +129,9 @@ Reproduce with `python -m phi_genesis.higher_moments_z2 --validate-reference --m
 
 The working decimation map is
 
-$
+$$
 \boxed{\phi(\lambda)=\lambda(5-\lambda)}
-$
+$$
 
 For the idealized decimation relation, inverse branches are used to compare candidate preimages across graph levels. In the actual implementation, the graph Laplacian has degree-2 corner vertices, and this boundary convention produces exceptional pairs and residuals that must be characterized rather than hidden.
 
@@ -146,28 +146,28 @@ For the idealized decimation relation, inverse branches are used to compare cand
 
 For the Sierpiński gasket, the theoretical exponent is
 
-$
+$$
 \boxed{\frac{d_s}{2}=\frac{\ln 3}{\ln 5}\approx0.682606}
-$
+$$
 
 The counting function $N(\lambda)$ counts eigenvalues below a threshold $\lambda$, with the precise convention defined by the implementation. Finite-level regressions are sensitive to the fitting window because the counting staircase has log-periodic structure.
 
 The exploratory chord estimator compares a count at $\sigma$ with a count at its decimation image $\phi(\sigma)$:
 
-$
+$$
 \widehat{d_s/2}(\sigma)=
 \frac{\ln\!\left[N(\phi(\sigma))/N(\sigma)\right]}
 {\ln\!\left[\phi(\sigma)/\sigma\right]}
-$
+$$
 
 Under the working count relation, this tends toward
 
-$
+$$
 \frac{\ln 3}{\ln(5-\sigma)}
 \longrightarrow
 \frac{\ln 3}{\ln 5}
 \qquad (\sigma\to0)
-$
+$$
 
 **Reported numerical result:** at level 9, for the 14 sampled points with $N\ge1000$, the chord estimate differs from $\ln3/\ln(5-\sigma)$ by an average of about $-0.03\%$, with a range of approximately $-0.08\%$ to $+0.07\%$. This is an exploratory consistency check added after the regression study—not a preregistered discovery and not new physical evidence. The exact theoretical exponent itself is not in question; the open problem is stable finite-level estimation and full control of the corner correction.
 
@@ -219,9 +219,9 @@ The current four-fermion integer fit uses $A=104.63\,\text{MeV}$. A separate exp
 
 The explored formula is
 
-$
+$$
 \boxed{m=A\,n}
-$
+$$
 
 where $A$ is a common scale and $n$ is an integer index. The table below reports the project's current integer fit for four heavy fermions.
 
