@@ -99,12 +99,20 @@ jobs:
               assert "Cambria Math" in source, f"Math-friendly typography missing: {filename}"
               print(f"MathJax markup OK: {filename}")
 
-          for filename in ("site/verified-results/index.html", "site/open-problems/index.html", "site/higher-moments-z2/index.html"):
+          verified = Path("site/verified-results/index.html").read_text(encoding="utf-8")
+          assert "phi-math-display" in verified, "Stable display math missing from verified results"
+          assert "phi-math-inline" in verified, "Stable inline math missing from verified results"
+          assert "phi-genesis.css" in verified, "Verified-results math stylesheet missing"
+          assert "$" not in verified, "Raw dollar delimiter found in verified results"
+          assert r"\(" not in verified and r"\[" not in verified, "Raw TeX delimiter found in verified results"
+          print("Stable HTML mathematics OK: site/verified-results/index.html")
+
+          for filename in ("site/open-problems/index.html", "site/higher-moments-z2/index.html"):
               page = Path(filename).read_text(encoding="utf-8")
               has_mathjax = "mathjax@3/es5/tex-mml-chtml.js" in page or "mathjax@3/es5/tex-chtml.js" in page
               assert has_mathjax, f"MathJax loader missing from generated documentation: {filename}"
               assert "arithmatex" in page, f"Expected arithmatex markup missing: {filename}"
-              print(f"Generated documentation math OK: {filename}")
+              print(f"Generated MathJax documentation OK: {filename}")
           PY
       - name: Verify supporting research-record routes
         run: |

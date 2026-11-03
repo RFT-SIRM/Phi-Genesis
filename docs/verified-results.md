@@ -8,7 +8,7 @@ This page summarises the results recorded in Phi-Genesis v2.2.1. “Verified” 
 ## 1. Sierpiński-gasket spectral structure
 
 - **Spectral decimation:** the characteristic eigenvalue scale factor is 5 between consecutive levels, with corner-defect corrections for the corner-degree-2 Laplacian used in this repository.
-- **Fukushima–Shima gaps:** the computations recover forbidden zones associated with fixed points near \(\lambda\approx2.5\) and \(\lambda\approx3\).
+- **Fukushima–Shima gaps:** the computations recover forbidden zones associated with fixed points near <span class="phi-math-inline" role="math" aria-label="lambda approximately 2.5"><i>λ</i> ≈ 2.5</span> and <span class="phi-math-inline" role="math" aria-label="lambda approximately 3"><i>λ</i> ≈ 3</span>.
 - **Log-periodic structure:** the counting data exhibit the expected periodic signature associated with the factor-5 scaling.
 
 These statements concern the graph family, operator convention and finite-level checks documented in the source. Start with [source code](https://github.com/RFT-SIRM/Phi-Genesis/tree/main/phi_genesis) and the [README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md).
@@ -17,11 +17,13 @@ These statements concern the graph family, operator convention and finite-level 
 
 For the Sierpiński gasket, the theoretical exponent is
 
-\[
-\frac{d_s}{2}=\frac{\ln 3}{\ln 5}\approx0.6826.
-\]
+<div class="phi-math-display" role="math" aria-label="d sub s divided by two equals natural logarithm of three divided by natural logarithm of five, approximately zero point six eight two six">
+  <i>d</i><sub>s</sub> / 2 =
+  <span class="phi-fraction"><span>ln 3</span><span>ln 5</span></span>
+  ≈ 0.6826
+</div>
 
-The repository reports that a window-free chord estimator is within 0.1% of its stated comparison expression at level 9 for \(N\ge1000\). This is a result for that estimator and range, not proof that every finite-level estimator converges uniformly.
+The repository reports that a window-free chord estimator is within 0.1% of its stated comparison expression at level 9 for <span class="phi-math-inline" role="math" aria-label="N greater than or equal to one thousand"><i>N</i> ≥ 1,000</span>. This is a result for that estimator and range, not proof that every finite-level estimator converges uniformly.
 
 The inertia-based count path uses Sylvester's law of inertia with sparse LU rather than computing the full spectrum. The documented level-10 graph has 88,575 vertices. The reported resource figures and window studies are implementation- and parameter-specific; see [Open Problem #2](open-problems.md#2-finite-level-convergence-of-the-spectral-exponent) and the [reproduction guide](reproducibility.md).
 
@@ -29,15 +31,16 @@ The inertia-based count path uses Sylvester's law of inertia with sparse LU rath
 
 For the tested level-5 graph, the documented full π-flux configuration raises the first eigenvalue from approximately 0.006 to approximately 0.46, opening a spectral gap in that instance. Partial twists also produce gaps in the tested cases.
 
-This does **not** establish a selection mechanism for \(\{1,12,17,40\}\). In the exhaustive search of all \(2^5=32\) generation-twist configurations, the maximum simultaneous target hit was 1 of 4 and index 40 was never selected.
+This does **not** establish a selection mechanism for <span class="phi-math-inline" role="math" aria-label="the set containing one, twelve, seventeen, and forty">{1, 12, 17, 40}</span>. In the exhaustive search of all <span class="phi-math-inline" role="math" aria-label="two to the fifth power equals thirty two">2<sup>5</sup> = 32</span> generation-twist configurations, the maximum simultaneous target hit was 1 of 4 and index 40 was never selected.
 
 ## 4. Signed-Z2 H10 finite computation
 
 For the deterministic GF(2) representative used by the hole-boundary solver, exact sparse-integer calculations give
-\[
-D_m^{(10)}=\mathrm{Tr}(L_{\pi,m}^{10})-\mathrm{Tr}(L_{0,m}^{10}).
-\]
-The traces are computed through level 10. The residual \(D_m^{(10)}-3D_{m-1}^{(10)}\) equals 12,387,360 on transitions 3→4 through 9→10. Complete generation-twist sweeps were computed at levels 4–9, with 1,008 transition checks; 156 level-10 samples agree with the recurrence. The recurrence is not yet an all-level theorem.
+<div class="phi-math-display" role="math" aria-label="D sub m to the tenth equals trace of L pi comma m to the tenth minus trace of L zero comma m to the tenth">
+  <i>D</i><sub>m</sub><sup>(10)</sup> =
+  Tr(<i>L</i><sub>π,m</sub><sup>10</sup>) − Tr(<i>L</i><sub>0,m</sub><sup>10</sup>)
+</div>
+The traces are computed through level 10. The residual <span class="phi-math-inline" role="math" aria-label="D m to the tenth minus three times D m minus one to the tenth"><i>D</i><sub>m</sub><sup>(10)</sup> − 3<i>D</i><sub>m−1</sub><sup>(10)</sup></span> equals 12,387,360 on transitions 3→4 through 9→10. Complete generation-twist sweeps were computed at levels 4–9, with 1,008 transition checks; 156 level-10 samples agree with the recurrence. The recurrence is not yet an all-level theorem.
 
 Crucially, the hole-boundary parities do not determine a unique cocycle. At level 5, 243 elementary-triangle holonomy degrees of freedom remain, and changing the local representative while preserving hole parities changes H10. This is not a topological invariant of hole flux alone. The scalar signed operator is distinct from the SU(2) operator in Evgeny-Theorem.
 
@@ -45,7 +48,7 @@ See the [full finite H10 note](higher-moments-z2.md), implementation, and reprod
 
 ## 5. Integer mass fit — a fit, not a prediction
 
-The repository records a single-scale fit \(m=A n\), with \(A=104.63\) MeV and integer indices \(n=\{1,12,17,40\}\), matching four selected masses with a mean error of about 0.68%.
+The repository records a single-scale fit <span class="phi-math-inline" role="math" aria-label="m equals A times n"><i>m</i> = <i>A n</i></span>, with <span class="phi-math-inline" role="math" aria-label="A equals 104 point 63"><i>A</i> = 104.63</span> MeV and integer indices <span class="phi-math-inline" role="math" aria-label="n equals the set containing one, twelve, seventeen, and forty"><i>n</i> = {1, 12, 17, 40}</span>, matching four selected masses with a mean error of about 0.68%.
 
 The index set was chosen with the masses in view. Because no independent spectral rule has derived those indices, this numerical agreement is **not a prediction** and must not be described as a confirmed mass law. The alternative scale expression documented in the README gives approximately 100.13 MeV, about 4.3% below the fitted value.
 
@@ -53,7 +56,7 @@ The top-quark index is unresolved: the repository documents candidates 1654, 166
 
 ## 6. η-invariant claim — not reproduced
 
-The RFT-String v8.7 claim \(\bar\eta(0)=-4\) for the stated boundary potential was not reproduced. The documented test reports asymmetry +1 for the claimed potential, −1 for a random potential, and −2 for zero potential; −4 was not observed in the tested cases. The repository interprets the observed asymmetry as a finite-size effect, not as a demonstrated topological invariant.
+The RFT-String v8.7 claim <span class="phi-math-inline" role="math" aria-label="eta bar of zero equals minus four">η̄(0) = −4</span> for the stated boundary potential was not reproduced. The documented test reports asymmetry +1 for the claimed potential, −1 for a random potential, and −2 for zero potential; −4 was not observed in the tested cases. The repository interprets the observed asymmetry as a finite-size effect, not as a demonstrated topological invariant.
 
 ## 7. How to read the evidence { #how-to-read-the-evidence }
 

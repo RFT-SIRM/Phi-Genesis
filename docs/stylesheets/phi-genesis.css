@@ -104,3 +104,61 @@
   .md-typeset table:not([class]) { font-size: .78rem; }
   .phi-doc-nav { padding: .8rem; }
 }
+
+
+/* Stable HTML mathematics for the verified-results page (no MathJax dependency). */
+.md-typeset .phi-math-inline,
+.md-typeset .phi-math-display {
+  font-family: "Cambria Math", "STIX Two Math", "DejaVu Serif", "Times New Roman", serif;
+  font-variant-numeric: lining-nums;
+}
+.md-typeset .phi-math-inline {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 1.02em;
+  line-height: 1.35;
+  vertical-align: -0.08em;
+}
+.md-typeset .phi-math-display {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 1.1em auto;
+  padding: 0.8em 1em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  text-align: center;
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  line-height: 1.8;
+  color: var(--md-default-fg-color);
+  background: var(--md-code-bg-color);
+  border-left: 0.22rem solid var(--md-accent-fg-color);
+  border-radius: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.md-typeset .phi-fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 1.15;
+  margin: 0 0.12em;
+}
+.md-typeset .phi-fraction > span:first-child {
+  display: block;
+  padding: 0 0.24em 0.08em;
+  border-bottom: 1px solid currentColor;
+}
+.md-typeset .phi-fraction > span:last-child {
+  display: block;
+  padding: 0.08em 0.24em 0;
+}
+@media (max-width: 600px) {
+  .md-typeset .phi-math-display {
+    margin: 0.9em 0;
+    padding: 0.65em 0.75em;
+    font-size: 0.98rem;
+  }
+}
