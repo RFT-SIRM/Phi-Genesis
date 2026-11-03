@@ -101,7 +101,8 @@ jobs:
 
           for filename in ("site/verified-results/index.html", "site/open-problems/index.html", "site/higher-moments-z2/index.html"):
               page = Path(filename).read_text(encoding="utf-8")
-              assert "tex-chtml.js" in page, f"MathJax loader missing from generated documentation: {filename}"
+              has_mathjax = "mathjax@3/es5/tex-mml-chtml.js" in page or "mathjax@3/es5/tex-chtml.js" in page
+              assert has_mathjax, f"MathJax loader missing from generated documentation: {filename}"
               assert "arithmatex" in page, f"Expected arithmatex markup missing: {filename}"
               print(f"Generated documentation math OK: {filename}")
           PY
