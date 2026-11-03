@@ -68,7 +68,7 @@ jobs:
           grep -q 'data-link="open-problems.html"' site/index.html
           ! grep -q 'href="../verified-results/' site/index.html
           grep -q "Interactive Research Portal" site/interactive/index.html
-          grep -q 'build-revision" content="2026-11-03-h10-finite-computation-1' site/interactive/index.html
+          grep -q 'build-revision" content="2026-11-03-h10-math-audit-1' site/interactive/index.html
           grep -q '<canvas id="field"' site/interactive/index.html
           grep -q 'data-title=' site/interactive/index.html
           grep -q "Phi-Genesis" site/interactive/index.html
@@ -81,6 +81,30 @@ jobs:
           grep -q 'data-link="../open-problems.html"' site/interactive/index.html
           grep -q "Phi-Genesis" site/history.html
 
+
+      - name: Verify MathJax formulas in published HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          for filename in ("site/index.html", "site/interactive/index.html"):
+              source = Path(filename).read_text(encoding="utf-8")
+              body = re.sub(r"<script\b[^>]*>.*?</script>", "", source, flags=re.I | re.S)
+              assert "mathjax@3/es5/tex-chtml.js" in source, f"MathJax loader missing: {filename}"
+              assert "window.MathJax" in source, f"MathJax configuration missing: {filename}"
+              assert "$" not in body, f"Raw dollar delimiters found: {filename}"
+              assert body.count(r"\(") == body.count(r"\)"), f"Unbalanced inline math delimiters: {filename}"
+              assert body.count(r"\[") == body.count(r"\]"), f"Unbalanced display math delimiters: {filename}"
+              assert "Cambria Math" in source, f"Math-friendly typography missing: {filename}"
+              print(f"MathJax markup OK: {filename}")
+
+          for filename in ("site/verified-results/index.html", "site/open-problems/index.html", "site/higher-moments-z2/index.html"):
+              page = Path(filename).read_text(encoding="utf-8")
+              assert "tex-chtml.js" in page, f"MathJax loader missing from generated documentation: {filename}"
+              assert "arithmatex" in page, f"Expected arithmatex markup missing: {filename}"
+              print(f"Generated documentation math OK: {filename}")
+          PY
       - name: Verify supporting research-record routes
         run: |
           test -s site/methodology/index.html
