@@ -35,7 +35,7 @@ This does **not** establish a selection mechanism for \(\{1,12,17,40\}\). In the
 
 For the deterministic GF(2) representative used by the hole-boundary solver, exact sparse-integer calculations give
 \[
-D_m^{(10)}=\operatorname{Tr}(L_{\pi,m}^{10})-\operatorname{Tr}(L_{0,m}^{10}).
+D_m^{(10)}=\mathrm{Tr}(L_{\pi,m}^{10})-\mathrm{Tr}(L_{0,m}^{10}).
 \]
 The traces are computed through level 10. The residual \(D_m^{(10)}-3D_{m-1}^{(10)}\) equals 12,387,360 on transitions 3→4 through 9→10. Complete generation-twist sweeps were computed at levels 4–9, with 1,008 transition checks; 156 level-10 samples agree with the recurrence. The recurrence is not yet an all-level theorem.
 
