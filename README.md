@@ -111,10 +111,10 @@ For this representative, exact sparse-integer calculations give:
 | 9 | 29,526 | 59,049 | 9,841 | 404,622,661,080 | 12,387,360 |
 | 10 | 88,575 | 177,147 | 29,524 | 1,213,880,370,600 | 12,387,360 |
 
-The observed affine law is verified on levels $3$ through $10$ only:
-$$
-D_m^{(10)}=3D_{m-1}^{(10)}+12,387,360.
-$$
+The observed affine law is verified on levels 3 through 10 only:
+
+<p><i>D</i><sub>m</sub><sup>(10)</sup> = 3 <i>D</i><sub>m−1</sub><sup>(10)</sup> + 12,387,360.</p>
+
 It is a finite computational result, **not yet an all-level theorem**.
 
 A second exact sweep evaluates every generation-twist mask at levels 4--9 (16, 32, 64, 128, 256, and 512 masks). All 1,008 transition checks from level 3 to 9 agree with the same Boolean correction $Q(t_1,t_2,t_3,t_{m+1})$. At level 10, 156 directly evaluated masks agree with the recurrence; the remaining masks at that level are predictions, not direct matrix-power calculations. The full correction polynomial, mathematical derivation route, finite audits, and caveats are in [the H10 research note](docs/higher-moments-z2.md).
