@@ -23,6 +23,15 @@ pytest -q -m "not nightly"
 
 The README reports that the fast suite can take roughly 2–3 minutes on one CPU core, with the level-8 test dominating. Nightly tests are excluded by this command.
 
+## Reproduce signed-Z2 H10 finite calculations
+
+```bash
+python -m phi_genesis.higher_moments_z2 --validate-reference --max-level 10 --output /tmp/full_flux_h10.csv
+pytest -q test_higher_moments_z2.py
+```
+
+The module computes exact integer traces for the deterministic GF(2) representative. The reference boundary scan and dense solver are checked through level 5; see the [H10 research note](higher-moments-z2.md) for the finite-data scope and caveats.
+
 ## Reproduce protocol v1.2.1
 
 ```bash
