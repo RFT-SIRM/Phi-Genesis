@@ -86,4 +86,4 @@ is valid for this scalar L. It does not identify the scalar Z2-flux defect with 
 
 Prove the copy-restriction and corner-moment identities at every level, derive Q from the three-copy word expansion, and formalize the recurrence in Lean 4. Until then, the recurrence and any normalized limit derived from it remain finite computational evidence or conditional consequences only.
 
-See [the implementation](../phi_genesis/higher_moments_z2.py), [reproduction instructions](../computational/higher_moments_z2/README.md), and [the repository README](../README.md).
+See [the implementation](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/phi_genesis/higher_moments_z2.py), [reproduction instructions](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/computational/higher_moments_z2/README.md), and [the repository README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md).
