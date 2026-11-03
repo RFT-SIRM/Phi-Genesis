@@ -88,7 +88,7 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 </details>
 
 
-## Exact finite H10 calculations for the signed `Z2)-flux Laplacian
+## Exact finite H10 calculations for the signed `Z_2`-flux Laplacian
 
 The repository now includes a reproducible exact-integer computation module for the scalar signed operator
 $
