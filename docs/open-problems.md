@@ -35,6 +35,20 @@ See [reproducibility instructions](reproducibility.md) and the source scripts in
 
 The repository does not currently define a Lagrangian or beta functions for the proposed bridge, so an RG calculation is not yet specified. A toy NJL-type equation would introduce its own coupling and cutoff; these parameters must be counted against the number of masses explained. These items remain blocked until a concrete model is stated.
 
+## 3. Signed-Z2 H10: prove the observed generation recurrence
+
+**Question.** Can the finite-data relation
+\[
+F_{m+1}(t_1,\ldots,t_{m+1})=3F_m(t_1,\ldots,t_m)+Q(t_1,t_2,t_3,t_{m+1})
+\]
+be derived for every level from copy restrictions, corner-moment identities, and the three-copy word expansion?
+
+**Current status.** Exact generation-mask sweeps at levels 4–9 and 1,008 transition checks support one Boolean correction polynomial. At level 10, 156 directly computed masks agree with the recurrence. These checks do not prove the recurrence at arbitrary levels or constitute a Lean 4 formalization. In addition, hole-boundary parities do not determine the complete signed cocycle: local representative choices affect H10.
+
+**Path forward.** Prove the local restriction identities uniformly in the level, derive the correction polynomial from the word expansion, and formalize the resulting induction. Keep the representative convention explicit. Do not identify this scalar signed-graph result with the SU(2) trace-defect theorem.
+
+See the [finite H10 research note](higher-moments-z2.md).
+
 ## Research discipline for the next phase
 
 1. State the mathematical rationale before testing a new family.
