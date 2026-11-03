@@ -15,6 +15,7 @@ Phi-Genesis is the RFT-SIRM spectral research programme for the Sierpiński gask
 
 - [**Research map — follow the evidence**](research-map.md)
 - [Verified spectral results and limitations](verified-results.md)
+- [Exact finite signed-Z2 H10 calculations](higher-moments-z2.md)
 - [Selection protocol and negative results](selection-protocol.md)
 - [Interactive spectral research portal](https://rft-sirm.github.io/Phi-Genesis/interactive/)
 - [Research history and chronology](history.html)
@@ -51,6 +52,7 @@ uses a fitted scale and the target indices \(\{1,12,17,40\}\). Those indices hav
 | Spectral decimation and gap structure | [Verified Results](verified-results.md) | Numerically reproduced within the documented scope; corner corrections matter |
 | Spectral counting and spectral dimension | [Open Problems](open-problems.md) | Finite-level exponent estimates remain window-sensitive |
 | Möbius / \(\pi\)-flux boundary conditions | [Verified Results](verified-results.md) | Tested configurations open a gap; target selection is not established |
+| Signed-Z2 H10 moments | [Finite H10 note](higher-moments-z2.md) | Exact finite levels 1–10; observed affine law and generation-twist recurrence remain unproved globally |
 | Target-index selection \(\{1,12,17,40\}\) | [Selection Protocol](selection-protocol.md) | Preregistered tests did not meet the decision threshold |
 | Reproducibility and search provenance | [Data & Provenance](data-and-provenance.md) | Versioned records and code are the source of truth |
 | Interactive exploration and chronology | [Interactive Portal](interactive.md) · [History](history.html) | Separate from the main documentation |
@@ -61,6 +63,7 @@ uses a fitted scale and the target indices \(\{1,12,17,40\}\). Those indices hav
 |---|---|
 | [Research Map](research-map.md) | Research hierarchy, evidence classes, and reading order |
 | [Verified Results](verified-results.md) | Numerical observations, measurements, and explicit limitations |
+| [Signed-Z2 H10](higher-moments-z2.md) | Exact finite traces, generation-twist recurrence data, representative-dependence audit, and open proof target |
 | [Selection Protocol](selection-protocol.md) | Preregistered search families, thresholds, and negative results |
 | [Open Problems](open-problems.md) | Unresolved questions and requirements for further work |
 | [Methodology](methodology.md) | Statistical design, power checks, and look-elsewhere correction |
@@ -78,6 +81,7 @@ uses a fitted scale and the target indices \(\{1,12,17,40\}\). Those indices hav
 - **Spectral decimation:** eigenvalues scale by approximately a factor of five between levels, subject to the documented corner-defect correction.
 - **Weyl exponent:** \(d_s/2=\ln 3/\ln 5\) is the theoretical value; finite-window estimates show phase-dependent spread.
 - **Boundary twists:** the tested full \(\pi\)-flux configuration opens a spectral gap, but this does not select all four target indices.
+- **Signed-Z2 H10:** for the deterministic hole-flux representative, exact tenth-moment traces are computed through level 10. The residual is 12,387,360 for transitions 3→4 through 9→10. This is finite computational evidence; the recurrence is not an all-level theorem. Hole parities do not determine the full cocycle, and local representative changes affect H10.
 - **Selection audit:** preregistered tests v1.0, v1.1, and v1.2.1 did not meet the required threshold. Version v1.0 was underpowered; v1.1 and v1.2.1 could reach the threshold but did not.
 - **\(\eta\)-invariant:** the previously claimed value \(-4\) was not reproduced in the documented tests.
 - **Top-quark index:** candidates 1654, 1664, and 1680 remain inconsistent under the documented scale choices; no candidate is asserted as correct.
