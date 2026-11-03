@@ -21,6 +21,10 @@ This page is a map of the code and research artifacts in the repository. It does
 
 The current file tree and test suite are available in the [GitHub repository](https://github.com/RFT-SIRM/Phi-Genesis/tree/main).
 
+## Higher-moment finite audit
+
+The signed-Z2 H10 computation has a dedicated [research note](higher-moments-z2.md), an executable module, and [regression tests](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/test_higher_moments_z2.py). The observed recurrence is finite-level evidence, not a universal theorem; the hole-parity representative is not unique.
+
 ## Research data and audit artifacts
 
 - \`protocol_data/\` contains null pools, protocol outputs, design results and Open Problem #2 scripts.
