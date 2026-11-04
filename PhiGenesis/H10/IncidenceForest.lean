@@ -665,6 +665,16 @@ theorem gasketTwoCount_replicate_one (k : Nat) :
   | succ k ih =>
       simp [List.replicate_succ, gasketTwoCount, ih]
 
+/-- Forgetting the proof component after Option.pmap into a subtype
+recovers the original optional value. -/
+private theorem option_map_subtype_val_pmap
+    {α : Type*} {P : α → Prop} (o : Option α)
+    (h : ∀ a, o = some a → P a) :
+    Option.map (fun x : {a // P a} => x.1)
+      (Option.pmap
+        (fun a ha => (⟨a, ha⟩ : {a // P a})) o h) = o := by
+  cases o <;> rfl
+
 /-- The bounded form of the prefix before the rightmost 2.
 The length proof is stored with the prefix, so downstream parent maps
 are ordinary Option.map operations rather than dependent matches. -/
@@ -681,17 +691,11 @@ theorem prefixBeforeLastTwoBounded_map_val (w : List (Fin 3)) :
     Option.map
       (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
       (prefixBeforeLastTwoBounded w) = prefixBeforeLastTwo w := by
-  let o := prefixBeforeLastTwo w
-  have hBound : ∀ p, o = some p → p.length < w.length := by
-    intro p hp
-    exact prefixBeforeLastTwo_length_lt (by simpa [o] using hp)
-  change
-    Option.map
-      (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
-      (Option.pmap
-        (fun p hp => (⟨p, hp⟩ : {p : List (Fin 3) // p.length < w.length}))
-        o hBound) = o
-  cases o <;> simp [Option.pmap]
+  simpa [prefixBeforeLastTwoBounded] using
+    (option_map_subtype_val_pmap
+      (P := fun p : List (Fin 3) => p.length < w.length)
+      (o := prefixBeforeLastTwo w)
+      (h := fun p hp => prefixBeforeLastTwo_length_lt hp))
 
 /-- The bounded prefix retains the original rightmost-2 characterization. -/
 theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
