@@ -135,6 +135,18 @@ theorem incidenceForest_orientation_invariant
     simpa [incidenceDegreeParity, incidenceEntry, add_comm] using hv
 
 
+/-- For one indexed undirected edge, the sum of its incidence entries
+over all vertices is zero in GF(2). Both endpoints contribute one, even
+when the edge is a loop. -/
+theorem incidenceEntry_sum_vertices_eq_zero
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    (source target : E → V) (e : E) :
+    (∑ v : V, incidenceEntry source target e v) = 0 := by
+  classical
+  simp [incidenceEntry, Finset.sum_add_distrib, Fintype.sum_ite_eq']
+
+
+
 
 end PhiGenesis.H10
 
