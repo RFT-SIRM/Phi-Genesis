@@ -542,7 +542,7 @@ theorem prefixBeforeLastTwo_length_lt {w p : List (Fin 3)}
           · have hp : p = [] := by
               have hEq : (some [] : Option (List (Fin 3))) = some p := by
                 simpa [prefixBeforeLastTwo, htail, hd] using h
-              exact Option.some.inj hEq
+              exact (Option.some.inj hEq).symm
             subst p
             simp
           · simp [prefixBeforeLastTwo, htail, hd] at h
@@ -575,13 +575,12 @@ theorem prefixBeforeLastTwo_append_replicate_one (w : List (Fin 3))
   | zero =>
       simp
   | succ k ih =>
-      change prefixBeforeLastTwo (w ++ (1 :: List.replicate k (1 : Fin 3))) =
+      change prefixBeforeLastTwo (w ++ ([1] ++ List.replicate k (1 : Fin 3))) =
         prefixBeforeLastTwo w
+      rw [← List.append_assoc]
       calc
-        prefixBeforeLastTwo (w ++ (1 :: List.replicate k (1 : Fin 3))) =
-            prefixBeforeLastTwo ((w ++ [1]) ++ List.replicate k (1 : Fin 3)) := by
-              rw [← List.append_assoc]
-        _ = prefixBeforeLastTwo (w ++ [1]) := ih (w := w ++ [1])
+        prefixBeforeLastTwo ((w ++ [1]) ++ List.replicate k (1 : Fin 3)) =
+            prefixBeforeLastTwo (w ++ [1]) := ih (w := w ++ [1])
         _ = prefixBeforeLastTwo w :=
           prefixBeforeLastTwo_append_digit w 1 (by decide)
 
@@ -643,7 +642,7 @@ theorem gasketTwoCount_eq_prefix_succ {w p : List (Fin 3)}
           · have hp : p = [] := by
               have hEq : (some [] : Option (List (Fin 3))) = some p := by
                 simpa [prefixBeforeLastTwo, htail, hd] using h
-              exact Option.some.inj hEq
+              exact (Option.some.inj hEq).symm
             subst p
             have hcount := gasketTwoCount_eq_zero_of_prefix_none htail
             simp [gasketTwoCount, hd, hcount]
@@ -703,29 +702,6 @@ theorem gasketAddressBaseRank_append_parent_suffix (w : List (Fin 3))
     gasketTwoCount_append]
   simp [gasketTwoCount, gasketTwoCount_replicate_one]
 
-/-- The exact address parent rule from the H10 pivot-tree analysis.
-Nonterminal words point to u 0 1^(m-|u|-2). Terminal words point to
-the prefix before their rightmost 2, or to the exterior root when no
-2 occurs. -/
-def gasketAddressPrefix (m : Nat) (u : GasketAddress m) :
-    Option (GasketAddress m) :=
-  match h : prefixBeforeLastTwo u.1 with
-  | none => none
-  | some p =>
-      some ⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt h) u.2⟩
-
-def gasketAddressParent (m : Nat) (u : GasketAddress m) :
-    Option (GasketAddress m) :=
-  if h : u.1.length + 1 < m then
-    some ⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
-      have hlen :
-          (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
-        simp
-        omega
-      exact hlen⟩
-  else
-    gasketAddressPrefix m u
-
 /-- A well-founded rank for the actual H10 parent map.
 An internal address has rank one more than its terminal parent.
 A terminal address has at least two more rank units than the prefix
@@ -740,8 +716,17 @@ theorem gasketAddressParent_rank_lt (m : Nat)
     gasketAddressRank m v < gasketAddressRank m u := by
   classical
   by_cases hInternal : u.1.length + 1 < m
-  · simp [gasketAddressParent, hInternal] at h
-    cases h
+  · have hValue :
+        v.1 = u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1 := by
+      have hEq :
+          (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+            have hlen :
+                (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
+              simp
+              omega
+            exact hlen⟩ : GasketAddress m) = v :=
+        Option.some.inj (by simpa [gasketAddressParent, hInternal] using h)
+      exact (congrArg Subtype.val hEq).symm
     have hParentLen :
         (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length + 1 = m := by
       simp
@@ -754,8 +739,13 @@ theorem gasketAddressParent_rank_lt (m : Nat)
             (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1) =
           gasketAddressBaseRank u.1 :=
       gasketAddressBaseRank_append_parent_suffix u.1 (m - u.1.length - 2)
-    simp [gasketAddressRank, hInternal, hParentNotInternal, hBase]
-    omega
+    calc
+      gasketAddressRank m v =
+          2 * gasketAddressBaseRank u.1 := by
+            simp [gasketAddressRank, hValue, hBase, hParentNotInternal]
+      _ < 2 * gasketAddressBaseRank u.1 + 1 := by omega
+      _ = gasketAddressRank m u := by
+            simp [gasketAddressRank, hInternal]
   · have hTerminal : u.1.length + 1 = m := by omega
     have hPrefix : gasketAddressPrefix m u = some v := by
       simpa [gasketAddressParent, hInternal] using h
@@ -763,16 +753,29 @@ theorem gasketAddressParent_rank_lt (m : Nat)
     | none =>
         simp [gasketAddressPrefix, hlast] at hPrefix
     | some p =>
-        have hvVal : (v : List (Fin 3)) = p := by
-          have hEq : (⟨p, Nat.lt_trans
-              (prefixBeforeLastTwo_length_lt hlast) u.2⟩ : GasketAddress m) = v :=
+        have hValue : v.1 = p := by
+          have hEq :
+              (⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt hlast) u.2⟩ :
+                GasketAddress m) = v :=
             Option.some.inj (by simpa [gasketAddressPrefix, hlast] using hPrefix)
-          exact congrArg Subtype.val hEq
-        have hBase : gasketAddressBaseRank u.1 =
-            gasketAddressBaseRank p + 1 :=
-          gasketTwoCount_eq_prefix_succ hlast
-        simp [gasketAddressRank, hTerminal, hvVal, hBase]
-        split_ifs <;> omega
+          exact (congrArg Subtype.val hEq).symm
+        have hPrefixLen : p.length < u.1.length :=
+          prefixBeforeLastTwo_length_lt hlast
+        have hParentInternal : v.1.length + 1 < m := by
+          rw [hValue]
+          omega
+        have hBase :
+            gasketAddressBaseRank u.1 =
+              gasketAddressBaseRank p + 1 := by
+          simpa [gasketAddressBaseRank] using
+            (gasketTwoCount_eq_prefix_succ hlast)
+        calc
+          gasketAddressRank m v =
+              2 * gasketAddressBaseRank p + 1 := by
+                simp [gasketAddressRank, hValue, hParentInternal]
+          _ < 2 * (gasketAddressBaseRank p + 1) := by omega
+          _ = gasketAddressRank m u := by
+                simp [gasketAddressRank, hTerminal, hBase]
 
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
