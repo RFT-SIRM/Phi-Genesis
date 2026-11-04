@@ -297,6 +297,31 @@ theorem reducedIncidenceForest_coefficients_unique
 
 
 
+/-- A forest cannot contain two distinct parallel edges. Over GF(2),
+reversing an edge orientation leaves its incidence column unchanged, so
+parallel indexed edges would give equal columns and violate independence. -/
+theorem incidenceForest_no_parallel_edges
+    {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
+    (source target : E → V)
+    (hForest : IsIncidenceForest source target) :
+    ∀ e f : E, e ≠ f →
+      (source e = source f ∧ target e = target f) ∨
+      (source e = target f ∧ target e = source f) →
+      False := by
+  classical
+  have hLI : LinearIndependent (ZMod 2) (incidenceColumn source target) :=
+    (incidenceColumns_linearIndependent_iff_forest source target).2 hForest
+  have hinj : Function.Injective (incidenceColumn source target) := hLI.injective
+  intro e f hef hEndpoints
+  apply hef
+  apply hinj
+  funext v
+  rcases hEndpoints with hSame | hReverse
+  · simp [incidenceColumn, incidenceEntry, hSame.1, hSame.2]
+  · simp [incidenceColumn, incidenceEntry, hReverse.1, hReverse.2, add_comm]
+
+
+
 
 end PhiGenesis.H10
 
