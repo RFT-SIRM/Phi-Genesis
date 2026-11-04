@@ -12,11 +12,13 @@ namespace PhiGenesis.H10
 
 theorem zmod_two_one_add_one : (1 : ZMod 2) + 1 = 0 := by
   calc
-    (1 : ZMod 2) + 1 = 2 := by ring
+    (1 : ZMod 2) + 1 = 2 := by norm_num
     _ = 0 := ZMod.natCast_self 2
 
 theorem zmod_two_has_exactly_two_values (x : ZMod 2) : x = 0 ∨ x = 1 := by
-  fin_cases x <;> simp
+  fin_cases x
+  · exact Or.inl rfl
+  · exact Or.inr rfl
 
 example : Matrix (Fin 2) (Fin 2) (ZMod 2) := 0
 
