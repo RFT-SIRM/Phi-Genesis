@@ -163,6 +163,85 @@ theorem incidenceDegreeParity_sum_vertices_eq_zero
 
 
 
+/-- The reduced incidence column of an edge in a graph with an exterior
+root. The endpoint `none` denotes the root, whose row is omitted. -/
+def reducedIncidenceColumn (source target : E → Option V) (e : E) : V → ZMod 2 :=
+  fun v => incidenceEntry source target e (some v)
+
+/-- A finite edge-subset combination of reduced incidence columns is the
+degree-parity function restricted to the non-root vertices. -/
+theorem reducedIncidenceCombination_edgeIndicator
+    (source target : E → Option V) (F : Finset E) :
+    (∑ e : E, edgeIndicator F e • reducedIncidenceColumn source target e) =
+      fun v => incidenceDegreeParity source target F (some v) := by
+  classical
+  ext v
+  simp only [Finset.sum_apply, Pi.smul_apply, reducedIncidenceColumn,
+    incidenceDegreeParity, smul_eq_mul]
+
+/-- Removing the exterior-root row from a GF(2) incidence matrix preserves
+column independence. The omitted root coordinate is forced by the
+handshake-parity identity. The edge type remains indexed, so parallel edges
+are not identified; loops remain zero columns and hence are dependent. -/
+theorem reducedIncidenceColumns_linearIndependent_iff_forest
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E]
+    (source target : E → Option V) :
+    LinearIndependent (ZMod 2) (reducedIncidenceColumn source target) ↔
+      IsIncidenceForest source target := by
+  classical
+  rw [Fintype.linearIndependent_iff]
+  constructor
+  · intro h F hF
+    by_contra hNoOdd
+    have hEven : ∀ v : Option V, incidenceDegreeParity source target F v = 0 := by
+      intro v
+      by_contra hv
+      exact hNoOdd ⟨v, hv⟩
+    have hzero :
+        (∑ e : E, edgeIndicator F e • reducedIncidenceColumn source target e) = 0 := by
+      rw [reducedIncidenceCombination_edgeIndicator]
+      funext v
+      exact hEven (some v)
+    have hcoeff := h (edgeIndicator F) hzero
+    obtain ⟨e, he⟩ := hF
+    have hnonzero : edgeIndicator F e ≠ 0 := by
+      simp [edgeIndicator, he]
+    exact hnonzero (hcoeff e)
+  · intro hForest c hzero
+    by_contra hNotAllZero
+    push Not at hNotAllZero
+    obtain ⟨e, he⟩ := hNotAllZero
+    let F : Finset E := Finset.univ.filter fun e => c e ≠ 0
+    have hF : F.Nonempty := by
+      refine ⟨e, ?_⟩
+      simp [F, he]
+    have hrep : c = edgeIndicator F := by
+      simpa [F] using coefficient_eq_edgeIndicator c
+    have hSome : ∀ v : V, incidenceDegreeParity source target F (some v) = 0 := by
+      intro v
+      have hpoint := congrFun hzero v
+      rw [hrep] at hpoint
+      simpa only [Finset.sum_apply, Pi.smul_apply, reducedIncidenceColumn,
+        incidenceDegreeParity, smul_eq_mul] using hpoint
+    have htotal :
+        (∑ v : Option V, incidenceDegreeParity source target F v) = 0 :=
+      incidenceDegreeParity_sum_vertices_eq_zero source target F
+    rw [Fintype.sum_option] at htotal
+    have hsumSome :
+        (∑ v : V, incidenceDegreeParity source target F (some v)) = 0 := by
+      simp [hSome]
+    rw [hsumSome, add_zero] at htotal
+    have hEven : ∀ v : Option V, incidenceDegreeParity source target F v = 0 := by
+      intro v
+      cases v with
+      | none => exact htotal
+      | some v => exact hSome v
+    obtain ⟨v, hv⟩ := hForest F hF
+    exact hv (hEven v)
+
+
+
 
 end PhiGenesis.H10
 
