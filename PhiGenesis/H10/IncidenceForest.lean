@@ -61,16 +61,21 @@ theorem coefficient_eq_edgeIndicator (c : E → ZMod 2) :
       rcases zmod_two_eq_zero_or_one (c e) with hzero | hone
       · exact (he hzero).elim
       · exact hone
-    simp [edgeIndicator, he, hc]
+    have hmem : e ∈ Finset.univ.filter (fun e => c e ≠ 0) := by
+      simp [hc]
+    simp [edgeIndicator, hmem, hc]
 
 /-- The linear combination with coefficients 1_F is the degree-parity function. -/
 theorem incidenceCombination_edgeIndicator
     (source target : E → V) (F : Finset E) :
     (∑ e : E, edgeIndicator F e • incidenceColumn source target e) =
       fun v => incidenceDegreeParity source target F v := by
+  classical
   funext v
-  simp [incidenceColumn, incidenceDegreeParity, edgeIndicator, incidenceEntry,
-    Pi.smul_apply, smul_eq_mul]
+  change
+    (∑ e : E, edgeIndicator F e * incidenceEntry source target e v) =
+      (∑ e : E, edgeIndicator F e * incidenceEntry source target e v)
+  rfl
 
 /-- The indexed incidence columns over GF(2) are linearly independent
 iff every nonempty edge subset has a vertex of odd degree.
@@ -104,7 +109,7 @@ theorem incidenceColumns_linearIndependent_iff_forest
     exact hnonzero (hcoeff e)
   · intro hForest c hzero
     by_contra hNotAllZero
-    push_neg at hNotAllZero
+    push Not at hNotAllZero
     obtain ⟨e, he⟩ := hNotAllZero
     let F : Finset E := Finset.univ.filter fun e => c e ≠ 0
     have hF : F.Nonempty := by
@@ -113,11 +118,8 @@ theorem incidenceColumns_linearIndependent_iff_forest
     obtain ⟨v, hv⟩ := hForest F hF
     have hrep : c = edgeIndicator F := by
       simpa [F] using coefficient_eq_edgeIndicator c
-    have hrow := congrFun hzero v
-    rw [hrep] at hrow
-    have hdegree : incidenceDegreeParity source target F v = 0 := by
-      simpa [incidenceDegreeParity, edgeIndicator, incidenceColumn,
-        incidenceEntry, Pi.smul_apply, smul_eq_mul] using hrow
-    exact hv hdegree
+    rw [hrep] at hzero
+    rw [incidenceCombination_edgeIndicator] at hzero
+    exact hv (congrFun hzero v)
 
 end PhiGenesis.H10
