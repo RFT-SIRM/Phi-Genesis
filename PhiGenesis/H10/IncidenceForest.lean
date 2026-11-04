@@ -261,6 +261,42 @@ theorem incidenceForest_no_loops
 
 
 
+/-- Coefficients on a forest are uniquely determined by their incidence
+sum. In particular, once a pivot edge set is known to be a forest, the
+solution supported on that fixed set is unique. -/
+theorem reducedIncidenceForest_coefficients_unique
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (c d : E → ZMod 2)
+    (hEq :
+      (∑ e : E, c e • reducedIncidenceColumn source target e) =
+      (∑ e : E, d e • reducedIncidenceColumn source target e)) :
+    c = d := by
+  classical
+  have hLI :
+      LinearIndependent (ZMod 2) (reducedIncidenceColumn source target) :=
+    (reducedIncidenceColumns_linearIndependent_iff_forest source target).2 hForest
+  rw [Fintype.linearIndependent_iff] at hLI
+  have hzero :
+      (∑ e : E, (c e - d e) • reducedIncidenceColumn source target e) = 0 := by
+    calc
+      (∑ e : E, (c e - d e) • reducedIncidenceColumn source target e)
+          = ∑ e : E,
+              (c e • reducedIncidenceColumn source target e -
+                d e • reducedIncidenceColumn source target e) := by
+              simp only [sub_smul]
+      _ = (∑ e : E, c e • reducedIncidenceColumn source target e) -
+          (∑ e : E, d e • reducedIncidenceColumn source target e) := by
+            rw [Finset.sum_sub_distrib]
+      _ = 0 := by rw [hEq, sub_self]
+  have hcoeff := hLI (fun e => c e - d e) hzero
+  funext e
+  exact sub_eq_zero.mp (hcoeff e)
+
+
+
 
 end PhiGenesis.H10
 
