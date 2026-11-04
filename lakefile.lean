@@ -6,7 +6,7 @@ package phiGenesis where
   fixedToolchain := true
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @
+  "https://github.com/leanprover-community/mathlib4" @
   "v4.33.1"
 
 @[default_target]

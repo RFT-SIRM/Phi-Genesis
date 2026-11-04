@@ -66,6 +66,7 @@ theorem coefficient_eq_edgeIndicator (c : E → ZMod 2) :
     simp [edgeIndicator, hmem, hc]
 
 /-- The linear combination with coefficients 1_F is the degree-parity function. -/
+omit [Fintype V] in
 theorem incidenceCombination_edgeIndicator
     (source target : E → V) (F : Finset E) :
     (∑ e : E, edgeIndicator F e • incidenceColumn source target e) =
