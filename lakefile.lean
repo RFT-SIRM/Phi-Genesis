@@ -7,7 +7,7 @@ package phiGenesis where
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @
-  "6190227179fc32673298fb94e184cdd7fc2581a8"
+  "v4.33.1"
 
 @[default_target]
 lean_lib PhiGenesis where

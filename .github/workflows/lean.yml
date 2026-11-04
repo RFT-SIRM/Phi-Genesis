@@ -1,11 +1,11 @@
-name: Lean 4
+name: Lean formalization
 
 on:
   push:
     branches: [ "formalize/h10-lean4" ]
     paths:
       - "PhiGenesis.lean"
-      - "PhiGenesis/**"
+      - "PhiGenesis/**/*.lean"
       - "lakefile.lean"
       - "lake-manifest.json"
       - "lean-toolchain"
@@ -17,16 +17,18 @@ permissions:
 
 jobs:
   build:
-    name: lake build (pinned Lean + Mathlib)
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
-      - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - name: Build with Lean
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Lean and Mathlib cache
         uses: leanprover/lean-action@fe408643ea7367d8c0404a8be3975bb145f5fb64
+        timeout-minutes: 20
         with:
           auto-config: false
-          build: true
+          build: false
           test: false
           lint: false
           use-mathlib-cache: true
+      - name: Build formalization
+        run: lake build PhiGenesis
