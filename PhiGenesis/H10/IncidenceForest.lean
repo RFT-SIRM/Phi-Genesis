@@ -223,7 +223,7 @@ theorem reducedIncidenceColumns_linearIndependent_iff_forest
       have hpoint := congrFun hzero v
       rw [hrep] at hpoint
       simpa only [Finset.sum_apply, Pi.smul_apply, reducedIncidenceColumn,
-        incidenceDegreeParity, smul_eq_mul] using hpoint
+        incidenceDegreeParity, smul_eq_mul, Pi.zero_apply] using hpoint
     have htotal :
         (∑ v : Option V, incidenceDegreeParity source target F v) = 0 :=
       incidenceDegreeParity_sum_vertices_eq_zero source target F
