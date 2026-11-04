@@ -719,14 +719,14 @@ theorem gasketAddressParent_rank_lt (m : Nat)
   · have hValue :
         v.1 = u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1 := by
       have hEq :
-          (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+          (some (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
             have hlen :
                 (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
               simp
               omega
-            exact hlen⟩ : GasketAddress m) = v :=
-        Option.some.inj (by simpa [gasketAddressParent, hInternal] using h)
-      exact (congrArg Subtype.val hEq).symm
+            exact hlen⟩ : GasketAddress m)) = some v := by
+        simpa [gasketAddressParent, hInternal] using h
+      exact (congrArg Subtype.val (Option.some.inj hEq)).symm
     have hParentLen :
         (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length + 1 = m := by
       simp
@@ -739,26 +739,35 @@ theorem gasketAddressParent_rank_lt (m : Nat)
             (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1) =
           gasketAddressBaseRank u.1 :=
       gasketAddressBaseRank_append_parent_suffix u.1 (m - u.1.length - 2)
+    have hValueBase :
+        gasketAddressBaseRank v.1 = gasketAddressBaseRank u.1 := by
+      rw [hValue]
+      exact hBase
     calc
       gasketAddressRank m v =
           2 * gasketAddressBaseRank u.1 := by
-            simp [gasketAddressRank, hValue, hBase, hParentNotInternal]
+            simp [gasketAddressRank, hValueBase, hParentNotInternal]
       _ < 2 * gasketAddressBaseRank u.1 + 1 := by omega
       _ = gasketAddressRank m u := by
             simp [gasketAddressRank, hInternal]
   · have hTerminal : u.1.length + 1 = m := by omega
-    have hPrefix : gasketAddressPrefix m u = some v := by
-      simpa [gasketAddressParent, hInternal] using h
     cases hlast : prefixBeforeLastTwo u.1 with
     | none =>
-        simp [gasketAddressPrefix, hlast] at hPrefix
+        have hNone : gasketAddressParent m u = none := by
+          simp [gasketAddressParent, hInternal, gasketAddressPrefix, hlast]
+        rw [hNone] at h
+        cases h
     | some p =>
-        have hValue : v.1 = p := by
+        have hParentValue :
+            (⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt hlast) u.2⟩ :
+              GasketAddress m) = v := by
           have hEq :
-              (⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt hlast) u.2⟩ :
-                GasketAddress m) = v :=
-            Option.some.inj (by simpa [gasketAddressPrefix, hlast] using hPrefix)
-          exact (congrArg Subtype.val hEq).symm
+              (some (⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt hlast) u.2⟩ :
+                GasketAddress m)) = some v := by
+            simpa [gasketAddressParent, hInternal, gasketAddressPrefix, hlast] using h
+          exact Option.some.inj hEq
+        have hValue : v.1 = p :=
+          (congrArg Subtype.val hParentValue).symm
         have hPrefixLen : p.length < u.1.length :=
           prefixBeforeLastTwo_length_lt hlast
         have hParentInternal : v.1.length + 1 < m := by
