@@ -72,7 +72,7 @@ theorem incidenceCombination_edgeIndicator
       fun v => incidenceDegreeParity source target F v := by
   classical
   ext v
-  simp only [Finset.sum_apply, Pi.smul_apply, incidenceColumn, incidenceDegreeParity]
+  simp only [Finset.sum_apply, Pi.smul_apply, incidenceColumn, incidenceDegreeParity, smul_eq_mul]
 
 /-- The indexed incidence columns over GF(2) are linearly independent
 iff every nonempty edge subset has a vertex of odd degree.
