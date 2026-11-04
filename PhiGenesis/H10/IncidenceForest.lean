@@ -142,8 +142,8 @@ theorem incidenceEntry_sum_vertices_eq_zero
     (source target : E → V) (e : E) :
     (∑ v : V, incidenceEntry source target e v) = 0 := by
   classical
-  simp [incidenceEntry, eq_comm]
-  norm_num
+  simp [incidenceEntry, Finset.sum_ite_eq', eq_comm]
+  ring
 
 /-- Handshake parity: the sum of all vertex degree parities in any edge
 subset is zero over GF(2). This statement includes loops and parallel edges. -/
@@ -157,8 +157,8 @@ theorem incidenceDegreeParity_sum_vertices_eq_zero
   rw [Finset.sum_comm]
   apply Finset.sum_eq_zero
   intro e he
-  rw [← Finset.mul_sum]
-  rw [incidenceEntry_sum_vertices_eq_zero]
+  rw [← Finset.mul_sum, incidenceEntry_sum_vertices_eq_zero]
+  simp
 
 /-- Every nonempty edge subset of an incidence forest has at least two
 distinct vertices of odd degree. -/
@@ -184,7 +184,7 @@ theorem IsIncidenceForest.exists_two_odd_vertices
         incidenceDegreeParity source target F v := by
     rw [Finset.sum_eq_single v]
     · simp
-    · intro w hw hne
+    · intro w hne
       exact hzero_other w hne
     · simp
   have hvzero : incidenceDegreeParity source target F v = 0 := by
