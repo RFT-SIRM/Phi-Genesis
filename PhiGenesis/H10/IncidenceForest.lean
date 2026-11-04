@@ -148,6 +148,21 @@ theorem incidenceEntry_sum_vertices_eq_zero
 
 
 
+/-- Handshake parity for a finite indexed multigraph: the sum of all
+vertex-degree parities is zero in GF(2), since every edge contributes
+two incidences. -/
+theorem incidenceDegreeParity_sum_vertices_eq_zero
+    {V E : Type*} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+    (source target : E → V) (F : Finset E) :
+    (∑ v : V, incidenceDegreeParity source target F v) = 0 := by
+  classical
+  simp only [incidenceDegreeParity]
+  rw [Finset.sum_comm]
+  simp_rw [← Finset.mul_sum]
+  simp [incidenceEntry_sum_vertices_eq_zero]
+
+
+
 
 end PhiGenesis.H10
 
