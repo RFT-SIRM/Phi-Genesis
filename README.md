@@ -123,6 +123,25 @@ A second exact sweep evaluates every generation-twist mask at levels 4--9 (16, 3
 
 Reproduce with `python -m phi_genesis.higher_moments_z2 --validate-reference --max-level 10`; run `pytest -q test_higher_moments_z2.py` for regression checks. See [calculation instructions and data](computational/higher_moments_z2/README.md).
 
+## Lean 4 formalization: current verified scope
+
+A pinned Lean 4 project is maintained on the `formalize/h10-lean4` branch.
+
+- Lean toolchain: `leanprover/lean4:v4.33.1`.
+- Mathlib: pinned by `lake-manifest.json` to revision `0df444a360eaa60ab8c11dca51a86af692955474`.
+- Build target: `lake build PhiGenesis`.
+- Latest verified build: [GitHub Actions run](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41848273814).
+
+The current Lean development formalizes finite indexed edges with source and target maps, so parallel edges remain distinct. Incidence entries take values in `ZMod 2`; both endpoints are counted, making a loop contribute zero modulo two. The main theorem proves that the indexed incidence columns are linearly independent over `ZMod 2` if and only if every nonempty finite edge subset has a vertex of odd degree parity.
+
+**Scope limitation:** in the current file, `IsIncidenceForest` is defined by this odd-degree condition. The separate equivalence between that condition and the conventional graph-theoretic definition of a forest has not yet been formalized. Nor does this result prove the all-level H10 recurrence. Those are subsequent proof obligations, not claims established by the current CI run.
+
+The Lean source is in [`PhiGenesis/H10/IncidenceForest.lean`](PhiGenesis/H10/IncidenceForest.lean). To reproduce the build:
+
+~~~bash
+lake build PhiGenesis
+~~~
+
 ## Mathematical core
 
 ### 1. Sierpiński-gasket spectral decimation
