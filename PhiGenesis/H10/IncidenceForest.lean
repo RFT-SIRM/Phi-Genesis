@@ -1,6 +1,7 @@
 module
 import Mathlib.Data.ZMod.Basic
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.Tactic
 
 /-!
@@ -326,6 +327,48 @@ theorem incidenceForest_no_parallel_edges
   rcases hEndpoints with hSame | hReverse
   · simp [incidenceColumn, incidenceEntry, hSame.1, hSame.2]
   · simp [incidenceColumn, incidenceEntry, hReverse.1, hReverse.2, add_comm]
+
+
+
+
+/-- The reduced incidence columns of a forest form a basis whenever the
+number of edges equals the number of non-root vertices. -/
+noncomputable def reducedIncidenceForestBasis
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E] [Nonempty E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (hCard : Fintype.card E = Fintype.card V) :
+    Basis E (ZMod 2) (V → ZMod 2) :=
+  basisOfLinearIndependentOfCardEqFinrank
+    ((reducedIncidenceColumns_linearIndependent_iff_forest source target).2 hForest)
+    (by
+      rw [Module.finrank_fintype_fun_eq_card]
+      exact hCard)
+
+/-- For a finite reduced-incidence forest with equally many edges and
+non-root vertices, every right-hand side has exactly one edge-coefficient
+solution over GF(2). -/
+theorem reducedIncidenceForest_existsUnique_solution
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E] [Nonempty E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (hCard : Fintype.card E = Fintype.card V)
+    (rhs : V → ZMod 2) :
+    ∃! c : E → ZMod 2,
+      (∑ e : E, c e • reducedIncidenceColumn source target e) = rhs := by
+  classical
+  let B := reducedIncidenceForestBasis source target hForest hCard
+  have hBasis :
+      (∑ e : E, B.repr rhs e • reducedIncidenceColumn source target e) = rhs := by
+    simpa [B, reducedIncidenceForestBasis] using B.sum_repr rhs
+  refine ⟨B.repr rhs, hBasis, ?_⟩
+  intro c hc
+  apply reducedIncidenceForest_coefficients_unique source target hForest c (B.repr rhs)
+  calc
+    (∑ e : E, c e • reducedIncidenceColumn source target e) = rhs := hc
+    _ = ∑ e : E, B.repr rhs e • reducedIncidenceColumn source target e := hBasis.symm
 
 
 
