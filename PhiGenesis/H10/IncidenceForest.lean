@@ -254,9 +254,12 @@ theorem incidenceForest_no_loops
   let F : Finset E := {e}
   have hF : F.Nonempty := by simp [F]
   obtain ⟨v, hv⟩ := hForest F hF
+  have hTwo : (1 : ZMod 2) + 1 = 0 := by
+    calc
+      (1 : ZMod 2) + 1 = (2 : ZMod 2) := by ring
+      _ = 0 := ZMod.natCast_self 2
   have hEven : incidenceDegreeParity source target F v = 0 := by
-    simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry, he,
-      ZMod.natCast_self]
+    simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry, he, hTwo]
   exact hv hEven
 
 
