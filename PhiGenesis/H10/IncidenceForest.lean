@@ -242,6 +242,25 @@ theorem reducedIncidenceColumns_linearIndependent_iff_forest
 
 
 
+/-- An incidence forest cannot contain a loop: a loop is already a
+nonempty edge subset with even degree at every vertex. -/
+theorem incidenceForest_no_loops
+    {V E : Type*} [DecidableEq V] [Fintype E] [DecidableEq E]
+    (source target : E → V)
+    (hForest : IsIncidenceForest source target) :
+    ∀ e : E, source e ≠ target e := by
+  classical
+  intro e he
+  let F : Finset E := {e}
+  have hF : F.Nonempty := by simp [F]
+  obtain ⟨v, hv⟩ := hForest F hF
+  have hEven : incidenceDegreeParity source target F v = 0 := by
+    simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry, he,
+      ZMod.natCast_self]
+  exact hv hEven
+
+
+
 
 end PhiGenesis.H10
 
