@@ -259,7 +259,11 @@ theorem incidenceForest_no_loops
       (1 : ZMod 2) + 1 = (2 : ZMod 2) := by ring
       _ = 0 := ZMod.natCast_self 2
   have hEven : incidenceDegreeParity source target F v = 0 := by
-    simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry, he, hTwo]
+    by_cases htv : target e = v
+    · simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry,
+        he, htv, hTwo]
+    · simp [F, incidenceDegreeParity, edgeIndicator, incidenceEntry,
+        he, htv]
   exact hv hEven
 
 
