@@ -483,7 +483,386 @@ theorem rankDecreasingParentSolverEquiv_spec
       rfl rhs)
 
 
+/-- The postorder address list used by the scalar H10 hole enumeration.
+At level m + 1, each of the three child copies is listed recursively,
+followed by the address of the parent cell. -/
+def gasketAddressOrder : Nat → List (List (Fin 3))
+  | 0 => []
+  | m + 1 =>
+      (gasketAddressOrder m).map (fun w => (0 : Fin 3) :: w) ++
+      (gasketAddressOrder m).map (fun w => (1 : Fin 3) :: w) ++
+      (gasketAddressOrder m).map (fun w => (2 : Fin 3) :: w) ++
+      [[]]
+
+/-- The recursive address list contains exactly the ternary words of
+length strictly smaller than the level. -/
+theorem mem_gasketAddressOrder_iff (m : Nat) (w : List (Fin 3)) :
+    w ∈ gasketAddressOrder m ↔ w.length < m := by
+  induction m generalizing w with
+  | zero =>
+      simp [gasketAddressOrder]
+  | succ m ih =>
+      cases w with
+      | nil =>
+          simp [gasketAddressOrder]
+      | cons d tail =>
+          fin_cases d <;> simp [gasketAddressOrder, ih]
+
+/-- A level-m gasket address is a ternary word of length less than m. -/
+abbrev GasketAddress (m : Nat) := {w : List (Fin 3) // w.length < m}
+
+/-- The address type is finite, using the recursive enumeration above. -/
+noncomputable instance gasketAddressFintype (m : Nat) :
+    Fintype (GasketAddress m) := by
+  classical
+  exact Fintype.subtype (gasketAddressOrder m).toFinset (by
+    intro w
+    simpa using mem_gasketAddressOrder_iff m w)
+
+/-- The prefix strictly before the rightmost digit 2, when such a digit
+exists. The recursion scans from the right, so an earlier 2 is ignored
+once a later one has been found. -/
+def prefixBeforeLastTwo : List (Fin 3) → Option (List (Fin 3))
+  | [] => none
+  | d :: ds =>
+      match prefixBeforeLastTwo ds with
+      | some p => some (d :: p)
+      | none => if d = 2 then some [] else none
+
+/-- A prefix ending immediately before a 2 is strictly shorter. -/
+theorem prefixBeforeLastTwo_length_lt {w p : List (Fin 3)}
+    (h : prefixBeforeLastTwo w = some p) : p.length < w.length := by
+  induction w generalizing p with
+  | nil =>
+      simp [prefixBeforeLastTwo] at h
+  | cons d ds ih =>
+      cases htail : prefixBeforeLastTwo ds with
+      | none =>
+          by_cases hd : d = 2
+          · have hp : p = [] := by
+              have hEq : (some [] : Option (List (Fin 3))) = some p := by
+                simpa [prefixBeforeLastTwo, htail, hd] using h
+              exact (Option.some.inj hEq).symm
+            subst p
+            simp
+          · simp [prefixBeforeLastTwo, htail, hd] at h
+      | some q =>
+          have hp : p = d :: q := by
+            have hEq : (some (d :: q) : Option (List (Fin 3))) = some p := by
+              simpa [prefixBeforeLastTwo, htail] using h
+            exact (Option.some.inj hEq).symm
+          subst p
+          have hq := ih (p := q) htail
+          simpa using Nat.add_lt_add_right hq 1
+
+/-- Appending a digit different from 2 does not change the prefix
+before the rightmost 2. -/
+theorem prefixBeforeLastTwo_append_digit (w : List (Fin 3))
+    (d : Fin 3) (hd : d ≠ 2) :
+    prefixBeforeLastTwo (w ++ [d]) = prefixBeforeLastTwo w := by
+  induction w with
+  | nil =>
+      simp [prefixBeforeLastTwo, hd]
+  | cons a tail ih =>
+      simp [prefixBeforeLastTwo, ih]
+
+/-- Appending any number of 1 digits does not change that prefix. -/
+theorem prefixBeforeLastTwo_append_replicate_one (w : List (Fin 3))
+    (k : Nat) :
+    prefixBeforeLastTwo (w ++ List.replicate k (1 : Fin 3)) =
+      prefixBeforeLastTwo w := by
+  induction k generalizing w with
+  | zero =>
+      simp
+  | succ k ih =>
+      change prefixBeforeLastTwo (w ++ ([1] ++ List.replicate k (1 : Fin 3))) =
+        prefixBeforeLastTwo w
+      rw [← List.append_assoc]
+      calc
+        prefixBeforeLastTwo ((w ++ [1]) ++ List.replicate k (1 : Fin 3)) =
+            prefixBeforeLastTwo (w ++ [1]) := ih (w := w ++ [1])
+        _ = prefixBeforeLastTwo w :=
+          prefixBeforeLastTwo_append_digit w 1 (by decide)
+
+/-- The parent-address suffix 0 1 ... 1 contains no 2, so it
+preserves the prefix before the rightmost 2. -/
+theorem prefixBeforeLastTwo_append_parent_suffix (w : List (Fin 3))
+    (k : Nat) :
+    prefixBeforeLastTwo (w ++ [0] ++ List.replicate k (1 : Fin 3)) =
+      prefixBeforeLastTwo w := by
+  calc
+    prefixBeforeLastTwo (w ++ [0] ++ List.replicate k (1 : Fin 3)) =
+        prefixBeforeLastTwo (w ++ [0]) :=
+      prefixBeforeLastTwo_append_replicate_one (w ++ [0]) k
+    _ = prefixBeforeLastTwo w :=
+      prefixBeforeLastTwo_append_digit w 0 (by decide)
+
+/-- The number of digits equal to 2 in a ternary address. -/
+def gasketTwoCount : List (Fin 3) → Nat
+  | [] => 0
+  | d :: ds => (if d = 2 then 1 else 0) + gasketTwoCount ds
+
+/-- The number of digits equal to 2 is additive under concatenation. -/
+theorem gasketTwoCount_append (w z : List (Fin 3)) :
+    gasketTwoCount (w ++ z) = gasketTwoCount w + gasketTwoCount z := by
+  induction w with
+  | nil =>
+      simp [gasketTwoCount]
+  | cons d ds ih =>
+      simp [gasketTwoCount, ih, Nat.add_assoc]
+
+/-- A word with no rightmost 2 contains no digit equal to 2. -/
+theorem gasketTwoCount_eq_zero_of_prefix_none {w : List (Fin 3)}
+    (h : prefixBeforeLastTwo w = none) : gasketTwoCount w = 0 := by
+  induction w with
+  | nil =>
+      simp [gasketTwoCount]
+  | cons d ds ih =>
+      cases htail : prefixBeforeLastTwo ds with
+      | some p =>
+          simp [prefixBeforeLastTwo, htail] at h
+      | none =>
+          by_cases hd : d = 2
+          · simp [prefixBeforeLastTwo, htail, hd] at h
+          · have hcount := ih htail
+            simp [gasketTwoCount, hd, hcount]
+
+/-- Removing the rightmost 2 and the suffix after it decreases the
+number of 2 digits by exactly one. -/
+theorem gasketTwoCount_eq_prefix_succ {w p : List (Fin 3)}
+    (h : prefixBeforeLastTwo w = some p) :
+    gasketTwoCount w = gasketTwoCount p + 1 := by
+  induction w generalizing p with
+  | nil =>
+      simp [prefixBeforeLastTwo] at h
+  | cons d ds ih =>
+      cases htail : prefixBeforeLastTwo ds with
+      | none =>
+          by_cases hd : d = 2
+          · have hp : p = [] := by
+              have hEq : (some [] : Option (List (Fin 3))) = some p := by
+                simpa [prefixBeforeLastTwo, htail, hd] using h
+              exact (Option.some.inj hEq).symm
+            subst p
+            have hcount := gasketTwoCount_eq_zero_of_prefix_none htail
+            simp [gasketTwoCount, hd, hcount]
+          · simp [prefixBeforeLastTwo, htail, hd] at h
+      | some q =>
+          have hp : p = d :: q := by
+            have hEq : (some (d :: q) : Option (List (Fin 3))) = some p := by
+              simpa [prefixBeforeLastTwo, htail] using h
+            exact (Option.some.inj hEq).symm
+          subst p
+          have hcount := ih (p := q) htail
+          simp [gasketTwoCount, hcount, Nat.add_assoc]
+
+/-- Every replicate of the digit 1 has no occurrences of 2. -/
+theorem gasketTwoCount_replicate_one (k : Nat) :
+    gasketTwoCount (List.replicate k (1 : Fin 3)) = 0 := by
+  induction k with
+  | zero =>
+      simp [gasketTwoCount]
+  | succ k ih =>
+      simp [List.replicate_succ, gasketTwoCount, ih]
+
+/-- The bounded form of the prefix before the rightmost 2.
+The length proof is stored with the prefix, so downstream parent maps
+are ordinary Option.map operations rather than dependent matches. -/
+def prefixBeforeLastTwoBounded (w : List (Fin 3)) :
+    Option {p : List (Fin 3) // p.length < w.length} :=
+  match h : prefixBeforeLastTwo w with
+  | none => none
+  | some p => some ⟨p, prefixBeforeLastTwo_length_lt h⟩
+
+/-- Forgetting the proof component of a bounded prefix recovers
+the original optional list prefix. -/
+theorem prefixBeforeLastTwoBounded_map_val (w : List (Fin 3)) :
+    Option.map
+      (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
+      (prefixBeforeLastTwoBounded w) = prefixBeforeLastTwo w := by
+  cases hlast : prefixBeforeLastTwo w with
+  | none =>
+      simp [prefixBeforeLastTwoBounded, hlast]
+  | some p =>
+      simp [prefixBeforeLastTwoBounded, hlast]
+
+/-- The bounded prefix retains the original rightmost-2 characterization. -/
+theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
+    {p : {p : List (Fin 3) // p.length < w.length}}
+    (h : prefixBeforeLastTwoBounded w = some p) :
+    prefixBeforeLastTwo w = some p.1 := by
+  have hMap := congrArg
+    (Option.map
+      (fun q : {q : List (Fin 3) // q.length < w.length} => q.1)) h
+  calc
+    prefixBeforeLastTwo w =
+        Option.map
+          (fun q : {q : List (Fin 3) // q.length < w.length} => q.1)
+          (prefixBeforeLastTwoBounded w) :=
+      (prefixBeforeLastTwoBounded_map_val w).symm
+    _ = some p.1 := by simpa using hMap
+
+/-- The exact H10 address parent rule. Internal addresses point to the
+terminal address u 0 1^(m-|u|-2); terminal addresses point to the prefix
+before their rightmost 2, or to the common exterior vertex. -/
+def gasketAddressParent (m : Nat) (u : GasketAddress m) :
+    Option (GasketAddress m) :=
+  if h : u.1.length + 1 < m then
+    some ⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+      have hlen :
+          (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
+        simp
+        omega
+      exact hlen⟩
+  else
+    Option.map
+      (fun p : {p : List (Fin 3) // p.length < u.1.length} =>
+        (⟨p.1, Nat.lt_trans p.2 u.2⟩ : GasketAddress m))
+      (prefixBeforeLastTwoBounded u.1)
+
+/-- The base rank counts the occurrences of the digit 2 in an address. -/
+def gasketAddressBaseRank (w : List (Fin 3)) : Nat :=
+  gasketTwoCount w
+
+/-- The internal-parent suffix 0 1 ... 1 contains no 2, so appending it
+preserves the base rank. -/
+theorem gasketAddressBaseRank_append_parent_suffix (w : List (Fin 3))
+    (k : Nat) :
+    gasketAddressBaseRank (w ++ [0] ++ List.replicate k (1 : Fin 3)) =
+      gasketAddressBaseRank w := by
+  rw [gasketAddressBaseRank, gasketAddressBaseRank,
+    gasketTwoCount_append, gasketTwoCount_append]
+  simp [gasketTwoCount, gasketTwoCount_replicate_one]
+
+/-- A well-founded rank for the actual H10 parent map.
+An internal address has rank one more than its terminal parent.
+A terminal address has at least two more rank units than the prefix
+before its rightmost 2. -/
+def gasketAddressRank (m : Nat) (u : GasketAddress m) : Nat :=
+  2 * gasketAddressBaseRank u.1 + (if u.1.length + 1 < m then 1 else 0)
+
+/-- Every H10 address-parent edge strictly decreases the explicit rank. -/
+theorem gasketAddressParent_rank_lt (m : Nat)
+    (u v : GasketAddress m)
+    (h : gasketAddressParent m u = some v) :
+    gasketAddressRank m v < gasketAddressRank m u := by
+  classical
+  by_cases hInternal : u.1.length + 1 < m
+  · have hEq :
+        (some (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+          have hlen :
+              (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
+            simp
+            omega
+          exact hlen⟩ : GasketAddress m)) = some v := by
+      simpa [gasketAddressParent, hInternal] using h
+    have hAddr :
+        (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+          have hlen :
+              (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
+            simp
+            omega
+          exact hlen⟩ : GasketAddress m) = v :=
+      Option.some.inj hEq
+    have hValue :
+        v.1 = u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1 :=
+      (congrArg Subtype.val hAddr).symm
+    have hParentLen :
+        (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length + 1 = m := by
+      simp
+      omega
+    have hParentNotInternal :
+        ¬ (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length + 1 < m := by
+      omega
+    have hVNotInternal : ¬ v.1.length + 1 < m := by
+      rw [hValue]
+      exact hParentNotInternal
+    have hBase :
+        gasketAddressBaseRank
+            (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1) =
+          gasketAddressBaseRank u.1 :=
+      gasketAddressBaseRank_append_parent_suffix u.1 (m - u.1.length - 2)
+    have hVBase :
+        gasketAddressBaseRank v.1 = gasketAddressBaseRank u.1 := by
+      rw [hValue]
+      exact hBase
+    calc
+      gasketAddressRank m v =
+          2 * gasketAddressBaseRank u.1 := by
+            simp [gasketAddressRank, hVBase, hVNotInternal]
+      _ < 2 * gasketAddressBaseRank u.1 + 1 := by omega
+      _ = gasketAddressRank m u := by
+            simp [gasketAddressRank, hInternal]
+  · have hTerminal : u.1.length + 1 = m := by omega
+    have hTerminalNotInternal : ¬ u.1.length + 1 < m := by omega
+    cases hBounded : prefixBeforeLastTwoBounded u.1 with
+    | none =>
+        simp [gasketAddressParent, hInternal, hBounded] at h
+    | some p =>
+        have hEq :
+            (some (⟨p.1, Nat.lt_trans p.2 u.2⟩ : GasketAddress m)) = some v := by
+          simpa [gasketAddressParent, hInternal, hBounded] using h
+        have hAddr :
+            (⟨p.1, Nat.lt_trans p.2 u.2⟩ : GasketAddress m) = v :=
+          Option.some.inj hEq
+        have hValue : v.1 = p.1 :=
+          (congrArg Subtype.val hAddr).symm
+        have hPrefixLen : p.1.length < u.1.length := p.2
+        have hParentInternal : p.1.length + 1 < m := by
+          omega
+        have hPrefix :
+            prefixBeforeLastTwo u.1 = some p.1 :=
+          prefixBeforeLastTwoBounded_val hBounded
+        have hBase :
+            gasketAddressBaseRank u.1 =
+              gasketAddressBaseRank p.1 + 1 := by
+          simpa [gasketAddressBaseRank] using
+            (gasketTwoCount_eq_prefix_succ hPrefix)
+        calc
+          gasketAddressRank m v =
+              2 * gasketAddressBaseRank p.1 + 1 := by
+                simp [gasketAddressRank, hValue, hParentInternal]
+          _ < 2 * (gasketAddressBaseRank p.1 + 1) := by omega
+          _ = gasketAddressRank m u := by
+                simp [gasketAddressRank, hTerminalNotInternal, hBase]
+
+/-- The address-parent multigraph is an incidence forest at every level.
+This is the concrete Sierpiński address-tree instance of the generic
+rank-decreasing parent theorem. -/
+theorem gasketAddressParent_isForest (m : Nat) :
+    IsIncidenceForest (fun u : GasketAddress m => some u)
+      (gasketAddressParent m) := by
+  classical
+  apply incidenceForest_of_rank_decreasing_parent
+    (gasketAddressRank m) (gasketAddressParent m)
+  intro u v huv
+  exact gasketAddressParent_rank_lt m u v huv
+
+/-- The exact H10 address tree has a canonical GF(2) solver at every
+positive level. Its edge set is indexed by the non-root addresses, so
+the reduced incidence matrix is square and invertible. -/
+noncomputable def gasketAddressTreeSolverEquiv (m : Nat) :
+    (GasketAddress (m + 1) → ZMod 2) ≃ₗ[ZMod 2]
+      (GasketAddress (m + 1) → ZMod 2) := by
+  letI : Nonempty (GasketAddress (m + 1)) := ⟨⟨[], by simp⟩⟩
+  exact rankDecreasingParentSolverEquiv
+    (gasketAddressRank (m + 1)) (gasketAddressParent (m + 1))
+    (gasketAddressParent_rank_lt (m + 1))
+
+/-- The address-tree solver reconstructs every prescribed finite
+generation right-hand side exactly. -/
+theorem gasketAddressTreeSolverEquiv_spec (m : Nat)
+    (rhs : GasketAddress (m + 1) → ZMod 2) :
+    (∑ u : GasketAddress (m + 1),
+      gasketAddressTreeSolverEquiv m rhs u •
+        reducedIncidenceColumn (fun u : GasketAddress (m + 1) => some u)
+          (gasketAddressParent (m + 1)) u) = rhs := by
+  classical
+  letI : Nonempty (GasketAddress (m + 1)) := ⟨⟨[], by simp⟩⟩
+  simpa [gasketAddressTreeSolverEquiv] using
+    (rankDecreasingParentSolverEquiv_spec
+      (gasketAddressRank (m + 1)) (gasketAddressParent (m + 1))
+      (gasketAddressParent_rank_lt (m + 1)) rhs)
 
 
 end PhiGenesis.H10
-
