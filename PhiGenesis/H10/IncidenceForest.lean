@@ -670,9 +670,10 @@ The length proof is stored with the prefix, so downstream parent maps
 are ordinary Option.map operations rather than dependent matches. -/
 def prefixBeforeLastTwoBounded (w : List (Fin 3)) :
     Option {p : List (Fin 3) // p.length < w.length} :=
-  match h : prefixBeforeLastTwo w with
-  | none => none
-  | some p => some ⟨p, prefixBeforeLastTwo_length_lt h⟩
+  Option.pmap
+    (fun p hp => ⟨p, hp⟩)
+    (prefixBeforeLastTwo w)
+    (fun p h => prefixBeforeLastTwo_length_lt h)
 
 /-- Forgetting the proof component of a bounded prefix recovers
 the original optional list prefix. -/
@@ -680,11 +681,8 @@ theorem prefixBeforeLastTwoBounded_map_val (w : List (Fin 3)) :
     Option.map
       (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
       (prefixBeforeLastTwoBounded w) = prefixBeforeLastTwo w := by
-  cases hlast : prefixBeforeLastTwo w with
-  | none =>
-      simp [prefixBeforeLastTwoBounded, hlast]
-  | some p =>
-      simp [prefixBeforeLastTwoBounded, hlast]
+  cases hlast : prefixBeforeLastTwo w <;>
+    simp [prefixBeforeLastTwoBounded, Option.pmap, hlast]
 
 /-- The bounded prefix retains the original rightmost-2 characterization. -/
 theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
