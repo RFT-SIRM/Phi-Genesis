@@ -339,7 +339,7 @@ noncomputable def reducedIncidenceForestBasis
     (source target : E → Option V)
     (hForest : IsIncidenceForest source target)
     (hCard : Fintype.card E = Fintype.card V) :
-    Basis E (ZMod 2) (V → ZMod 2) :=
+    Module.Basis E (ZMod 2) (V → ZMod 2) :=
   basisOfLinearIndependentOfCardEqFinrank
     ((reducedIncidenceColumns_linearIndependent_iff_forest source target).2 hForest)
     (by
