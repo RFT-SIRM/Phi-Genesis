@@ -446,7 +446,7 @@ theorem incidenceForest_of_rank_decreasing_parent
           have hlt : rank v < rank e := hparent e v hp
           exact (not_lt_of_ge (hmax e heF)) hlt
         simp [edgeIndicator, heF, incidenceEntry, hev, hNoIncoming]
-      · simp [edgeIndicator, heF]
+      · simp [edgeIndicator, heF, hev]
   have hParity :
       incidenceDegreeParity (fun v : V => some v) parent F (some v) = 1 := by
     simp [incidenceDegreeParity, hTerm]
