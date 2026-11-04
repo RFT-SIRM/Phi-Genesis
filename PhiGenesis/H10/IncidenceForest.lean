@@ -135,64 +135,6 @@ theorem incidenceForest_orientation_invariant
     simpa [incidenceDegreeParity, incidenceEntry, add_comm] using hv
 
 
-/-- For one indexed undirected edge, the total incidence parity over all
-vertices is zero: its two endpoints contribute twice, including for a loop. -/
-theorem incidenceEntry_sum_vertices_eq_zero
-    {V E : Type*} [Fintype V] [DecidableEq V]
-    (source target : E → V) (e : E) :
-    (∑ v : V, incidenceEntry source target e v) = 0 := by
-  classical
-  simp [incidenceEntry, Finset.sum_ite_eq', eq_comm]
-  ring
-
-/-- Handshake parity: the sum of all vertex degree parities in any edge
-subset is zero over GF(2). This statement includes loops and parallel edges. -/
-theorem incidenceDegreeParity_sum_vertices_eq_zero
-    {V E : Type*} [Fintype V] [DecidableEq V]
-    [Fintype E] [DecidableEq E]
-    (source target : E → V) (F : Finset E) :
-    (∑ v : V, incidenceDegreeParity source target F v) = 0 := by
-  classical
-  simp only [incidenceDegreeParity]
-  rw [Finset.sum_comm]
-  apply Finset.sum_eq_zero
-  intro e he
-  rw [← Finset.mul_sum, incidenceEntry_sum_vertices_eq_zero]
-  simp
-
-/-- Every nonempty edge subset of an incidence forest has at least two
-distinct vertices of odd degree. -/
-theorem IsIncidenceForest.exists_two_odd_vertices
-    {V E : Type*} [Fintype V] [DecidableEq V]
-    [Fintype E] [DecidableEq E]
-    {source target : E → V}
-    (hForest : IsIncidenceForest source target)
-    (F : Finset E) (hF : F.Nonempty) :
-    ∃ v w : V, v ≠ w ∧
-      incidenceDegreeParity source target F v ≠ 0 ∧
-      incidenceDegreeParity source target F w ≠ 0 := by
-  classical
-  obtain ⟨v, hv⟩ := hForest F hF
-  by_contra hpair
-  have hzero_other : ∀ w : V, w ≠ v →
-      incidenceDegreeParity source target F w = 0 := by
-    intro w hw
-    by_contra hodd
-    exact hpair ⟨v, w, hw.symm, hv, hodd⟩
-  have hsum_single :
-      (∑ w : V, incidenceDegreeParity source target F w) =
-        incidenceDegreeParity source target F v := by
-    rw [Finset.sum_eq_single v]
-    · simp
-    · intro w hne
-      exact hzero_other w hne
-    · simp
-  have hvzero : incidenceDegreeParity source target F v = 0 := by
-    calc
-      incidenceDegreeParity source target F v =
-          ∑ w : V, incidenceDegreeParity source target F w := hsum_single.symm
-      _ = 0 := incidenceDegreeParity_sum_vertices_eq_zero source target F
-  exact hv hvzero
 
 end PhiGenesis.H10
 
