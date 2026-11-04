@@ -689,7 +689,8 @@ theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
         simpa [prefixBeforeLastTwoBounded, hlast] using h
       have hVal : q = p.1 :=
         congrArg Subtype.val (Option.some.inj hEq)
-      simpa [hVal] using hlast
+      rw [← hVal]
+      exact hlast
 
 /-- The exact H10 address parent rule. Internal addresses point to the
 terminal address u 0 1^(m-|u|-2); terminal addresses point to the prefix
@@ -708,6 +709,20 @@ def gasketAddressParent (m : Nat) (u : GasketAddress m) :
       (fun p : {p : List (Fin 3) // p.length < u.1.length} =>
         (⟨p.1, Nat.lt_trans p.2 u.2⟩ : GasketAddress m))
       (prefixBeforeLastTwoBounded u.1)
+
+/-- The base rank counts the occurrences of the digit 2 in an address. -/
+def gasketAddressBaseRank (w : List (Fin 3)) : Nat :=
+  gasketTwoCount w
+
+/-- The internal-parent suffix 0 1 ... 1 contains no 2, so appending it
+preserves the base rank. -/
+theorem gasketAddressBaseRank_append_parent_suffix (w : List (Fin 3))
+    (k : Nat) :
+    gasketAddressBaseRank (w ++ [0] ++ List.replicate k (1 : Fin 3)) =
+      gasketAddressBaseRank w := by
+  rw [gasketAddressBaseRank, gasketAddressBaseRank,
+    gasketTwoCount_append, gasketTwoCount_append]
+  simp [gasketTwoCount, gasketTwoCount_replicate_one]
 
 /-- A well-founded rank for the actual H10 parent map.
 An internal address has rank one more than its terminal parent.
@@ -783,7 +798,9 @@ theorem gasketAddressParent_rank_lt (m : Nat)
         have hValue : v.1 = p.1 :=
           (congrArg Subtype.val hAddr).symm
         have hPrefixLen : p.1.length < u.1.length := p.2
-        have hParentInternal : p.1.length + 1 < m := by omega
+        have hParentInternal : p.1.length + 1 < m := by
+          rw [← hTerminal]
+          exact Nat.succ_lt_succ hPrefixLen
         have hPrefix :
             prefixBeforeLastTwo u.1 = some p.1 :=
           prefixBeforeLastTwoBounded_val hBounded
