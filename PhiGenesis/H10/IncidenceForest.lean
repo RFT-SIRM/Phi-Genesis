@@ -71,11 +71,8 @@ theorem incidenceCombination_edgeIndicator
     (∑ e : E, edgeIndicator F e • incidenceColumn source target e) =
       fun v => incidenceDegreeParity source target F v := by
   classical
-  funext v
-  change
-    (∑ e : E, edgeIndicator F e * incidenceEntry source target e v) =
-      (∑ e : E, edgeIndicator F e * incidenceEntry source target e v)
-  rfl
+  ext v
+  simp only [Finset.sum_apply, Pi.smul_apply, incidenceColumn, incidenceDegreeParity]
 
 /-- The indexed incidence columns over GF(2) are linearly independent
 iff every nonempty edge subset has a vertex of odd degree.
@@ -119,7 +116,8 @@ theorem incidenceColumns_linearIndependent_iff_forest
     have hrep : c = edgeIndicator F := by
       simpa [F] using coefficient_eq_edgeIndicator c
     rw [hrep] at hzero
-    rw [incidenceCombination_edgeIndicator] at hzero
-    exact hv (congrFun hzero v)
+    have hpoint := congrFun hzero v
+    rw [incidenceCombination_edgeIndicator] at hpoint
+    exact hv hpoint
 
 end PhiGenesis.H10
