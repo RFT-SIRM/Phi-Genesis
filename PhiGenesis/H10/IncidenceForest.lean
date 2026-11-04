@@ -681,8 +681,17 @@ theorem prefixBeforeLastTwoBounded_map_val (w : List (Fin 3)) :
     Option.map
       (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
       (prefixBeforeLastTwoBounded w) = prefixBeforeLastTwo w := by
-  cases hlast : prefixBeforeLastTwo w <;>
-    simp [prefixBeforeLastTwoBounded, Option.pmap, hlast]
+  let o := prefixBeforeLastTwo w
+  have hBound : ∀ p, o = some p → p.length < w.length := by
+    intro p hp
+    exact prefixBeforeLastTwo_length_lt (by simpa [o] using hp)
+  change
+    Option.map
+      (fun p : {p : List (Fin 3) // p.length < w.length} => p.1)
+      (Option.pmap
+        (fun p hp => (⟨p, hp⟩ : {p : List (Fin 3) // p.length < w.length}))
+        o hBound) = o
+  cases o <;> simp [Option.pmap]
 
 /-- The bounded prefix retains the original rightmost-2 characterization. -/
 theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
