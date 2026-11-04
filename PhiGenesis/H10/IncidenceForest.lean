@@ -418,5 +418,72 @@ theorem reducedIncidenceForestSolverEquiv_symm_apply
 
 
 
+/-- A parent map whose parent always has strictly smaller natural rank
+defines a rooted incidence forest. The proof uses a maximum-rank vertex
+in any nonempty edge subset: no selected edge can enter that vertex from
+a child, so its only selected incidence is its own parent edge. -/
+theorem incidenceForest_of_rank_decreasing_parent
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (rank : V → Nat) (parent : V → Option V)
+    (hparent : ∀ v w, parent v = some w → rank w < rank v) :
+    IsIncidenceForest (fun v : V => some v) parent := by
+  classical
+  intro F hF
+  obtain ⟨v, hvF, hmax⟩ := Finset.exists_max_image F rank hF
+  have hNoLoop : parent v ≠ some v := by
+    intro hv
+    exact (Nat.lt_irrefl (rank v)) (hparent v v hv)
+  have hTerm (e : V) :
+      edgeIndicator F e *
+          incidenceEntry (fun x : V => some x) parent e (some v) =
+        if e = v then 1 else 0 := by
+    by_cases hev : e = v
+    · subst e
+      simp [edgeIndicator, hvF, incidenceEntry, hNoLoop]
+    · by_cases heF : e ∈ F
+      · have hNoIncoming : parent e ≠ some v := by
+          intro hp
+          have hlt : rank v < rank e := hparent e v hp
+          exact (not_lt_of_ge (hmax e heF)) hlt
+        simp [edgeIndicator, heF, incidenceEntry, hev, hNoIncoming]
+      · simp [edgeIndicator, heF]
+  have hParity :
+      incidenceDegreeParity (fun v : V => some v) parent F (some v) = 1 := by
+    simp [incidenceDegreeParity, hTerm]
+  refine ⟨some v, ?_⟩
+  rw [hParity]
+  norm_num
+
+/-- Every strictly rank-decreasing parent system has a canonical GF(2)
+solver: the reduced incidence matrix of its parent edges is invertible. -/
+noncomputable def rankDecreasingParentSolverEquiv
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    (rank : V → Nat) (parent : V → Option V)
+    (hparent : ∀ v w, parent v = some w → rank w < rank v) :
+    (V → ZMod 2) ≃ₗ[ZMod 2] (V → ZMod 2) :=
+  reducedIncidenceForestSolverEquiv
+    (fun v : V => some v) parent
+    (incidenceForest_of_rank_decreasing_parent rank parent hparent)
+    rfl
+
+/-- The parent-tree solver coefficients reconstruct every prescribed
+right-hand side exactly. -/
+theorem rankDecreasingParentSolverEquiv_spec
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    (rank : V → Nat) (parent : V → Option V)
+    (hparent : ∀ v w, parent v = some w → rank w < rank v)
+    (rhs : V → ZMod 2) :
+    (∑ v : V,
+      rankDecreasingParentSolverEquiv rank parent hparent rhs v •
+        reducedIncidenceColumn (fun v : V => some v) parent v) = rhs := by
+  simpa [rankDecreasingParentSolverEquiv] using
+    (reducedIncidenceForestSolverEquiv_spec
+      (fun v : V => some v) parent
+      (incidenceForest_of_rank_decreasing_parent rank parent hparent)
+      rfl rhs)
+
+
+
+
 end PhiGenesis.H10
 
