@@ -373,5 +373,50 @@ theorem reducedIncidenceForest_existsUnique_solution
 
 
 
+/-- The canonical GF(2) solver associated to a finite reduced-incidence
+forest with equally many edges and non-root vertices. It sends each
+right-hand side to its unique edge-coefficient vector. -/
+noncomputable def reducedIncidenceForestSolverEquiv
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E] [Nonempty E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (hCard : Fintype.card E = Fintype.card V) :
+    (V → ZMod 2) ≃ₗ[ZMod 2] (E → ZMod 2) :=
+  (reducedIncidenceForestBasis source target hForest hCard).equivFun
+
+/-- Applying the canonical solver gives coefficients whose incidence
+combination is exactly the prescribed right-hand side. -/
+theorem reducedIncidenceForestSolverEquiv_spec
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E] [Nonempty E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (hCard : Fintype.card E = Fintype.card V)
+    (rhs : V → ZMod 2) :
+    (∑ e : E,
+      reducedIncidenceForestSolverEquiv source target hForest hCard rhs e •
+        reducedIncidenceColumn source target e) = rhs := by
+  simpa [reducedIncidenceForestSolverEquiv, reducedIncidenceForestBasis] using
+    (reducedIncidenceForestBasis source target hForest hCard).sum_equivFun rhs
+
+/-- The inverse of the canonical solver forms the incidence sum of a
+coefficient vector. Thus the solver and the incidence map are inverse
+linear equivalences, not merely a pointwise existence result. -/
+theorem reducedIncidenceForestSolverEquiv_symm_apply
+    {V E : Type*} [Fintype V] [DecidableEq V]
+    [Fintype E] [DecidableEq E] [Nonempty E]
+    (source target : E → Option V)
+    (hForest : IsIncidenceForest source target)
+    (hCard : Fintype.card E = Fintype.card V)
+    (c : E → ZMod 2) :
+    (reducedIncidenceForestSolverEquiv source target hForest hCard).symm c =
+      ∑ e : E, c e • reducedIncidenceColumn source target e := by
+  simpa [reducedIncidenceForestSolverEquiv, reducedIncidenceForestBasis] using
+    (reducedIncidenceForestBasis source target hForest hCard).equivFun_symm_apply c
+
+
+
+
 end PhiGenesis.H10
 
