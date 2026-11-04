@@ -143,7 +143,7 @@ theorem incidenceEntry_sum_vertices_eq_zero
     (source target : E → V) (e : E) :
     (∑ v : V, incidenceEntry source target e v) = 0 := by
   classical
-  simp [incidenceEntry, Finset.sum_add_distrib, Fintype.sum_ite_eq']
+  norm_num [incidenceEntry, Finset.sum_add_distrib]
 
 
 
