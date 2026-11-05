@@ -212,3 +212,15 @@ The exact Lean run `42000284818` for commit `97888606801fc11dbbe4bea4e65fc65b233
 The correction removes `Fintype` only from `GasketCornerVertex` as well. The module uses neither a finite-type enumeration nor a sum/product over this type; concrete list permutation and nodup facts remain decidable from the inductive constructors. The state and vertex constructors, orders, transition automaton, and theorem statements are unchanged.
 
 This is the final remaining instance cleanup identified by that log. The module is not verified until the next exact-SHA `lake build PhiGenesis` passes.
+
+
+
+## 20. Exact integer geometry of recursive child embeddings
+
+The branch head before this block, `9164817a7417c67043d0aaf47776048ae00cd30b`, passed the full Lean build (workflow `42001194393`). The A/B/C module formalizes the abstract three-state order automaton, but its header leaves realization by the Python graph builder open.
+
+The Python child map is `target + (point - old_corner)/2`. In triangular-lattice coordinates scaled by (2^n) at level (n), the three child maps from level (n) to (n+1) become exact integer translations ((x,y)), ((x+2^n,y)), and ((x,y+2^n)). The new `PhiGenesis/H10/GasketCoordinates.lean` formalizes these maps without floating point or rounding. It proves injectivity of each child embedding, preservation of the parent triangle, the three pairwise-intersection constraints, and attainment of the shared midpoints by child outer corners.
+
+An independent arithmetic sandbox check of this coordinate recursion gave the expected vertex counts ((3^{n+1}+3)/2) for levels 0 through 8 and verified the three singleton pairwise intersections at each positive level.
+
+This is only the exact geometric gluing foundation. It does not yet prove the A/B/C first-occurrence state transitions from the ordered vertex list, side monotonicity, or the minimum-edge fundamental-cut lemma. The module is not kernel-verified until the exact-SHA Lean workflow completes `lake build PhiGenesis`.
