@@ -204,3 +204,11 @@ Lean workflow `41998579819` for `e861058597f83d375baec453173bb9474cec280d` faile
 The correction removes the unnecessary `Fintype` deriving from both enumerations, retaining `DecidableEq` and `Repr`. The child-table theorem now records the three append-transition equations separately, rewrites the conjunction with those equations, and then splits on the parent state so the middle-child branch simplifies explicitly. The state values, vertex orders, transition function, and theorem statements are unchanged.
 
 This is a proof/elaboration correction only. The A/B/C module is not kernel-verified until the new exact SHA passes `lake build PhiGenesis`.
+
+## 19. Remove the remaining unnecessary Fintype instance from corner vertices
+
+The exact Lean run `42000284818` for commit `97888606801fc11dbbe4bea4e65fc65b233279ba` failed at `VertexOrder.lean:34`. Inspection of the complete source showed that the prior correction removed the derived `Fintype` instance from `GasketCornerOrderState`, but accidentally left the same deriving clause on `GasketCornerVertex`. That remaining generated `enumList` instance caused the identical membership coercion mismatch in the permutation proof.
+
+The correction removes `Fintype` only from `GasketCornerVertex` as well. The module uses neither a finite-type enumeration nor a sum/product over this type; concrete list permutation and nodup facts remain decidable from the inductive constructors. The state and vertex constructors, orders, transition automaton, and theorem statements are unchanged.
+
+This is the final remaining instance cleanup identified by that log. The module is not verified until the next exact-SHA `lake build PhiGenesis` passes.

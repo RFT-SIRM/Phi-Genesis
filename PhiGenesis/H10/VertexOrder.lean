@@ -31,7 +31,7 @@ inductive GasketCornerVertex where
   | h01
   | h02
   | h12
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
 
 /-- The six local vertices, listed in first-occurrence order in state A, B, or C. -/
 def gasketCornerVertexOrder : GasketCornerOrderState → List GasketCornerVertex
