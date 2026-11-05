@@ -32,7 +32,7 @@ balanced signing has trivial kernel.
 | Statement | Where | Status |
 | --- | --- | --- |
 | `Q` is the Gram matrix of a signed edge-incidence matrix, `Q = BᵀB`, hence positive semidefinite | `PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean`, commit `86d8d1e` (`sgSignedIncidenceMatrix`) | formalized, on `main` |
-| Every eigenvalue of the signed Laplacian is **≥ 1**, for every level `m` | same file, `sgSignedLaplacianMatrix_eigenvalue_ge_one` | formalized, on `main` |
+| Every real eigenvalue (with a nonzero real eigenvector) of the signed Laplacian is **≥ 1**, for every level `m` | same file, `sgSignedLaplacianMatrix_eigenvalue_ge_one` | formalized, on `main` |
 | The gap cannot close at θ = 2π for the stated recursive face/sign model | `RESEARCH_LOG_2026-11-05.md`, lower-bound section | proved; uses only edge-disjoint triangular faces and vertex coverage |
 
 The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** close as `m → ∞`.
