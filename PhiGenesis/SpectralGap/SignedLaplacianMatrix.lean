@@ -28,7 +28,19 @@ theorem sgSignedEdgeVector_sum (m : Nat)
     (∑ v : SGVertex m, sgSignedEdgeVector m e v * x v) =
       x e.1 + sgVertexGauge e.1 * sgVertexGauge e.2 * x e.2 := by
   classical
-  simp [sgSignedEdgeVector]
+  have hindicator (a : SGVertex m) (c : ℝ) :
+      (∑ v : SGVertex m, (if v = a then c else 0) * x v) = c * x a := by
+    calc
+      (∑ v : SGVertex m, (if v = a then c else 0) * x v) =
+          ∑ v : SGVertex m, (if v = a then c * x a else 0) := by
+            apply Finset.sum_congr rfl
+            intro v hv
+            by_cases h : v = a <;> simp [h]
+      _ = c * x a := by simp
+  unfold sgSignedEdgeVector
+  rw [Finset.sum_add_distrib]
+  rw [hindicator e.1 1, hindicator e.2 (sgVertexGauge e.1 * sgVertexGauge e.2)]
+  norm_num
 
 /-- The signed Laplacian matrix is the sum of rank-one matrices associated
 with the signed edge vectors.  Its entries are symmetric by construction. -/
@@ -60,6 +72,7 @@ private theorem sum_outerProduct_quadratic
         ∑ e ∈ s, b e v * (∑ w : V, b e w * x w) := by
           apply Finset.sum_congr rfl
           intro v hv
+          congr 1
           calc
             (∑ w : V, (∑ e ∈ s, b e v * b e w) * x w) =
                 ∑ w : V, ∑ e ∈ s, (b e v * b e w) * x w := by
@@ -135,11 +148,11 @@ theorem sgSignedLaplacianMatrix_quadraticForm (m : Nat)
 least one.  The eigenvector equation is written row-by-row, i.e. as the
 ordinary matrix-vector equation for sgSignedLaplacianMatrix. -/
 theorem sgSignedLaplacianMatrix_eigenvalue_ge_one (m : Nat)
-    (λ : ℝ) (x : SGVertex m → ℝ)
+    (eigval : ℝ) (x : SGVertex m → ℝ)
     (hEigen : ∀ u : SGVertex m,
-      (∑ v : SGVertex m, sgSignedLaplacianMatrix m u v * x v) = λ * x u)
+      (∑ v : SGVertex m, sgSignedLaplacianMatrix m u v * x v) = eigval * x u)
     (hx : x ≠ 0) :
-    1 ≤ λ := by
+    1 ≤ eigval := by
   classical
   let mass : ℝ := ∑ v : SGVertex m, (x v) ^ 2
   have hmass_pos : 0 < mass := by
@@ -157,7 +170,7 @@ theorem sgSignedLaplacianMatrix_eigenvalue_ge_one (m : Nat)
         (fun w hw => sq_nonneg (x w)) (Finset.mem_univ v)
     dsimp [mass]
     exact lt_of_lt_of_le hsq hsingle
-  have hmass_le : mass ≤ λ * mass := by
+  have hmass_le : mass ≤ eigval * mass := by
     dsimp [mass]
     calc
       (∑ v : SGVertex m, (x v) ^ 2) ≤ sgSignedGraphEnergy m x :=
@@ -165,15 +178,15 @@ theorem sgSignedLaplacianMatrix_eigenvalue_ge_one (m : Nat)
       _ = ∑ u : SGVertex m, x u *
           ∑ v : SGVertex m, sgSignedLaplacianMatrix m u v * x v :=
         (sgSignedLaplacianMatrix_quadraticForm m x).symm
-      _ = ∑ u : SGVertex m, x u * (λ * x u) := by
+      _ = ∑ u : SGVertex m, x u * (eigval * x u) := by
         apply Finset.sum_congr rfl
         intro u hu
         rw [hEigen u]
-      _ = ∑ u : SGVertex m, λ * (x u) ^ 2 := by
+      _ = ∑ u : SGVertex m, eigval * (x u) ^ 2 := by
         apply Finset.sum_congr rfl
         intro u hu
         ring
-      _ = λ * ∑ u : SGVertex m, (x u) ^ 2 := by
+      _ = eigval * ∑ u : SGVertex m, (x u) ^ 2 := by
         rw [Finset.mul_sum]
   dsimp [mass] at hmass_pos hmass_le
   nlinarith

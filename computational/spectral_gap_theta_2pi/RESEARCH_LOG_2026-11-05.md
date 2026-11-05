@@ -331,3 +331,9 @@ On commit `37a83b768d070e6e6b1a83dc36f1fe76d79df722`, Lean workflow run [#419791
 The next formal block defines the finite signed Laplacian matrix as a sum of rank-one edge matrices built from the signed endpoint vector. It proves entrywise symmetry and identifies its quadratic form exactly with `sgSignedGraphEnergy`. The already verified all-level quadratic-form estimate then implies that every real eigenvalue admitting a nonzero real eigenvector is at least one.
 
 Scope is kept explicit: the matrix represents the local-face signing `s_uv = epsilon(u) epsilon(v)` established in `SignedGaugeEnergy.lean`. This does not identify that signing with the pivot-zero all-hole-flux representative; the latter remains a separate spectral problem. The new matrix and eigenpair statements await Lean CI on their exact commit.
+
+## 26. Repair of the first matrix formalization compile errors
+
+Lean run [#41980056963](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41980056963) reached `SignedLaplacianMatrix.lean` and reported three source-level issues: (i) the endpoint-indicator sum was not reduced by the initial `simp`; (ii) two intermediate `calc` steps in the finite rank-one quadratic-form rearrangement omitted the surrounding scalar factor; and (iii) `λ` was used as a binder name although it is reserved Lean syntax.
+
+The repair gives the indicator sum an explicit finite-sum proof, keeps the external scalar factor in both sum-reordering steps, and renames the eigenvalue variable to `eigval`. No graph definition, sign convention, energy identity, or theorem hypothesis is changed. Python audit [#41980056972](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41980056972) passed on the parent source. This repair is not closed until a fresh Lean build on its exact SHA succeeds.
