@@ -1426,7 +1426,7 @@ have been identified with these finite address sets. -/
 
 /-- The triangular boundary-row transform: an internal address contributes
 itself and its three children; a terminal address contributes itself. -/
-def gasketBoundaryRowTransform {E : Type*}
+@[expose] public def gasketBoundaryRowTransform {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m : Nat)
     (w : List (Fin 3)) : E → ZMod 2 :=
   fun e =>
@@ -1437,7 +1437,7 @@ def gasketBoundaryRowTransform {E : Type*}
 
 /-- Recursive sum of transformed rows over a complete ternary address
 subtree of depth k, rooted at w. -/
-def gasketAddressSubtreeRowSum {E : Type*}
+@[expose] public def gasketAddressSubtreeRowSum {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m : Nat) :
     Nat → List (Fin 3) → E → ZMod 2
   | 0, w, e =>
@@ -1453,7 +1453,7 @@ private theorem zmodTwo_two_eq_zero : (2 : ZMod 2) = 0 := by
 
 /-- On a complete ternary subtree whose leaves are at level m-1,
 the sum of the transformed rows telescopes to the original root row. -/
-theorem gasketAddressSubtreeRowSum_eq {E : Type*}
+public theorem gasketAddressSubtreeRowSum_eq {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m k : Nat) (w : List (Fin 3))
     (h : w.length + k + 1 = m) :
     gasketAddressSubtreeRowSum B m k w = B w := by
@@ -1486,7 +1486,7 @@ theorem gasketAddressSubtreeRowSum_eq {E : Type*}
 
 /-- Algebraic cut-row sum for an internal address. The candidate component
 is the root together with the complete subtree rooted at its child u2. -/
-theorem gasketAddressNonterminalCutRows_sum {E : Type*}
+public theorem gasketAddressNonterminalCutRows_sum {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m : Nat) (u : List (Fin 3))
     (hInternal : u.length + 1 < m) :
     gasketBoundaryRowTransform B m u
@@ -1505,7 +1505,7 @@ theorem gasketAddressNonterminalCutRows_sum {E : Type*}
 
 /-- Algebraic cut-row sum for a terminal address w = v 0 1^k
 whose unique internal child is v. -/
-theorem gasketAddressTerminalCutRows_sum {E : Type*}
+public theorem gasketAddressTerminalCutRows_sum {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m : Nat)
     (v : List (Fin 3)) (k : Nat)
     (hInternal : v.length + 1 < m)

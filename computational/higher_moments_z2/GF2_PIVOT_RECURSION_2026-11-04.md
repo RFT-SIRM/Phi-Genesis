@@ -128,3 +128,13 @@ Added PhiGenesis/H10/BoundaryRowTransform.lean. The module reuses the establishe
 The constructive inverse is the sum of transformed rows over the complete descendant subtree rooted at the address. This formalizes the injectivity part of the row-change obligation independently of the edge-order argument. It does not yet identify the least primal edge in a fundamental cut, nor does it prove that the resulting address-parent tree is the lexicographically greedy pivot tree. Those remain separate obligations.
 
 This module uses exact address lengths and ZMod 2 arithmetic only. It makes no changes to the Python solver, its edge order, or the non-pivot-zero convention. Lean CI on the exact commit is required before marking the result kernel-verified.
+
+## 9. Lean module visibility correction
+
+The first CI attempt for the new injectivity module, commit `95ff1a8e7f6835227fecc6a4af0392153722c650`, failed while elaborating `PhiGenesis/H10/BoundaryRowTransform.lean`. The first errors were unknown identifiers `gasketBoundaryRowTransform` and `gasketAddressSubtreeRowSum`; the later implicit-variable and length errors were cascading consequences, not separate mathematical failures.
+
+The cause was the Lean module visibility boundary: `IncidenceForest.lean` starts with `module`, so declarations are private by default unless explicitly exported. The row-transform definitions and their algebraic row-sum/cut theorems existed in that file but were not visible to an importing module.
+
+The correction exports the two row-transform definitions with exposed bodies, and exports the subtree telescoping and two cut-row sum theorems. Their statements and proofs are unchanged. This is an API-visibility correction only; it does not alter the address parent map, the GF(2) equations, the canonical pivot convention, or the edge-order obligation.
+
+The visibility correction is not counted as kernel-verified until the Lean workflow for the resulting exact commit completes `lake build PhiGenesis` successfully.
