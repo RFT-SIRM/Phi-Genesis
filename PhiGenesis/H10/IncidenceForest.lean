@@ -994,6 +994,108 @@ theorem gasketAddressParent_twoSubtree_invariant
         simpa [q] using hValue.symm
 
 
+/-- Every address below the child u2 has a parent: the terminal prefix
+before its rightmost 2 is either u itself or still lies below u2. -/
+theorem gasketAddressParent_twoSubtree_parent_some
+    (m : Nat) (u s : List (Fin 3))
+    (hLength : (u ++ [2] ++ s).length < m) :
+    ∃ v : GasketAddress m,
+      gasketAddressParent m
+        (⟨u ++ [2] ++ s, hLength⟩ : GasketAddress m) = some v := by
+  let z : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
+  have hLengthBound : z.1.length + 1 ≤ m := by
+    simpa [z] using (Nat.succ_le_of_lt hLength)
+  by_cases hInternal : z.1.length + 1 < m
+  · exact ⟨_, gasketAddressParent_internal m z hInternal⟩
+  · have hTerminal : z.1.length + 1 = m := by
+      exact le_antisymm hLengthBound (Nat.le_of_not_gt hInternal)
+    cases hTail : prefixBeforeLastTwo s with
+    | none =>
+        have hPrefix : prefixBeforeLastTwo z.1 = some u := by
+          simpa [z, hTail] using (prefixBeforeLastTwo_append_two u s)
+        have hULt : u.length < m := by
+          have hlt := prefixBeforeLastTwo_length_lt hPrefix
+          omega
+        exact ⟨⟨u, hULt⟩,
+          gasketAddressParent_terminalPrefix m z u hTerminal hPrefix⟩
+    | some p =>
+        let q := u ++ [2] ++ p
+        have hPrefix : prefixBeforeLastTwo z.1 = some q := by
+          simpa [z, q, hTail] using (prefixBeforeLastTwo_append_two u s)
+        have hQLt : q.length < m := by
+          have hlt := prefixBeforeLastTwo_length_lt hPrefix
+          omega
+        exact ⟨⟨q, hQLt⟩,
+          gasketAddressParent_terminalPrefix m z q hTerminal hPrefix⟩
+
+
+/-- Iterate the address-parent map, stopping if the exterior root is reached. -/
+def gasketAddressParentIter (m : Nat) :
+    Nat → GasketAddress m → Option (GasketAddress m)
+  | 0, u => some u
+  | n + 1, u =>
+      (gasketAddressParent m u).bind (gasketAddressParentIter m n)
+
+
+/-- Every address in the u2 subtree reaches u after finitely many parent
+steps. The proof combines subtree invariance with strict decrease of the
+well-founded address rank; thus the candidate non-root component is
+connected to its root using only parent edges. -/
+theorem gasketAddressParentIter_twoSubtree_reaches
+    (m : Nat) (u s : List (Fin 3))
+    (hInternal : u.length + 1 < m)
+    (hLength : (u ++ [2] ++ s).length < m) :
+    ∃ n,
+      gasketAddressParentIter m n
+        (⟨u ++ [2] ++ s, hLength⟩ : GasketAddress m) =
+          some (⟨u, by omega⟩ : GasketAddress m) := by
+  let root : GasketAddress m := ⟨u, by omega⟩
+  have hmain :
+      ∀ n (z : GasketAddress m),
+        gasketAddressRank m z = n →
+        (∃ tail, z.1 = u ++ [2] ++ tail) →
+        ∃ steps, gasketAddressParentIter m steps z = some root := by
+    intro n
+    induction n using Nat.strong_induction_on with
+    | h n ih =>
+        intro z hz hSubtree
+        rcases hSubtree with ⟨tail, hWord⟩
+        have hLengthZ : (u ++ [2] ++ tail).length < m := by
+          simpa [hWord] using z.2
+        have hParentExists :=
+          gasketAddressParent_twoSubtree_parent_some m u tail hLengthZ
+        obtain ⟨p, hParent⟩ := hParentExists
+        have hAddressEq :
+            (⟨u ++ [2] ++ tail, hLengthZ⟩ : GasketAddress m) = z := by
+          apply Subtype.ext
+          exact hWord.symm
+        have hParentAtZ : gasketAddressParent m z = some p := by
+          rw [← hAddressEq]
+          exact hParent
+        have hParentCase :=
+          gasketAddressParent_twoSubtree_invariant m u tail hLengthZ p hParent
+        rcases hParentCase with hRoot | ⟨q, hSubParent⟩
+        · have hpRoot : p = root := by
+            apply Subtype.ext
+            exact hRoot
+          refine ⟨1, ?_⟩
+          simp [gasketAddressParentIter, hParentAtZ, hpRoot, root]
+        · have hRankP : gasketAddressRank m p < n := by
+            calc
+              gasketAddressRank m p < gasketAddressRank m z :=
+                gasketAddressParent_rank_lt m z p hParentAtZ
+              _ = n := hz
+          obtain ⟨steps, hSteps⟩ :=
+            ih (gasketAddressRank m p) hRankP p rfl ⟨q, hSubParent⟩
+          refine ⟨steps + 1, ?_⟩
+          simp [gasketAddressParentIter, hParentAtZ, hSteps]
+  let start : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
+  obtain ⟨n, hn⟩ :=
+    hmain (gasketAddressRank m start) start rfl ⟨s, rfl⟩
+  exact ⟨n, by simpa [start, root] using hn⟩
+
+
+
 
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
