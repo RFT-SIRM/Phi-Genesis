@@ -1,7 +1,7 @@
-# Research log: uniform spectral gap at the central theta = 2 pi point
+# Research log: uniform gap for the local-face signing (theta = 2 pi label conditional)
 
 **Date:** 5 November 2026  
-**Status:** an analytic lower-bound theorem is proved for the explicit recursive face/sign model below. Exact combinatorial and edge-gauge audits pass through level 10; low eigenvalues were computed numerically through level 8. The proposed limiting value near 1.30912892028081 is **not** proved.
+**Status:** the analytic lower bound is proved for the explicit local-face operator H = D + A_s defined below. The interpretation of this assignment as the external theta = 2 pi model remains conditional: the cited external sg.py/gap.py sources were not present in the repository or current attachment. This model is not the pivot-zero all-hole-flux representative produced by the repository's default mobius.py solver. The sharper bottom value near 1.30912892028081 remains a numerical observation, not a proved limit.
 
 This is a separate spectral-gap workstream. It is **not** the scalar canonical GF(2) H10 recurrence in computational/higher_moments_z2, and no claim is made that it proves or changes that recurrence.
 
@@ -24,9 +24,7 @@ At level 0 the ordered face is ((0,0),(1,0),(0,1)). To pass from level m-1 to m,
 (0,0),\quad (2^{m-1},0),\quad (0,2^{m-1}).
 \]
 
-For each ordered elementary upward face T=(a,b,c), the supplied convention flux={(f[0],f[1])} gives signed-adjacency signs:
-- s_ab = +1 on the first edge;
-- s_ac = s_bc = -1 on the other two edges.
+For the explicit local-face assignment reconstructed from the convention flux={(f[0],f[1])}, each ordered upward face T=(a,b,c) has signed-adjacency signs s_ab=+1 on the first (horizontal) edge and s_ac=s_bc=-1 on the other two edges. In the repository convention of phi_genesis/mobius.py, signs are sigma=1-2x and the operator is L=D-A_sigma. The local-face model is exactly this operator for x=1 on every first edge (a,b) and x=0 on the other two edges, so sigma=-s and L=D+A_s. This is a specific cochain with odd flux on each elementary upward triangle; it must not be conflated with the separate pivot-zero solution of the hole-boundary-only GF(2) system.
 
 The graph edges are the union of the three edges of each elementary face. In this recursive construction there are 3^m faces; their edge sets are pairwise disjoint; every vertex is covered by at least one face; and
 \[
@@ -111,12 +109,13 @@ These are floating-point eigensolver outputs, not part of the proof. The spin ma
 
 ## 6. Evidence boundary
 
-1. The analytic lower bound is proved for the explicit recursive face/sign model specified above.
-2. The supplied attachment did not contain the external sg.py source. The face order and sign convention were reconstructed from the pasted code and its six-vertex cell. The spectra reproduce the quoted values and the graph matches the repository's recursive Sierpinski graph, but exact source-to-source identity with the external faces(m) function still needs checking.
-3. The exact limiting value near 1.30912892028081 remains an observation.
-4. The supplied interior and boundary rational maps are not a global spectral-decimation theorem. Any further use must classify boundary data and exceptional modes.
-5. No claim is made about general theta, noncentral SU(2) holonomies, Yang--Mills mass gaps, P vs NP, or continuum quantum field theory.
-6. This separate workstream does not change the scalar canonical-signing H10 recurrence or its Lean obligations.
+1. The analytic lower bound is proved for the explicit recursive local-face operator specified above.
+2. The supplied attachment did not contain the external sg.py/gap.py sources. The face order and sign convention were reconstructed from the pasted code and its six-vertex cell. The graph matches the repository's recursive Sierpinski graph through the audited levels, but exact source-to-source identity with the external faces(m) and operator construction still needs checking.
+3. The local-face signing is not the same as the repository's default pivot-zero representative for the all-hole-flux constraints; see the re-audit below.
+4. The exact limiting value near 1.30912892028081 remains an observation.
+5. The supplied interior and boundary rational maps are not a global spectral-decimation theorem. Any further use must classify boundary data and exceptional modes.
+6. No claim is made about general theta, noncentral SU(2) holonomies, Yang--Mills mass gaps, P vs NP, or continuum quantum field theory.
+7. This separate workstream does not change the scalar canonical-signing H10 recurrence or its Lean obligations.
 
 ## 7. Next steps for the next session
 
@@ -127,3 +126,56 @@ These are floating-point eigensolver outputs, not part of the proof. The spin ma
 5. For 0 < theta < 2 pi, compute the local magnetic-triangle coercivity constant and check whether a face-wise estimate survives the chosen connection convention.
 
 **Handoff:** the no-closing-gap question at theta = 2 pi has a clean analytic answer for the explicit model: a uniform lower bound of 1. The exact spectral edge and general-theta case remain open.
+
+
+## 8. Re-audit of the 4472ddba checkpoint
+
+The initial commit did not trigger a workflow. This is expected from the repository configuration, not evidence of a failed calculation:
+
+- \`.github/workflows/lean.yml\` watches Lean sources, \`lakefile.lean\`, \`lean-toolchain\`, and itself; it does not watch \`computational/**\`.
+- \`.github/workflows/tests.yml\` runs only on pushes to \`main\` and pull requests targeting \`main\`.
+- The 4472ddba commit changed only this research log and the Python audit script. Therefore neither existing workflow was eligible to run.
+
+The first audit script also had a weak holonomy assertion: it multiplied a constant expression rather than looking up the three signs stored for each face. The revised script now computes the signed product from the actual edge-sign table.
+
+### Checks rerun in the sandbox
+
+1. Exact face/sign audit, levels 0--10:
+   - \`|F_m|=3^m\`, \`|E_m|=3^{m+1}\`, and \`|V_m|=(3^{m+1}+3)/2\`.
+   - Every edge belongs to exactly one elementary face.
+   - Every vertex belongs to one or two elementary faces.
+   - The gauge identity \`s_uv = epsilon(u) epsilon(v)\` holds on every edge.
+   - The repository-sign convention \`sigma=-s\` has product \`-1\` around every elementary upward face.
+
+2. Direct graph comparison against \`phi_genesis.sg_laplacian.sierpinski_graph\`, levels 0--8: vertex and edge sets agree exactly after conversion to integer triangular-lattice coordinates.
+
+3. Lowest eigenvalue of the local-face operator \`L=D-A_sigma\`, with \`sigma=-s\`, levels 1--8:
+   \`1.17157287525381, 1.29843788128358, 1.30907106525561, 1.30912891862700, 1.30912892028081, 1.30912892028081, 1.30912892028081, 1.30912892028082\`.
+   These are floating-point sparse-eigensolver outputs. They reproduce the earlier table; they are not the proof of the lower bound.
+
+### Crucial comparison with the existing hole-flux solver
+
+The default \`phi_genesis.mobius.mobius_spectrum\` representative solves one parity-one equation for every listed hole and sets free variables to zero. The local-face assignment instead sets the GF(2) variable to one on each horizontal \`(a,b)\` face edge and zero on the other two face edges.
+
+For levels 1--6, the local-face assignment has parity zero on every listed hole row, while the default solver requires parity one on every such row. The two representatives differ on 2, 8, 26, 80, 242, and 728 edges, respectively. Their smallest eigenvalues are:
+
+| level | pivot-zero all-hole representative | local-face representative |
+|---:|---:|---:|
+| 1 | 0.330920911718 | 1.171572875254 |
+| 2 | 0.374778207648 | 1.298437881284 |
+| 3 | 0.454116460742 | 1.309071065256 |
+| 4 | 0.459731121824 | 1.309128918627 |
+| 5 | 0.459731877707 | 1.309128920281 |
+| 6 | 0.459731877707 | 1.309128920281 |
+
+Consequently, the bound \`lambda_min >= 1\` is a result for the local-face signing, not for the default all-hole-flux calculation already documented in \`mobius.py\`. The two matrices have different elementary/hole cycle data and must not be described as gauge-equivalent. The theta = 2 pi label remains conditional until the original external \`sg.py\` and \`gap.py\` are inspected.
+
+## 9. Reproducible automation and next steps
+
+A dedicated workflow, \`.github/workflows/spectral-gap-theta2pi.yml\`, now runs this audit on pushes to \`formalize/h10-lean4\` that touch the spectral-gap audit, the recursive graph builder, or the hole-flux implementation. It runs four checks: exact face/gauge data through level 10, direct graph comparison through level 8, local-face eigenvalues through level 8, and local-face versus pivot-zero hole-solver comparison through level 6.
+
+Next:
+1. Obtain the original external \`sg.py\` and \`gap.py\`; verify that their face ordering, edge signs, and matrix convention are exactly this local-face operator before treating the theta label as identified.
+2. Formalize the local triangle energy identity and the global lower bound in Lean, together with the recursive face partition/coverage lemmas.
+3. Only after source identification and kernel formalization, study whether the repeated numerical bottom is an exact inherited eigenvalue and derive the sharper spectral edge.
+4. Keep this local-face workstream separate from the canonical GF(2) H10 recurrence and from the default pivot-zero hole-flux data.
