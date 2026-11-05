@@ -280,3 +280,19 @@ The exact run `42005758239` for commit `aaff8016f5a8073ce535daa53d4703eb44a40253
 The correction explicitly simplifies only with `gasketFirstOccurrencesAux` and `List.mem_cons`, then closes the second disjunct with the already established induction hypothesis `hrec`. This avoids broad simplification of the Boolean filter predicate and uses the same `simp only [gasketFirstOccurrencesAux, List.mem_cons]` pattern already used successfully in the membership lemma above.
 
 This is the final single diagnostic reported by the preceding run. The module is not considered closed until the exact new SHA passes `lake build PhiGenesis`.
+
+
+
+## 26. Exact pairwise gluing of the recursively enumerated vertex sets
+
+The green base `b538788f83c1bef153e45986680df9c9339ebeef` passed the full Lean build (workflow `42011035390`, `Build completed successfully (3019 jobs)`). Before this step, the integer-coordinate recursive first-occurrence list had been independently compared with the repository's actual floating-coordinate/deduplication builder: the ordered lists agree exactly at levels 0 through 8, with vertex counts 3, 6, 15, 42, 123, 366, 1095, 3282, and 9843.
+
+The new module `PhiGenesis/H10/GasketVertexGeometry.lean` proves:
+- every vertex in the recursively generated level-`n` list lies in its closed triangular parent region;
+- child vertex sets 0 and 1 intersect exactly at ((2^n,0));
+- child vertex sets 0 and 2 intersect exactly at ((0,2^n));
+- child vertex sets 1 and 2 intersect exactly at ((2^n,2^n)).
+
+The forward directions use the exact integer triangle-intersection theorems from `GasketCoordinates.lean`; the reverse directions use the already formalized fact that all three outer corners occur in the recursive list. This closes the set-theoretic gluing step for the actual first-occurrence enumeration. It does not yet prove the ordering of the six local vertices in A/B/C states or monotonicity along addressed sides; those are the next obligations before the least-edge fundamental-cut proof.
+
+The new module is not kernel-verified until the exact commit passes `lake build PhiGenesis`.
