@@ -263,3 +263,14 @@ The module then defines the level-zero gasket as one face on `Fin 3`, proves its
 Progress assessment: this is the first concrete graph instance of the energy theorem, but only at level zero. The full arbitrary-level Sierpinski theorem is not yet present. The next task is to define the recursive face-address family at level m and prove its edge-slot injectivity and corner-map surjectivity; only then can the global theorem be instantiated for every m.
 
 Lean CI for this block is pending on the exact commit SHA. No H10 source was changed.
+## 17. Recursive Sierpinski faces: all-level address model
+
+Added `PhiGenesis/SpectralGap/RecursiveSierpinskiFaces.lean` and imported it from the root.
+
+The face type is the finite function type `Fin m → Fin 3`. Its origin is defined recursively: the leading digit selects one of the three child copies, translated by `(0,0)`, `(2^m,0)`, or `(0,2^m)`, and the tail determines the position inside that child.
+
+The module proves the child boxes are disjoint, the address-to-origin map is injective, every coordinate vertex in the finite image is represented by a face-corner slot, and the ordered edge-slot map is injective. The resulting theorem `sg_graph_energy_lower_bound` instantiates the global face-energy inequality at every natural level.
+
+This closes the combinatorial hypotheses of the abstract energy theorem for the recursively defined address graph, if the exact Lean build passes. The remaining model-identification task is to connect this address graph to the repository's coordinate/index-based `sierpinski_graph` implementation and the signed operator convention. The proof here is for the abstract recursively defined face graph, not yet for the default pivot-zero hole-flux matrix.
+
+Current exact commit SHA is awaiting Lean and Python workflows. Do not label the global spectral-gap theorem complete until the Lean kernel build succeeds and the graph/sign identification is proved.

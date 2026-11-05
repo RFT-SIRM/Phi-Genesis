@@ -3,3 +3,4 @@ import PhiGenesis.H10.IncidenceForest
 import PhiGenesis.SpectralGap.TriangleEnergy
 import PhiGenesis.SpectralGap.GlobalFaceEnergy
 import PhiGenesis.SpectralGap.FiniteFaceCover
+import PhiGenesis.SpectralGap.RecursiveSierpinskiFaces
