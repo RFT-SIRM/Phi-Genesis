@@ -3,7 +3,6 @@
 [![Research programme](https://img.shields.io/badge/RFT--SIRM-Phi--Genesis-5b4bc4?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Tests](https://img.shields.io/badge/Tests-Pytest-168f83?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/RFT-SIRM/Phi-Genesis/actions)
-[![Interactive portal](https://img.shields.io/badge/Explore-Interactive%20Portal-087ea4?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/interactive/)
 [![Research history](https://img.shields.io/badge/Read-Research%20History-0f766e?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/history.html)
 
 **Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed Z₂-flux / π-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
@@ -13,7 +12,7 @@
 
 <div align="center">
 
-[**Open the interactive research portal →**](https://rft-sirm.github.io/Phi-Genesis/interactive/) · [**Browse the research map →**](https://rft-sirm.github.io/Phi-Genesis/research-map.html) · [**Read the dissertation →**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
+[**Browse the research map →**](https://rft-sirm.github.io/Phi-Genesis/research-map.html) · [**Read the dissertation →**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
 
 </div>
 
@@ -435,30 +434,194 @@ These computations use the committed cached count data and/or perform numerical 
 
 ## Repository map
 
-| Path | Purpose |
-|---|---|
-| `phi_genesis/sg_laplacian.py` | Sierpiński-gasket graph Laplacian, spectral tools, and decimation-related routines |
-| `phi_genesis/mobius.py` | Signed Z₂-flux / π-flux operator |
-| `phi_genesis/mobius_selection_search.py` | Exhaustive generation-twist search |
-| `phi_genesis/fukushima_shima.py` | Fukushima–Shima gap-structure analysis |
-| `phi_genesis/sg_inertia.py` | Eigenvalue counting through Sylvester inertia and sparse factorization |
-| `phi_genesis/spectral_convergence.py` | Dense spectra, Weyl fits, and window sensitivity |
-| `phi_genesis/mass_check.py` | Mass-scale and consistency audit |
-| `phi_genesis/dirac_eta.py` | Graph Dirac operator and η-invariant experiment |
-| `test_decimation_gate_a.py` | Nightly Gate A diagnostic |
-| `test_decimation_residual_summary.py` | Mean/median/threshold semantics and residual-statistics tests |
-| `test_fukushima_shima.py` | Gap-structure checks |
-| `test_mobius.py` | Flux/twist and integer-related tests |
-| `test_sg_inertia.py` | Inertia-count checks and numerical cross-checks |
-| `test_selection_protocol.py`, `test_selection_protocol_v121.py` | Preregistered selection-protocol checks |
-| `test_sg_index_triviality.py` | Base-rate caveat for index 1 and other target indices |
-| `test_top_quark_consistency.py` | Guards against silently mixing top-index candidates/scales |
-| `protocol_data/` | Null pools, results, cached counts, and Open Problem #2 scripts |
-| `PREREGISTRATION*.md`, `protocol_ledger.md` | Protocol specifications and cumulative search history |
-| `METHODOLOGY.md` | Worked explanation of the look-elsewhere effect and negative results |
-| `CHANGELOG.md` | Versioned project history |
+The repository is organized as a connected research record: formal proofs, exact computational audits, numerical experiments, preregistered statistical tests, and the documentation history are kept in distinct, traceable locations. The tree below reflects the files and directories present on the \`formalize/h10-lean4\` branch.
 
-For the documentation site, start at [the documentation home](https://rft-sirm.github.io/Phi-Genesis/), then use the [research map](https://rft-sirm.github.io/Phi-Genesis/research-map.html), [verified results](https://rft-sirm.github.io/Phi-Genesis/verified-results.html), [protocol ledger](https://rft-sirm.github.io/Phi-Genesis/protocol-ledger.html), [open problems](https://rft-sirm.github.io/Phi-Genesis/open-problems.html), or [research history](https://rft-sirm.github.io/Phi-Genesis/history.html).
+### Complete repository tree
+
+\`\`\`text
+.
+├── .github/
+│   └── workflows/
+│       ├── docs.yml
+│       ├── ecosystem-control.yml
+│       ├── lean.yml
+│       ├── nightly-deep-tests.yml
+│       ├── pages.yml
+│       ├── spectral-gap-theta2pi.yml
+│       └── tests.yml
+├── .gitignore
+├── CHANGELOG.md
+├── METHODOLOGY.md
+├── PREREGISTRATION.md
+├── PREREGISTRATION_v1.1_DRAFT.md
+├── PREREGISTRATION_v1.2_DRAFT.md
+├── PREREGISTRATION_v1.2.1.md
+├── PhiGenesis.lean
+├── PhiGenesis/
+│   ├── H10/
+│   │   ├── BoundaryRowTransform.lean
+│   │   ├── GasketCoordinates.lean
+│   │   ├── GasketVertexChildCells.lean
+│   │   ├── GasketVertexExplicit.lean
+│   │   ├── GasketVertexGeometry.lean
+│   │   ├── GasketVertexMem.lean
+│   │   ├── GasketVertexOrder.lean
+│   │   ├── GasketVertexSplit.lean
+│   │   ├── GasketVertexStateA.lean
+│   │   ├── IncidenceForest.lean
+│   │   ├── Smoke.lean
+│   │   └── VertexOrder.lean
+│   └── SpectralGap/
+│       ├── FiniteFaceCover.lean
+│       ├── GlobalFaceEnergy.lean
+│       ├── RecursiveSierpinskiFaces.lean
+│       ├── SignedGaugeEnergy.lean
+│       ├── SignedLaplacianMatrix.lean
+│       └── TriangleEnergy.lean
+├── README.md
+├── computational/
+│   ├── higher_moments_z2/
+│   │   ├── FOLLOWUP_2026-11-03.md
+│   │   ├── GF2_PIVOT_RECURSION_2026-11-04.md
+│   │   ├── H10_ALL_LEVEL_CHECKPOINT_2026-11-04.md
+│   │   ├── LEAN4_FORMALIZATION_TASK_2026-11-04.md
+│   │   ├── Q_truth_table_16.csv
+│   │   ├── README.md
+│   │   ├── audit_gf2_pivot_tree.py
+│   │   ├── edge2_alternative_residuals_transitions_4_7.csv
+│   │   ├── followup_summary.json
+│   │   └── full_flux_h10_levels_1_10.csv
+│   └── spectral_gap_theta_2pi/
+│       ├── RESEARCH_LOG_2026-11-05.md
+│       └── audit_triangle_gauge.py
+├── docs/
+│   ├── application-programmes.md
+│   ├── architecture.md
+│   ├── changelog.md
+│   ├── computational-architecture.md
+│   ├── data-and-provenance.md
+│   ├── dissertation.md
+│   ├── ecosystem-control.md
+│   ├── field_trials.md
+│   ├── field_trials_sel4.md
+│   ├── foundations.md
+│   ├── glossary.md
+│   ├── higher-moments-z2.md
+│   ├── history.html
+│   ├── history.md
+│   ├── implementation.md
+│   ├── index.md
+│   ├── interactive.md
+│   ├── interactive/
+│   │   └── index.html
+│   ├── legacy-landing.html
+│   ├── methodology.md
+│   ├── open-problems.md
+│   ├── origin-chronology.md
+│   ├── platform.md
+│   ├── preregistration.md
+│   ├── protocol-ledger.md
+│   ├── reproducibility.md
+│   ├── research-home.md
+│   ├── research-map.md
+│   ├── selection-protocol.md
+│   ├── strategy.md
+│   ├── stylesheets/
+│   │   └── phi-genesis.css
+│   ├── support.md
+│   └── verified-results.md
+├── lake-manifest.json
+├── lakefile.lean
+├── lean-toolchain
+├── mkdocs.yml
+├── phi_genesis/
+│   ├── __init__.py
+│   ├── decimation_check.py
+│   ├── dirac_eta.py
+│   ├── fukushima_shima.py
+│   ├── higher_moments_z2.py
+│   ├── mass_check.py
+│   ├── mobius.py
+│   ├── mobius_selection_search.py
+│   ├── selection_protocol.py
+│   ├── selection_protocol_v11.py
+│   ├── selection_protocol_v121.py
+│   ├── sg_index_triviality.py
+│   ├── sg_inertia.py
+│   ├── sg_laplacian.py
+│   ├── sierpinski_carpet.py
+│   └── spectral_convergence.py
+├── protocol_data/
+│   ├── gen_rank_pool.py
+│   ├── null_pools_v1.json
+│   ├── null_pools_v1_1.json
+│   ├── null_pools_v1_2_1.json
+│   ├── op2_chord_estimator.py
+│   ├── op2_chord_estimator.txt
+│   ├── op2_counts.json
+│   ├── op2_window_bias.py
+│   ├── power_by_k.py
+│   ├── power_by_k_design_v1_1.txt
+│   ├── power_design_v1_2_1.py
+│   ├── power_design_v1_2_1.txt
+│   ├── results_v1.json
+│   ├── results_v1_1.json
+│   ├── results_v1_2_1.json
+│   └── structure_check_exploratory.py
+├── protocol_ledger.md
+├── pyproject.toml
+├── requirements.txt
+├── scripts/
+│   └── ecosystem_status.py
+├── test_carpet_lookelsewhere.py
+├── test_convergence_and_selection.py
+├── test_decimation_gate_a.py
+├── test_decimation_residual_summary.py
+├── test_fukushima_shima.py
+├── test_higher_moments_z2.py
+├── test_honest.py
+├── test_mobius.py
+├── test_nightly_deep.py
+├── test_selection_protocol.py
+├── test_selection_protocol_v121.py
+├── test_sg_index_triviality.py
+├── test_sg_inertia.py
+├── test_top_quark_consistency.py
+└── visual/
+    ├── index.html
+    └── interactive/
+        └── index.html
+\`\`\`
+
+### Architecture at a glance
+
+| Research layer | Main location | Role in the project |
+|---|---|---|
+| Lean 4 entry point and build | \`PhiGenesis.lean\`, \`lakefile.lean\`, \`lake-manifest.json\`, \`lean-toolchain\` | Defines the formalization entry point, dependencies, and reproducible Lean environment. |
+| H10 / GF(2) formalization | \`PhiGenesis/H10/\` | Formal work on boundary-row transforms, incidence forests, gasket coordinates, recursive vertex geometry, and vertex ordering. |
+| Signed spectral-gap formalization | \`PhiGenesis/SpectralGap/\` | Lean development for finite-face covers, recursive gasket faces, signed Laplacians, gauge energy, and triangle energy. |
+| Exact H10 computational record | \`computational/higher_moments_z2/\`, \`phi_genesis/higher_moments_z2.py\` | Finite-level exact calculations, pivot-tree audits, formalization checkpoints, and the accompanying research ledger. |
+| Spectral-gap computational record | \`computational/spectral_gap_theta_2pi/\` | Research log and triangle-gauge audit for the signed spectral-gap line. |
+| Numerical research package | \`phi_genesis/\` | Python implementations for gasket Laplacians, decimation checks, flux operators, inertia counts, moments, and related numerical studies. |
+| Statistical protocols and evidence | \`PREREGISTRATION*.md\`, \`protocol_data/\`, \`protocol_ledger.md\` | Preregistered selection rules, null pools, power checks, recorded outcomes, and the cumulative protocol history. |
+| Regression and audit suite | Root-level \`test_*.py\` files | Executable checks for numerical conventions, spectral behavior, flux experiments, statistical protocols, and reported caveats. |
+| Research documentation and history | \`docs/\`, \`CHANGELOG.md\`, \`METHODOLOGY.md\` | Research map, foundations, methods, data provenance, open problems, verified results, chronology, and documentation history. |
+| Documentation and visual site | \`mkdocs.yml\`, \`.github/workflows/docs.yml\`, \`visual/\` | Site configuration, publication workflow, and visual assets. |
+| Project automation | \`.github/workflows/\`, \`scripts/\` | CI, Lean builds, tests, nightly diagnostics, documentation, and ecosystem-status tooling. |
+
+### Recommended navigation
+
+| Purpose | Start with |
+|---|---|
+| Research overview | [Research map](docs/research-map.md) · [Documentation home](docs/index.md) |
+| Mathematical foundations and terminology | [Foundations](docs/foundations.md) · [Glossary](docs/glossary.md) |
+| H10 recurrence and exact GF(2) work | [H10 research note](docs/higher-moments-z2.md) · [Computational record](computational/higher_moments_z2/README.md) |
+| Lean formalization | \`PhiGenesis.lean\` · \`PhiGenesis/H10/\` · \`PhiGenesis/SpectralGap/\` |
+| Reproduction and provenance | [Reproducibility guide](docs/reproducibility.md) · [Data and provenance](docs/data-and-provenance.md) |
+| Research history | [History](docs/history.md) · [Origin chronology](docs/origin-chronology.md) · [Changelog](CHANGELOG.md) |
+| Open questions | [Open problems](docs/open-problems.md) · [Verified results](docs/verified-results.md) |
+
+The repository keeps formal statements, finite computational certificates, numerical observations, and unresolved questions separate. A file's presence in the tree is not itself evidence that the claim it concerns has been proved; use the linked research notes, logs, tests, and CI records to determine the status of each result.
 
 ---
 
