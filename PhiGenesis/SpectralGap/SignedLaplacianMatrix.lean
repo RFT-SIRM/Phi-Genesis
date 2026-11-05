@@ -37,10 +37,23 @@ theorem sgSignedEdgeVector_sum (m : Nat)
             intro v hv
             by_cases h : v = a <;> simp [h]
       _ = c * x a := by simp
-  unfold sgSignedEdgeVector
-  rw [Finset.sum_add_distrib]
-  rw [hindicator e.1 1, hindicator e.2 (sgVertexGauge e.1 * sgVertexGauge e.2)]
-  norm_num
+  calc
+    (∑ v : SGVertex m, sgSignedEdgeVector m e v * x v) =
+        ∑ v : SGVertex m,
+          ((if v = e.1 then 1 else 0) * x v +
+            (if v = e.2 then sgVertexGauge e.1 * sgVertexGauge e.2 else 0) * x v) := by
+          unfold sgSignedEdgeVector
+          apply Finset.sum_congr rfl
+          intro v hv
+          ring
+    _ = (∑ v : SGVertex m, (if v = e.1 then 1 else 0) * x v) +
+        ∑ v : SGVertex m,
+          (if v = e.2 then sgVertexGauge e.1 * sgVertexGauge e.2 else 0) * x v := by
+          rw [Finset.sum_add_distrib]
+    _ = x e.1 + sgVertexGauge e.1 * sgVertexGauge e.2 * x e.2 := by
+          rw [hindicator e.1 1,
+              hindicator e.2 (sgVertexGauge e.1 * sgVertexGauge e.2)]
+          norm_num
 
 /-- The signed Laplacian matrix is the sum of rank-one matrices associated
 with the signed edge vectors.  Its entries are symmetric by construction. -/
@@ -84,10 +97,14 @@ private theorem sum_outerProduct_quadratic
             _ = ∑ e ∈ s, b e v * (∑ w : V, b e w * x w) := by
                   apply Finset.sum_congr rfl
                   intro e he
-                  rw [← Finset.mul_sum]
-                  apply Finset.sum_congr rfl
-                  intro w hw
-                  ring
+                  calc
+                    (∑ w : V, (b e v * b e w) * x w) =
+                        ∑ w : V, b e v * (b e w * x w) := by
+                          apply Finset.sum_congr rfl
+                          intro w hw
+                          ring
+                    _ = b e v * ∑ w : V, b e w * x w := by
+                          rw [← Finset.mul_sum]
     _ = ∑ e ∈ s, ∑ v : V,
           x v * (b e v * (∑ w : V, b e w * x w)) := by
           calc
@@ -163,7 +180,7 @@ theorem sgSignedLaplacianMatrix_eigenvalue_ge_one (m : Nat)
       funext v
       exact hnone v
     obtain ⟨v, hv⟩ := hxSome
-    have hsq : 0 < (x v) ^ 2 := by nlinarith
+    have hsq : 0 < (x v) ^ 2 := sq_pos_of_ne_zero hv
     have hsingle :
         (x v) ^ 2 ≤ ∑ w : SGVertex m, (x w) ^ 2 :=
       Finset.single_le_sum
