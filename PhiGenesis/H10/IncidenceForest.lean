@@ -988,7 +988,8 @@ theorem gasketAddressTerminalCutRows_sum {E : Type*}
     omega
   rw [gasketAddressSubtreeRowSum_eq B m (m - v.length - 2) (v ++ [2]) hDepth]
   funext e
-  simp only [gasketBoundaryRowTransform, if_neg hLeaf, if_pos hInternal]
+  unfold gasketBoundaryRowTransform
+  rw [if_neg hLeaf, if_pos hInternal]
   ring_nf
   all_goals simp [zmodTwo_two_eq_zero]
 
