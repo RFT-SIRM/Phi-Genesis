@@ -965,14 +965,14 @@ theorem gasketAddressParent_twoSubtree_invariant
     v.1 = u ∨ ∃ p, v.1 = u ++ [2] ++ p := by
   let z : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
   have hLengthBound : z.1.length + 1 ≤ m := by
-    simp [z]
-    omega
+    simpa [z] using (Nat.succ_le_of_lt hLength)
   by_cases hInternal : z.1.length + 1 < m
   · rw [gasketAddressParent_internal m z hInternal] at hParent
     have hValue := congrArg Subtype.val (Option.some.inj hParent)
     refine Or.inr ⟨s ++ [0] ++ List.replicate (m - z.1.length - 2) 1, ?_⟩
     simpa [z, List.append_assoc] using hValue.symm
-  · have hTerminal : z.1.length + 1 = m := by omega
+  · have hTerminal : z.1.length + 1 = m := by
+      exact le_antisymm hLengthBound (Nat.le_of_not_gt hInternal)
     cases hTail : prefixBeforeLastTwo s with
     | none =>
         have hPrefix : prefixBeforeLastTwo z.1 = some u := by
