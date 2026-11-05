@@ -108,4 +108,24 @@ theorem gasketVertexOrder_child2_cellB (n : Nat) :
 
 
 
+
+
+/-- Exact coordinates of the six state-A points after entering child 1
+of child 2. This is the geometric address-21 cell used in the concrete
+state-C realization. The order here is still the inherited state-A order;
+the later state-C permutation is caused by the earlier occurrence of
+the cell's right-hand corner in the root child-1 block. -/
+theorem stateAList_map_child21 (n : Nat) :
+    ((stateAList n).map (gasketChildPoint (n + 1) .corner1)).map
+        (gasketChildPoint (n + 2) .corner2) =
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 2), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] := by
+  simp [stateAList, gasketChildPoint, gasketScale_succ,
+    Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
+
 end PhiGenesis.H10
