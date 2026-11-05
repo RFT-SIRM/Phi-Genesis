@@ -174,3 +174,11 @@ The iterator is intentionally exposed because its recursive equations are used b
 The later diagnostics in the same build (the recovery `sorry` terms, the two unsolved goals in the reachability proof, and the `change`/binder errors in the component theorem) followed the failed iterator declaration. They are not being counted as independently resolved; the next exact-SHA Lean build must determine whether any proof-level issue remains after the visibility dependency is fixed.
 
 No parent rule, rank, address set, component characterization, theorem statement, or proof argument is changed. The update is an API-visibility correction only. The result remains unverified until `lake build PhiGenesis` succeeds on the new exact SHA.
+
+## 15. Terminal parent-edge component characterization
+
+The Lean run `41992738883` passed `lake build PhiGenesis` for exact commit `8a370e61b1e5ffb9c613f5b567294645975b976b`, validating the internal-address component theorem.
+
+The next formal block adds the successor law for the parent iterator and characterizes the component cut off by a terminal address `v 0 1^k`. Its claimed component is exactly the terminal address itself, the unique incoming child `v`, and the full descendant subtree `v2{0,1,2}^*`. The forward proof uses the existing terminal incoming-child uniqueness theorem and the already established internal-subtree predecessor-closure lemma. The reverse proof reaches the terminal node from `v` by one final parent step, using the iterator successor law.
+
+No edge-order or least-primal-index conclusion is made here. This block is not kernel-verified until the exact-SHA Lean workflow completes `lake build PhiGenesis`.
