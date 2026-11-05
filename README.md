@@ -434,11 +434,11 @@ These computations use the committed cached count data and/or perform numerical 
 
 ## Repository map
 
-The repository is organized as a connected research record: formal proofs, exact computational audits, numerical experiments, preregistered statistical tests, and the documentation history are kept in distinct, traceable locations. The tree below reflects the files and directories present on the \`formalize/h10-lean4\` branch.
+The repository is organized as a connected research record: formal proofs, exact computational audits, numerical experiments, preregistered statistical tests, and the documentation history are kept in distinct, traceable locations. The tree below reflects the files and directories present on the `formalize/h10-lean4` branch.
 
 ### Complete repository tree
 
-\`\`\`text
+```text
 .
 ├── .github/
 │   └── workflows/
@@ -591,23 +591,23 @@ The repository is organized as a connected research record: formal proofs, exact
     ├── index.html
     └── interactive/
         └── index.html
-\`\`\`
+```
 
 ### Architecture at a glance
 
 | Research layer | Main location | Role in the project |
 |---|---|---|
-| Lean 4 entry point and build | \`PhiGenesis.lean\`, \`lakefile.lean\`, \`lake-manifest.json\`, \`lean-toolchain\` | Defines the formalization entry point, dependencies, and reproducible Lean environment. |
-| H10 / GF(2) formalization | \`PhiGenesis/H10/\` | Formal work on boundary-row transforms, incidence forests, gasket coordinates, recursive vertex geometry, and vertex ordering. |
-| Signed spectral-gap formalization | \`PhiGenesis/SpectralGap/\` | Lean development for finite-face covers, recursive gasket faces, signed Laplacians, gauge energy, and triangle energy. |
-| Exact H10 computational record | \`computational/higher_moments_z2/\`, \`phi_genesis/higher_moments_z2.py\` | Finite-level exact calculations, pivot-tree audits, formalization checkpoints, and the accompanying research ledger. |
-| Spectral-gap computational record | \`computational/spectral_gap_theta_2pi/\` | Research log and triangle-gauge audit for the signed spectral-gap line. |
-| Numerical research package | \`phi_genesis/\` | Python implementations for gasket Laplacians, decimation checks, flux operators, inertia counts, moments, and related numerical studies. |
-| Statistical protocols and evidence | \`PREREGISTRATION*.md\`, \`protocol_data/\`, \`protocol_ledger.md\` | Preregistered selection rules, null pools, power checks, recorded outcomes, and the cumulative protocol history. |
-| Regression and audit suite | Root-level \`test_*.py\` files | Executable checks for numerical conventions, spectral behavior, flux experiments, statistical protocols, and reported caveats. |
-| Research documentation and history | \`docs/\`, \`CHANGELOG.md\`, \`METHODOLOGY.md\` | Research map, foundations, methods, data provenance, open problems, verified results, chronology, and documentation history. |
-| Documentation and visual site | \`mkdocs.yml\`, \`.github/workflows/docs.yml\`, \`visual/\` | Site configuration, publication workflow, and visual assets. |
-| Project automation | \`.github/workflows/\`, \`scripts/\` | CI, Lean builds, tests, nightly diagnostics, documentation, and ecosystem-status tooling. |
+| Lean 4 entry point and build | `PhiGenesis.lean`, `lakefile.lean`, `lake-manifest.json`, `lean-toolchain` | Defines the formalization entry point, dependencies, and reproducible Lean environment. |
+| H10 / GF(2) formalization | `PhiGenesis/H10/` | Formal work on boundary-row transforms, incidence forests, gasket coordinates, recursive vertex geometry, and vertex ordering. |
+| Signed spectral-gap formalization | `PhiGenesis/SpectralGap/` | Lean development for finite-face covers, recursive gasket faces, signed Laplacians, gauge energy, and triangle energy. |
+| Exact H10 computational record | `computational/higher_moments_z2/`, `phi_genesis/higher_moments_z2.py` | Finite-level exact calculations, pivot-tree audits, formalization checkpoints, and the accompanying research ledger. |
+| Spectral-gap computational record | `computational/spectral_gap_theta_2pi/` | Research log and triangle-gauge audit for the signed spectral-gap line. |
+| Numerical research package | `phi_genesis/` | Python implementations for gasket Laplacians, decimation checks, flux operators, inertia counts, moments, and related numerical studies. |
+| Statistical protocols and evidence | `PREREGISTRATION*.md`, `protocol_data/`, `protocol_ledger.md` | Preregistered selection rules, null pools, power checks, recorded outcomes, and the cumulative protocol history. |
+| Regression and audit suite | Root-level `test_*.py` files | Executable checks for numerical conventions, spectral behavior, flux experiments, statistical protocols, and reported caveats. |
+| Research documentation and history | `docs/`, `CHANGELOG.md`, `METHODOLOGY.md` | Research map, foundations, methods, data provenance, open problems, verified results, chronology, and documentation history. |
+| Documentation and visual site | `mkdocs.yml`, `.github/workflows/docs.yml`, `visual/` | Site configuration, publication workflow, and visual assets. |
+| Project automation | `.github/workflows/`, `scripts/` | CI, Lean builds, tests, nightly diagnostics, documentation, and ecosystem-status tooling. |
 
 ### Recommended navigation
 
@@ -616,7 +616,7 @@ The repository is organized as a connected research record: formal proofs, exact
 | Research overview | [Research map](docs/research-map.md) · [Documentation home](docs/index.md) |
 | Mathematical foundations and terminology | [Foundations](docs/foundations.md) · [Glossary](docs/glossary.md) |
 | H10 recurrence and exact GF(2) work | [H10 research note](docs/higher-moments-z2.md) · [Computational record](computational/higher_moments_z2/README.md) |
-| Lean formalization | \`PhiGenesis.lean\` · \`PhiGenesis/H10/\` · \`PhiGenesis/SpectralGap/\` |
+| Lean formalization | `PhiGenesis.lean` · `PhiGenesis/H10/` · `PhiGenesis/SpectralGap/` |
 | Reproduction and provenance | [Reproducibility guide](docs/reproducibility.md) · [Data and provenance](docs/data-and-provenance.md) |
 | Research history | [History](docs/history.md) · [Origin chronology](docs/origin-chronology.md) · [Changelog](CHANGELOG.md) |
 | Open questions | [Open problems](docs/open-problems.md) · [Verified results](docs/verified-results.md) |
