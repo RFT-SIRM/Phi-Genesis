@@ -105,7 +105,7 @@ Phi-Genesis is a distinct spectral-computation workstream within [RFT-SIRM](http
 
 [![Docs CI](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/pages.yml/badge.svg)](https://github.com/RFT-SIRM/Phi-Genesis/actions)
 
-_Copyright 2026 Evgeniy Zaprudnov (RFT-SIRM)._
+_Copyright 2026 Evgeny Zaprudnov (RFT-SIRM) · Research correspondence: [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com)._
 
 ---
 
