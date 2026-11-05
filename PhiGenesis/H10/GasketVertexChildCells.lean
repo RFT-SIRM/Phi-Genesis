@@ -222,9 +222,10 @@ theorem gasketVertexOrder_child21_tail_sublist_child2_filtered (n : Nat) :
         (gasketScale (n + 1) + gasketScale n,
           gasketScale (n + 2) + gasketScale n),
         (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] :=
-    List.Sublist.cons _ (List.Sublist.cons _ (List.Sublist.cons _
-      (List.Sublist.cons₂ _ (List.Sublist.cons _ (List.Sublist.cons _
-        List.Sublist.slnil)))))
+    List.Sublist.cons_cons _ (List.Sublist.cons_cons _
+      (List.Sublist.cons_cons _ (List.Sublist.cons _
+        (List.Sublist.cons_cons _ (List.Sublist.cons_cons _
+          List.Sublist.slnil)))))
   have hGlobal :
       [(gasketScale (n + 1), gasketScale (n + 2)),
         (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
