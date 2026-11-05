@@ -1508,10 +1508,22 @@ theorem gasketAddressParentIter_succ_eq_bind_parent
   | zero =>
       simp [gasketAddressParentIter]
   | succ n ih =>
-      simp only [gasketAddressParentIter]
-      congr 1
-      funext x
-      simpa [gasketAddressParentIter] using ih x
+      change
+        (gasketAddressParent m z).bind (gasketAddressParentIter m (n + 1)) =
+          ((gasketAddressParent m z).bind
+            (gasketAddressParentIter m n)).bind (gasketAddressParent m)
+      calc
+        (gasketAddressParent m z).bind (gasketAddressParentIter m (n + 1)) =
+            (gasketAddressParent m z).bind
+              (fun x => (gasketAddressParentIter m n x).bind
+                (gasketAddressParent m)) := by
+                  congr 1
+                  funext x
+                  exact ih x
+        _ = ((gasketAddressParent m z).bind
+              (gasketAddressParentIter m n)).bind
+                (gasketAddressParent m) := by
+                  simp [Option.bind_assoc]
 
 
 /-- The component cut off by a terminal address of the form v 0 1^k

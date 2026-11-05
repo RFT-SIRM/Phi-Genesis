@@ -182,3 +182,11 @@ The Lean workflow `41993578524` failed on the first terminal-component attempt, 
 The repair starts from the last green source state, commit `8a370e61b1e5ffb9c613f5b567294645975b976b`, and inserts the terminal block exactly once immediately before the existing forest doc-comment. The iterator successor proof generalizes the address variable before induction and uses congruence on the shared first parent step. The forward terminal-component proof is an explicit induction on the number of iterations. The reverse proof handles the terminal, its unique child, and descendants under v2 separately, transporting subtype equalities explicitly.
 
 This clean reconstruction removes duplicate declarations and leaves the existing forest theorem and all previously green modules unchanged. The terminal-component result is not kernel-verified until the new exact-SHA `lake build PhiGenesis` succeeds.
+
+## 16. Correct the parent-iterator successor law
+
+The exact Lean run `41996212091` for commit `87f603ae61ff75871a0d7763f0501045ea7f2e5c` reached `lake build PhiGenesis` and failed at `IncidenceForest.lean:1513` in `gasketAddressParentIter_succ_eq_bind_parent`. The diagnostic showed that `funext` was being applied after `congr` had reduced the goal to an equality of options, not an equality of functions.
+
+The proof is rewritten with an explicit `change` to expose both sides as `Option.bind` expressions. The induction hypothesis is then applied pointwise to the continuation function, and associativity of `Option.bind` completes the final equality. The iterator definition and the terminal-component theorem statement are unchanged.
+
+The terminal-component result remains unverified until the next exact-SHA `lake build PhiGenesis` completes successfully.
