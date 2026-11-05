@@ -195,3 +195,24 @@ This is the first kernel-checking block, not yet the global graph spectral theor
 At this commit the Lean file has been submitted to the repository CI but its kernel build is pending. Do not mark this block formally complete until the Lean workflow succeeds on the exact commit SHA.
 
 The audit report now prints the level number in its first column (previously it mistakenly printed the vertex count under the level heading; the underlying calculations were unchanged).
+
+## 11. Global face-energy block submitted for Lean verification
+
+Added `PhiGenesis/SpectralGap/GlobalFaceEnergy.lean` and imported it into the library root.
+
+The new module makes the combinatorial hypotheses explicit:
+- `hEdges`: the map from a face-edge slot to its ordered endpoint pair is injective, so an edge is counted once;
+- `cover : V ↪ F × TriangleCorner` with `hCover`: every graph vertex has a chosen incident face-corner, and the chosen slots are distinct.
+
+Under these hypotheses, `faceGraphEnergy_lower_bound` proves
+
+`sum_v x(v)^2 ≤ sum_{edge {u,v}} (x(u)+x(v))^2`.
+
+The proof chain is now local triangle coercivity → sum over faces → no duplicated edge slots → cover every vertex exactly at least once. This is the abstract global theorem needed before instantiating the recursive Sierpinski faces. It is not yet the Sierpinski-instance theorem: the next block must construct the edge-injective map and the corner selector from the actual recursive face list.
+
+Current status: Lean CI on the exact commit is pending. If a compiler error appears, inspect that error and correct the specific proof; do not weaken `hEdges` or `hCover` to bypass it.
+
+Next three blocks:
+1. prove the recursive SG face family is edge-disjoint and every vertex has a selected incident face corner;
+2. instantiate `faceGraphEnergy_lower_bound` for each level and prove the gauge identity with the repository's sign convention;
+3. state the finite-dimensional Rayleigh-quotient/eigenvalue consequence, with the local-face signing clearly distinguished from the pivot-zero all-hole representative.
