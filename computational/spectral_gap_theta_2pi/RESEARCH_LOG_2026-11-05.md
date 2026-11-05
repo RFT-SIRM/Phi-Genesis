@@ -224,3 +224,13 @@ The first GlobalFaceEnergy commit (9c5844d) was assembled against the older 4472
 The follow-up restoration commit is built on the complete tree of the green 6c8e509 parent and adds the GlobalFaceEnergy module, root import, and this journal entry. It restores the previously checked TriangleEnergy module, the audit workflow's Lean-file trigger, and the corrected audit script. No H10 source is changed.
 
 The failed run #69 therefore reported missing imports caused by an incomplete Git tree; it did not reach typechecking of GlobalFaceEnergy itself. The global module remains unverified until a new Lean build succeeds on the restoration commit.
+## 13. Lean failure diagnosis and focused correction
+
+Run #41970854989 reached the new GlobalFaceEnergy module after successfully compiling TriangleEnergy. The failures were:
+- derived Fintype instances for the two small enumerated slot types produced malformed enum-list membership obligations under Lean 4.33.1;
+- the sum-over-product rewrites did not reduce the three constructors of those slot types;
+- two trailing `simp` calls were left after preceding rewrites had already closed their goals.
+
+The repair replaces the derived Fintype instances with explicit three-element `elems`/`complete` instances, keeps the same three slots and mathematical hypotheses, and removes only the two redundant tactic commands. This is a proof-engineering correction, not a weakening of the global inequality.
+
+Status: the focused correction is committed for a fresh Lean build. The global module is not counted as formally verified until that exact build succeeds.

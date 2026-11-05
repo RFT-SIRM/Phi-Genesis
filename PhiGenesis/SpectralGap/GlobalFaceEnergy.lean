@@ -18,14 +18,26 @@ inductive TriangleCorner where
   | leftBase
   | rightBase
   | apex
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance : Fintype TriangleCorner where
+  elems := {TriangleCorner.leftBase, TriangleCorner.rightBase, TriangleCorner.apex}
+  complete := by
+    intro corner
+    cases corner <;> simp
 
 /-- The three edge slots of a triangle, in its canonical face orientation. -/
 inductive TriangleEdge where
   | base
   | left
   | right
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance : Fintype TriangleEdge where
+  elems := {TriangleEdge.base, TriangleEdge.left, TriangleEdge.right}
+  complete := by
+    intro edge
+    cases edge <;> simp
 
 /-- The vertex at a chosen corner of a face. -/
 def faceCornerVertex {V F : Type*} (a b c : F → V) : F × TriangleCorner → V
@@ -65,6 +77,7 @@ theorem sum_faceCornerMass_eq_cornerSlots
     (x : V → ℝ) (a b c : F → V) :
     (∑ f : F, faceCornerMass x a b c f) =
       ∑ p : F × TriangleCorner, (x (faceCornerVertex a b c p)) ^ 2 := by
+  classical
   simp [faceCornerMass, faceCornerVertex, Fintype.sum_prod_type]
 
 /-- Summing one-face pair energies is the same as summing over all edge slots. -/
@@ -74,6 +87,7 @@ theorem sum_facePairEnergy_eq_edgeSlots
     (∑ f : F, facePairEnergy x a b c f) =
       ∑ p : F × TriangleEdge,
         (x (faceEdgeEndpoints a b c p).1 + x (faceEdgeEndpoints a b c p).2) ^ 2 := by
+  classical
   simp [facePairEnergy, faceEdgeEndpoints, Fintype.sum_prod_type]
 
 /-- Every face contributes at least the squared mass of its three corners. -/
@@ -105,7 +119,6 @@ theorem sum_image_nonneg_le_univ
       le_add_of_nonneg_right hrest
     _ = ∑ b : β, g b := by
       rw [← Finset.sum_union hdisj, hunion]
-      simp
 
 /-- Vertex mass is bounded by total face-corner mass whenever each vertex
 has a distinct chosen corner in the face family. -/
@@ -180,7 +193,6 @@ theorem faceGraphEnergy_lower_bound
           intro p hp q hq hpq
           exact hEdges hpq
         rw [Finset.sum_image hinj]
-        simp
   exact le_trans hCoverMass (hLocal.trans_eq hEdgesEnergy)
 
 end PhiGenesis.SpectralGap
