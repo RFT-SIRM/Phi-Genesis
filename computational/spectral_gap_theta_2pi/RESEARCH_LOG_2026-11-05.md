@@ -216,3 +216,11 @@ Next three blocks:
 1. prove the recursive SG face family is edge-disjoint and every vertex has a selected incident face corner;
 2. instantiate `faceGraphEnergy_lower_bound` for each level and prove the gauge identity with the repository's sign convention;
 3. state the finite-dimensional Rayleigh-quotient/eigenvalue consequence, with the local-face signing clearly distinguished from the pivot-zero all-hole representative.
+
+## 12. Build-tree correction after the first global-energy commit
+
+The first GlobalFaceEnergy commit (9c5844d) was assembled against the older 4472ddba tree instead of its immediate parent tree. This accidentally removed the already kernel-checked TriangleEnergy module and also reverted the spectral-workflow path trigger and the corrected audit output.
+
+The follow-up restoration commit is built on the complete tree of the green 6c8e509 parent and adds the GlobalFaceEnergy module, root import, and this journal entry. It restores the previously checked TriangleEnergy module, the audit workflow's Lean-file trigger, and the corrected audit script. No H10 source is changed.
+
+The failed run #69 therefore reported missing imports caused by an incomplete Git tree; it did not reach typechecking of GlobalFaceEnergy itself. The global module remains unverified until a new Lean build succeeds on the restoration commit.
