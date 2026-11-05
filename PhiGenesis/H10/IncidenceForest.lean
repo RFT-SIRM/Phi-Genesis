@@ -1481,17 +1481,21 @@ public theorem gasketAddressParentIter_reaches_iff_twoSubtree
     · have hEq : z = root := by
         apply Subtype.ext
         exact hRoot
-      subst z
-      exact ⟨0, rfl⟩
+      refine ⟨0, ?_⟩
+      simpa [gasketAddressParentIter] using
+        congrArg (fun x : GasketAddress m => some x) hEq
     · have hLength : (u ++ [2] ++ s).length < m := by
         simpa [hs] using z.2
-      have hEq : z = (⟨u ++ [2] ++ s, hLength⟩ : GasketAddress m) := by
+      let w : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
+      have hEq : z = w := by
         apply Subtype.ext
         exact hs
-      subst z
-      simpa [root] using
-        (gasketAddressParentIter_twoSubtree_reaches
-          m u s hInternal hLength)
+      have hReach :=
+        gasketAddressParentIter_twoSubtree_reaches
+          m u s hInternal hLength
+      refine ⟨hReach.choose, ?_⟩
+      rw [hEq]
+      exact hReach.choose_spec
 
 
 /-- The address-parent multigraph is an incidence forest at every level.
