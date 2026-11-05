@@ -120,3 +120,11 @@ Once this edge-order lemma is proved, Theorem 1 and (4) imply (5) at every level
 8. canonicalGenerationSolution: derive (5), then return to the local H10 moment expansion.
 
 The key advance is that the canonical GF(2) solve is reduced from opaque Gaussian elimination to an explicit address-tree flow. The finite computation and the remaining infinite-level proof obligation are kept separate.
+
+## 8. Kernel formalization of the triangular row-change injectivity
+
+Added PhiGenesis/H10/BoundaryRowTransform.lean. The module reuses the established telescoping identity for the complete ternary subtree and proves that equality of transformed rows at every address of a fixed level forces equality of the original rows at every such address.
+
+The constructive inverse is the sum of transformed rows over the complete descendant subtree rooted at the address. This formalizes the injectivity part of the row-change obligation independently of the edge-order argument. It does not yet identify the least primal edge in a fundamental cut, nor does it prove that the resulting address-parent tree is the lexicographically greedy pivot tree. Those remain separate obligations.
+
+This module uses exact address lengths and ZMod 2 arithmetic only. It makes no changes to the Python solver, its edge order, or the non-pivot-zero convention. Lean CI on the exact commit is required before marking the result kernel-verified.
