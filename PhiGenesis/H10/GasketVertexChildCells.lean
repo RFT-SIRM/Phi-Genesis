@@ -1,5 +1,6 @@
 import Mathlib.Tactic
 import PhiGenesis.H10.GasketVertexStateA
+import PhiGenesis.H10.VertexOrder
 
 open scoped List
 
@@ -318,5 +319,37 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
     exact List.Sublist.append (List.singleton_sublist.mpr hq1) htail
   rw [gasketVertexOrder_succ_explicit (n + 2)]
   exact List.sublist_append_of_sublist_right hBlocks
+
+
+/-- Coordinates of the six abstract corner/midpoint symbols in the
+standard state-A reference triangle of side length twice `S`. -/
+def gasketCornerVertexPoint (S : Nat) : GasketCornerVertex → GasketLatticePoint
+  | .q0 => (0, 0)
+  | .q1 => (S + S, 0)
+  | .q2 => (0, S + S)
+  | .h01 => (S, 0)
+  | .h02 => (0, S)
+  | .h12 => (S, S)
+
+/-- The geometric embedding of the address-21 cell: first enter child 1
+of the level-(n+1) cell, then child 2 of the level-(n+2) cell. -/
+def gasketAddress21Point (n : Nat) (p : GasketLatticePoint) :
+    GasketLatticePoint :=
+  gasketChildPoint (n + 2) .corner2
+    (gasketChildPoint (n + 1) .corner1 p)
+
+/-- The previously proved concrete address-21 order is exactly the
+symbolic C-state order from the abstract automaton after applying the
+actual nested child embedding. This is the bridge between the concrete
+first-occurrence list and the abstract A/B/C vertex names for this cell. -/
+theorem gasketVertexOrder_child21_stateC_symbols (n : Nat) :
+    (gasketCornerVertexOrder .C).map
+      (fun v => gasketAddress21Point n
+        (gasketCornerVertexPoint (gasketScale n) v)) <+
+      gasketVertexOrder (n + 3) := by
+  simpa [gasketCornerVertexOrder, gasketCornerVertexPoint,
+    gasketAddress21Point, gasketChildPoint, gasketScale_succ,
+    Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
+    gasketVertexOrder_child21_cellC n
 
 end PhiGenesis.H10
