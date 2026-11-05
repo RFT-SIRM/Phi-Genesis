@@ -341,3 +341,13 @@ The repair gives the indicator sum an explicit finite-sum proof, keeps the exter
 ## 27. Second source-level repair in the matrix block
 
 The rerun [#41980725248](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41980725248) compiled the preceding spectral modules and reported three remaining proof issues in `SignedLaplacianMatrix.lean`: the edge-vector sum needed explicit distribution before applying the indicator-sum helper; the scalar factor in the inner vertex sum had to be reassociated before `Finset.mul_sum`; and strict positivity of a nonzero coordinate square needed an explicit `sq_pos_of_ne_zero` proof. The repair makes each of these steps explicit. No mathematical definition or theorem assumption is altered. The Python audit passed on the parent SHA; Lean must pass on this new exact commit before this block is closed.
+
+## 28. Gram factorization of the local signed Laplacian
+
+The verified matrix module is now extended with an explicit signed edge-incidence matrix `B), indexed by the recursive face-edge slots. Each row has coefficient (1) at the first endpoint and the endpoint-gauge product (s_{uv}) at the second. Using the proved injectivity of the face-edge endpoint map, Lean identifies the existing finite-graph matrix exactly as `B.transpose * B`. Thus the local-face matrix is the standard signed Laplacian (D-A_\sigma) in the repository convention `\sigma=-s), not merely a matrix with the same energy formula.
+
+A second theorem states the full Rayleigh inequality directly at matrix level:
+`sum_v x_v^2 ≤ sum_u x_u (Lx)_u`.
+The earlier eigenvector corollary remains as a consequence.
+
+The distinction from the pivot-zero all-hole-flux model remains essential. The exact audit reports local-face hole parity zero and pivot-zero target parity one; the two signings are not switching-equivalent. The new Gram and Rayleigh theorems are only for the local-face model. The next mathematical task is to formalize the actual hole-boundary GF(2) constraints and the pivot-zero representative, reusing the general incidence/forest machinery only after the exact edge-order identification is established. This extension awaits Lean CI on its exact SHA.

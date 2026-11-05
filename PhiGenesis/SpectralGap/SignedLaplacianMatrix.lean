@@ -208,4 +208,57 @@ theorem sgSignedLaplacianMatrix_eigenvalue_ge_one (m : Nat)
   dsimp [mass] at hmass_pos hmass_le
   nlinarith
 
+
+/-- Signed edge-incidence matrix for the local-face signing.
+Rows are indexed by recursive face-edge slots, so each row is the vector
+with coefficient one at the first endpoint and the gauge product at the
+second endpoint. -/
+noncomputable def sgSignedIncidenceMatrix (m : Nat) :
+    Matrix ((Fin m → Fin 3) × TriangleEdge) (SGVertex m) ℝ :=
+  fun p v =>
+    sgSignedEdgeVector m
+      (faceEdgeEndpoints (sgFaceA m) (sgFaceB m) (sgFaceC m) p) v
+
+/-- The signed Laplacian already defined above is exactly the Gram matrix
+of its signed edge-incidence matrix: L = Bᵀ B.  This identifies the matrix
+with the standard signed Laplacian for the convention sigma = -s. -/
+theorem sgSignedLaplacianMatrix_eq_incidenceGram (m : Nat) :
+    sgSignedLaplacianMatrix m =
+      (sgSignedIncidenceMatrix m).transpose * sgSignedIncidenceMatrix m := by
+  classical
+  ext u v
+  simp only [sgSignedLaplacianMatrix, sgSignedIncidenceMatrix,
+    Matrix.mul_apply, Matrix.transpose_apply]
+  change
+    (∑ e ∈ Finset.univ.image
+      (faceEdgeEndpoints (sgFaceA m) (sgFaceB m) (sgFaceC m)),
+        sgSignedEdgeVector m e u * sgSignedEdgeVector m e v) =
+      ∑ p : (Fin m → Fin 3) × TriangleEdge,
+        sgSignedEdgeVector m
+          (faceEdgeEndpoints (sgFaceA m) (sgFaceB m) (sgFaceC m) p) u *
+        sgSignedEdgeVector m
+          (faceEdgeEndpoints (sgFaceA m) (sgFaceB m) (sgFaceC m) p) v
+  symm
+  have hinj : Set.InjOn
+      (faceEdgeEndpoints (sgFaceA m) (sgFaceB m) (sgFaceC m))
+      (↑(Finset.univ : Finset ((Fin m → Fin 3) × TriangleEdge))) := by
+    intro p hp q hq hpq
+    exact sgFaceEdgeEndpoints_injective m hpq
+  rw [Finset.sum_image hinj]
+  simp
+
+/-- The matrix lower bound in Rayleigh form: every real vector has
+quadratic energy at least its squared Euclidean norm. -/
+theorem sgSignedLaplacianMatrix_quadraticForm_ge_norm (m : Nat)
+    (x : SGVertex m → ℝ) :
+    (∑ v : SGVertex m, (x v) ^ 2) ≤
+      ∑ u : SGVertex m, x u *
+        ∑ v : SGVertex m, sgSignedLaplacianMatrix m u v * x v := by
+  calc
+    (∑ v : SGVertex m, (x v) ^ 2) ≤ sgSignedGraphEnergy m x :=
+      sgSignedGraphEnergy_lower_bound m x
+    _ = ∑ u : SGVertex m, x u *
+        ∑ v : SGVertex m, sgSignedLaplacianMatrix m u v * x v :=
+      (sgSignedLaplacianMatrix_quadraticForm m x).symm
+
 end PhiGenesis.SpectralGap
