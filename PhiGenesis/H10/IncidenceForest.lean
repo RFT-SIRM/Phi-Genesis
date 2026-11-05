@@ -972,7 +972,7 @@ theorem prefixBeforeLastTwo_eq_some_iff {w p : List (Fin 3)} :
                   simpa [prefixBeforeLastTwo, htail, hd] using h
                 exact (Option.some.inj hEq).symm
               subst p
-              exact ⟨ds, by simp, htail⟩
+              exact ⟨ds, by simp [hd], htail⟩
             · simp [prefixBeforeLastTwo, htail, hd] at h
         | some q =>
             have hp : p = d :: q := by
