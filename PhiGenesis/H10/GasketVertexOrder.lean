@@ -229,6 +229,7 @@ private theorem gasketFirstOccurrencesAux_prefix_of_nodup
       intro ys fuel hlen hnodup
       cases fuel with
       | zero =>
+          simp only [List.length_cons] at hlen
           omega
       | succ fuel =>
           rcases List.nodup_cons.mp hnodup with ⟨haNotMem, hxsNodup⟩

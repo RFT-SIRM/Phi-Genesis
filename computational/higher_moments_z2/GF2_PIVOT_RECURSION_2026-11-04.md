@@ -335,3 +335,13 @@ The next geometric statement is proved in a form directly matching the Python co
 Specializing to the image of `gasketVertexOrder n` under the injective corner-0 embedding gives `gasketVertexOrder_child0_prefix`: the whole ordered list of child 0 occurs unchanged at the start of the parent list. This is an all-level, order-sensitive fact, not merely set membership. It supplies the first segment of the concrete parent six-point order and avoids the failed general `idxOf` induction.
 
 This does not yet prove the complete six-point A/B/C realization, sorted primal-edge order, or least-edge-of-cut statement. Those remain the next obligations after this exact SHA passes `lake build PhiGenesis`.
+
+## 30. Close the zero-fuel branch in the child-0 prefix induction
+
+The exact Lean workflow 42024940428 for commit 4162d096b33617872be6ff230a067049f11e3e27 reached `Build formalization` and reported exactly one primary error in GasketVertexOrder.lean:232. In the zero-fuel branch of `gasketFirstOccurrencesAux_prefix_of_nodup`, `omega` was given `((a :: xs).length + ys.length ≤ 0)` without the list-length constructor equation being simplified, so it did not derive the contradiction from nonnegativity.
+
+The correction exposes `List.length_cons` in that branch before calling `omega`; the resulting inequality contains the positive successor term and is contradictory. The remainder of the proof emitted no further Lean errors in the full log. No definitions, theorem statements, or other proof branches are changed.
+
+Independent finite check: a scratch implementation of the exact fuel-bounded first-occurrence scan was exhaustively tested over all duplicate-free initial blocks of length at most 4 and all suffixes of length at most 4 over a three-symbol alphabet (1,936 cases). In every case, the initial block remained an exact prefix. This is a finite consistency check, not a substitute for the kernel build.
+
+The theorem remains unverified until the next exact-SHA `lake build PhiGenesis` succeeds.
