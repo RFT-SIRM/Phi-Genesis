@@ -105,6 +105,37 @@ theorem gasketCornerOrderStateOfAddress_child_table
   cases gasketCornerOrderStateOfAddress address <;>
     simp [gasketCornerChildState]
 
+/-- Any nonempty suffix consisting only of child-1 digits sends a
+non-A address state to C. Once the first such digit is read, C is stable
+under every additional child-1 transition. -/
+theorem gasketCornerOrderStateOfAddress_append_oneRun
+    (address : List (Fin 3)) (k : Nat)
+    (hState : gasketCornerOrderStateOfAddress address ≠ .A)
+    (hk : 0 < k) :
+    gasketCornerOrderStateOfAddress
+      (address ++ List.replicate k (1 : Fin 3)) = .C := by
+  have hRun : ∀ k, 0 < k → ∀ s, s ≠ .A →
+      (List.replicate k (1 : Fin 3)).foldl gasketCornerChildState s = .C := by
+    intro k
+    induction k with
+    | zero =>
+        intro hk
+        omega
+    | succ k ih =>
+        intro hk s hs
+        rw [List.replicate_succ, List.foldl_cons]
+        have hstep : gasketCornerChildState s (1 : Fin 3) = .C := by
+          rw [gasketCornerChildState_one]
+          simp [hs]
+        rw [hstep]
+        cases k with
+        | zero =>
+            rfl
+        | succ k =>
+            exact ih (by omega) .C (by decide)
+  simpa [gasketCornerOrderStateOfAddress, List.foldl_append] using
+    hRun k hk (gasketCornerOrderStateOfAddress address) hState
+
 /-- Each of the three states lists all six distinguished vertices exactly once. -/
 theorem gasketCornerVertexOrder_perm_universe
     (state : GasketCornerOrderState) :
