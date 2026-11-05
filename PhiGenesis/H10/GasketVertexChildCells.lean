@@ -152,7 +152,6 @@ theorem gasketVertexOrder_child21_q1_in_child1_block (n : Nat) :
       intro heq
       exact (Nat.ne_of_gt hS) (congrArg Prod.snd heq))
 
-end PhiGenesis.H10
 
 /-- The five address-21 points other than q₁ have first coordinate
 strictly between the two possible shared-midpoint x-coordinates.
@@ -190,3 +189,4 @@ theorem gasketVertexOrder_child21_tail_x_between (n : Nat) :
   · rw [h5]
     constructor <;> simp only [Prod.fst] <;> omega
 
+end PhiGenesis.H10
