@@ -907,7 +907,7 @@ def gasketAddressSubtreeRowSum {E : Type*}
         + gasketAddressSubtreeRowSum B m k (w ++ [2]) e
 
 private theorem zmodTwo_two_eq_zero : (2 : ZMod 2) = 0 := by
-  norm_num
+  exact ZMod.natCast_self 2
 
 /-- The transformed rows telescope on a complete ternary subtree:
 their sum is exactly the original row at its root. The depth invariant is
@@ -976,14 +976,11 @@ theorem gasketAddressTerminalCutRows_sum {E : Type*}
         (fun e =>
           B (v ++ [0] ++ List.replicate k (1 : Fin 3)) e
             + B v e + B (v ++ [0]) e + B (v ++ [1]) e) := by
-  have hWordLen :
-      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length = v.length + k + 1 := by
-    simp
-    omega
-  have hTerminal' : v.length + k + 2 = m := by
-    rw [hWordLen] at hTerminal
-    omega
-  have hLeaf' : ¬ 2 + v.length + k < m := by omega
+  have hLeaf :
+      ¬ (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 < m := by
+    intro hlt
+    rw [hTerminal] at hlt
+    exact Nat.lt_irrefl m hlt
   have hDepth :
       (v ++ [2]).length + (m - v.length - 2) + 1 = m := by
     have hle : v.length + 2 ≤ m := by omega
@@ -991,7 +988,7 @@ theorem gasketAddressTerminalCutRows_sum {E : Type*}
     omega
   rw [gasketAddressSubtreeRowSum_eq B m (m - v.length - 2) (v ++ [2]) hDepth]
   funext e
-  simp [gasketBoundaryRowTransform, hInternal, hLeaf']
+  simp [gasketBoundaryRowTransform, hInternal, hLeaf]
   ring_nf
   all_goals simp [zmodTwo_two_eq_zero]
 
