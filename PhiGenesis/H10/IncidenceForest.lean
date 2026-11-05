@@ -509,7 +509,7 @@ theorem mem_gasketAddressOrder_iff (m : Nat) (w : List (Fin 3)) :
           fin_cases d <;> simp [gasketAddressOrder, ih]
 
 /-- A level-m gasket address is a ternary word of length less than m. -/
-abbrev GasketAddress (m : Nat) := {w : List (Fin 3) // w.length < m}
+public abbrev GasketAddress (m : Nat) := {w : List (Fin 3) // w.length < m}
 
 /-- The address type is finite, using the recursive enumeration above. -/
 noncomputable instance gasketAddressFintype (m : Nat) :
@@ -1309,7 +1309,7 @@ theorem gasketAddressParent_twoSubtree_parent_some
 
 
 /-- Iterate the address-parent map, stopping if the exterior root is reached. -/
-def gasketAddressParentIter (m : Nat) :
+@[expose] public def gasketAddressParentIter (m : Nat) :
     Nat → GasketAddress m → Option (GasketAddress m)
   | 0, u => some u
   | n + 1, u =>

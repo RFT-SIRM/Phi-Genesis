@@ -156,3 +156,11 @@ z=uquad	ext{or}quad z=u2s
 for some ternary suffix (s). The forward implication uses an exhaustive classification of incoming parent edges: an internal parent extension cannot point to the internal address (u), while a terminal parent edge preserves the displayed (u2)-prefix. The reverse implication uses the already-proved rank-decreasing path result for every address in the (u2)-subtree.
 
 This identifies the address-tree component below the parent edge of every internal address, not merely its connectivity. It is the combinatorial premise needed to turn the internal cut-row sum formula into a sum over the actual tree component. It does not yet settle terminal parent-edge components, nor does it identify the abstract parent-tree edge with the least-indexed primal edge in the concrete Python edge order.
+
+## 12. Export the address type and parent-iteration map
+
+The Lean run `41988889016` for commit `df05adbddfeeca135e6ec668d7655fced556d911` failed in `IncidenceForest.lean` while elaborating the new public internal-component theorem. The diagnostics explicitly reported that `GasketAddress` and `gasketAddressParentIter` exist as private declarations but cannot occur in the type of a public theorem.
+
+The fix exports the address subtype abbreviation and exposes the parent-iteration definition. This is necessary because the component theorem is intended as part of the module's public API, not as a private internal lemma. No address definition, parent rule, induction argument, or component statement is changed.
+
+The new public theorem remains unverified until the next exact-SHA Lean build completes successfully.
