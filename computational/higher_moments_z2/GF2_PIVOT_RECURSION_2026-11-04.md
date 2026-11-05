@@ -164,3 +164,13 @@ The Lean run `41988889016` for commit `df05adbddfeeca135e6ec668d7655fced556d911`
 The fix exports the address subtype abbreviation and exposes the parent-iteration definition. This is necessary because the component theorem is intended as part of the module's public API, not as a private internal lemma. No address definition, parent rule, induction argument, or component statement is changed.
 
 The new public theorem remains unverified until the next exact-SHA Lean build completes successfully.
+
+## 13. Export the parent-map symbol used by the public iterator
+
+The Lean workflow `41989310255` for exact commit `2b40f9231c9d3aeaece509eac17424c30eadec1c` failed while compiling `PhiGenesis/H10/IncidenceForest.lean`. The first diagnostic was at line 1316: the exposed public definition `gasketAddressParentIter` referred to `gasketAddressParent`, which still had module-private visibility.
+
+The iterator is intentionally exposed because its recursive equations are used by importing modules. Its defining body therefore must refer only to an exported parent-map symbol. The correction changes `gasketAddressParent` from a module-private definition to a public definition, without exposing the implementation of the parent map itself. This keeps the bounded-prefix helper and the rest of the implementation private while making the dependency name available to the exported iterator.
+
+The later diagnostics in the same build (the recovery `sorry` terms, the two unsolved goals in the reachability proof, and the `change`/binder errors in the component theorem) followed the failed iterator declaration. They are not being counted as independently resolved; the next exact-SHA Lean build must determine whether any proof-level issue remains after the visibility dependency is fixed.
+
+No parent rule, rank, address set, component characterization, theorem statement, or proof argument is changed. The update is an API-visibility correction only. The result remains unverified until `lake build PhiGenesis` succeeds on the new exact SHA.

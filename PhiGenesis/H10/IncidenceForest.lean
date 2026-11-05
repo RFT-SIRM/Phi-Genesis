@@ -779,7 +779,7 @@ theorem prefixBeforeLastTwoBounded_val {w : List (Fin 3)}
 /-- The exact H10 address parent rule. Internal addresses point to the
 terminal address u 0 1^(m-|u|-2); terminal addresses point to the prefix
 before their rightmost 2, or to the common exterior vertex. -/
-def gasketAddressParent (m : Nat) (u : GasketAddress m) :
+public def gasketAddressParent (m : Nat) (u : GasketAddress m) :
     Option (GasketAddress m) :=
   if h : u.1.length + 1 < m then
     some ⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
