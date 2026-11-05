@@ -952,6 +952,96 @@ theorem prefixBeforeLastTwo_append_two
         simp [h, prefixBeforeLastTwo]
 
 
+
+/-- A word has rightmost-2 prefix p exactly when it is p followed
+by a digit 2 and a suffix containing no further digit 2. -/
+theorem prefixBeforeLastTwo_eq_some_iff {w p : List (Fin 3)} :
+    prefixBeforeLastTwo w = some p ↔
+      ∃ s, w = p ++ [2] ++ s ∧ prefixBeforeLastTwo s = none := by
+  constructor
+  · intro h
+    induction w generalizing p with
+    | nil =>
+        simp [prefixBeforeLastTwo] at h
+    | cons d ds ih =>
+        cases htail : prefixBeforeLastTwo ds with
+        | none =>
+            by_cases hd : d = 2
+            · have hp : p = [] := by
+                have hEq : (some [] : Option (List (Fin 3))) = some p := by
+                  simpa [prefixBeforeLastTwo, htail, hd] using h
+                exact (Option.some.inj hEq).symm
+              subst p
+              exact ⟨ds, by simp, htail⟩
+            · simp [prefixBeforeLastTwo, htail, hd] at h
+        | some q =>
+            have hp : p = d :: q := by
+              have hEq : (some (d :: q) : Option (List (Fin 3))) = some p := by
+                simpa [prefixBeforeLastTwo, htail] using h
+              exact (Option.some.inj hEq).symm
+            subst p
+            obtain ⟨s, hs, hnone⟩ := ih htail
+            refine ⟨s, ?_, hnone⟩
+            simp [hs, List.cons_append]
+  · rintro ⟨s, rfl, hnone⟩
+    rw [prefixBeforeLastTwo_append_two]
+    simp [hnone]
+
+
+/-- Every parent edge has one of its two defining forms. An internal
+address points to its terminal 0-then-1 extension. A terminal address
+points to the prefix before its rightmost 2, followed by a suffix with
+no further 2. This is the exhaustive edge classification for the
+address-parent tree. -/
+theorem gasketAddressParent_eq_some_cases
+    (m : Nat) (z q : GasketAddress m)
+    (hParent : gasketAddressParent m z = some q) :
+    (z.1.length + 1 < m ∧
+      q.1 = z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) 1) ∨
+    (z.1.length + 1 = m ∧
+      ∃ s, z.1 = q.1 ++ [2] ++ s ∧ prefixBeforeLastTwo s = none) := by
+  by_cases hInternal : z.1.length + 1 < m
+  · left
+    refine ⟨hInternal, ?_⟩
+    rw [gasketAddressParent_internal m z hInternal] at hParent
+    have hAddr :
+        (⟨z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) 1, by
+          have hlen :
+              (z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) 1).length < m := by
+            simp
+            omega
+          exact hlen⟩ : GasketAddress m) = q :=
+      Option.some.inj hParent
+    exact (congrArg Subtype.val hAddr).symm
+  · right
+    have hTerminal : z.1.length + 1 = m := by
+      have hBound : z.1.length + 1 ≤ m := Nat.succ_le_of_lt z.2
+      omega
+    have hParent' :
+        Option.map
+          (fun p : {p : List (Fin 3) // p.length < z.1.length} =>
+            (⟨p.1, Nat.lt_trans p.2 z.2⟩ : GasketAddress m))
+          (prefixBeforeLastTwoBounded z.1) = some q := by
+      simpa [gasketAddressParent, hInternal] using hParent
+    cases hBounded : prefixBeforeLastTwoBounded z.1 with
+    | none =>
+        simp [hBounded] at hParent'
+    | some p =>
+        have hAddr :
+            (⟨p.1, Nat.lt_trans p.2 z.2⟩ : GasketAddress m) = q := by
+          have hSome :
+              some (⟨p.1, Nat.lt_trans p.2 z.2⟩ : GasketAddress m) = some q := by
+            simpa [hBounded] using hParent'
+          exact Option.some.inj hSome
+        have hPrefix : prefixBeforeLastTwo z.1 = some q.1 := by
+          have hp : p.1 = q.1 := congrArg Subtype.val hAddr
+          simpa [hp] using (prefixBeforeLastTwoBounded_val hBounded)
+        obtain ⟨s, hs, hnone⟩ :=
+          (prefixBeforeLastTwo_eq_some_iff).mp hPrefix
+        exact ⟨hTerminal, s, hs, hnone⟩
+
+
+
 /-- The address-parent map preserves the component below the child address
 u2, except that terminal leaves with no later 2 attach directly to u.
 This is the parent-closure statement needed for the explicit component
