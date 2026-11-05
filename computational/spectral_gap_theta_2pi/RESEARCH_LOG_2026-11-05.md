@@ -274,3 +274,13 @@ The module proves the child boxes are disjoint, the address-to-origin map is inj
 This closes the combinatorial hypotheses of the abstract energy theorem for the recursively defined address graph, if the exact Lean build passes. The remaining model-identification task is to connect this address graph to the repository's coordinate/index-based `sierpinski_graph` implementation and the signed operator convention. The proof here is for the abstract recursively defined face graph, not yet for the default pivot-zero hole-flux matrix.
 
 Current exact commit SHA is awaiting Lean and Python workflows. Do not label the global spectral-gap theorem complete until the Lean kernel build succeeds and the graph/sign identification is proved.
+## 18. First Lean failure and exact proof repair
+
+Lean run #41975849562 reached the new recursive module and identified three local proof-engineering issues:
+- the box-separation arithmetic needed the explicit positivity fact `0 < 2^m`;
+- the edge-slot case split needed to discharge the mixed-direction cases by arithmetic before reconstructing an address;
+- the finite subtype vertex type needed an explicit classical `DecidableEq` instance for the graph-energy definition.
+
+The follow-up changes add only these missing facts and refine the case split. No geometric definition, coordinate, face family, or theorem hypothesis is changed.
+
+Run #41975849503 (Python local-face audit) succeeded on the original recursive-address commit. Lean build on the repair commit is the deciding verification.

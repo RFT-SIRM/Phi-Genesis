@@ -39,6 +39,7 @@ theorem sgAddOffset_bounds (m : Nat) (child : Fin 3) (p : Nat × Nat)
       (sgAddOffset m child p).2 < 2 ^ (m + 1) := by
   rcases hp with ⟨hpx, hpy⟩
   have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]
+  have hpos : 0 < 2 ^ m := pow_pos (by norm_num) _
   fin_cases child <;>
     simp [sgAddOffset, sgChildOffset] <;> omega
 
@@ -54,6 +55,7 @@ theorem sgAddOffset_injective_on_box (m : Nat)
   rcases hp with ⟨hpx, hpy⟩
   rcases hq with ⟨hqx, hqy⟩
   have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]
+  have hpos : 0 < 2 ^ m := pow_pos (by norm_num) _
   fin_cases c <;> fin_cases d <;>
     simp [sgAddOffset, sgChildOffset] at h ⊢ <;> omega
 
@@ -107,6 +109,9 @@ def SGVertex (m : Nat) := {v : Nat × Nat // v ∈ sgVertexFinset m}
 
 noncomputable instance sgVertexFintype (m : Nat) : Fintype (SGVertex m) :=
   Fintype.ofFinset (sgVertexFinset m) (by intro v; rfl)
+
+noncomputable instance sgVertexDecidableEq (m : Nat) : DecidableEq (SGVertex m) :=
+  Classical.decEq _
 
 /-- A face-corner slot, viewed as a vertex of the finite gasket graph. -/
 def sgCornerVertex (m : Nat)
@@ -169,14 +174,13 @@ theorem sgFaceEdgeCoords_injective (m : Nat) :
   simp only [sgFaceEdgeCoords, Prod.mk.injEq] at h
   fin_cases e <;> fin_cases e' <;>
     simp [sgFaceCornerCoords] at h
+  all_goals try omega
   all_goals
     rcases h with ⟨h₁, h₂⟩
     have hOrigin : sgFaceOrigin m f = sgFaceOrigin m g := by
       apply Prod.ext
-      · dsimp [sgFaceCornerCoords] at h₁ h₂
-        omega
-      · dsimp [sgFaceCornerCoords] at h₁ h₂
-        omega
+      · omega
+      · omega
     have hfg : f = g := sgFaceOrigin_injective m hOrigin
     subst g
     rfl
