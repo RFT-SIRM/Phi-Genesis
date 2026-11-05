@@ -906,11 +906,15 @@ def gasketAddressSubtreeRowSum {E : Type*}
         + gasketAddressSubtreeRowSum B m k (w ++ [1]) e
         + gasketAddressSubtreeRowSum B m k (w ++ [2]) e
 
+private theorem zmodTwo_two_eq_zero : (2 : ZMod 2) = 0 := by
+  norm_num
+
 /-- The transformed rows telescope on a complete ternary subtree:
-their sum is exactly the original row at its root. -/
+their sum is exactly the original row at its root. The depth invariant is
+written without truncated subtraction: root length plus depth plus one is m. -/
 theorem gasketAddressSubtreeRowSum_eq {E : Type*}
     (B : List (Fin 3) → E → ZMod 2) (m k : Nat) (w : List (Fin 3))
-    (h : w.length + k = m - 1) :
+    (h : w.length + k + 1 = m) :
     gasketAddressSubtreeRowSum B m k w = B w := by
   funext e
   induction k generalizing w with
@@ -919,9 +923,15 @@ theorem gasketAddressSubtreeRowSum_eq {E : Type*}
       simp [gasketAddressSubtreeRowSum, gasketBoundaryRowTransform, hlen]
   | succ k ih =>
       have hInternal : w.length + 1 < m := by omega
-      have h0 : (w ++ [0]).length + k = m - 1 := by simp; omega
-      have h1 : (w ++ [1]).length + k = m - 1 := by simp; omega
-      have h2 : (w ++ [2]).length + k = m - 1 := by simp; omega
+      have h0 : (w ++ [0]).length + k + 1 = m := by
+        simp
+        omega
+      have h1 : (w ++ [1]).length + k + 1 = m := by
+        simp
+        omega
+      have h2 : (w ++ [2]).length + k + 1 = m := by
+        simp
+        omega
       change
         gasketBoundaryRowTransform B m w e
           + gasketAddressSubtreeRowSum B m k (w ++ [0]) e
@@ -930,7 +940,8 @@ theorem gasketAddressSubtreeRowSum_eq {E : Type*}
         B w e
       rw [ih (w ++ [0]) h0, ih (w ++ [1]) h1, ih (w ++ [2]) h2]
       simp [gasketBoundaryRowTransform, hInternal]
-      ring
+      ring_nf
+      all_goals simp [zmodTwo_two_eq_zero]
 
 /-- Fundamental-cut row sum for a nonterminal address, using the component
 shape {u} union u2{0,1,2}^{<= m-|u|-2}. -/
@@ -941,13 +952,15 @@ theorem gasketAddressNonterminalCutRows_sum {E : Type*}
       + gasketAddressSubtreeRowSum B m (m - u.length - 2) (u ++ [2]) =
         (fun e => B u e + B (u ++ [0]) e + B (u ++ [1]) e) := by
   have hDepth :
-      (u ++ [2]).length + (m - u.length - 2) = m - 1 := by
+      (u ++ [2]).length + (m - u.length - 2) + 1 = m := by
+    have hle : u.length + 2 ≤ m := by omega
     simp
     omega
   rw [gasketAddressSubtreeRowSum_eq B m (m - u.length - 2) (u ++ [2]) hDepth]
   funext e
   simp [gasketBoundaryRowTransform, hInternal]
-  ring
+  ring_nf
+  all_goals simp [zmodTwo_two_eq_zero]
 
 /-- Fundamental-cut row sum for a terminal address w=v 0 1^k whose unique
 internal child is v. The component shape is {w,v} union v2{0,1,2}^{<=m-|v|-2}. -/
@@ -963,19 +976,24 @@ theorem gasketAddressTerminalCutRows_sum {E : Type*}
         (fun e =>
           B (v ++ [0] ++ List.replicate k (1 : Fin 3)) e
             + B v e + B (v ++ [0]) e + B (v ++ [1]) e) := by
-  have hDepth :
-      (v ++ [2]).length + (m - v.length - 2) = m - 1 := by
+  have hWordLen :
+      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length = v.length + k + 1 := by
     simp
     omega
-  have hLeaf :
-      ¬ (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 < m := by
-    intro hlt
-    rw [hTerminal] at hlt
-    exact (Nat.lt_irrefl m) hlt
+  have hTerminal' : v.length + k + 2 = m := by
+    rw [hWordLen] at hTerminal
+    omega
+  have hLeaf' : ¬ 2 + v.length + k < m := by omega
+  have hDepth :
+      (v ++ [2]).length + (m - v.length - 2) + 1 = m := by
+    have hle : v.length + 2 ≤ m := by omega
+    simp
+    omega
   rw [gasketAddressSubtreeRowSum_eq B m (m - v.length - 2) (v ++ [2]) hDepth]
   funext e
-  simp [gasketBoundaryRowTransform, hInternal, hLeaf]
-  ring
+  simp [gasketBoundaryRowTransform, hInternal, hLeaf']
+  ring_nf
+  all_goals simp [zmodTwo_two_eq_zero]
 
 
 end PhiGenesis.H10
