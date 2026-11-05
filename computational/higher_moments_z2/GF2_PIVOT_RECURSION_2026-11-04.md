@@ -260,3 +260,13 @@ Lean workflow `42004260138` for exact commit `58f64826a5b0fef653007fa6571f0ad5fc
 This revision changes both empty-list branches to simplify the impossible membership hypothesis `ha`, supplies the Boolean inequality equation explicitly, and applies `List.length_filter_le` to the explicit Boolean predicate and list. The recursive first-occurrence definition and all vertex-order statements remain unchanged. The nodup argument continues to derive contradiction from filtered membership of the head.
 
 This is still an unverified proof repair until the exact new commit passes the full `lake build PhiGenesis`.
+
+
+
+## 24. Avoid predicate over-normalization in the first-occurrence completeness proof
+
+Lean run `42004872852` for `fa5ddf5fc24e6734ade9f80da003e9073e6bf802` reduced the remaining failure to one goal at `GasketVertexOrder.lean:81`. The induction hypothesis already proves membership in the filtered tail, but the final broad `simp` normalized the Boolean filter predicate `decide (x ≠ b)` to `! decide (x = b)`, so it no longer matched the hypothesis syntactically.
+
+The correction does not unfold or normalize the filter predicate. It changes the goal directly to the constructor form of the recursive first-occurrence scan and closes the second disjunct with the existing induction-hypothesis result. The recurrence, theorem statements, and mathematical content are unchanged.
+
+This is a targeted elaboration repair. The module remains unverified until the exact next SHA passes the full Lean build.

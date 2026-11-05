@@ -90,7 +90,11 @@ theorem gasketFirstOccurrencesAux_complete [DecidableEq α] :
                   (bs.filter (fun x => x ≠ b)).length ≤ fuel := by
                 omega
               have hrec := ih _ hlength' hfiltered
-              simp [gasketFirstOccurrencesAux, hrec]
+              change
+                a = b ∨
+                  a ∈ gasketFirstOccurrencesAux fuel
+                    (bs.filter (fun x => x ≠ b))
+              exact Or.inr hrec
 
 /-- Keep the first occurrence of every point in a finite list. -/
 def gasketFirstOccurrences [DecidableEq α] (xs : List α) : List α :=
