@@ -321,3 +321,13 @@ Lean run #41978775853 attempt 2 typechecked the earlier spectral-gap modules, in
 The same run also exposed the residual `1 * x` goal in the earlier 22a587 source. The current parent 3ff2e1f already adds `ring` immediately after `rw [hgu]`, which explicitly closes that algebraic normalization. This commit only marks the edge-energy definition noncomputable.
 
 Lean and Python checks are pending on the new exact SHA.
+
+## 24. Green verification of the signed-gauge energy block
+
+On commit `37a83b768d070e6e6b1a83dc36f1fe76d79df722`, Lean workflow run [#41979152426](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41979152426) completed successfully. The `Build formalization` step ran `lake build PhiGenesis` and passed. The exact local-face Python audit [#41979152625](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41979152625) also completed successfully. Thus `SignedGaugeEnergy.lean` is typechecked on this exact SHA; this is not merely a cache/setup success.
+
+## 25. Explicit matrix realization and eigenvalue consequence
+
+The next formal block defines the finite signed Laplacian matrix as a sum of rank-one edge matrices built from the signed endpoint vector. It proves entrywise symmetry and identifies its quadratic form exactly with `sgSignedGraphEnergy`. The already verified all-level quadratic-form estimate then implies that every real eigenvalue admitting a nonzero real eigenvector is at least one.
+
+Scope is kept explicit: the matrix represents the local-face signing `s_uv = epsilon(u) epsilon(v)` established in `SignedGaugeEnergy.lean`. This does not identify that signing with the pivot-zero all-hole-flux representative; the latter remains a separate spectral problem. The new matrix and eigenpair statements await Lean CI on their exact commit.

@@ -5,3 +5,4 @@ import PhiGenesis.SpectralGap.GlobalFaceEnergy
 import PhiGenesis.SpectralGap.FiniteFaceCover
 import PhiGenesis.SpectralGap.RecursiveSierpinskiFaces
 import PhiGenesis.SpectralGap.SignedGaugeEnergy
+import PhiGenesis.SpectralGap.SignedLaplacianMatrix
