@@ -190,3 +190,9 @@ The exact Lean run `41996212091` for commit `87f603ae61ff75871a0d7763f0501045ea7
 The proof is rewritten with an explicit `change` to expose both sides as `Option.bind` expressions. The induction hypothesis is then applied pointwise to the continuation function, and associativity of `Option.bind` completes the final equality. The iterator definition and the terminal-component theorem statement are unchanged.
 
 The terminal-component result remains unverified until the next exact-SHA `lake build PhiGenesis` completes successfully.
+
+## 17. Lean formalization of the A/B/C corner-order automaton
+
+The exact green Lean baseline is commit `c64b317bf90092260346280c61dcf5b1735d86d2`, workflow `41996612258`. The next module, `PhiGenesis/H10/VertexOrder.lean`, encodes the three six-vertex orders from the H10 all-level checkpoint as finite lists and defines the child-state transition on address digits. It proves that every state order is a permutation of the six distinguished vertices, has no repetitions, ends at q2, and that the A/A/B versus A/C/B child table holds after every address prefix.
+
+This is the finite automaton layer of the vertex-order proof. It does not yet prove that the symbolic six-vertex orders coincide with the first-occurrence IDs produced by the recursive graph constructor, nor does it prove hypotenuse monotonicity or the least-edge fundamental-cut lemma. Those remain the next geometric realization obligations. No Python code or solver ordering is modified.
