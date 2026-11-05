@@ -71,6 +71,30 @@ def faceGraphEnergy {V F : Type*} [DecidableEq V] [Fintype F]
     (x : V → ℝ) (a b c : F → V) : ℝ :=
   ∑ e ∈ faceGraphEdges a b c, (x e.1 + x e.2) ^ 2
 
+/-- Sum over the three corner labels, expanded in the face order. -/
+theorem sum_triangleCorner (g : TriangleCorner → ℝ) :
+    (∑ corner : TriangleCorner, g corner) =
+      g .leftBase + g .rightBase + g .apex := by
+  classical
+  change (∑ corner in
+    ({TriangleCorner.leftBase, TriangleCorner.rightBase, TriangleCorner.apex} :
+      Finset TriangleCorner), g corner) =
+      g .leftBase + g .rightBase + g .apex
+  simp
+  ring
+
+/-- Sum over the three edge labels, expanded in the face order. -/
+theorem sum_triangleEdge (g : TriangleEdge → ℝ) :
+    (∑ edge : TriangleEdge, g edge) =
+      g .base + g .left + g .right := by
+  classical
+  change (∑ edge in
+    ({TriangleEdge.base, TriangleEdge.left, TriangleEdge.right} :
+      Finset TriangleEdge), g edge) =
+      g .base + g .left + g .right
+  simp
+  ring
+
 /-- Summing face-corner mass is the same as summing over all corner slots. -/
 theorem sum_faceCornerMass_eq_cornerSlots
     {V F : Type*} [Fintype F]
@@ -78,7 +102,8 @@ theorem sum_faceCornerMass_eq_cornerSlots
     (∑ f : F, faceCornerMass x a b c f) =
       ∑ p : F × TriangleCorner, (x (faceCornerVertex a b c p)) ^ 2 := by
   classical
-  simp [faceCornerMass, faceCornerVertex, Fintype.sum_prod_type]
+  rw [Fintype.sum_prod_type]
+  simp [faceCornerMass, faceCornerVertex, sum_triangleCorner]
 
 /-- Summing one-face pair energies is the same as summing over all edge slots. -/
 theorem sum_facePairEnergy_eq_edgeSlots
@@ -88,7 +113,8 @@ theorem sum_facePairEnergy_eq_edgeSlots
       ∑ p : F × TriangleEdge,
         (x (faceEdgeEndpoints a b c p).1 + x (faceEdgeEndpoints a b c p).2) ^ 2 := by
   classical
-  simp [facePairEnergy, faceEdgeEndpoints, Fintype.sum_prod_type]
+  rw [Fintype.sum_prod_type]
+  simp [facePairEnergy, faceEdgeEndpoints, sum_triangleEdge]
 
 /-- Every face contributes at least the squared mass of its three corners. -/
 theorem faceCornerMass_le_pairEnergy

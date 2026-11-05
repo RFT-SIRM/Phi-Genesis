@@ -234,3 +234,12 @@ Run #41970854989 reached the new GlobalFaceEnergy module after successfully comp
 The repair replaces the derived Fintype instances with explicit three-element `elems`/`complete` instances, keeps the same three slots and mathematical hypotheses, and removes only the two redundant tactic commands. This is a proof-engineering correction, not a weakening of the global inequality.
 
 Status: the focused correction is committed for a fresh Lean build. The global module is not counted as formally verified until that exact build succeeds.
+## 14. Second focused correction to global face-energy sums
+
+The restored Lean build now reaches and compiles TriangleEnergy. Run #41971429410 then isolated the remaining failures to the two identities which expand sums over the custom three-constructor corner and edge types.
+
+The previous `simp` attempt rewrote the product sum but did not reduce the custom finite sum. The correction now proves `sum_triangleCorner` and `sum_triangleEdge` explicitly by changing `Fintype.univ` to the exact three-element `elems` finset, then uses those lemmas after `Fintype.sum_prod_type`.
+
+No graph assumptions, injectivity hypotheses, or coverage assumptions were changed. The global inequality proof after these identities is unchanged.
+
+Current commit is pending a fresh `lake build PhiGenesis`; only a successful run on its exact SHA will close this block.
