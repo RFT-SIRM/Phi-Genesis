@@ -1146,12 +1146,17 @@ theorem gasketAddressParent_terminalCutChild_unique
     rw [prefixBeforeLastZero_append_zero_replicate_one,
       prefixBeforeLastZero_append_zero_replicate_one] at hPrefix
     exact Option.some.inj hPrefix
-  · rcases hTerminalChild with ⟨hZTerminal, s, hZWord, _hNoTwo⟩
-    have hZLen : z.1.length + 1 = m := hZTerminal
-    rw [hZWord] at hZLen
-    rw [hWordLen] at hTerminal
-    simp only [List.length_append, List.length_singleton,
-      List.length_replicate] at hZLen
+  · rcases hTerminalChild with ⟨hZTerminal, s, hZWord, hNoTwo⟩
+    have hPrefix : prefixBeforeLastTwo z.1 = some terminal.1 := by
+      rw [hZWord, prefixBeforeLastTwo_append_two]
+      simp [hNoTwo]
+    have hShort : terminal.1.length < z.1.length :=
+      prefixBeforeLastTwo_length_lt hPrefix
+    have hTargetTerminal : terminal.1.length + 1 = m := by
+      simpa [terminal] using hTerminal
+    have hZTerminalLen : z.1.length + 1 = m := hZTerminal
+    have hEqualLength : terminal.1.length = z.1.length := by
+      omega
     omega
 
 
