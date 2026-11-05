@@ -314,3 +314,10 @@ Lean/Python workflow results for this revision are pending.
 During source review, the first `hinner` subproof was found to rely on `rw [hgu]` closing the residual `1 * x` expression by definitional reduction. Added `ring` after the rewrite so the algebraic normalization is explicit. The identity itself and all hypotheses are unchanged.
 
 CI is being rerun on this exact source revision; the preceding Mathlib cache attempt failed before Lean compilation due to 28 transient broken-pipe downloads, not due to this module.
+## 23. Mark graph energy noncomputable for the classical finite-vertex equality
+
+Lean run #41978775853 attempt 2 typechecked the earlier spectral-gap modules, including RecursiveSierpinskiFaces, and then reported that `sgSignedGraphEnergy` depends on the noncomputable `sgVertexDecidableEq` instance. The energy definition therefore needs the `noncomputable` modifier; the mathematical quantity is still a finite sum over the same edge finset.
+
+The same run also exposed the residual `1 * x` goal in the earlier 22a587 source. The current parent 3ff2e1f already adds `ring` immediately after `rw [hgu]`, which explicitly closes that algebraic normalization. This commit only marks the edge-energy definition noncomputable.
+
+Lean and Python checks are pending on the new exact SHA.

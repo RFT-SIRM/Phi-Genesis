@@ -107,7 +107,7 @@ theorem sgSignedEdgeTerm_eq_gauge {m : Nat} (x : SGVertex m → ℝ)
 
 /-- Signed quadratic energy on the finite graph, each edge counted once.
 Its edge sign is the local-face signing `s_uv = epsilon(u) epsilon(v)`. -/
-def sgSignedGraphEnergy (m : Nat) (x : SGVertex m → ℝ) : ℝ :=
+noncomputable def sgSignedGraphEnergy (m : Nat) (x : SGVertex m → ℝ) : ℝ :=
   ∑ e ∈ faceGraphEdges (sgFaceA m) (sgFaceB m) (sgFaceC m),
     (x e.1 + sgVertexGauge e.1 * sgVertexGauge e.2 * x e.2) ^ 2
 
