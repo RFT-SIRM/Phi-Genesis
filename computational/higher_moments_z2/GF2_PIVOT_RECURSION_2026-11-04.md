@@ -324,3 +324,14 @@ The next lemma `gasketVertexOrder_parentSixPoints_mem` records that all six dist
 The proof uses the already verified presence of the three outer corners at level (n), mapped into the appropriate child copies. Thus it does not appeal to a finite-level search or any assumed A/B/C state.
 
 An exact-coordinate sandbox check confirmed the six points occur at every level 1 through 8, with the expected graph vertex counts. This lemma proves membership only; it does not yet prove their first-occurrence order. The next target remains the A/B/C order realization and side monotonicity, followed by the least-edge fundamental-cut lemma.
+
+
+## 29. The first child vertex block is a prefix of the parent order
+
+The previous five Lean attempts for a generic `idxOf` comparison theorem all failed in binder elaboration. That route is discarded; the branch is based again on the last green commit 3241f31a5e7efe392589303c0d5ef7ea004e1636 (workflow 42013626950, full build 3020 jobs). The working ref was reset to that exact SHA before the current change.
+
+The next geometric statement is proved in a form directly matching the Python construction: if the initial list block `xs` is Nodup, then scanning `xs ++ ys` by first occurrence leaves the entire `xs` as an exact prefix. In the recursive proof, the Nodup head cannot occur in the remaining part of `xs`; therefore filtering the unprocessed suffix by inequality with that head leaves `xs` intact and filters only `ys`. The induction hypothesis applies to that filtered tail, with the fuel bound obtained from `List.length_filter_le`.
+
+Specializing to the image of `gasketVertexOrder n` under the injective corner-0 embedding gives `gasketVertexOrder_child0_prefix`: the whole ordered list of child 0 occurs unchanged at the start of the parent list. This is an all-level, order-sensitive fact, not merely set membership. It supplies the first segment of the concrete parent six-point order and avoids the failed general `idxOf` induction.
+
+This does not yet prove the complete six-point A/B/C realization, sorted primal-edge order, or least-edge-of-cut statement. Those remain the next obligations after this exact SHA passes `lake build PhiGenesis`.

@@ -211,4 +211,77 @@ theorem gasketVertexOrder_outerCorners_mem (n : Nat) :
           n .corner2 (gasketOuterCorner n .corner2) h2
         simpa [gasketOuterCorner, gasketChildPoint, gasketScale_succ] using h
 
+/-- If the initial block is duplicate-free, the first-occurrence scan
+keeps that entire block as a prefix. The scan only removes later copies
+from the unprocessed suffix. -/
+private theorem gasketFirstOccurrencesAux_prefix_of_nodup
+    [DecidableEq α] :
+    ∀ (xs ys : List α) (fuel : Nat),
+      xs.length + ys.length ≤ fuel →
+      xs.Nodup →
+      ∃ tail, gasketFirstOccurrencesAux fuel (xs ++ ys) = xs ++ tail := by
+  intro xs
+  induction xs with
+  | nil =>
+      intro ys fuel hlen hnodup
+      exact ⟨gasketFirstOccurrencesAux fuel ys, by simp⟩
+  | cons a xs ih =>
+      intro ys fuel hlen hnodup
+      cases fuel with
+      | zero =>
+          omega
+      | succ fuel =>
+          rcases List.nodup_cons.mp hnodup with ⟨haNotMem, hxsNodup⟩
+          have hxsFilter : xs.filter (fun x => x ≠ a) = xs := by
+            apply List.filter_eq_self.mpr
+            intro x hx
+            have hxa : x ≠ a := by
+              intro hEq
+              exact haNotMem (hEq ▸ hx)
+            simp [hxa]
+          have hfilter :
+              (xs ++ ys).filter (fun x => x ≠ a) =
+                xs ++ ys.filter (fun x => x ≠ a) := by
+            rw [List.filter_append, hxsFilter]
+          have hfilterLen :
+              (ys.filter (fun x => x ≠ a)).length ≤ ys.length := by
+            exact List.length_filter_le (fun x => decide (x ≠ a)) ys
+          have hlen' :
+              xs.length + (ys.filter (fun x => x ≠ a)).length ≤ fuel := by
+            simp only [List.length_cons] at hlen
+            omega
+          obtain ⟨tail, htail⟩ :=
+            ih (ys.filter (fun x => x ≠ a)) fuel hlen' hxsNodup
+          refine ⟨tail, ?_⟩
+          change
+            a :: gasketFirstOccurrencesAux fuel
+              ((xs ++ ys).filter (fun x => x ≠ a)) =
+            a :: (xs ++ tail)
+          rw [hfilter, htail]
+
+/-- The ordered list of the first child copy is an exact prefix of the
+parent's first-occurrence vertex list. This is the concrete order statement
+needed before deriving the parent six-point A/B/C configuration. -/
+theorem gasketVertexOrder_child0_prefix (n : Nat) :
+    (gasketVertexOrder n).map (gasketChildPoint n .corner0) <+:
+      gasketVertexOrder (n + 1) := by
+  change
+    (gasketVertexOrder n).map (gasketChildPoint n .corner0) <+:
+      gasketFirstOccurrences
+        ((gasketVertexOrder n).map (gasketChildPoint n .corner0) ++
+          ((gasketVertexOrder n).map (gasketChildPoint n .corner1) ++
+            (gasketVertexOrder n).map (gasketChildPoint n .corner2)))
+  unfold gasketFirstOccurrences
+  rw [List.prefix_iff_exists_eq_append]
+  exact gasketFirstOccurrencesAux_prefix_of_nodup
+    ((gasketVertexOrder n).map (gasketChildPoint n .corner0))
+    ((gasketVertexOrder n).map (gasketChildPoint n .corner1) ++
+      (gasketVertexOrder n).map (gasketChildPoint n .corner2))
+    (((gasketVertexOrder n).map (gasketChildPoint n .corner0) ++
+      ((gasketVertexOrder n).map (gasketChildPoint n .corner1) ++
+        (gasketVertexOrder n).map (gasketChildPoint n .corner2))).length)
+    (by simp)
+    ((gasketVertexOrder_nodup n).map
+      (gasketChildPoint_injective n .corner0))
+
 end PhiGenesis.H10
