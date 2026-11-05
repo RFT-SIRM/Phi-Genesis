@@ -153,3 +153,40 @@ theorem gasketVertexOrder_child21_q1_in_child1_block (n : Nat) :
       exact (Nat.ne_of_gt hS) (congrArg Prod.snd heq))
 
 end PhiGenesis.H10
+
+/-- The five address-21 points other than q₁ have first coordinate
+strictly between the two possible shared-midpoint x-coordinates.
+Consequently none can be removed by either root-child intersection
+filter; the order/sublist argument is proved separately. -/
+theorem gasketVertexOrder_child21_tail_x_between (n : Nat) :
+    ∀ p ∈
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))],
+      0 < p.1 ∧ p.1 < gasketScale (n + 2) := by
+  have hS : 0 < gasketScale n := by
+    unfold gasketScale
+    positivity
+  have hScale1 : gasketScale (n + 1) = 2 * gasketScale n := by
+    rw [gasketScale_succ]
+    omega
+  have hScale2 : gasketScale (n + 2) = 4 * gasketScale n := by
+    rw [show n + 2 = (n + 1) + 1 by omega, gasketScale_succ, hScale1]
+    omega
+  intro p hp
+  simp only [List.mem_cons, List.mem_singleton] at hp
+  rcases hp with h1 | h2 | h3 | h4 | h5
+  · rw [h1]
+    constructor <;> simp only [Prod.fst] <;> omega
+  · rw [h2]
+    constructor <;> simp only [Prod.fst] <;> omega
+  · rw [h3]
+    constructor <;> simp only [Prod.fst] <;> omega
+  · rw [h4]
+    constructor <;> simp only [Prod.fst] <;> omega
+  · rw [h5]
+    constructor <;> simp only [Prod.fst] <;> omega
+
