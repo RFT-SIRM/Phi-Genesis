@@ -54,10 +54,14 @@ theorem sgAddOffset_injective_on_box (m : Nat)
     c = d ∧ p = q := by
   rcases hp with ⟨hpx, hpy⟩
   rcases hq with ⟨hqx, hqy⟩
-  have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]
   have hpos : 0 < 2 ^ m := pow_pos (by norm_num) _
+  have hx := congrArg Prod.fst h
+  have hy := congrArg Prod.snd h
   fin_cases c <;> fin_cases d <;>
-    simp [sgAddOffset, sgChildOffset] at h ⊢ <;> omega
+    simp [sgAddOffset, sgChildOffset] at hx hy ⊢ <;>
+    first
+    | apply Prod.ext <;> omega
+    | omega
 
 /-- Every level-`m` face origin lies in the half-open square of side `2^m`. -/
 theorem sgFaceOrigin_bounds : ∀ m (w : Fin m → Fin 3),
@@ -169,21 +173,19 @@ theorem sgFaceEdgeCoords_injective (m : Nat) :
   intro p q h
   rcases p with ⟨f, e⟩
   rcases q with ⟨g, e'⟩
-  have hf := sgFaceOrigin_bounds m f
-  have hg := sgFaceOrigin_bounds m g
-  simp only [sgFaceEdgeCoords, Prod.mk.injEq] at h
-  fin_cases e <;> fin_cases e' <;>
-    simp [sgFaceCornerCoords] at h
-  all_goals try omega
+  rcases Prod.mk.inj h with ⟨hStart, hEnd⟩
+  rcases Prod.mk.inj hStart with ⟨h₁x, h₁y⟩
+  rcases Prod.mk.inj hEnd with ⟨h₂x, h₂y⟩
+  fin_cases e <;> fin_cases e'
+  all_goals simp [sgFaceCornerCoords] at h₁x h₁y h₂x h₂y
   all_goals
-    rcases h with ⟨h₁, h₂⟩
-    have hOrigin : sgFaceOrigin m f = sgFaceOrigin m g := by
-      apply Prod.ext
-      · omega
-      · omega
-    have hfg : f = g := sgFaceOrigin_injective m hOrigin
-    subst g
-    rfl
+    first
+    | have hOrigin : sgFaceOrigin m f = sgFaceOrigin m g := by
+        apply Prod.ext <;> omega
+      have hfg : f = g := sgFaceOrigin_injective m hOrigin
+      subst g
+      rfl
+    | omega
 
 /-- The coordinate edge map is exactly the subtype-value projection of the
 actual graph edge-slot map. -/

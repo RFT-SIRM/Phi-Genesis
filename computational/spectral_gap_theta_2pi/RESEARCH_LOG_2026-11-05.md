@@ -284,3 +284,10 @@ Lean run #41975849562 reached the new recursive module and identified three loca
 The follow-up changes add only these missing facts and refine the case split. No geometric definition, coordinate, face family, or theorem hypothesis is changed.
 
 Run #41975849503 (Python local-face audit) succeeded on the original recursive-address commit. Lean build on the repair commit is the deciding verification.
+## 19. Coordinate-level repair of recursive edge proofs
+
+Run #41976228574 showed the previous repair still left pair equalities opaque to `omega`. In particular, `sgAddOffset_injective_on_box` passed a product equality directly into arithmetic, and `sgFaceEdgeCoords_injective` split endpoint pairs only one level but did not split each point into its two coordinates.
+
+The current repair explicitly applies `congrArg Prod.fst` and `congrArg Prod.snd` to the translated-origin equality. For edge slots it applies `Prod.mk.inj` three times, exposing the four scalar coordinate equalities before any arithmetic reasoning. The remaining cases are then separated into same-direction cases (recover the face origin, then use address injectivity) and mixed-direction cases (contradict the scalar endpoint equations).
+
+This changes no coordinates, offset definitions, or theorem statements. The next Lean run determines whether these coordinate-level proofs now close.
