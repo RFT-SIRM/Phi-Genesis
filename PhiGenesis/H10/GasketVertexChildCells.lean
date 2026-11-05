@@ -291,6 +291,16 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
         gasketScale (n + 2) + gasketScale n),
       (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
       gasketVertexOrder (n + 3) := by
+  let child1Block :=
+    ((gasketVertexOrder (n + 2)).map
+      (gasketChildPoint (n + 2) .corner1)).filter
+      (fun p => decide (p ≠ (gasketScale (n + 2), 0)))
+  let child2Block :=
+    (((gasketVertexOrder (n + 2)).map
+      (gasketChildPoint (n + 2) .corner2)).filter
+      (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+      (fun p => decide
+        (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))
   have hq1 := gasketVertexOrder_child21_q1_in_child1_block n
   have htail := gasketVertexOrder_child21_tail_sublist_child2_filtered n
   have hBlocks :
@@ -301,14 +311,7 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
           (gasketScale (n + 1) + gasketScale n,
             gasketScale (n + 2) + gasketScale n),
           (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
-      (((gasketVertexOrder (n + 2)).map
-          (gasketChildPoint (n + 2) .corner1)).filter
-        (fun p => decide (p ≠ (gasketScale (n + 2), 0))) ++
-        (((gasketVertexOrder (n + 2)).map
-            (gasketChildPoint (n + 2) .corner2)).filter
-          (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
-          (fun p => decide
-            (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))) := by
+      child1Block ++ child2Block := by
     exact List.Sublist.append (List.singleton_sublist.mpr hq1) htail
   rw [gasketVertexOrder_succ_explicit (n + 2)]
   exact List.sublist_append_of_sublist_right hBlocks
