@@ -135,7 +135,7 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
   have hMap : sourceMap <+ globalMap := by
     exact (gasketVertexOrder_child1_cellA n).map outer
   have hNoBottom : ∀ y ∈ sourceMap,
-      (fun p : GasketLatticePoint => p ≠ (0, gasketScale (n + 2))) y = true := by
+      decide (y ≠ (0, gasketScale (n + 2))) = true := by
     intro y hy
     rcases List.mem_map.mp hy with ⟨z, hz, rfl⟩
     rcases List.mem_map.mp hz with ⟨p, hp, rfl⟩
@@ -145,25 +145,25 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
     omega
   have hFiltered0 :
       sourceMap <+ globalMap.filter
-        (fun p => p ≠ (0, gasketScale (n + 2))) :=
+        (fun p => decide (p ≠ (0, gasketScale (n + 2)))) :=
     sublist_filter_of_forall _ hMap hNoBottom
   have hFiltered :
       sourceMap.filter
-          (fun p => p ≠
+          (fun p => decide (p ≠
             (gasketScale (n + 2), gasketScale (n + 2))) <+
         (globalMap.filter
-          (fun p => p ≠ (0, gasketScale (n + 2))).filter
-          (fun p => p ≠
-            (gasketScale (n + 2), gasketScale (n + 2))) :=
+          (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+          (fun p => decide (p ≠
+            (gasketScale (n + 2), gasketScale (n + 2)))) :=
     hFiltered0.filter _
   have hSourceFilter :
       sourceMap.filter
-          (fun p => p ≠ (0, gasketScale (n + 2))) = sourceMap :=
-    List.filter_eq_self.mpr hNoBottom
+          (fun p => decide (p ≠ (0, gasketScale (n + 2))) = true := by
+    exact List.filter_eq_self.mpr hNoBottom
   have hTailEq :
       sourceMap.filter
-          (fun p => p ≠ (0, gasketScale (n + 2))).filter
-          (fun p => p ≠
+          (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+          (fun p => decide (p ≠
             (gasketScale (n + 2), gasketScale (n + 2))) =
         [(gasketScale (n + 1), gasketScale (n + 2)),
           (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
@@ -173,15 +173,19 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
           (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] := by
     simp [sourceMap, inner, outer, stateAList, gasketChildPoint,
       gasketScale_succ, Prod.ext_iff] <;> omega
-  have hTail : sourceMap.filter
-      (fun p => p ≠
-        (gasketScale (n + 2), gasketScale (n + 2))) <+
+  have hTail :
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
       (globalMap.filter
-        (fun p => p ≠ (0, gasketScale (n + 2))).filter
-        (fun p => p ≠
-          (gasketScale (n + 2), gasketScale (n + 2))) := by
-    rw [← hSourceFilter] at hTailEq
+        (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+        (fun p => decide (p ≠
+          (gasketScale (n + 2), gasketScale (n + 2)))) := by
     rw [← hTailEq]
+    rw [hSourceFilter]
     exact hFiltered
   rcases gasketVertexOrder_outerCorners_mem (n + 2) with ⟨_, _, hcorner2⟩
   have hq1 : (gasketScale (n + 2), gasketScale (n + 2)) ∈
