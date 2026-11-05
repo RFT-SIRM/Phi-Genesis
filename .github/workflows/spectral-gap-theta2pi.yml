@@ -6,6 +6,7 @@ on:
       - formalize/h10-lean4
     paths:
       - "computational/spectral_gap_theta_2pi/**"
+      - "PhiGenesis/SpectralGap/**/*.lean"
       - "phi_genesis/sg_laplacian.py"
       - "phi_genesis/mobius.py"
       - ".github/workflows/spectral-gap-theta2pi.yml"

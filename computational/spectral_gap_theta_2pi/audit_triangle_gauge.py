@@ -218,7 +218,7 @@ def main():
     print("level vertices edges hole_rows local_x_hole_parity_ones pivot_local_hamming lambda_pivot lambda_local")
     for m in range(1, args.compare_hole_solver_max_level + 1):
         values = compare_hole_solver(m)
-        print(values[0], values[1], values[2], values[3], values[4],
+        print(m, values[0], values[1], values[2], values[3], values[4],
               f"{values[5]:.12f}", f"{values[6]:.12f}")
 
 

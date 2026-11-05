@@ -179,3 +179,19 @@ Next:
 2. Formalize the local triangle energy identity and the global lower bound in Lean, together with the recursive face partition/coverage lemmas.
 3. Only after source identification and kernel formalization, study whether the repeated numerical bottom is an exact inherited eigenvalue and derive the sharper spectral edge.
 4. Keep this local-face workstream separate from the canonical GF(2) H10 recurrence and from the default pivot-zero hole-flux data.
+
+## 10. Lean formalization: local triangle energy
+
+Added PhiGenesis/SpectralGap/TriangleEnergy.lean and imported it from the library root.
+
+The module states and proves:
+- trianglePairEnergy_identity: the exact three-pair scalar energy identity;
+- trianglePairEnergy_lower_bound: its nonnegative local defect;
+- trianglePairEnergy_identity_pi: the same identity summed over an arbitrary finite real coordinate type;
+- trianglePairEnergy_lower_bound_pi: the finite-coordinate lower bound.
+
+This is the first kernel-checking block, not yet the global graph spectral theorem. The finite-coordinate version is designed to cover real vector coordinates; a complex or spinor vector can be represented by its real coordinates. The global step still needs a precise finite-face incidence structure, edge partition, and vertex-cover argument.
+
+At this commit the Lean file has been submitted to the repository CI but its kernel build is pending. Do not mark this block formally complete until the Lean workflow succeeds on the exact commit SHA.
+
+The audit report now prints the level number in its first column (previously it mistakenly printed the vertex count under the level heading; the underlying calculations were unchanged).
