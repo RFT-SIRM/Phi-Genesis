@@ -351,3 +351,7 @@ A second theorem states the full Rayleigh inequality directly at matrix level:
 The earlier eigenvector corollary remains as a consequence.
 
 The distinction from the pivot-zero all-hole-flux model remains essential. The exact audit reports local-face hole parity zero and pivot-zero target parity one; the two signings are not switching-equivalent. The new Gram and Rayleigh theorems are only for the local-face model. The next mathematical task is to formalize the actual hole-boundary GF(2) constraints and the pivot-zero representative, reusing the general incidence/forest machinery only after the exact edge-order identification is established. This extension awaits Lean CI on its exact SHA.
+
+## 29. Remove a tactic after the Gram-factorization goal was already closed
+
+Lean run [#41984179386](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41984179386) typechecked the new Gram-factorization proof through the final rewrite. The only reported error was `No goals to be solved` at the following standalone `simp`: `rw [Finset.sum_image hinj]` had already discharged the equality. The correction removes that redundant tactic line only. The factorization statement and injectivity argument are unchanged. A new exact-SHA Lean build is required before marking the extension complete. Python audit [#41984179303](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41984179303) passed on the parent.

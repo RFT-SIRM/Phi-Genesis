@@ -245,7 +245,6 @@ theorem sgSignedLaplacianMatrix_eq_incidenceGram (m : Nat) :
     intro p hp q hq hpq
     exact sgFaceEdgeEndpoints_injective m hpq
   rw [Finset.sum_image hinj]
-  simp
 
 /-- The matrix lower bound in Rayleigh form: every real vector has
 quadratic energy at least its squared Euclidean norm. -/
