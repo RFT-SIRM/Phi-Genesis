@@ -136,6 +136,26 @@ theorem gasketCornerOrderStateOfAddress_append_oneRun
   simpa [gasketCornerOrderStateOfAddress, List.foldl_append] using
     hRun k hk (gasketCornerOrderStateOfAddress address) hState
 
+/-- Every address of the form `u 2 1^k`, with a nonempty final
+run of child-1 digits, is in state C. The prefix `u` is arbitrary:
+the child-2 step resets the state to B, and the first child-1 step
+then enters C permanently along that final run. -/
+theorem gasketCornerOrderStateOfAddress_two_then_oneRun
+    (address : List (Fin 3)) (k : Nat) (hk : 0 < k) :
+    gasketCornerOrderStateOfAddress
+      (address ++ [2] ++ List.replicate k (1 : Fin 3)) = .C := by
+  have hB :
+      gasketCornerOrderStateOfAddress (address ++ [2]) = .B := by
+    rw [gasketCornerOrderStateOfAddress_append]
+    exact gasketCornerChildState_two _
+  have hNotA :
+      gasketCornerOrderStateOfAddress (address ++ [2]) ≠ .A := by
+    rw [hB]
+    decide
+  simpa [List.append_assoc] using
+    gasketCornerOrderStateOfAddress_append_oneRun
+      (address ++ [2]) k hNotA hk
+
 /-- Each of the three states lists all six distinguished vertices exactly once. -/
 theorem gasketCornerVertexOrder_perm_universe
     (state : GasketCornerOrderState) :
