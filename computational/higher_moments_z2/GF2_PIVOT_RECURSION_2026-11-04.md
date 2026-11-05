@@ -175,18 +175,10 @@ The later diagnostics in the same build (the recovery `sorry` terms, the two uns
 
 No parent rule, rank, address set, component characterization, theorem statement, or proof argument is changed. The update is an API-visibility correction only. The result remains unverified until `lake build PhiGenesis` succeeds on the new exact SHA.
 
-## 15. Terminal parent-edge component characterization
+## 15. Repair and consolidate the terminal-component formalization
 
-The Lean run `41992738883` passed `lake build PhiGenesis` for exact commit `8a370e61b1e5ffb9c613f5b567294645975b976b`, validating the internal-address component theorem.
+The Lean workflow `41993578524` failed on the first terminal-component attempt, and the follow-up workflow `41995566102` exposed an additional repository-editing defect: the attempted insertion had duplicated the new theorem block and separated the existing forest doc-comment from its declaration. The second log also identified the successor-iteration proof and two subtype-equality transport errors in the terminal theorem.
 
-The next formal block adds the successor law for the parent iterator and characterizes the component cut off by a terminal address `v 0 1^k`. Its claimed component is exactly the terminal address itself, the unique incoming child `v`, and the full descendant subtree `v2{0,1,2}^*`. The forward proof uses the existing terminal incoming-child uniqueness theorem and the already established internal-subtree predecessor-closure lemma. The reverse proof reaches the terminal node from `v` by one final parent step, using the iterator successor law.
+The repair starts from the last green source state, commit `8a370e61b1e5ffb9c613f5b567294645975b976b`, and inserts the terminal block exactly once immediately before the existing forest doc-comment. The iterator successor proof generalizes the address variable before induction and uses congruence on the shared first parent step. The forward terminal-component proof is an explicit induction on the number of iterations. The reverse proof handles the terminal, its unique child, and descendants under v2 separately, transporting subtype equalities explicitly.
 
-No edge-order or least-primal-index conclusion is made here. This block is not kernel-verified until the exact-SHA Lean workflow completes `lake build PhiGenesis`.
-
-## 16. Repair the terminal-component proof after exact CI diagnostics
-
-The Lean workflow `41993578524` for commit `8630bb95a0af56d412837c31ec2c370cd4211a93` failed in `IncidenceForest.lean`. The full log exposed four independent defects in the newly inserted terminal-component block: an orphaned forest doc-comment was separated from its declaration; the iterator successor law used an incorrect simplification direction and an invalid base-case definitional equality; the induction proof attempted to use a reachability hypothesis with a subtype value equality without transporting it; and the terminal reachability induction was not made explicit enough to keep its induction hypothesis specialized to the reachability proposition.
-
-The replacement moves the forest doc-comment back immediately before its declaration, proves the iterator successor law by induction and associativity of `Option.bind`, and factors the forward half into a separately typed `hForward` induction. The zero-step case extracts equality from `Option.some.inj` and then forgets the subtype proof. The reverse direction keeps explicit subtype equalities and uses the previously kernel-verified internal-subtree reachability theorem for the final parent step.
-
-No address map, component set, pivot convention, or theorem statement is changed. The replacement is not considered verified until the exact new commit passes `lake build PhiGenesis`.
+This clean reconstruction removes duplicate declarations and leaves the existing forest theorem and all previously green modules unchanged. The terminal-component result is not kernel-verified until the new exact-SHA `lake build PhiGenesis` succeeds.

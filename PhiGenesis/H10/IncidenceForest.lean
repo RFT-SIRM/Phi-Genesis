@@ -1504,15 +1504,14 @@ theorem gasketAddressParentIter_succ_eq_bind_parent
     (m n : Nat) (z : GasketAddress m) :
     gasketAddressParentIter m (n + 1) z =
       (gasketAddressParentIter m n z).bind (gasketAddressParent m) := by
-  induction n with
+  induction n generalizing z with
   | zero =>
       simp [gasketAddressParentIter]
   | succ n ih =>
       simp only [gasketAddressParentIter]
-      rw [Option.bind_assoc]
       congr 1
       funext x
-      exact ih x
+      simpa [gasketAddressParentIter] using ih x
 
 
 /-- The component cut off by a terminal address of the form v 0 1^k
@@ -1556,8 +1555,8 @@ public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
     induction n with
     | zero =>
         intro x hReach
-        have hEq : x = terminal :=
-          Option.some.inj (by simpa [gasketAddressParentIter] using hReach)
+        have hEq : x = terminal := by
+          simpa [gasketAddressParentIter] using hReach
         exact Or.inl (congrArg Subtype.val hEq)
     | succ n ih =>
         intro x hReach
@@ -1611,15 +1610,15 @@ public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
         apply Subtype.ext
         exact hTerminalAddress
       refine ⟨0, ?_⟩
-      simpa [gasketAddressParentIter] using
-        congrArg (fun x : GasketAddress m => some x) hEq
+      rw [hEq]
+      rfl
     · rcases hComponent with hParentAddressEq | ⟨s, hSubtree⟩
       · have hEq : z = parentAddress := by
           apply Subtype.ext
           exact hParentAddressEq
         refine ⟨1, ?_⟩
         rw [hEq]
-        simp [gasketAddressParentIter, hParentAddress]
+        simpa [gasketAddressParentIter, terminal] using hParentAddress
       · have hLength : (v ++ [2] ++ s).length < m := by
           simpa [hSubtree] using z.2
         let child : GasketAddress m := ⟨v ++ [2] ++ s, hLength⟩
@@ -1635,7 +1634,8 @@ public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
         have hReachChild :
             gasketAddressParentIter m (n + 1) child = some terminal := by
           rw [gasketAddressParentIter_succ_eq_bind_parent]
-          simp [hn', hParentAddress]
+          rw [hn']
+          simpa [terminal] using hParentAddress
         refine ⟨n + 1, ?_⟩
         rw [hEq]
         exact hReachChild
@@ -1644,301 +1644,6 @@ public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
 rank-decreasing parent theorem. -/
-  exact gasketAddressParent_preimage_twoSubtree
-              m u hInternal z q (ih q hTail) hParent
-  · intro hComponent
-    rcases hComponent with hRoot | ⟨s, hs⟩
-    · have hEq : z = root := by
-        apply Subtype.ext
-        exact hRoot
-      refine ⟨0, ?_⟩
-      simpa [gasketAddressParentIter] using
-        congrArg (fun x : GasketAddress m => some x) hEq
-    · have hLength : (u ++ [2] ++ s).length < m := by
-        simpa [hs] using z.2
-      let w : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
-      have hEq : z = w := by
-        apply Subtype.ext
-        exact hs
-      have hReach :=
-        gasketAddressParentIter_twoSubtree_reaches
-          m u s hInternal hLength
-      refine ⟨hReach.choose, ?_⟩
-      rw [hEq]
-      exact hReach.choose_spec
-
-
-/-- The address-parent multigraph is an incidence forest at every level.
-This is the concrete Sierpiński address-tree instance of the generic
-rank-decreasing parent theorem. -/
-/-- One additional parent step applies the parent map to the result of
-the previous partial iteration. -/
-theorem gasketAddressParentIter_succ_eq_bind_parent
-    (m n : Nat) (z : GasketAddress m) :
-    gasketAddressParentIter m (n + 1) z =
-      (gasketAddressParentIter m n z).bind (gasketAddressParent m) := by
-  induction n generalizing z with
-  | zero => rfl
-  | succ n ih =>
-      simp [gasketAddressParentIter, ih, Option.bind_assoc]
-
-
-/-- The component cut off by a terminal address of the form v 0 1^k
-consists exactly of that terminal address, its unique incoming child v,
-and the complete subtree below v2. -/
-public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
-    (m : Nat) (v : List (Fin 3)) (k : Nat)
-    (hTerminal :
-      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 = m)
-    (z : GasketAddress m) :
-    (∃ n,
-      gasketAddressParentIter m n z =
-        some (⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by
-          have hWordLen :
-              (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
-                v.length + k + 1 := by
-            simp
-            omega
-          omega⟩ : GasketAddress m)) ↔
-      z.1 = v ++ [0] ++ List.replicate k (1 : Fin 3) ∨
-        z.1 = v ∨ ∃ s, z.1 = v ++ [2] ++ s := by
-  have hWordLen :
-      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
-        v.length + k + 1 := by
-    simp
-    omega
-  have hvInternal : v.length + 1 < m := by omega
-  let terminal : GasketAddress m :=
-    ⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by omega⟩
-  let parentAddress : GasketAddress m := ⟨v, by omega⟩
-  have hParentAddress :
-      gasketAddressParent m parentAddress = some terminal := by
-    simpa [parentAddress, terminal] using
-      (gasketAddressParent_terminalCutChild m v k hTerminal)
-  constructor
-  · rintro ⟨n, hReach⟩
-    induction n generalizing z with
-    | zero =>
-        have hEq : z = terminal := by
-          simpa [gasketAddressParentIter] using hReach
-        exact Or.inl (congrArg Subtype.val hEq)
-    | succ n ih =>
-        change
-          (gasketAddressParent m z).bind (gasketAddressParentIter m n) =
-            some terminal at hReach
-        cases hParent : gasketAddressParent m z with
-        | none =>
-            simp [hParent] at hReach
-        | some q =>
-            have hTail :
-                gasketAddressParentIter m n q = some terminal := by
-              simpa [hParent] using hReach
-            rcases ih q hTail with hqTerminal | hqParent | ⟨s, hqSubtree⟩
-            · have hqEq : q = terminal := by
-                apply Subtype.ext
-                exact hqTerminal
-              have hParentTerminal :
-                  gasketAddressParent m z = some terminal := by
-                calc
-                  gasketAddressParent m z = some q := hParent
-                  _ = some terminal := congrArg some hqEq
-              have hzParent : z.1 = v := by
-                apply gasketAddressParent_terminalCutChild_unique
-                  m v k hTerminal z
-                simpa [terminal] using hParentTerminal
-              exact Or.inr (Or.inl hzParent)
-            · have hqComponent :
-                  q.1 = v ∨ ∃ p, q.1 = v ++ [2] ++ p :=
-                Or.inl hqParent
-              have hPreimage :=
-                gasketAddressParent_preimage_twoSubtree
-                  m v hvInternal z q hqComponent hParent
-              rcases hPreimage with hzParent | ⟨s, hzSubtree⟩
-              · exact Or.inr (Or.inl hzParent)
-              · exact Or.inr (Or.inr ⟨s, hzSubtree⟩)
-            · have hqComponent :
-                  q.1 = v ∨ ∃ p, q.1 = v ++ [2] ++ p :=
-                Or.inr ⟨s, hqSubtree⟩
-              have hPreimage :=
-                gasketAddressParent_preimage_twoSubtree
-                  m v hvInternal z q hqComponent hParent
-              rcases hPreimage with hzParent | ⟨s', hzSubtree⟩
-              · exact Or.inr (Or.inl hzParent)
-              · exact Or.inr (Or.inr ⟨s', hzSubtree⟩)
-  · rintro (hTerminalAddress | hComponent)
-    · have hEq : z = terminal := by
-        apply Subtype.ext
-        exact hTerminalAddress
-      refine ⟨0, ?_⟩
-      simpa [gasketAddressParentIter] using
-        congrArg (fun x : GasketAddress m => some x) hEq
-    · rcases hComponent with hParentAddressEq | ⟨s, hSubtree⟩
-      · have hEq : z = parentAddress := by
-          apply Subtype.ext
-          exact hParentAddressEq
-        refine ⟨1, ?_⟩
-        simpa [gasketAddressParentIter, hEq] using hParentAddress
-      · have hLength : (v ++ [2] ++ s).length < m := by
-          simpa [hSubtree] using z.2
-        let child : GasketAddress m := ⟨v ++ [2] ++ s, hLength⟩
-        have hEq : z = child := by
-          apply Subtype.ext
-          exact hSubtree
-        obtain ⟨n, hn⟩ :=
-          gasketAddressParentIter_twoSubtree_reaches
-            m v s hvInternal hLength
-        have hn' :
-            gasketAddressParentIter m n child = some parentAddress := by
-          simpa [child, parentAddress] using hn
-        have hReachChild :
-            gasketAddressParentIter m (n + 1) child = some terminal := by
-          calc
-            gasketAddressParentIter m (n + 1) child =
-                (gasketAddressParentIter m n child).bind
-                  (gasketAddressParent m) :=
-              gasketAddressParentIter_succ_eq_bind_parent m n child
-            _ = some terminal := by
-              simp [hn', hParentAddress]
-        refine ⟨n + 1, ?_⟩
-        rw [hEq]
-        exact hReachChild
-
-/-- The address-parent multigraph is an incidence forest at every level.
-This is the concrete Sierpiński address-tree instance of the generic
-rank-decreasing parent theorem. -/
-/-- One additional parent step applies the parent map to the result of
-the previous partial iteration. -/
-theorem gasketAddressParentIter_succ_eq_bind_parent
-    (m n : Nat) (z : GasketAddress m) :
-    gasketAddressParentIter m (n + 1) z =
-      (gasketAddressParentIter m n z).bind (gasketAddressParent m) := by
-  induction n generalizing z with
-  | zero => rfl
-  | succ n ih =>
-      simp [gasketAddressParentIter, ih, Option.bind_assoc]
-
-
-/-- The component cut off by a terminal address of the form v 0 1^k
-consists exactly of that terminal address, its unique incoming child v,
-and the complete subtree below v2. -/
-public theorem gasketAddressParentIter_reaches_iff_terminalCutComponent
-    (m : Nat) (v : List (Fin 3)) (k : Nat)
-    (hTerminal :
-      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 = m)
-    (z : GasketAddress m) :
-    (∃ n,
-      gasketAddressParentIter m n z =
-        some (⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by
-          have hWordLen :
-              (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
-                v.length + k + 1 := by
-            simp
-            omega
-          omega⟩ : GasketAddress m)) ↔
-      z.1 = v ++ [0] ++ List.replicate k (1 : Fin 3) ∨
-        z.1 = v ∨ ∃ s, z.1 = v ++ [2] ++ s := by
-  have hWordLen :
-      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
-        v.length + k + 1 := by
-    simp
-    omega
-  have hvInternal : v.length + 1 < m := by omega
-  let terminal : GasketAddress m :=
-    ⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by omega⟩
-  let parentAddress : GasketAddress m := ⟨v, by omega⟩
-  have hParentAddress :
-      gasketAddressParent m parentAddress = some terminal := by
-    simpa [parentAddress, terminal] using
-      (gasketAddressParent_terminalCutChild m v k hTerminal)
-  constructor
-  · rintro ⟨n, hReach⟩
-    induction n generalizing z with
-    | zero =>
-        have hEq : z = terminal := by
-          simpa [gasketAddressParentIter] using hReach
-        exact Or.inl (congrArg Subtype.val hEq)
-    | succ n ih =>
-        change
-          (gasketAddressParent m z).bind (gasketAddressParentIter m n) =
-            some terminal at hReach
-        cases hParent : gasketAddressParent m z with
-        | none =>
-            simp [hParent] at hReach
-        | some q =>
-            have hTail :
-                gasketAddressParentIter m n q = some terminal := by
-              simpa [hParent] using hReach
-            rcases ih q hTail with hqTerminal | hqParent | ⟨s, hqSubtree⟩
-            · have hqEq : q = terminal := by
-                apply Subtype.ext
-                exact hqTerminal
-              have hParentTerminal :
-                  gasketAddressParent m z = some terminal := by
-                calc
-                  gasketAddressParent m z = some q := hParent
-                  _ = some terminal := congrArg some hqEq
-              have hzParent : z.1 = v := by
-                apply gasketAddressParent_terminalCutChild_unique
-                  m v k hTerminal z
-                simpa [terminal] using hParentTerminal
-              exact Or.inr (Or.inl hzParent)
-            · have hqComponent :
-                  q.1 = v ∨ ∃ p, q.1 = v ++ [2] ++ p :=
-                Or.inl hqParent
-              have hPreimage :=
-                gasketAddressParent_preimage_twoSubtree
-                  m v hvInternal z q hqComponent hParent
-              rcases hPreimage with hzParent | ⟨s, hzSubtree⟩
-              · exact Or.inr (Or.inl hzParent)
-              · exact Or.inr (Or.inr ⟨s, hzSubtree⟩)
-            · have hqComponent :
-                  q.1 = v ∨ ∃ p, q.1 = v ++ [2] ++ p :=
-                Or.inr ⟨s, hqSubtree⟩
-              have hPreimage :=
-                gasketAddressParent_preimage_twoSubtree
-                  m v hvInternal z q hqComponent hParent
-              rcases hPreimage with hzParent | ⟨s', hzSubtree⟩
-              · exact Or.inr (Or.inl hzParent)
-              · exact Or.inr (Or.inr ⟨s', hzSubtree⟩)
-  · rintro (hTerminalAddress | hComponent)
-    · have hEq : z = terminal := by
-        apply Subtype.ext
-        exact hTerminalAddress
-      refine ⟨0, ?_⟩
-      simpa [gasketAddressParentIter] using
-        congrArg (fun x : GasketAddress m => some x) hEq
-    · rcases hComponent with hParentAddressEq | ⟨s, hSubtree⟩
-      · have hEq : z = parentAddress := by
-          apply Subtype.ext
-          exact hParentAddressEq
-        refine ⟨1, ?_⟩
-        simpa [gasketAddressParentIter, hEq] using hParentAddress
-      · have hLength : (v ++ [2] ++ s).length < m := by
-          simpa [hSubtree] using z.2
-        let child : GasketAddress m := ⟨v ++ [2] ++ s, hLength⟩
-        have hEq : z = child := by
-          apply Subtype.ext
-          exact hSubtree
-        obtain ⟨n, hn⟩ :=
-          gasketAddressParentIter_twoSubtree_reaches
-            m v s hvInternal hLength
-        have hn' :
-            gasketAddressParentIter m n child = some parentAddress := by
-          simpa [child, parentAddress] using hn
-        have hReachChild :
-            gasketAddressParentIter m (n + 1) child = some terminal := by
-          calc
-            gasketAddressParentIter m (n + 1) child =
-                (gasketAddressParentIter m n child).bind
-                  (gasketAddressParent m) :=
-              gasketAddressParentIter_succ_eq_bind_parent m n child
-            _ = some terminal := by
-              simp [hn', hParentAddress]
-        refine ⟨n + 1, ?_⟩
-        rw [hEq]
-        exact hReachChild
-
-
 theorem gasketAddressParent_isForest (m : Nat) :
     IsIncidenceForest (fun u : GasketAddress m => some u)
       (gasketAddressParent m) := by
