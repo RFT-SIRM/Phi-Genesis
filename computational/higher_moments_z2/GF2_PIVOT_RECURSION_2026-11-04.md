@@ -270,3 +270,13 @@ Lean run `42004872852` for `fa5ddf5fc24e6734ade9f80da003e9073e6bf802` reduced th
 The correction does not unfold or normalize the filter predicate. It changes the goal directly to the constructor form of the recursive first-occurrence scan and closes the second disjunct with the existing induction-hypothesis result. The recurrence, theorem statements, and mathematical content are unchanged.
 
 This is a targeted elaboration repair. The module remains unverified until the exact next SHA passes the full Lean build.
+
+
+
+## 25. Unfold the recursive scan before applying the membership induction hypothesis
+
+The exact run `42005758239` for commit `aaff8016f5a8073ce535daa53d4703eb44a40253` reduced the entire remaining module failure to one failed `change` at the completeness theorem. The target was still expressed as membership in `gasketFirstOccurrencesAux (fuel + 1) (b :: bs)`; it was not definitionally presented as the required disjunction because the recursive definition had not been unfolded.
+
+The correction explicitly simplifies only with `gasketFirstOccurrencesAux` and `List.mem_cons`, then closes the second disjunct with the already established induction hypothesis `hrec`. This avoids broad simplification of the Boolean filter predicate and uses the same `simp only [gasketFirstOccurrencesAux, List.mem_cons]` pattern already used successfully in the membership lemma above.
+
+This is the final single diagnostic reported by the preceding run. The module is not considered closed until the exact new SHA passes `lake build PhiGenesis`.
