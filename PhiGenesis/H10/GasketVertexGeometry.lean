@@ -136,4 +136,35 @@ theorem gasketVertexOrder_child12_intersection (n : Nat) :
       ⟨gasketOuterCorner n .corner1, h1, by
         simp [gasketChildPoint, gasketOuterCorner]⟩
 
+
+/-- The six distinguished corners and side midpoints of the parent cell
+all occur in the recursively generated level-(n+1) vertex list. -/
+theorem gasketVertexOrder_parentSixPoints_mem (n : Nat) :
+    (0, 0) ∈ gasketVertexOrder (n + 1) ∧
+    (gasketScale n, 0) ∈ gasketVertexOrder (n + 1) ∧
+    (0, gasketScale n) ∈ gasketVertexOrder (n + 1) ∧
+    (gasketScale (n + 1), 0) ∈ gasketVertexOrder (n + 1) ∧
+    (gasketScale n, gasketScale n) ∈ gasketVertexOrder (n + 1) ∧
+    (0, gasketScale (n + 1)) ∈ gasketVertexOrder (n + 1) := by
+  rcases gasketVertexOrder_outerCorners_mem n with ⟨h0, h1, h2⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner0 (gasketOuterCorner n .corner0) h0
+    simpa [gasketOuterCorner, gasketChildPoint] using h
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner0 (gasketOuterCorner n .corner1) h1
+    simpa [gasketOuterCorner, gasketChildPoint] using h
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner0 (gasketOuterCorner n .corner2) h2
+    simpa [gasketOuterCorner, gasketChildPoint] using h
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner1 (gasketOuterCorner n .corner1) h1
+    simpa [gasketOuterCorner, gasketChildPoint, gasketScale_succ] using h
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner1 (gasketOuterCorner n .corner2) h2
+    simpa [gasketOuterCorner, gasketChildPoint] using h
+  · have h := gasketVertexOrder_succ_mem_of_child
+      n .corner2 (gasketOuterCorner n .corner2) h2
+    simpa [gasketOuterCorner, gasketChildPoint, gasketScale_succ] using h
+
 end PhiGenesis.H10

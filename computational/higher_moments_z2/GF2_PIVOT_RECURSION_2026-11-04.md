@@ -310,3 +310,17 @@ The correction handles all four base-membership branches explicitly and transpor
 A separate exact-coordinate sandbox check at levels 0 through 8 verified the three intersections as singleton sets `{(2^n,0)}`, `{(0,2^n)}`, and `{(2^n,2^n)}`, as well as vertex counts 3, 6, 15, 42, 123, 366, 1095, 3282, and 9843. This checks the geometric witnesses but is not a substitute for Lean compilation.
 
 The module remains unverified until the new exact-SHA Lean build succeeds.
+
+
+
+## 28. Parent boundary six-point membership
+
+The exact geometric gluing block at `9c0fb9bb2a365087ae61e9b5017341fd47da8d1b` passed `lake build PhiGenesis` (workflow `42012735480`; 3020 jobs). The pairwise child-set intersections are now kernel-verified.
+
+The next lemma `gasketVertexOrder_parentSixPoints_mem` records that all six distinguished points of the level-(n+1) parent triangle occur in the global first-occurrence list:
+[
+(0,0), (2^n,0), (0,2^n), (2^{n+1},0),(2^n,2^n), (0,2^{n+1}).
+]
+The proof uses the already verified presence of the three outer corners at level (n), mapped into the appropriate child copies. Thus it does not appeal to a finite-level search or any assumed A/B/C state.
+
+An exact-coordinate sandbox check confirmed the six points occur at every level 1 through 8, with the expected graph vertex counts. This lemma proves membership only; it does not yet prove their first-occurrence order. The next target remains the A/B/C order realization and side monotonicity, followed by the least-edge fundamental-cut lemma.
