@@ -597,6 +597,69 @@ theorem prefixBeforeLastTwo_append_parent_suffix (w : List (Fin 3))
     _ = prefixBeforeLastTwo w :=
       prefixBeforeLastTwo_append_digit w 0 (by decide)
 
+
+
+/-- The prefix strictly before the rightmost zero in an address.
+As with prefixBeforeLastTwo, the scan proceeds from the right. -/
+def prefixBeforeLastZero : List (Fin 3) → Option (List (Fin 3))
+  | [] => none
+  | d :: ds =>
+      match prefixBeforeLastZero ds with
+      | some p => some (d :: p)
+      | none => if d = 0 then some [] else none
+
+/-- Appending a nonzero digit does not change the prefix before the
+rightmost zero. -/
+theorem prefixBeforeLastZero_append_digit (w : List (Fin 3))
+    (d : Fin 3) (hd : d ≠ 0) :
+    prefixBeforeLastZero (w ++ [d]) = prefixBeforeLastZero w := by
+  induction w with
+  | nil =>
+      simp [prefixBeforeLastZero, hd]
+  | cons a tail ih =>
+      simp [prefixBeforeLastZero, ih]
+
+/-- Appending one zero makes the original word the prefix before the
+rightmost zero. -/
+theorem prefixBeforeLastZero_append_zero (w : List (Fin 3)) :
+    prefixBeforeLastZero (w ++ [0]) = some w := by
+  induction w with
+  | nil =>
+      simp [prefixBeforeLastZero]
+  | cons d ds ih =>
+      simp [prefixBeforeLastZero, ih]
+
+/-- A suffix of ones does not alter the prefix before the rightmost zero. -/
+theorem prefixBeforeLastZero_append_replicate_one
+    (w : List (Fin 3)) (k : Nat) :
+    prefixBeforeLastZero (w ++ List.replicate k (1 : Fin 3)) =
+      prefixBeforeLastZero w := by
+  induction k generalizing w with
+  | zero =>
+      simp
+  | succ k ih =>
+      change prefixBeforeLastZero (w ++ ([1] ++ List.replicate k (1 : Fin 3))) =
+        prefixBeforeLastZero w
+      rw [← List.append_assoc]
+      calc
+        prefixBeforeLastZero ((w ++ [1]) ++ List.replicate k (1 : Fin 3)) =
+            prefixBeforeLastZero (w ++ [1]) := ih (w := w ++ [1])
+        _ = prefixBeforeLastZero w :=
+          prefixBeforeLastZero_append_digit w 1 (by decide)
+
+/-- The last zero in v 0 1^k is precisely the displayed zero, so this
+word uniquely records v as its prefix before the rightmost zero. -/
+theorem prefixBeforeLastZero_append_zero_replicate_one
+    (v : List (Fin 3)) (k : Nat) :
+    prefixBeforeLastZero (v ++ [0] ++ List.replicate k (1 : Fin 3)) =
+      some v := by
+  calc
+    prefixBeforeLastZero (v ++ [0] ++ List.replicate k (1 : Fin 3)) =
+        prefixBeforeLastZero (v ++ [0]) :=
+      prefixBeforeLastZero_append_replicate_one (v ++ [0]) k
+    _ = some v := prefixBeforeLastZero_append_zero v
+
+
 /-- The number of digits equal to 2 in a ternary address. -/
 def gasketTwoCount : List (Fin 3) → Nat
   | [] => 0
@@ -1039,6 +1102,58 @@ theorem gasketAddressParent_eq_some_cases
         obtain ⟨s, hs, hnone⟩ :=
           (prefixBeforeLastTwo_eq_some_iff).mp hPrefix
         exact ⟨hTerminal, s, hs, hnone⟩
+
+
+
+/-- The exceptional terminal address v 0 1^k has exactly one incoming
+parent edge: its parent is v. This is the uniqueness half of the terminal
+cut-child description. -/
+theorem gasketAddressParent_terminalCutChild_unique
+    (m : Nat) (v : List (Fin 3)) (k : Nat)
+    (hTerminal :
+      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 = m)
+    (z : GasketAddress m)
+    (hParent :
+      gasketAddressParent m z =
+        some (⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by
+          have hWordLen :
+              (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
+                v.length + k + 1 := by
+            simp
+            omega
+          omega⟩ : GasketAddress m)) :
+    z.1 = v := by
+  have hWordLen :
+      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
+        v.length + k + 1 := by
+    simp
+    omega
+  let terminal :
+      GasketAddress m :=
+    ⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by
+      rw [hWordLen]
+      omega⟩
+  have hParent' : gasketAddressParent m z = some terminal := by
+    simpa [terminal] using hParent
+  rcases gasketAddressParent_eq_some_cases m z terminal hParent' with
+    hInternal | hTerminalChild
+  · rcases hInternal with ⟨_hInt, hAddress⟩
+    have hWords :
+        z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) (1 : Fin 3) =
+          v ++ [0] ++ List.replicate k (1 : Fin 3) := by
+      exact hAddress.symm
+    have hPrefix := congrArg prefixBeforeLastZero hWords
+    rw [prefixBeforeLastZero_append_zero_replicate_one,
+      prefixBeforeLastZero_append_zero_replicate_one] at hPrefix
+    exact Option.some.inj hPrefix
+  · rcases hTerminalChild with ⟨hZTerminal, s, hZWord, _hNoTwo⟩
+    have hZLen : z.1.length + 1 = m := hZTerminal
+    rw [hZWord] at hZLen
+    rw [hWordLen] at hTerminal
+    simp only [List.length_append, List.length_singleton,
+      List.length_replicate] at hZLen
+    omega
+
 
 
 
