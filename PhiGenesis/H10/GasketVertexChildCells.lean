@@ -277,4 +277,40 @@ theorem gasketVertexOrder_child21_tail_sublist_child2_filtered (n : Nat) :
     (fun p => decide (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))
     hFilter0 hRight
 
+
+/-- The six distinguished vertices of the address-21 cell occur in
+state-C order in the actual first-occurrence list of the level-(n+3)
+gasket. The right corner occurs earlier in the root child-1 block;
+the other five vertices occur, in order, in the filtered child-2 block. -/
+theorem gasketVertexOrder_child21_cellC (n : Nat) :
+    [(gasketScale (n + 2), gasketScale (n + 2)),
+      (gasketScale (n + 1), gasketScale (n + 2)),
+      (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1) + gasketScale n,
+        gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+      gasketVertexOrder (n + 3) := by
+  have hq1 := gasketVertexOrder_child21_q1_in_child1_block n
+  have htail := gasketVertexOrder_child21_tail_sublist_child2_filtered n
+  have hBlocks :
+      [(gasketScale (n + 2), gasketScale (n + 2))] ++
+        [(gasketScale (n + 1), gasketScale (n + 2)),
+          (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+          (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+          (gasketScale (n + 1) + gasketScale n,
+            gasketScale (n + 2) + gasketScale n),
+          (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+      (((gasketVertexOrder (n + 2)).map
+          (gasketChildPoint (n + 2) .corner1)).filter
+        (fun p => decide (p ≠ (gasketScale (n + 2), 0))) ++
+        (((gasketVertexOrder (n + 2)).map
+            (gasketChildPoint (n + 2) .corner2)).filter
+          (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+          (fun p => decide
+            (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))) := by
+    exact List.Sublist.append (List.singleton_sublist.mpr hq1) htail
+  rw [gasketVertexOrder_succ_explicit (n + 2)]
+  exact List.sublist_append_of_sublist_right hBlocks
+
 end PhiGenesis.H10
