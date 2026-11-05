@@ -291,3 +291,16 @@ Run #41976228574 showed the previous repair still left pair equalities opaque to
 The current repair explicitly applies `congrArg Prod.fst` and `congrArg Prod.snd` to the translated-origin equality. For edge slots it applies `Prod.mk.inj` three times, exposing the four scalar coordinate equalities before any arithmetic reasoning. The remaining cases are then separated into same-direction cases (recover the face origin, then use address injectivity) and mixed-direction cases (contradict the scalar endpoint equations).
 
 This changes no coordinates, offset definitions, or theorem statements. The next Lean run determines whether these coordinate-level proofs now close.
+## 20. Gauge-transformed signed energy and all-level lower bound
+
+Added `PhiGenesis/SpectralGap/SignedGaugeEnergy.lean` and imported it into the root.
+
+The row gauge is `epsilon(i,j)=(-1)^j`, defined by parity. The module proves that every local face-edge sign is the product of its endpoint gauges: the horizontal/base edge has sign +1, while the two other face edges have sign -1.
+
+`sgSignedGraphEnergy` defines the corresponding signed quadratic form with each graph edge counted once. `sgSignedGraphEnergy_eq_gauged` proves it equals the ordinary pair energy after applying the diagonal vertex gauge. Combining this identity with `sg_graph_energy_lower_bound` gives `sgSignedGraphEnergy_lower_bound` for every level m.
+
+Under the repository sign convention `sigma=1-2*x` and `L=D-A_sigma`, the local-face assignment has `sigma=-s`, so this energy is the quadratic form of `D+A_s = D-A_sigma`. The theorem is therefore an all-level quadratic-form lower bound `xᵀLx ≥ ||x||²` for the explicit local-face signing.
+
+Scope: this is not the pivot-zero all-hole-flux representative in `mobius.py`; those cycle constraints differ. It is also not yet a matrix-eigenvalue theorem: the next formalization should define the signed Laplacian matrix from the finite edge set and derive the Rayleigh/eigenvalue statement from this quadratic-form bound.
+
+Lean and Python CI are pending on the exact commit SHA.
