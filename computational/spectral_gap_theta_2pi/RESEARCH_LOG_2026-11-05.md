@@ -309,3 +309,8 @@ Lean and Python CI are pending on the exact commit SHA.
 Before relying on CI, source review caught that the face-sign proof referenced `sgRowGauge_mul_self` without yet defining it. Added the missing helper directly from `sgRowGauge_sq` using `pow_two`. This is a small proof dependency omission caught before treating the gauge block as complete; no mathematical statement or sign convention changes.
 
 Lean/Python workflow results for this revision are pending.
+## 22. Explicit normalization in the gauge-term identity
+
+During source review, the first `hinner` subproof was found to rely on `rw [hgu]` closing the residual `1 * x` expression by definitional reduction. Added `ring` after the rewrite so the algebraic normalization is explicit. The identity itself and all hypotheses are unchanged.
+
+CI is being rerun on this exact source revision; the preceding Mathlib cache attempt failed before Lean compilation due to 28 transient broken-pipe downloads, not due to this module.

@@ -93,6 +93,7 @@ theorem sgSignedEdgeTerm_eq_gauge {m : Nat} (x : SGVertex m → ℝ)
           (sgVertexGauge u * sgVertexGauge u) * x u +
             (sgVertexGauge u * sgVertexGauge v) * x v := by
               rw [hgu]
+              ring
       _ = sgVertexGauge u *
             (sgVertexGauge u * x u + sgVertexGauge v * x v) := by ring
   calc
