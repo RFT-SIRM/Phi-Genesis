@@ -191,4 +191,89 @@ theorem gasketVertexOrder_child21_tail_x_between (n : Nat) :
       constructor <;> omega
     · simp at hnil
 
+
+/-- The five address-21 points other than q₁ occur, in their inherited
+order, inside the root child-2 block after both shared-midpoint filters.
+The omitted fourth point is q₁, whose earlier occurrence in child 1 is
+handled by `gasketVertexOrder_child21_q1_in_child1_block`. -/
+theorem gasketVertexOrder_child21_tail_sublist_child2_filtered (n : Nat) :
+    [(gasketScale (n + 1), gasketScale (n + 2)),
+      (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1) + gasketScale n,
+        gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+      (((gasketVertexOrder (n + 2)).map
+          (gasketChildPoint (n + 2) .corner2)).filter
+        (fun p => decide (p ≠ (0, gasketScale (n + 2))))).filter
+        (fun p => decide
+          (p ≠ (gasketScale (n + 2), gasketScale (n + 2)))) := by
+  have hpick :
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 2), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] :=
+    List.Sublist.cons _ (List.Sublist.cons _ (List.Sublist.cons _
+      (List.Sublist.cons₂ _ (List.Sublist.cons _ (List.Sublist.cons _
+        List.Sublist.slnil)))))
+  have hGlobal :
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 2), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+      ((gasketVertexOrder (n + 2)).map
+        (gasketChildPoint (n + 2) .corner2)) := by
+    have h := (gasketVertexOrder_child1_cellA n).map
+      (gasketChildPoint (n + 2) .corner2)
+    rw [stateAList_map_child21 n] at h
+    exact h
+  have hTail := hpick.trans hGlobal
+  have hLeft : ∀ p ∈
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))],
+      decide (p ≠ (0, gasketScale (n + 2))) = true := by
+    intro p hp
+    rcases gasketVertexOrder_child21_tail_x_between n p hp with
+      ⟨hpos, _⟩
+    exact decide_eq_true (by
+      intro heq
+      have hfst : p.1 = 0 := congrArg Prod.fst heq
+      omega)
+  have hRight : ∀ p ∈
+      [(gasketScale (n + 1), gasketScale (n + 2)),
+        (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1) + gasketScale n,
+          gasketScale (n + 2) + gasketScale n),
+        (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))],
+      decide (p ≠ (gasketScale (n + 2), gasketScale (n + 2))) = true := by
+    intro p hp
+    rcases gasketVertexOrder_child21_tail_x_between n p hp with
+      ⟨_, hupper⟩
+    exact decide_eq_true (by
+      intro heq
+      have hfst : p.1 = gasketScale (n + 2) := congrArg Prod.fst heq
+      omega)
+  have hFilter0 := sublist_filter_of_forall
+    (fun p => decide (p ≠ (0, gasketScale (n + 2)))) hTail hLeft
+  exact sublist_filter_of_forall
+    (fun p => decide (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))
+    hFilter0 hRight
+
 end PhiGenesis.H10
