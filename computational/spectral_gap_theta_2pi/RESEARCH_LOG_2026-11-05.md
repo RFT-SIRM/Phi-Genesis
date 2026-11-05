@@ -250,3 +250,16 @@ Run #41971915645 reached `GlobalFaceEnergy.lean` and reported `unexpected token 
 The previous correction wrote `∑ corner in S, ...` and `∑ edge in S, ...`, but Lean's Finset binder syntax is `∑ corner ∈ S, ...` and `∑ edge ∈ S, ...`. The next commit changes only these two binder tokens. The intended three-element finite sums and the global theorem hypotheses remain unchanged.
 
 Status: parser fix committed; await Lean CI on the exact SHA before proceeding.
+## 16. Surjective corner selection and level-zero instantiation
+
+Added `PhiGenesis/SpectralGap/FiniteFaceCover.lean` and imported it from `PhiGenesis.lean`.
+
+The new `cornerEmbedding_of_surjective` theorem constructs an injective right-inverse selector from mere surjectivity of the face-corner map. This removes the manual embedding obligation from concrete finite face models.
+
+`faceGraphEnergy_lower_bound_of_surjective_corners` packages the global energy inequality using edge-slot injectivity plus surjective corner coverage.
+
+The module then defines the level-zero gasket as one face on `Fin 3`, proves its three corner slots cover all three vertices, proves its three ordered edge slots are distinct, and instantiates the global lower bound as `baseFace_graph_energy_lower_bound`.
+
+Progress assessment: this is the first concrete graph instance of the energy theorem, but only at level zero. The full arbitrary-level Sierpinski theorem is not yet present. The next task is to define the recursive face-address family at level m and prove its edge-slot injectivity and corner-map surjectivity; only then can the global theorem be instantiated for every m.
+
+Lean CI for this block is pending on the exact commit SHA. No H10 source was changed.
