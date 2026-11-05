@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use Phi-Genesis or report results from this repository, please cite it using the metadata below."
+title: "Phi-Genesis: Spectral Research on the Sierpiński Gasket"
+type: software
+authors:
+  - family-names: "Zaprudnov"
+    given-names: "Evgeny"
+    email: "evgeniyzaprudnov@gmail.com"
+    affiliation: "RFT-SIRM"
+repository-code: "https://github.com/RFT-SIRM/Phi-Genesis"
+url: "https://rft-sirm.github.io/Phi-Genesis/"
+abstract: >-
+  Reproducible computational and formal research on Sierpiński-gasket graph
+  Laplacians, signed Z2-flux boundary conditions, spectral decimation, and
+  numerical spectral evidence. The repository records finite-level exact
+  calculations, numerical experiments, preregistered statistical audits,
+  Lean formalization work, and unresolved research questions. Numerical
+  observations and fitted mass-index patterns are not presented as universal
+  theorems or established predictive physical laws.
+keywords:
+  - Sierpiński gasket
+  - spectral graph theory
+  - graph Laplacians
+  - spectral decimation
+  - Z2 flux
+  - reproducible research
+  - Lean 4

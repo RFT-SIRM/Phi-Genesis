@@ -5,7 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "phi-genesis"
 version = "2.2.1"
-description = "Honest spectral computation on the Sierpinski gasket + fermion mass-formula audit"
+description = "Reproducible spectral research on Sierpiński-gasket graph Laplacians, signed boundary flux, spectral decimation, and numerical evidence audits"
+authors = [{ name = "Evgeny Zaprudnov", email = "evgeniyzaprudnov@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = ["numpy", "scipy"]
 

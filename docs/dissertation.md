@@ -39,6 +39,7 @@
 |---|---|
 | Author | Evgeny Zaprudnov |
 | Research group | RFT-SIRM |
+| Correspondence | [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com) |
 | Version | 1.0 |
 | Date shown in the source | 15 October 2026 |
 | Canonical manuscript | [`DISSERTATION.md`](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md) |
