@@ -1376,6 +1376,124 @@ theorem gasketAddressParentIter_twoSubtree_reaches
 
 
 
+
+
+/-- If a parent edge points into u or its 2-subtree, its child is still
+in that same address component.  The internal-parent case uses the fact
+that appending 0 and then only 1s cannot erase the last-2 prefix. -/
+private theorem gasketAddressParent_preimage_twoSubtree
+    (m : Nat) (u : List (Fin 3))
+    (hInternal : u.length + 1 < m)
+    (z q : GasketAddress m)
+    (hq : q.1 = u ∨ ∃ p, q.1 = u ++ [2] ++ p)
+    (hParent : gasketAddressParent m z = some q) :
+    z.1 = u ∨ ∃ s, z.1 = u ++ [2] ++ s := by
+  rcases gasketAddressParent_eq_some_cases m z q hParent with
+    hInternalParent | hTerminalParent
+  · rcases hq with hq | ⟨p, hq⟩
+    · have hTargetTerminal : q.1.length + 1 = m := by
+        rw [hInternalParent.2]
+        simp
+        omega
+      rw [hq] at hTargetTerminal
+      omega
+    · have hPrefixSame :
+          prefixBeforeLastTwo z.1 = prefixBeforeLastTwo q.1 := by
+        rw [hInternalParent.2]
+        exact
+          (prefixBeforeLastTwo_append_parent_suffix z.1
+            (m - z.1.length - 2)).symm
+      have hQPrefix :
+          prefixBeforeLastTwo q.1 =
+            match prefixBeforeLastTwo p with
+            | some r => some (u ++ [2] ++ r)
+            | none => some u := by
+        rw [hq]
+        exact prefixBeforeLastTwo_append_two u p
+      cases hp : prefixBeforeLastTwo p with
+      | none =>
+          have hZPrefix : prefixBeforeLastTwo z.1 = some u := by
+            rw [hPrefixSame, hQPrefix, hp]
+          obtain ⟨s, hs, _hNoTwo⟩ :=
+            (prefixBeforeLastTwo_eq_some_iff).mp hZPrefix
+          exact Or.inr ⟨s, hs⟩
+      | some r =>
+          have hZPrefix :
+              prefixBeforeLastTwo z.1 = some (u ++ [2] ++ r) := by
+            rw [hPrefixSame, hQPrefix, hp]
+          obtain ⟨s, hs, _hNoTwo⟩ :=
+            (prefixBeforeLastTwo_eq_some_iff).mp hZPrefix
+          refine Or.inr ⟨r ++ [2] ++ s, ?_⟩
+          calc
+            z.1 = (u ++ [2] ++ r) ++ [2] ++ s := hs
+            _ = u ++ [2] ++ (r ++ [2] ++ s) := by
+              simp [List.append_assoc]
+  · rcases hTerminalParent with ⟨_hTerminal, s, hWord, _hNoTwo⟩
+    rcases hq with hq | ⟨p, hq⟩
+    · exact Or.inr ⟨s, by simpa [hq] using hWord⟩
+    · have hExpanded :
+          z.1 = (u ++ [2] ++ p) ++ [2] ++ s := by
+        simpa [hq] using hWord
+      refine Or.inr ⟨p ++ [2] ++ s, ?_⟩
+      calc
+        z.1 = (u ++ [2] ++ p) ++ [2] ++ s := hExpanded
+        _ = u ++ [2] ++ (p ++ [2] ++ s) := by
+          simp [List.append_assoc]
+
+
+/-- The nodes whose parent chain reaches an internal address u are
+exactly u itself and the complete descendant subtree rooted at u2.
+Equivalently, this is the non-root component cut off by the parent edge
+of u in the address tree. -/
+public theorem gasketAddressParentIter_reaches_iff_twoSubtree
+    (m : Nat) (u : List (Fin 3))
+    (hInternal : u.length + 1 < m)
+    (z : GasketAddress m) :
+    (∃ n,
+      gasketAddressParentIter m n z =
+        some (⟨u, by omega⟩ : GasketAddress m)) ↔
+      z.1 = u ∨ ∃ s, z.1 = u ++ [2] ++ s := by
+  let root : GasketAddress m := ⟨u, by omega⟩
+  constructor
+  · rintro ⟨n, hReach⟩
+    induction n generalizing z with
+    | zero =>
+        have hEq : z = root := by
+          simpa [gasketAddressParentIter] using hReach
+        left
+        change z.1 = u
+        simpa [root] using congrArg Subtype.val hEq
+    | succ n ih =>
+        change
+          (gasketAddressParent m z).bind (gasketAddressParentIter m n) =
+            some root at hReach
+        cases hParent : gasketAddressParent m z with
+        | none =>
+            simp [hParent] at hReach
+        | some q =>
+            have hTail :
+                gasketAddressParentIter m n q = some root := by
+              simpa [hParent] using hReach
+            exact gasketAddressParent_preimage_twoSubtree
+              m u hInternal z q (ih q hTail) hParent
+  · intro hComponent
+    rcases hComponent with hRoot | ⟨s, hs⟩
+    · have hEq : z = root := by
+        apply Subtype.ext
+        exact hRoot
+      subst z
+      exact ⟨0, rfl⟩
+    · have hLength : (u ++ [2] ++ s).length < m := by
+        simpa [hs] using z.2
+      have hEq : z = (⟨u ++ [2] ++ s, hLength⟩ : GasketAddress m) := by
+        apply Subtype.ext
+        exact hs
+      subst z
+      simpa [root] using
+        (gasketAddressParentIter_twoSubtree_reaches
+          m u s hInternal hLength)
+
+
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
 rank-decreasing parent theorem. -/

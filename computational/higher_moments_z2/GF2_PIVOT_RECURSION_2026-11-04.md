@@ -146,3 +146,13 @@ The build for commit `985d81cd5f0c660a846ef4e92b0d238b4ae1e5bc` passed the setup
 This is the second half of the module-boundary issue. Exporting the row-transform declarations in section 9 made the declarations visible to importers, but their coefficient type `ZMod 2` was still brought in by an ordinary (private) import. In a file beginning with `module`, dependencies used by public declarations must themselves be publicly imported. The correction is therefore to change the header to `public import Mathlib.Data.ZMod.Basic`. It changes import visibility only; no definitions, theorem statements, proof terms, or matrix conventions are changed.
 
 The failed run was `41986819415` for the exact SHA above. The next exact-SHA Lean workflow must complete `lake build PhiGenesis` before these row-transform results are treated as kernel-verified.
+
+## 11. Exact parent-component characterization for an internal address
+
+The Lean theorem `gasketAddressParentIter_reaches_iff_twoSubtree` now proves both directions of the internal component description. For an internal address (u), an address (z) reaches (u) after finitely many applications of the parent map exactly when
+[
+z=uquad	ext{or}quad z=u2s
+]
+for some ternary suffix (s). The forward implication uses an exhaustive classification of incoming parent edges: an internal parent extension cannot point to the internal address (u), while a terminal parent edge preserves the displayed (u2)-prefix. The reverse implication uses the already-proved rank-decreasing path result for every address in the (u2)-subtree.
+
+This identifies the address-tree component below the parent edge of every internal address, not merely its connectivity. It is the combinatorial premise needed to turn the internal cut-row sum formula into a sum over the actual tree component. It does not yet settle terminal parent-edge components, nor does it identify the abstract parent-tree edge with the least-indexed primal edge in the concrete Python edge order.
