@@ -2,7 +2,7 @@ name: Lean formalization
 
 on:
   push:
-    branches: [ "formalize/h10-lean4" ]
+    branches: [ "formalize/**" ]
     paths:
       - "PhiGenesis.lean"
       - "PhiGenesis/**/*.lean"
@@ -10,6 +10,16 @@ on:
       - "lake-manifest.json"
       - "lean-toolchain"
       - ".github/workflows/lean.yml"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "PhiGenesis.lean"
+      - "PhiGenesis/**/*.lean"
+      - "lakefile.lean"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+      - ".github/workflows/lean.yml"
+
   workflow_dispatch:
 
 permissions:
