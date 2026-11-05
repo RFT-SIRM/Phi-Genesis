@@ -243,3 +243,10 @@ The previous `simp` attempt rewrote the product sum but did not reduce the custo
 No graph assumptions, injectivity hypotheses, or coverage assumptions were changed. The global inequality proof after these identities is unchanged.
 
 Current commit is pending a fresh `lake build PhiGenesis`; only a successful run on its exact SHA will close this block.
+## 15. Parser correction in explicit triangle-slot sums
+
+Run #41971915645 reached `GlobalFaceEnergy.lean` and reported `unexpected token 'in'; expected ','` at the two explicit finite sums. The finite-type instances and sum-over-product expansions were no longer the issue.
+
+The previous correction wrote `∑ corner in S, ...` and `∑ edge in S, ...`, but Lean's Finset binder syntax is `∑ corner ∈ S, ...` and `∑ edge ∈ S, ...`. The next commit changes only these two binder tokens. The intended three-element finite sums and the global theorem hypotheses remain unchanged.
+
+Status: parser fix committed; await Lean CI on the exact SHA before proceeding.

@@ -76,7 +76,7 @@ theorem sum_triangleCorner (g : TriangleCorner → ℝ) :
     (∑ corner : TriangleCorner, g corner) =
       g .leftBase + g .rightBase + g .apex := by
   classical
-  change (∑ corner in
+  change (∑ corner ∈
     ({TriangleCorner.leftBase, TriangleCorner.rightBase, TriangleCorner.apex} :
       Finset TriangleCorner), g corner) =
       g .leftBase + g .rightBase + g .apex
@@ -88,7 +88,7 @@ theorem sum_triangleEdge (g : TriangleEdge → ℝ) :
     (∑ edge : TriangleEdge, g edge) =
       g .base + g .left + g .right := by
   classical
-  change (∑ edge in
+  change (∑ edge ∈
     ({TriangleEdge.base, TriangleEdge.left, TriangleEdge.right} :
       Finset TriangleEdge), g edge) =
       g .base + g .left + g .right
