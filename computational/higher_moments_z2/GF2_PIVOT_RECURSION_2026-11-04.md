@@ -224,3 +224,19 @@ The Python child map is `target + (point - old_corner)/2`. In triangular-lattice
 An independent arithmetic sandbox check of this coordinate recursion gave the expected vertex counts ((3^{n+1}+3)/2) for levels 0 through 8 and verified the three singleton pairwise intersections at each positive level.
 
 This is only the exact geometric gluing foundation. It does not yet prove the A/B/C first-occurrence state transitions from the ordered vertex list, side monotonicity, or the minimum-edge fundamental-cut lemma. The module is not kernel-verified until the exact-SHA Lean workflow completes `lake build PhiGenesis`.
+
+
+
+## 21. Kernel model of the first-occurrence vertex enumeration
+
+The previous green commit `c6e527d6953f25094e781c66ca3c97ba48181638` passed `lake build PhiGenesis` (workflow `42002762609`, 3018 successful jobs). The exact child embeddings are now in integer triangular-lattice coordinates.
+
+The new module `PhiGenesis/H10/GasketVertexOrder.lean` formalizes the vertex-ID assignment rule from `sierpinski_graph_with_holes`: concatenate the three child vertex lists in order 0, 1, 2, map each through its exact integer embedding, and retain the first occurrence of each point. It proves:
+- the first-occurrence scan preserves exactly the input membership set;
+- the resulting list is duplicate-free;
+- the recursively generated level-n vertex list is duplicate-free for every n;
+- each of the three parent outer corners remains present in the next recursively generated list.
+
+This is the first Lean definition of the actual recursive vertex discovery order, rather than a standalone A/B/C automaton. The module deliberately does not yet assert that the A/B/C six-vertex table follows: that requires deriving the six local corner/midpoint positions from this global first-occurrence list and proving the side-order monotonicity. The least-indexed primal-edge/fundamental-cut theorem remains open.
+
+The module is not considered kernel-verified until the exact SHA passes the complete `lake build PhiGenesis`.

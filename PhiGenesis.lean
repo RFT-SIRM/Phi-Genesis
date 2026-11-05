@@ -8,4 +8,5 @@ import PhiGenesis.SpectralGap.SignedGaugeEnergy
 import PhiGenesis.SpectralGap.SignedLaplacianMatrix
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
+import PhiGenesis.H10.GasketVertexOrder
 import PhiGenesis.H10.VertexOrder
