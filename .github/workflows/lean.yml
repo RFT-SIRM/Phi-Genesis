@@ -1,15 +1,6 @@
 name: Lean formalization
 
 on:
-  push:
-    branches: [ "formalize/**" ]
-    paths:
-      - "PhiGenesis.lean"
-      - "PhiGenesis/**/*.lean"
-      - "lakefile.lean"
-      - "lake-manifest.json"
-      - "lean-toolchain"
-      - ".github/workflows/lean.yml"
   pull_request:
     branches: [ "main" ]
     paths:
@@ -20,8 +11,9 @@ on:
       - "lean-toolchain"
       - ".github/workflows/lean.yml"
 
-  workflow_dispatch:
-
+concurrency:
+  group: lean-formalization-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 
