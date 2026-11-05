@@ -111,11 +111,11 @@ For this representative, exact sparse-integer calculations give:
 | 9 | 29,526 | 59,049 | 9,841 | 404,622,661,080 | 12,387,360 |
 | 10 | 88,575 | 177,147 | 29,524 | 1,213,880,370,600 | 12,387,360 |
 
-The table is a direct exact finite-level computation: it verifies the affine increment on levels 3 through 10.
+The observed affine law is verified on levels 3 through 10 only:
 
-A later mathematical derivation is recorded in the [H10 all-level checkpoint](computational/higher_moments_z2/H10_ALL_LEVEL_CHECKPOINT_2026-11-04.md). It derives the recurrence for every level $m\ge3$ from the recursive address-tree structure, child restriction, finite local moment certificates, and an exact exceptional transition $3\to4$. This is a **paper-level mathematical derivation**, not yet a Lean-kernel theorem.
+<p><i>D</i><sub>m</sub><sup>(10)</sup> = 3 <i>D</i><sub>m−1</sub><sup>(10)</sup> + 12,387,360.</p>
 
-There is a documentation discrepancy that remains to be reconciled: the older [GF(2) pivot-tree note](computational/higher_moments_z2/GF2_PIVOT_RECURSION_2026-11-04.md) still labels the all-level edge-order lemma open, and [the older H10 research note](docs/higher-moments-z2.md) still describes the recurrence as finite-level evidence only. The newer checkpoint says it resolves the geometric step. Until those accounts have been reconciled and the derivation has been formalized, distinguish the exact finite computations, the newer mathematical proof checkpoint, and a Lean-verified theorem.
+It is a finite computational result, **not yet an all-level theorem**.
 
 A second exact sweep evaluates every generation-twist mask at levels 4--9 (16, 32, 64, 128, 256, and 512 masks). All 1,008 transition checks from level 3 to 9 agree with the same Boolean correction $Q(t_1,t_2,t_3,t_{m+1})$. At level 10, 156 directly evaluated masks agree with the recurrence; the remaining masks at that level are predictions, not direct matrix-power calculations. The full correction polynomial, mathematical derivation route, finite audits, and caveats are in [the H10 research note](docs/higher-moments-z2.md).
 
@@ -130,15 +130,11 @@ A pinned Lean 4 project is maintained on the `formalize/h10-lean4` branch.
 - Lean toolchain: `leanprover/lean4:v4.33.1`.
 - Mathlib: pinned by `lake-manifest.json` to revision `0df444a360eaa60ab8c11dca51a86af692955474`.
 - Build target: `lake build PhiGenesis`.
-- Latest verified build: [GitHub Actions run #48](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41898706458), commit `7d9f3d3` (4 November 2026).
+- Latest verified build: [GitHub Actions run](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41848273814).
 
-The current Lean development formalizes finite indexed edges with source and target maps, so parallel edges remain distinct. Incidence entries take values in `ZMod 2`; both endpoints are counted, making a loop contribute zero modulo two. The main theorem proves that the indexed incidence columns are linearly independent over `ZMod 2` if and only if every nonempty finite edge subset has a vertex of odd degree parity. The development also proves the corresponding reduced-incidence criterion, uniqueness and existence of solutions for square forest incidence systems, and a linear equivalence implementing the solver.
+The current Lean development formalizes finite indexed edges with source and target maps, so parallel edges remain distinct. Incidence entries take values in `ZMod 2`; both endpoints are counted, making a loop contribute zero modulo two. The main theorem proves that the indexed incidence columns are linearly independent over `ZMod 2` if and only if every nonempty finite edge subset has a vertex of odd degree parity.
 
-For the H10 address model, Lean now defines the ternary address enumeration, the prefix before the rightmost digit 2, the concrete parent map, and an explicit natural-number rank. It proves that every parent step strictly decreases this rank, that the resulting address-parent incidence system is a forest in the defined sense, and that its canonical solver reconstructs every prescribed finite right-hand side. These address statements hold for every finite level parameter; the theorem is not limited to a finite list of tested levels.
-
-**Scope limitation:** `IsIncidenceForest` is currently defined by the odd-degree condition. Its equivalence with the conventional graph-theoretic acyclicity definition has not yet been formalized. More importantly, the Lean address-parent forest and solver are still an abstract address-tree model: they have not yet been connected to the actual transformed hole-boundary matrix, its primal-edge ordering, or the claimed lexicographically first pivot set. The following are still required in Lean: the concrete row transformation and fundamental-cut identities; the least-primal-edge/pivot correspondence; the A/B/C state recursion and switching-class child restrictions; exact ordered tenth-trace gluing; the finite local patch certificates and correction polynomial $Q$; the exceptional $3\to4$ bridge; and finally the all-level recurrence, its closed form, and the normalized limit.
-
-The green CI run proves that the current Lean source compiles. It does **not** establish the paper-level recurrence checkpoint as a Lean theorem. The build has three non-fatal linter warnings in `IncidenceForest.lean`.
+**Scope limitation:** in the current file, `IsIncidenceForest` is defined by this odd-degree condition. The separate equivalence between that condition and the conventional graph-theoretic definition of a forest has not yet been formalized. Nor does this result prove the all-level H10 recurrence. Those are subsequent proof obligations, not claims established by the current CI run.
 
 The Lean source is in [`PhiGenesis/H10/IncidenceForest.lean`](PhiGenesis/H10/IncidenceForest.lean). To reproduce the build:
 
