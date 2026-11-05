@@ -296,3 +296,17 @@ The new module `PhiGenesis/H10/GasketVertexGeometry.lean` proves:
 The forward directions use the exact integer triangle-intersection theorems from `GasketCoordinates.lean`; the reverse directions use the already formalized fact that all three outer corners occur in the recursive list. This closes the set-theoretic gluing step for the actual first-occurrence enumeration. It does not yet prove the ordering of the six local vertices in A/B/C states or monotonicity along addressed sides; those are the next obligations before the least-edge fundamental-cut proof.
 
 The new module is not kernel-verified until the exact commit passes `lake build PhiGenesis`.
+
+
+
+## 27. Repair the child-intersection proofs using the exact failed Lean log
+
+The exact Lean workflow `42011815846` for `2fb30270e315e2da2f1089e40266afb92e97eebf` failed in `GasketVertexGeometry.lean`. The full log identifies two proof defects:
+1. At level zero, simplifying membership in the three-element list leaves a fourth impossible `p ∈ []` branch; the proof destructed only three disjuncts and then attempted `subst` on the final disjunction.
+2. Each pairwise-intersection theorem proves that the mapped representative from the first child equals the shared midpoint, while the goal is stated for the ambient point `p`; the proof omitted transport through the `List.mem_map` equality `haEq`.
+
+The correction handles all four base-membership branches explicitly and transports each midpoint identity to `p` with a `calc` using `haEq.symm`. I rechecked the three reverse inclusion witnesses against the exact child maps: 0∩1 uses child-1's image of outer corner 0; 0∩2 uses child-2's image of outer corner 0; 1∩2 uses child-2's image of outer corner 1. These witnesses in the original source were correct and are retained.
+
+A separate exact-coordinate sandbox check at levels 0 through 8 verified the three intersections as singleton sets `{(2^n,0)}`, `{(0,2^n)}`, and `{(2^n,2^n)}`, as well as vertex counts 3, 6, 15, 42, 123, 366, 1095, 3282, and 9843. This checks the geometric witnesses but is not a substitute for Lean compilation.
+
+The module remains unverified until the new exact-SHA Lean build succeeds.

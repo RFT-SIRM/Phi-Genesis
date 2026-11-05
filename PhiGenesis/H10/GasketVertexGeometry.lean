@@ -20,9 +20,15 @@ theorem gasketVertexOrder_mem_triangle (n : Nat) :
   induction n with
   | zero =>
       intro p hp
-      simp only [gasketVertexOrder, List.mem_cons, List.mem_singleton] at hp
-      rcases hp with hp | hp | hp
-      all_goals subst p <;> norm_num [gasketLatticeTriangle, gasketScale]
+      simp only [gasketVertexOrder, List.mem_cons] at hp
+      rcases hp with h | h | h | h
+      · subst p
+        norm_num [gasketLatticeTriangle, gasketScale]
+      · subst p
+        norm_num [gasketLatticeTriangle, gasketScale]
+      · subst p
+        norm_num [gasketLatticeTriangle, gasketScale]
+      · cases h
   | succ n ih =>
       intro p hp
       change p ∈ gasketFirstOccurrences
@@ -59,9 +65,12 @@ theorem gasketVertexOrder_child01_intersection (n : Nat) :
       calc
         gasketChildPoint n .corner0 a = p := haEq
         _ = gasketChildPoint n .corner1 b := hbEq.symm
-    exact gasketChildPoint_zero_one_intersection n a b
+    have hmid := gasketChildPoint_zero_one_intersection n a b
       (gasketVertexOrder_mem_triangle n ha)
       (gasketVertexOrder_mem_triangle n hb) hAB
+    calc
+      p = gasketChildPoint n .corner0 a := haEq.symm
+      _ = (gasketScale n, 0) := hmid
   · intro hp
     rw [hp]
     rcases gasketVertexOrder_outerCorners_mem n with ⟨h0, h1, h2⟩
@@ -85,9 +94,12 @@ theorem gasketVertexOrder_child02_intersection (n : Nat) :
       calc
         gasketChildPoint n .corner0 a = p := haEq
         _ = gasketChildPoint n .corner2 b := hbEq.symm
-    exact gasketChildPoint_zero_two_intersection n a b
+    have hmid := gasketChildPoint_zero_two_intersection n a b
       (gasketVertexOrder_mem_triangle n ha)
       (gasketVertexOrder_mem_triangle n hb) hAB
+    calc
+      p = gasketChildPoint n .corner0 a := haEq.symm
+      _ = (0, gasketScale n) := hmid
   · intro hp
     rw [hp]
     rcases gasketVertexOrder_outerCorners_mem n with ⟨h0, h1, h2⟩
@@ -111,9 +123,12 @@ theorem gasketVertexOrder_child12_intersection (n : Nat) :
       calc
         gasketChildPoint n .corner1 a = p := haEq
         _ = gasketChildPoint n .corner2 b := hbEq.symm
-    exact gasketChildPoint_one_two_intersection n a b
+    have hmid := gasketChildPoint_one_two_intersection n a b
       (gasketVertexOrder_mem_triangle n ha)
       (gasketVertexOrder_mem_triangle n hb) hAB
+    calc
+      p = gasketChildPoint n .corner1 a := haEq.symm
+      _ = (gasketScale n, gasketScale n) := hmid
   · intro hp
     rw [hp]
     rcases gasketVertexOrder_outerCorners_mem n with ⟨h0, h1, h2⟩
