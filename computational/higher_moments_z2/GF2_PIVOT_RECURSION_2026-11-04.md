@@ -250,3 +250,13 @@ The exact Lean run `42003790338` for commit `a41e0da6862948f115408a570fe3993f93b
 The correction makes the induction-hypothesis list argument explicit, closes the empty-list cases from their impossible membership hypotheses, converts inequality to the exact Boolean predicate equation, applies `List.length_filter_le` with both arguments, and derives a contradiction from the filtered membership of the head. The recursion, first-occurrence order, generated vertex list, and theorem statements are unchanged.
 
 This correction is proof/elaboration-only. The recursive vertex-order module is not considered kernel-verified until the next exact-SHA `lake build PhiGenesis` succeeds.
+
+
+
+## 23. Correct the first-occurrence completeness proof from the full CI diagnostics
+
+Lean workflow `42004260138` for exact commit `58f64826a5b0fef653007fa6571f0ad5fc4fc761` failed again in `GasketVertexOrder.lean`. The full job log confirmed that the previous revision had not actually changed the two empty-list branches or the filter-membership block. The unresolved diagnostics were: impossible membership in an empty list was not eliminated through its hypothesis; proposition inequality was supplied where the Boolean filter requires `decide (a ≠ b) = true`; and `List.length_filter_le` was left unapplied.
+
+This revision changes both empty-list branches to simplify the impossible membership hypothesis `ha`, supplies the Boolean inequality equation explicitly, and applies `List.length_filter_le` to the explicit Boolean predicate and list. The recursive first-occurrence definition and all vertex-order statements remain unchanged. The nodup argument continues to derive contradiction from filtered membership of the head.
+
+This is still an unverified proof repair until the exact new commit passes the full `lake build PhiGenesis`.

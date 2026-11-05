@@ -62,14 +62,14 @@ theorem gasketFirstOccurrencesAux_complete [DecidableEq α] :
       intro xs hlen a ha
       cases xs with
       | nil =>
-          simp [gasketFirstOccurrencesAux]
+          simp at ha
       | cons b bs =>
           simp at hlen
   | succ fuel ih =>
       intro xs hlen a ha
       cases xs with
       | nil =>
-          simp [gasketFirstOccurrencesAux]
+          simp at ha
       | cons b bs =>
           simp only [List.length_cons] at hlen
           rcases List.mem_cons.mp ha with hhead | htail
@@ -78,12 +78,14 @@ theorem gasketFirstOccurrencesAux_complete [DecidableEq α] :
           · by_cases hab : a = b
             · subst a
               simp [gasketFirstOccurrencesAux]
-            · have hfiltered :
+            · have hneq : decide (a ≠ b) = true := by
+                simp [hab]
+              have hfiltered :
                   a ∈ bs.filter (fun x => x ≠ b) :=
-                List.mem_filter.mpr ⟨htail, hab⟩
+                List.mem_filter.mpr ⟨htail, hneq⟩
               have hfilterLength :
-                  (bs.filter (fun x => x ≠ b)).length ≤ bs.length :=
-                List.length_filter_le
+                  (bs.filter (fun x => x ≠ b)).length ≤ bs.length := by
+                exact List.length_filter_le (fun x => decide (x ≠ b)) bs
               have hlength' :
                   (bs.filter (fun x => x ≠ b)).length ≤ fuel := by
                 omega
