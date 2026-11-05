@@ -46,7 +46,7 @@ theorem gasketFirstOccurrencesAux_mem [DecidableEq α] :
           rcases h with h | h
           · subst a
             simp
-          · have hfiltered : a ∈ bs.filter (fun x => x ≠ b) := ih h
+          · have hfiltered : a ∈ bs.filter (fun x => x ≠ b) := ih _ h
             simp only [List.mem_cons]
             exact Or.inr (List.mem_filter.mp hfiltered).1
 
@@ -129,7 +129,9 @@ theorem gasketFirstOccurrences_nodup [DecidableEq α]
               have hfiltered :
                   b ∈ bs.filter (fun x => x ≠ b) :=
                 gasketFirstOccurrencesAux_mem fuel _ hmem
-              exact (List.mem_filter.mp hfiltered).2 rfl
+              have hfalse : decide (b ≠ b) = true :=
+                (List.mem_filter.mp hfiltered).2
+              simp at hfalse
             · exact ih _
   exact hnodup xs.length xs
 

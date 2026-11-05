@@ -240,3 +240,13 @@ The new module `PhiGenesis/H10/GasketVertexOrder.lean` formalizes the vertex-ID 
 This is the first Lean definition of the actual recursive vertex discovery order, rather than a standalone A/B/C automaton. The module deliberately does not yet assert that the A/B/C six-vertex table follows: that requires deriving the six local corner/midpoint positions from this global first-occurrence list and proving the side-order monotonicity. The least-indexed primal-edge/fundamental-cut theorem remains open.
 
 The module is not considered kernel-verified until the exact SHA passes the complete `lake build PhiGenesis`.
+
+
+
+## 22. Repair Boolean-filter proofs in the first-occurrence scan
+
+The exact Lean run `42003790338` for commit `a41e0da6862948f115408a570fe3993f93b0ebb1` failed in `GasketVertexOrder.lean`. The full log identified the primary issues: one induction hypothesis was applied without its list argument; the completeness proof tried to use proposition-level `¬ a = b` where `List.filter` requires the Boolean equation `decide (a ≠ b) = true`; the filter-length bound was left as an unapplied theorem; and the nodup proof attempted to use `rfl` as a proof of a Boolean filter equation.
+
+The correction makes the induction-hypothesis list argument explicit, closes the empty-list cases from their impossible membership hypotheses, converts inequality to the exact Boolean predicate equation, applies `List.length_filter_le` with both arguments, and derives a contradiction from the filtered membership of the head. The recursion, first-occurrence order, generated vertex list, and theorem statements are unchanged.
+
+This correction is proof/elaboration-only. The recursive vertex-order module is not considered kernel-verified until the next exact-SHA `lake build PhiGenesis` succeeds.
