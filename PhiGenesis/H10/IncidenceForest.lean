@@ -1105,6 +1105,75 @@ theorem gasketAddressParent_eq_some_cases
 
 
 
+/-- A terminal address q has an incoming parent edge from z exactly
+when q is z followed by a zero and then only ones. The terminal-to-prefix
+case cannot point into q, since that parent prefix is strictly shorter
+than a terminal address. -/
+theorem gasketAddressParent_terminal_preimage_iff
+    (m : Nat) (z q : GasketAddress m)
+    (hTerminal : q.1.length + 1 = m) :
+    gasketAddressParent m z = some q ↔
+      ∃ k, q.1 = z.1 ++ [0] ++ List.replicate k (1 : Fin 3) := by
+  constructor
+  · intro hParent
+    rcases gasketAddressParent_eq_some_cases m z q hParent with
+      hInternal | hTerminalParent
+    · rcases hInternal with ⟨_hInt, hAddress⟩
+      exact ⟨m - z.1.length - 2, hAddress⟩
+    · rcases hTerminalParent with ⟨hZTerminal, s, hZWord, hNoTwo⟩
+      have hPrefix : prefixBeforeLastTwo z.1 = some q.1 := by
+        rw [hZWord, prefixBeforeLastTwo_append_two]
+        simp [hNoTwo]
+      have hShort : q.1.length < z.1.length :=
+        prefixBeforeLastTwo_length_lt hPrefix
+      omega
+  · rintro ⟨k, hAddress⟩
+    have hTerminal' := hTerminal
+    rw [hAddress] at hTerminal'
+    simp only [List.length_append, List.length_singleton,
+      List.length_replicate] at hTerminal'
+    have hDepth : m - z.1.length - 2 = k := by omega
+    have hInternal : z.1.length + 1 < m := by omega
+    have hValue :
+        z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) (1 : Fin 3) =
+          q.1 := by
+      rw [hDepth]
+      exact hAddress.symm
+    have hSubtype :
+        (⟨z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) (1 : Fin 3),
+          by
+            have hlen :
+                (z.1 ++ [0] ++ List.replicate (m - z.1.length - 2) (1 : Fin 3)).length < m := by
+              simp
+              omega
+            exact hlen⟩ : GasketAddress m) = q := by
+      apply Subtype.ext
+      exact hValue
+    rw [gasketAddressParent_internal m z hInternal, hSubtype]
+
+
+/-- A terminal address has at most one incoming parent edge. Its possible
+internal child is the prefix before the rightmost zero, provided the
+remaining suffix consists entirely of ones. -/
+theorem gasketAddressParent_terminal_preimage_unique
+    (m : Nat) (q z z' : GasketAddress m)
+    (hTerminal : q.1.length + 1 = m)
+    (hz : gasketAddressParent m z = some q)
+    (hz' : gasketAddressParent m z' = some q) :
+    z.1 = z'.1 := by
+  obtain ⟨k, hzk⟩ :=
+    (gasketAddressParent_terminal_preimage_iff m z q hTerminal).mp hz
+  obtain ⟨k', hzk'⟩ :=
+    (gasketAddressParent_terminal_preimage_iff m z' q hTerminal).mp hz'
+  have hPrefix : prefixBeforeLastZero q.1 = some z.1 := by
+    rw [hzk, prefixBeforeLastZero_append_zero_replicate_one]
+  have hPrefix' : prefixBeforeLastZero q.1 = some z'.1 := by
+    rw [hzk', prefixBeforeLastZero_append_zero_replicate_one]
+  exact Option.some.inj (hPrefix.trans hPrefix'.symm)
+
+
+
+
 /-- The exceptional terminal address v 0 1^k has exactly one incoming
 parent edge: its parent is v. This is the uniqueness half of the terminal
 cut-child description. -/
