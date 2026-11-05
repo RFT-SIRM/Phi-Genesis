@@ -931,6 +931,70 @@ theorem gasketAddressParent_terminalCutChild
   simp [gasketAddressParent, hInternal, hDepth]
 
 
+
+/-- Appending the address prefix before a digit 2 isolates the rightmost-2
+prefix: a later 2 in the suffix takes precedence, and otherwise the newly
+appended 2 is the rightmost one. -/
+theorem prefixBeforeLastTwo_append_two
+    (u s : List (Fin 3)) :
+    prefixBeforeLastTwo (u ++ [2] ++ s) =
+      match prefixBeforeLastTwo s with
+      | some p => some (u ++ [2] ++ p)
+      | none => some u := by
+  induction u with
+  | nil =>
+      cases h : prefixBeforeLastTwo s <;>
+        simp [prefixBeforeLastTwo, h]
+  | cons d ds ih =>
+      simp only [List.cons_append, prefixBeforeLastTwo]
+      rw [ih]
+      cases h : prefixBeforeLastTwo s <;>
+        simp [h, prefixBeforeLastTwo]
+
+
+/-- The address-parent map preserves the component below the child address
+u2, except that terminal leaves with no later 2 attach directly to u.
+This is the parent-closure statement needed for the explicit component
+formula K_u = {u} union u2{0,1,2}^*. -/
+theorem gasketAddressParent_twoSubtree_invariant
+    (m : Nat) (u s : List (Fin 3))
+    (hLength : (u ++ [2] ++ s).length < m)
+    (v : GasketAddress m)
+    (hParent : gasketAddressParent m
+      (⟨u ++ [2] ++ s, hLength⟩ : GasketAddress m) = some v) :
+    v.1 = u ∨ ∃ p, v.1 = u ++ [2] ++ p := by
+  let z : GasketAddress m := ⟨u ++ [2] ++ s, hLength⟩
+  have hLengthBound : z.1.length + 1 ≤ m := by
+    simp [z]
+    omega
+  by_cases hInternal : z.1.length + 1 < m
+  · rw [gasketAddressParent_internal m z hInternal] at hParent
+    have hValue := congrArg Subtype.val (Option.some.inj hParent)
+    refine Or.inr ⟨s ++ [0] ++ List.replicate (m - z.1.length - 2) 1, ?_⟩
+    simpa [z, List.append_assoc] using hValue.symm
+  · have hTerminal : z.1.length + 1 = m := by omega
+    cases hTail : prefixBeforeLastTwo s with
+    | none =>
+        have hPrefix : prefixBeforeLastTwo z.1 = some u := by
+          simpa [z, hTail] using (prefixBeforeLastTwo_append_two u s)
+        have hParentFormula :=
+          gasketAddressParent_terminalPrefix m z u hTerminal hPrefix
+        rw [hParentFormula] at hParent
+        have hValue := congrArg Subtype.val (Option.some.inj hParent)
+        exact Or.inl hValue.symm
+    | some p =>
+        let q := u ++ [2] ++ p
+        have hPrefix : prefixBeforeLastTwo z.1 = some q := by
+          simpa [z, q, hTail] using (prefixBeforeLastTwo_append_two u s)
+        have hParentFormula :=
+          gasketAddressParent_terminalPrefix m z q hTerminal hPrefix
+        rw [hParentFormula] at hParent
+        have hValue := congrArg Subtype.val (Option.some.inj hParent)
+        refine Or.inr ⟨p, ?_⟩
+        simpa [q] using hValue.symm
+
+
+
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
 rank-decreasing parent theorem. -/
