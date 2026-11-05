@@ -776,7 +776,7 @@ theorem gasketAddressParent_terminalPrefix
             q = ⟨p, prefixBeforeLastTwo_length_lt hPrefix⟩ := by
           apply Subtype.ext
           exact hValue
-        rw [hCase, hSubtype]
+        exact congrArg some hSubtype
   simp [gasketAddressParent, hTerminal, hBounded]
 
 /-- A terminal address with no digit 2 is attached to the exterior root,
@@ -789,7 +789,7 @@ theorem gasketAddressParent_terminalRoot
   have hBounded : prefixBeforeLastTwoBounded u.1 = none := by
     cases hCase : prefixBeforeLastTwoBounded u.1 with
     | none =>
-        exact hCase
+        rfl
     | some q =>
         have hMap := prefixBeforeLastTwoBounded_map_val u.1
         rw [hCase, hNoTwo] at hMap
