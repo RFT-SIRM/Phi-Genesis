@@ -179,14 +179,16 @@ theorem gasketVertexOrder_child21_tail_x_between (n : Nat) :
   simp only [List.mem_cons, List.mem_singleton] at hp
   rcases hp with h1 | h2 | h3 | h4 | h5
   · rw [h1]
-    constructor <;> simp only [Prod.fst] <;> omega
+    constructor <;> omega
   · rw [h2]
-    constructor <;> simp only [Prod.fst] <;> omega
+    constructor <;> omega
   · rw [h3]
-    constructor <;> simp only [Prod.fst] <;> omega
+    constructor <;> omega
   · rw [h4]
-    constructor <;> simp only [Prod.fst] <;> omega
-  · rw [h5]
-    constructor <;> simp only [Prod.fst] <;> omega
+    constructor <;> omega
+  · rcases h5 with h5 | hnil
+    · rw [h5]
+      constructor <;> omega
+    · simp at hnil
 
 end PhiGenesis.H10
