@@ -837,6 +837,34 @@ theorem gasketAddressParent_rank_lt (m : Nat)
           _ = gasketAddressRank m u := by
                 simp [gasketAddressRank, hTerminalNotInternal, hBase]
 
+
+/-- In the terminal-cut pattern w = v 0 1^k, the internal address v
+is joined to w by its parent edge. This is the exceptional child edge
+needed in the terminal component description. -/
+theorem gasketAddressParent_terminalCutChild
+    (m : Nat) (v : List (Fin 3)) (k : Nat)
+    (hTerminal :
+      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length + 1 = m) :
+    gasketAddressParent m
+        (⟨v, by
+          have hWordLen :
+              (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
+                v.length + k + 1 := by
+            simp
+            omega
+          omega⟩ : GasketAddress m) =
+      some (⟨v ++ [0] ++ List.replicate k (1 : Fin 3), by omega⟩ :
+        GasketAddress m) := by
+  have hWordLen :
+      (v ++ [0] ++ List.replicate k (1 : Fin 3)).length =
+        v.length + k + 1 := by
+    simp
+    omega
+  have hInternal : v.length + 1 < m := by omega
+  have hDepth : m - v.length - 2 = k := by omega
+  simp [gasketAddressParent, hInternal, hDepth]
+
+
 /-- The address-parent multigraph is an incidence forest at every level.
 This is the concrete Sierpiński address-tree instance of the generic
 rank-decreasing parent theorem. -/
