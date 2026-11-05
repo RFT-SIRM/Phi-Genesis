@@ -106,4 +106,116 @@ theorem gasketVertexOrder_child2_cellB (n : Nat) :
   exact List.Sublist.append (List.singleton_sublist.mpr h0)
     (List.Sublist.append (List.singleton_sublist.mpr h3) hf2)
 
+
+
+/-- The cell at address 21 realizes state C in the actual
+first-occurrence vertex list. Its q₁ vertex is already present in the
+root child-1 block; the other five points occur in the filtered root
+child-2 block in the inherited state-A order. This is the first concrete
+B-to-C transition, not merely an instance of the abstract automaton. -/
+theorem gasketVertexOrder_child21_cellC (n : Nat) :
+    [(gasketScale (n + 2), gasketScale (n + 2)),
+      (gasketScale (n + 1), gasketScale (n + 2)),
+      (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1) + gasketScale n,
+        gasketScale (n + 2) + gasketScale n),
+      (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+        gasketVertexOrder (n + 3) := by
+  have hR : 0 < gasketScale (n + 1) := by
+    unfold gasketScale
+    positivity
+  have hT : 0 < gasketScale (n + 2) := by
+    unfold gasketScale
+    positivity
+  let inner := gasketChildPoint (n + 1) .corner1
+  let outer := gasketChildPoint (n + 2) .corner2
+  let sourceMap := ((stateAList n).map inner).map outer
+  let globalMap := (gasketVertexOrder (n + 2)).map outer
+  have hMap : sourceMap <+ globalMap := by
+    exact (gasketVertexOrder_child1_cellA n).map outer
+  have hNoBottom : ∀ y ∈ sourceMap,
+      (fun p : GasketLatticePoint => p ≠ (0, gasketScale (n + 2))) y = true := by
+    intro y hy
+    rcases List.mem_map.mp hy with ⟨z, hz, rfl⟩
+    rcases List.mem_map.mp hz with ⟨p, hp, rfl⟩
+    apply decide_eq_true
+    intro heq
+    simp [inner, outer, gasketChildPoint] at heq
+    omega
+  have hFiltered0 :
+      sourceMap <+ globalMap.filter
+        (fun p => p ≠ (0, gasketScale (n + 2))) :=
+    sublist_filter_of_forall _ hMap hNoBottom
+  have hFiltered :
+      sourceMap.filter
+          (fun p => p ≠
+            (gasketScale (n + 2), gasketScale (n + 2))) <+
+        (globalMap.filter
+          (fun p => p ≠ (0, gasketScale (n + 2))).filter
+          (fun p => p ≠
+            (gasketScale (n + 2), gasketScale (n + 2))) :=
+    hFiltered0.filter _
+  have hSourceFilter :
+      sourceMap.filter
+          (fun p => p ≠ (0, gasketScale (n + 2))) = sourceMap :=
+    List.filter_eq_self.mpr hNoBottom
+  have hTailEq :
+      sourceMap.filter
+          (fun p => p ≠ (0, gasketScale (n + 2))).filter
+          (fun p => p ≠
+            (gasketScale (n + 2), gasketScale (n + 2))) =
+        [(gasketScale (n + 1), gasketScale (n + 2)),
+          (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+          (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+          (gasketScale (n + 1) + gasketScale n,
+            gasketScale (n + 2) + gasketScale n),
+          (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] := by
+    simp [sourceMap, inner, outer, stateAList, gasketChildPoint,
+      gasketScale_succ, Prod.ext_iff] <;> omega
+  have hTail : sourceMap.filter
+      (fun p => p ≠
+        (gasketScale (n + 2), gasketScale (n + 2))) <+
+      (globalMap.filter
+        (fun p => p ≠ (0, gasketScale (n + 2))).filter
+        (fun p => p ≠
+          (gasketScale (n + 2), gasketScale (n + 2))) := by
+    rw [← hSourceFilter] at hTailEq
+    rw [← hTailEq]
+    exact hFiltered
+  rcases gasketVertexOrder_outerCorners_mem (n + 2) with ⟨_, _, hcorner2⟩
+  have hq1 : (gasketScale (n + 2), gasketScale (n + 2)) ∈
+      ((gasketVertexOrder (n + 2)).map
+        (gasketChildPoint (n + 2) .corner1)).filter
+        (fun p => p ≠ (gasketScale (n + 2), 0)) := by
+    apply List.mem_filter.mpr
+    refine ⟨List.mem_map.mpr
+      ⟨(0, gasketScale (n + 2)), hcorner2, ?_⟩, ?_⟩
+    · simp [gasketChildPoint]
+    · exact decide_eq_true (by
+        intro heq
+        have hsecond := congrArg Prod.snd heq
+        simp at hsecond
+        omega)
+  have hPair :
+      [(gasketScale (n + 2), gasketScale (n + 2))] ++
+          [(gasketScale (n + 1), gasketScale (n + 2)),
+            (gasketScale (n + 1) + gasketScale n, gasketScale (n + 2)),
+            (gasketScale (n + 1), gasketScale (n + 2) + gasketScale n),
+            (gasketScale (n + 1) + gasketScale n,
+              gasketScale (n + 2) + gasketScale n),
+            (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
+        ((gasketVertexOrder (n + 2)).map
+          (gasketChildPoint (n + 2) .corner1)).filter
+          (fun p => p ≠ (gasketScale (n + 2), 0)) ++
+        ((gasketVertexOrder (n + 2)).map
+          (gasketChildPoint (n + 2) .corner2)).filter
+          (fun p => p ≠ (0, gasketScale (n + 2))).filter
+          (fun p => p ≠
+            (gasketScale (n + 2), gasketScale (n + 2))) :=
+    List.Sublist.append (List.singleton_sublist.mpr hq1) hTail
+  rw [gasketVertexOrder_succ_explicit (n + 2)]
+  simpa using
+    (List.Sublist.append (List.Sublist.slnil) hPair)
+
 end PhiGenesis.H10
