@@ -128,4 +128,28 @@ theorem stateAList_map_child21 (n : Nat) :
   simp [stateAList, gasketChildPoint, gasketScale_succ,
     Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
 
+
+
+/-- The q₁ point of the address-21 cell is already present in the
+root child-1 block and survives that block's shared-midpoint filter.
+This is the earlier occurrence responsible for the first entry of
+the concrete state-C order. -/
+theorem gasketVertexOrder_child21_q1_in_child1_block (n : Nat) :
+    (gasketScale (n + 2), gasketScale (n + 2)) ∈
+      ((gasketVertexOrder (n + 2)).map
+        (gasketChildPoint (n + 2) .corner1)).filter
+        (fun p => decide (p ≠ (gasketScale (n + 2), 0))) := by
+  have hS : 0 < gasketScale (n + 2) := by
+    unfold gasketScale
+    positivity
+  rcases gasketVertexOrder_outerCorners_mem (n + 2) with
+    ⟨_, _, hcorner2⟩
+  apply List.mem_filter.mpr
+  refine ⟨List.mem_map.mpr
+    ⟨(0, gasketScale (n + 2)), hcorner2, ?_⟩, ?_⟩
+  · simp [gasketChildPoint]
+  · exact decide_eq_true (by
+      intro heq
+      exact (Nat.ne_of_gt hS) (congrArg Prod.snd heq))
+
 end PhiGenesis.H10
