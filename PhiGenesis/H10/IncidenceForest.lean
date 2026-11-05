@@ -1,5 +1,5 @@
 module
-import Mathlib.Data.ZMod.Basic
+public import Mathlib.Data.ZMod.Basic
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.Tactic
