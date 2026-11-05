@@ -22,6 +22,11 @@ theorem sgRowGauge_sq (j : Nat) : (sgRowGauge j) ^ 2 = 1 := by
   unfold sgRowGauge
   split_ifs <;> norm_num
 
+/-- Two copies of the same row gauge multiply to one. -/
+theorem sgRowGauge_mul_self (j : Nat) :
+    sgRowGauge j * sgRowGauge j = 1 := by
+  simpa [pow_two] using sgRowGauge_sq j
+
 /-- Consecutive rows have opposite gauge signs. -/
 theorem sgRowGauge_mul_succ (j : Nat) :
     sgRowGauge j * sgRowGauge (j + 1) = -1 := by

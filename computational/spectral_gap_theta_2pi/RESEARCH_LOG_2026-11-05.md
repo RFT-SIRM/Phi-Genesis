@@ -304,3 +304,8 @@ Under the repository sign convention `sigma=1-2*x` and `L=D-A_sigma`, the local-
 Scope: this is not the pivot-zero all-hole-flux representative in `mobius.py`; those cycle constraints differ. It is also not yet a matrix-eigenvalue theorem: the next formalization should define the signed Laplacian matrix from the finite edge set and derive the Rayleigh/eigenvalue statement from this quadratic-form bound.
 
 Lean and Python CI are pending on the exact commit SHA.
+## 21. Explicit same-row gauge product helper
+
+Before relying on CI, source review caught that the face-sign proof referenced `sgRowGauge_mul_self` without yet defining it. Added the missing helper directly from `sgRowGauge_sq` using `pow_two`. This is a small proof dependency omission caught before treating the gauge block as complete; no mathematical statement or sign convention changes.
+
+Lean/Python workflow results for this revision are pending.
