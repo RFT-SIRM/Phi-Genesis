@@ -731,6 +731,72 @@ def gasketAddressParent (m : Nat) (u : GasketAddress m) :
         (⟨p.1, Nat.lt_trans p.2 u.2⟩ : GasketAddress m))
       (prefixBeforeLastTwoBounded u.1)
 
+
+/-! ## Explicit terminal cases of the address-parent map
+
+The terminal parent is the prefix strictly before the rightmost digit 2.
+If no digit 2 occurs, the terminal address is attached to the exterior root. -/
+
+/-- An internal address points to its unique terminal extension
+u 0 1^(m-|u|-2). -/
+theorem gasketAddressParent_internal
+    (m : Nat) (u : GasketAddress m)
+    (hInternal : u.1.length + 1 < m) :
+    gasketAddressParent m u =
+      some (⟨u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1, by
+        have hlen :
+            (u.1 ++ [0] ++ List.replicate (m - u.1.length - 2) 1).length < m := by
+          simp
+          omega
+        exact hlen⟩ : GasketAddress m) := by
+  simp [gasketAddressParent, hInternal]
+
+/-- A terminal address containing a digit 2 points to the prefix
+strictly before its rightmost digit 2. -/
+theorem gasketAddressParent_terminalPrefix
+    (m : Nat) (u : GasketAddress m) (p : List (Fin 3))
+    (hTerminal : u.1.length + 1 = m)
+    (hPrefix : prefixBeforeLastTwo u.1 = some p) :
+    gasketAddressParent m u =
+      some (⟨p, Nat.lt_trans (prefixBeforeLastTwo_length_lt hPrefix) u.2⟩ :
+        GasketAddress m) := by
+  have hBounded :
+      prefixBeforeLastTwoBounded u.1 =
+        some ⟨p, prefixBeforeLastTwo_length_lt hPrefix⟩ := by
+    cases hCase : prefixBeforeLastTwoBounded u.1 with
+    | none =>
+        have hMap := prefixBeforeLastTwoBounded_map_val u.1
+        rw [hCase, hPrefix] at hMap
+        cases hMap
+    | some q =>
+        have hMap := prefixBeforeLastTwoBounded_map_val u.1
+        rw [hCase, hPrefix] at hMap
+        have hValue : q.1 = p := Option.some.inj hMap
+        have hSubtype :
+            q = ⟨p, prefixBeforeLastTwo_length_lt hPrefix⟩ := by
+          apply Subtype.ext
+          exact hValue
+        rw [hCase, hSubtype]
+  simp [gasketAddressParent, hTerminal, hBounded]
+
+/-- A terminal address with no digit 2 is attached to the exterior root,
+represented by none in the parent map. -/
+theorem gasketAddressParent_terminalRoot
+    (m : Nat) (u : GasketAddress m)
+    (hTerminal : u.1.length + 1 = m)
+    (hNoTwo : prefixBeforeLastTwo u.1 = none) :
+    gasketAddressParent m u = none := by
+  have hBounded : prefixBeforeLastTwoBounded u.1 = none := by
+    cases hCase : prefixBeforeLastTwoBounded u.1 with
+    | none =>
+        exact hCase
+    | some q =>
+        have hMap := prefixBeforeLastTwoBounded_map_val u.1
+        rw [hCase, hNoTwo] at hMap
+        cases hMap
+  simp [gasketAddressParent, hTerminal, hBounded]
+
+
 /-- The base rank counts the occurrences of the digit 2 in an address. -/
 def gasketAddressBaseRank (w : List (Fin 3)) : Nat :=
   gasketTwoCount w
