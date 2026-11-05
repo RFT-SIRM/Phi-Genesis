@@ -196,3 +196,11 @@ The terminal-component result remains unverified until the next exact-SHA `lake 
 The exact green Lean baseline is commit `c64b317bf90092260346280c61dcf5b1735d86d2`, workflow `41996612258`. The next module, `PhiGenesis/H10/VertexOrder.lean`, encodes the three six-vertex orders from the H10 all-level checkpoint as finite lists and defines the child-state transition on address digits. It proves that every state order is a permutation of the six distinguished vertices, has no repetitions, ends at q2, and that the A/A/B versus A/C/B child table holds after every address prefix.
 
 This is the finite automaton layer of the vertex-order proof. It does not yet prove that the symbolic six-vertex orders coincide with the first-occurrence IDs produced by the recursive graph constructor, nor does it prove hypotenuse monotonicity or the least-edge fundamental-cut lemma. Those remain the next geometric realization obligations. No Python code or solver ordering is modified.
+
+## 18. Remove unused derived finite instances and prove the A/B/C table by cases
+
+Lean workflow `41998579819` for `e861058597f83d375baec453173bb9474cec280d` failed in the newly added `VertexOrder.lean`. The full diagnostics identified two sources: deriving `Fintype` for the two small inductive enumerations triggered a generated `enumList`/membership instance mismatch, although no finite-type instance is required anywhere in this module; and the child-table proof used `rfl` before reducing the middle-child transition, whose value depends on whether the parent state is A or B/C.
+
+The correction removes the unnecessary `Fintype` deriving from both enumerations, retaining `DecidableEq` and `Repr`. The child-table theorem now records the three append-transition equations separately, rewrites the conjunction with those equations, and then splits on the parent state so the middle-child branch simplifies explicitly. The state values, vertex orders, transition function, and theorem statements are unchanged.
+
+This is a proof/elaboration correction only. The A/B/C module is not kernel-verified until the new exact SHA passes `lake build PhiGenesis`.

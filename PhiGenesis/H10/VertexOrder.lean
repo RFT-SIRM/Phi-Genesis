@@ -21,7 +21,7 @@ inductive GasketCornerOrderState where
   | A
   | B
   | C
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Repr
 
 /-- The six distinguished vertices of a cell: its corners and side midpoints. -/
 inductive GasketCornerVertex where
@@ -98,10 +98,12 @@ theorem gasketCornerOrderStateOfAddress_child_table
     gasketCornerOrderStateOfAddress (address ++ [1]) =
       (if gasketCornerOrderStateOfAddress address = .A then .A else .C) ∧
     gasketCornerOrderStateOfAddress (address ++ [2]) = .B := by
-  rw [gasketCornerOrderStateOfAddress_append,
-    gasketCornerOrderStateOfAddress_append,
-    gasketCornerOrderStateOfAddress_append]
-  cases gasketCornerOrderStateOfAddress address <;> rfl
+  have h0 := gasketCornerOrderStateOfAddress_append address (0 : Fin 3)
+  have h1 := gasketCornerOrderStateOfAddress_append address (1 : Fin 3)
+  have h2 := gasketCornerOrderStateOfAddress_append address (2 : Fin 3)
+  rw [h0, h1, h2]
+  cases gasketCornerOrderStateOfAddress address <;>
+    simp [gasketCornerChildState]
 
 /-- Each of the three states lists all six distinguished vertices exactly once. -/
 theorem gasketCornerVertexOrder_perm_universe
