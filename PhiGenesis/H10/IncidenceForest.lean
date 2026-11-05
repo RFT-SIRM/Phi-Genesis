@@ -1169,7 +1169,7 @@ theorem gasketAddressParent_terminal_preimage_unique
     rw [hzk, prefixBeforeLastZero_append_zero_replicate_one]
   have hPrefix' : prefixBeforeLastZero q.1 = some z'.1 := by
     rw [hzk', prefixBeforeLastZero_append_zero_replicate_one]
-  exact Option.some.inj (hPrefix.trans hPrefix'.symm)
+  exact Option.some.inj (hPrefix.symm.trans hPrefix')
 
 
 
