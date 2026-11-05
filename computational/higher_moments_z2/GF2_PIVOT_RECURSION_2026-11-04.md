@@ -182,3 +182,11 @@ The Lean run `41992738883` passed `lake build PhiGenesis` for exact commit `8a37
 The next formal block adds the successor law for the parent iterator and characterizes the component cut off by a terminal address `v 0 1^k`. Its claimed component is exactly the terminal address itself, the unique incoming child `v`, and the full descendant subtree `v2{0,1,2}^*`. The forward proof uses the existing terminal incoming-child uniqueness theorem and the already established internal-subtree predecessor-closure lemma. The reverse proof reaches the terminal node from `v` by one final parent step, using the iterator successor law.
 
 No edge-order or least-primal-index conclusion is made here. This block is not kernel-verified until the exact-SHA Lean workflow completes `lake build PhiGenesis`.
+
+## 16. Repair the terminal-component proof after exact CI diagnostics
+
+The Lean workflow `41993578524` for commit `8630bb95a0af56d412837c31ec2c370cd4211a93` failed in `IncidenceForest.lean`. The full log exposed four independent defects in the newly inserted terminal-component block: an orphaned forest doc-comment was separated from its declaration; the iterator successor law used an incorrect simplification direction and an invalid base-case definitional equality; the induction proof attempted to use a reachability hypothesis with a subtype value equality without transporting it; and the terminal reachability induction was not made explicit enough to keep its induction hypothesis specialized to the reachability proposition.
+
+The replacement moves the forest doc-comment back immediately before its declaration, proves the iterator successor law by induction and associativity of `Option.bind`, and factors the forward half into a separately typed `hForward` induction. The zero-step case extracts equality from `Option.some.inj` and then forgets the subtype proof. The reverse direction keeps explicit subtype equalities and uses the previously kernel-verified internal-subtree reachability theorem for the final parent step.
+
+No address map, component set, pivot convention, or theorem statement is changed. The replacement is not considered verified until the exact new commit passes `lake build PhiGenesis`.
