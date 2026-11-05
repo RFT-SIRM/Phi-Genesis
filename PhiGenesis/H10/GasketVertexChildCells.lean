@@ -291,16 +291,19 @@ theorem gasketVertexOrder_child21_cellC (n : Nat) :
         gasketScale (n + 2) + gasketScale n),
       (gasketScale (n + 1), gasketScale (n + 2) + gasketScale (n + 1))] <+
       gasketVertexOrder (n + 3) := by
-  let child1Block :=
-    ((gasketVertexOrder (n + 2)).map
-      (gasketChildPoint (n + 2) .corner1)).filter
+  let child1Block : List (Nat × Nat) :=
+    List.filter
       (fun p => decide (p ≠ (gasketScale (n + 2), 0)))
-  let child2Block :=
-    (((gasketVertexOrder (n + 2)).map
-      (gasketChildPoint (n + 2) .corner2)).filter
-      (fun p => decide (p ≠ (0, gasketScale (n + 2)))).filter
+      ((gasketVertexOrder (n + 2)).map
+        (gasketChildPoint (n + 2) .corner1))
+  let child2Block : List (Nat × Nat) :=
+    List.filter
       (fun p => decide
         (p ≠ (gasketScale (n + 2), gasketScale (n + 2))))
+      (List.filter
+        (fun p => decide (p ≠ (0, gasketScale (n + 2))))
+        ((gasketVertexOrder (n + 2)).map
+          (gasketChildPoint (n + 2) .corner2)))
   have hq1 := gasketVertexOrder_child21_q1_in_child1_block n
   have htail := gasketVertexOrder_child21_tail_sublist_child2_filtered n
   have hBlocks :
