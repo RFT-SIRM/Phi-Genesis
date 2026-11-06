@@ -204,4 +204,77 @@ theorem schurMidpointPivot_energy_nonneg (c b : ℝ) (x : Fin 3 → ℝ)
     rw [h]
     exact hc
 
+
+/-- Strict positive definiteness of the three-midpoint pivot:
+positive E and A1 channel eigenvalues force strictly positive energy
+on every nonzero boundary vector. -/
+theorem schurMidpointPivot_energy_pos (c b : ℝ) (x : Fin 3 → ℝ)
+    (hx : x ≠ 0) (hc : 0 < c) (hc3 : 0 < c + 3 * b) :
+    0 < schurCornerEnergy (c + b) b x := by
+  classical
+  rw [schurCornerEnergy_decomposition]
+  have hA1 : 0 < ((c + b) + 2 * b) / 3 := by
+    have h : (c + b) + 2 * b = c + 3 * b := by ring
+    rw [h]
+    exact div_pos hc3 (by norm_num)
+  have hE : 0 < (c + b) - b := by
+    have h : (c + b) - b = c := by ring
+    rw [h]
+    exact hc
+  have hxSome : ∃ i : Fin 3, x i ≠ 0 := by
+    by_contra hnone
+    push_neg at hnone
+    apply hx
+    funext i
+    exact hnone i
+  obtain ⟨i, hi⟩ := hxSome
+  have hsq : 0 < (x i) ^ 2 := sq_pos_of_ne_zero hi
+  have hsingle : (x i) ^ 2 ≤ ∑ j : Fin 3, (x j) ^ 2 :=
+    Finset.single_le_sum
+      (fun j hj => sq_nonneg (x j)) (Finset.mem_univ i)
+  have hnorm : 0 < ∑ j : Fin 3, (x j) ^ 2 :=
+    lt_of_lt_of_le hsq hsingle
+  have hcenterNonneg :
+      0 ≤ ∑ i : Fin 3, (x i - (∑ j : Fin 3, x j) / 3) ^ 2 :=
+    Finset.sum_nonneg fun i hi => sq_nonneg _
+  have hcomponents :
+      0 < (∑ i : Fin 3, x i) ^ 2 +
+        ∑ i : Fin 3, (x i - (∑ j : Fin 3, x j) / 3) ^ 2 := by
+    rw [schurCorner_centered_squares]
+    nlinarith [hnorm, sq_nonneg (∑ i : Fin 3, x i)]
+  by_cases hsum : 0 < (∑ i : Fin 3, x i) ^ 2
+  · exact add_pos_of_pos_of_nonneg (mul_pos hA1 hsum)
+      (mul_nonneg (le_of_lt hE) hcenterNonneg)
+  · have hsum0 : (∑ i : Fin 3, x i) ^ 2 = 0 := by
+      exact le_antisymm (le_of_not_gt hsum) (sq_nonneg _)
+    have hcenterPos :
+        0 < ∑ i : Fin 3, (x i - (∑ j : Fin 3, x j) / 3) ^ 2 := by
+      nlinarith [hcomponents]
+    exact add_pos_of_nonneg_of_pos
+      (mul_nonneg (le_of_lt hA1) (sq_nonneg _))
+      (mul_pos hE hcenterPos)
+
+/-- The two positive midpoint-pivot eigenvalues give a positive
+denominator in the scalar Schur update. -/
+theorem schurMidpointPivot_denominator_pos (c b : ℝ)
+    (hc : 0 < c) (hc3 : 0 < c + 3 * b) :
+    0 < c * (c + 3 * b) :=
+  mul_pos hc hc3
+
+/-- Under positive midpoint pivots and c>b, the next off-diagonal
+Schur coefficient is strictly negative whenever b is nonzero. -/
+theorem schurNextOffDiagonal_neg (b c : ℝ)
+    (hb : b ≠ 0) (hc : 0 < c) (hc3 : 0 < c + 3 * b)
+    (hcb : b < c) :
+    schurNextOffDiagonal b c < 0 := by
+  unfold schurNextOffDiagonal
+  have hnum : 0 < b ^ 2 * (c - b) :=
+    mul_pos (sq_pos_of_ne_zero hb) (by linarith)
+  have hden : 0 < c * (c + 3 * b) := mul_pos hc hc3
+  have hratio : 0 < b ^ 2 * (c - b) / (c * (c + 3 * b)) :=
+    div_pos hnum hden
+  rw [show -b ^ 2 * (c - b) / (c * (c + 3 * b)) =
+    -(b ^ 2 * (c - b) / (c * (c + 3 * b)) ) by ring]
+  nlinarith
+
 end PhiGenesis.SpectralGap
