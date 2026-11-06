@@ -714,14 +714,18 @@ theorem schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_box
   have hb_small : 0 ≤ (6 / 10 ^ 37 : ℝ) + b := by linarith
   have hbsq : (-b) ^ 2 ≤ (6 / 10 ^ 37 : ℝ) * (-b) := by
     nlinarith [mul_nonneg hb_nonneg hb_small]
+  have hcoeff :
+      (4 / 5 : ℝ) * (6 / 10 ^ 37 : ℝ) ≤ (1 / 10 ^ 36 : ℝ) := by
+    norm_num
   have hlinear :
       (4 / 5 : ℝ) * b ^ 2 ≤ (1 / 10 ^ 36 : ℝ) * (-b) := by
     calc
       (4 / 5 : ℝ) * b ^ 2 = (4 / 5 : ℝ) * (-b) ^ 2 := by ring
       _ ≤ (4 / 5 : ℝ) * ((6 / 10 ^ 37 : ℝ) * (-b)) :=
         mul_le_mul_of_nonneg_left hbsq (by norm_num)
+      _ = ((4 / 5 : ℝ) * (6 / 10 ^ 37 : ℝ)) * (-b) := by ring
       _ ≤ (1 / 10 ^ 36 : ℝ) * (-b) :=
-        mul_le_mul_of_nonneg_right (by norm_num) hb_nonneg
+        mul_le_mul_of_nonneg_right hcoeff hb_nonneg
   calc
     |schurNextOffDiagonal b c|
         ≤ (4 / 5 : ℝ) * b ^ 2 := hquadratic
