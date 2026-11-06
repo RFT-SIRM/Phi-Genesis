@@ -37,6 +37,7 @@ jobs:
         run: |
           set -o pipefail
           python computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py \
+            --mixed-precision-only \\
             --mixed-precision-levels 9 \
             --mixed-precision-sectors A1 \
             --mixed-precision-dps 360 \
@@ -66,6 +67,7 @@ jobs:
         run: |
           set -o pipefail
           python computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py \
+            --mixed-precision-only \\
             --mixed-precision-levels 10 \
             --mixed-precision-sectors A1 \
             --mixed-precision-dps 360 \
@@ -95,6 +97,7 @@ jobs:
         run: |
           set -o pipefail
           python computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py \
+            --mixed-precision-only \\
             --mixed-precision-levels 9 \
             --mixed-precision-sectors E \
             --mixed-precision-dps 360 \
