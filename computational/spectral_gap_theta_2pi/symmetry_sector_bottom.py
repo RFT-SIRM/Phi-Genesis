@@ -671,9 +671,14 @@ def mixed_precision_bottom(
             f"{time.time() - factor_started:.1f}s",
             flush=True,
         )
-        _float_values, float_vectors = eigsh(
-            seed_matrix, k=4, which="SA", tol=1e-13
-        )
+        if sector_n <= 4:
+            # ARPACK requires k < N. The smallest regression levels have
+            # quotient dimension four, so use a dense seed eigensolve there.
+            _float_values, float_vectors = np.linalg.eigh(seed_matrix.toarray())
+        else:
+            _float_values, float_vectors = eigsh(
+                seed_matrix, k=min(4, sector_n - 1), which="SA", tol=1e-13
+            )
         seed = float_vectors[:, int(np.argmin(_float_values))]
         if complex_mode:
             vector = [
