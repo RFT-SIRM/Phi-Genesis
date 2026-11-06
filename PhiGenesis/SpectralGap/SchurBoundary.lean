@@ -3416,11 +3416,8 @@ theorem schurBootstrapA1AtLevel_exists_root (n : ℕ) :
   intro lambda hlambda k hk
   exact schurBootstrap_all_pivots_nonzero lambda hlambda k
 
-/-- The level-six A1 characteristics have a uniform finite-tail bound on
-the entire bootstrap parameter interval. The bound is independent of lambda:
-after three coarse half-contractions, the off-diagonal magnitude is at most
-1/160000, and every subsequent tail contributes at most four times its
-current magnitude. -/
+/-- Uniform finite-tail estimate, obtained by shifting the level-three
+trajectory and summing the half-contracting off-diagonal coefficients. -/
 theorem schurBootstrapA1AtLevel_tail_bound
     (lambda : ℝ)
     (hlambda :
@@ -3433,171 +3430,103 @@ theorem schurBootstrapA1AtLevel_tail_bound
         schurBootstrapA1AtLevel lambda m ≤
           (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := by
   have hwindow := schurBootstrapEndpoints_in_parameter_window
-  have hlambda_lower :
-      (1309 / 1000 : ℝ) ≤ lambda :=
-    le_trans hwindow.1 hlambda.1
-  have hlambda_upper :
-      lambda ≤ (131 / 100 : ℝ) :=
-    le_trans hlambda.2 hwindow.2.2.2
+  have hλlo : (1309 / 1000 : ℝ) ≤ lambda := le_trans hwindow.1 hlambda.1
+  have hλhi : lambda ≤ (131 / 100 : ℝ) := le_trans hlambda.2 hwindow.2.2.2
   let initial : ℝ × ℝ := (2 - lambda, 1)
-  let state3 : ℝ × ℝ :=
-    schurBoundaryTrajectory lambda initial 3
-  let state6 : ℝ × ℝ :=
-    schurBoundaryTrajectory lambda initial 6
-  have hlevel3 := schurBootstrap_levelThree_state_box lambda hlambda
-  have hstate3 :
-      |state3.1| ≤ (1 / 500 : ℝ) ∧
-        -(1 / 20000 : ℝ) ≤ state3.2 ∧ state3.2 ≤ 0 := by
-    simpa [state3, initial] using hlevel3
-  have hstate3_path :=
-    schurBoundaryTrajectory_coarse_state_box
-      lambda state3.1 state3.2
-      hstate3.1 hstate3.2.1 hstate3.2.2
-      hlambda_lower hlambda_upper 3
-  have hstate6_eq :
-      state6 = schurBoundaryTrajectory lambda state3 3 := by
-    simpa [state6, state3, initial] using
-      (schurBoundaryTrajectory_add lambda initial 3 3)
-  have hstate6 :
-      |state6.1| ≤ (1 / 400 : ℝ) ∧
-        -(1 / 20000 : ℝ) ≤ state6.2 ∧ state6.2 ≤ 0 := by
-    rw [hstate6_eq]
-    exact hstate3_path
-  have hstate3_offdiag_abs :
-      |state3.2| ≤ (1 / 20000 : ℝ) := by
+  let s3 := schurBoundaryTrajectory lambda initial 3
+  have hs3 := schurBootstrap_levelThree_state_box lambda hlambda
+  have hs3' : |s3.1| ≤ (1 / 500 : ℝ) ∧
+      -(1 / 20000 : ℝ) ≤ s3.2 ∧ s3.2 ≤ 0 := by
+    simpa [s3, initial] using hs3
+  have hbabs : |s3.2| ≤ (1 / 20000 : ℝ) := by
     apply abs_le.mpr
-    constructor
-    · exact hstate3.2.1
-    · exact le_trans hstate3.2.2 (by norm_num)
-  have hcontract3 :=
+    exact ⟨hs3'.2.1, le_trans hs3'.2.2 (by norm_num)⟩
+  have hcontract :=
     schurBoundaryTrajectory_coarse_offDiagonal_half_contract
-      lambda state3.1 state3.2
-      hstate3.1 hstate3.2.1 hstate3.2.2
-      hlambda_lower hlambda_upper
-  have hdecay3 :
-      ∀ n, |(schurBoundaryTrajectory lambda state3 n).2| ≤
-        |state3.2| * (1 / 2 : ℝ) ^ n := by
-    intro n
-    induction n with
-    | zero =>
-        simp
-    | succ n ih =>
-        calc
-          |(schurBoundaryTrajectory lambda state3 (n + 1)).2|
-              ≤ (1 / 2 : ℝ) *
-                  |(schurBoundaryTrajectory lambda state3 n).2| :=
-                hcontract3 n
-          _ ≤ (1 / 2 : ℝ) *
-                (|state3.2| * (1 / 2 : ℝ) ^ n) :=
-              mul_le_mul_of_nonneg_left ih (by norm_num)
-          _ = |state3.2| * (1 / 2 : ℝ) ^ (n + 1) := by
-              rw [pow_succ]
-              ring
-  have hstate6_offdiag_abs :
-      |state6.2| ≤ (1 / 160000 : ℝ) := by
-    rw [hstate6_eq]
-    calc
-      |(schurBoundaryTrajectory lambda state3 3).2|
-          ≤ |state3.2| * (1 / 2 : ℝ) ^ 3 := hdecay3 3
-      _ ≤ (1 / 20000 : ℝ) * (1 / 2 : ℝ) ^ 3 :=
-        mul_le_mul_of_nonneg_right hstate3_offdiag_abs (by positivity)
-      _ = (1 / 160000 : ℝ) := by norm_num
-  have hcontract6 :=
-    schurBoundaryTrajectory_coarse_offDiagonal_half_contract
-      lambda state6.1 state6.2
-      hstate6.1 hstate6.2.1 hstate6.2.2
-      hlambda_lower hlambda_upper
-  have hdecay6 :
-      ∀ n, |(schurBoundaryTrajectory lambda state6 n).2| ≤
-        |state6.2| * (1 / 2 : ℝ) ^ n := by
-    intro n
-    induction n with
-    | zero =>
-        simp
-    | succ n ih =>
-        calc
-          |(schurBoundaryTrajectory lambda state6 (n + 1)).2|
-              ≤ (1 / 2 : ℝ) *
-                  |(schurBoundaryTrajectory lambda state6 n).2| :=
-                hcontract6 n
-          _ ≤ (1 / 2 : ℝ) *
-                (|state6.2| * (1 / 2 : ℝ) ^ n) :=
-              mul_le_mul_of_nonneg_left ih (by norm_num)
-          _ = |state6.2| * (1 / 2 : ℝ) ^ (n + 1) := by
-              rw [pow_succ]
-              ring
+      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hλlo hλhi
+  have hinc :=
+    schurBoundaryTrajectory_coarse_A1_increment_bounds
+      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hλlo hλhi
   intro m N
-  have hstate_m_path :=
-    schurBoundaryTrajectory_coarse_state_box
-      lambda state6.1 state6.2
-      hstate6.1 hstate6.2.1 hstate6.2.2
-      hlambda_lower hlambda_upper m
-  have hglobal_m :
-      schurBoundaryTrajectory lambda initial (6 + m) =
-        schurBoundaryTrajectory lambda state6 m := by
-    simpa [state6, initial] using
-      (schurBoundaryTrajectory_add lambda initial 6 m)
-  have hstate_m :
-      |(schurBoundaryTrajectory lambda initial (6 + m)).1| ≤
-          (1 / 400 : ℝ) ∧
-        -(1 / 20000 : ℝ) ≤
-          (schurBoundaryTrajectory lambda initial (6 + m)).2 ∧
-        (schurBoundaryTrajectory lambda initial (6 + m)).2 ≤ 0 := by
-    rw [hglobal_m]
-    exact hstate_m_path
-  have htail_semigroup :
-      schurBoundaryTrajectory lambda initial (6 + (m + N)) =
-        schurBoundaryTrajectory lambda
-          (schurBoundaryTrajectory lambda initial (6 + m)) N := by
+  let f : ℕ → ℝ := fun k =>
+    (schurBoundaryTrajectory lambda s3 (3 + m + k)).1 +
+      2 * (schurBoundaryTrajectory lambda s3 (3 + m + k)).2
+  let u : ℕ → ℝ :=
+    fun k => |(schurBoundaryTrajectory lambda s3 (3 + m + k)).2|
+  have hu0 : u 0 ≤ (1 / 160000 : ℝ) * (1 / 2 : ℝ) ^ m := by
+    change |(schurBoundaryTrajectory lambda s3 (3 + m)).2| ≤ _
+    have hdecay : ∀ n,
+        |(schurBoundaryTrajectory lambda s3 n).2| ≤
+          |s3.2| * (1 / 2 : ℝ) ^ n := by
+      intro n
+      induction n with
+      | zero => simp [schurBoundaryTrajectory]
+      | succ n ih =>
+          calc
+            |(schurBoundaryTrajectory lambda s3 (n + 1)).2|
+                ≤ (1 / 2 : ℝ) *
+                    |(schurBoundaryTrajectory lambda s3 n).2| := hcontract n
+            _ ≤ (1 / 2 : ℝ) * (|s3.2| * (1 / 2 : ℝ)^n) :=
+              mul_le_mul_of_nonneg_left ih (by norm_num)
+            _ = |s3.2| * (1 / 2 : ℝ)^(n+1) := by rw [pow_succ]; ring
     calc
-      schurBoundaryTrajectory lambda initial (6 + (m + N)) =
-          schurBoundaryTrajectory lambda initial ((6 + m) + N) := by
-            congr 1
-            omega
-      _ = schurBoundaryTrajectory lambda
-            (schurBoundaryTrajectory lambda initial (6 + m)) N :=
-        schurBoundaryTrajectory_add lambda initial (6 + m) N
-  have htotal :=
-    schurBoundaryTrajectory_coarse_A1_total_increment_bound
-      lambda
-      (schurBoundaryTrajectory lambda initial (6 + m)).1
-      (schurBoundaryTrajectory lambda initial (6 + m)).2
-      hstate_m.1 hstate_m.2.1 hstate_m.2.2
-      hlambda_lower hlambda_upper N
-  rw [← htail_semigroup] at htotal
-  have hb_m_abs :
-      |(schurBoundaryTrajectory lambda initial (6 + m)).2| ≤
-        (1 / 160000 : ℝ) * (1 / 2 : ℝ) ^ m := by
+      |(schurBoundaryTrajectory lambda s3 (3 + m)).2|
+          ≤ |s3.2| * (1 / 2 : ℝ)^(3 + m) := hdecay (3 + m)
+      _ ≤ (1 / 20000 : ℝ) * (1 / 2 : ℝ)^(3 + m) :=
+        mul_le_mul_of_nonneg_right hbabs (by positivity)
+      _ = (1 / 160000 : ℝ) * (1 / 2 : ℝ)^m := by rw [pow_add]; norm_num
+  have hu_nonneg : ∀ k, 0 ≤ u k := fun k => abs_nonneg _
+  have hucontract : ∀ k, u (k+1) ≤ (1/2 : ℝ) * u k := by
+    intro k
+    simpa [u, Nat.add_assoc] using hcontract (3 + m + k)
+  have hsumu :=
+    sum_range_le_two_mul_initial_of_half_contraction u N hu_nonneg hucontract
+  have hsuminc0 : 0 ≤ ∑ k ∈ Finset.range N, (f (k+1)-f k) := by
+    apply Finset.sum_nonneg
+    intro k hk
+    simpa [f, Nat.add_assoc] using (hinc (3 + m + k)).1
+  have hsuminc1 :
+      (∑ k ∈ Finset.range N, (f (k+1)-f k)) ≤
+        2 * (∑ k ∈ Finset.range N, u k) := by
     calc
-      |(schurBoundaryTrajectory lambda initial (6 + m)).2|
-          = |(schurBoundaryTrajectory lambda state6 m).2| := by
-              rw [hglobal_m]
-      _ ≤ |state6.2| * (1 / 2 : ℝ) ^ m := hdecay6 m
-      _ ≤ (1 / 160000 : ℝ) * (1 / 2 : ℝ) ^ m :=
-        mul_le_mul_of_nonneg_right hstate6_offdiag_abs (by positivity)
-  have htail_upper :
-      4 * |(schurBoundaryTrajectory lambda initial (6 + m)).2| ≤
-        (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := by
+      (∑ k ∈ Finset.range N, (f (k+1)-f k))
+          ≤ ∑ k ∈ Finset.range N, 2*u k := by
+            apply Finset.sum_le_sum
+            intro k hk
+            simpa [f,u,Nat.add_assoc] using (hinc (3 + m + k)).2
+      _ = 2 * (∑ k ∈ Finset.range N, u k) := by rw [← Finset.mul_sum]
+  have htel := sum_range_step_difference_eq f N
+  have hlower : 0 ≤ f N - f 0 := by rw [← htel]; exact hsuminc0
+  have hupper : f N - f 0 ≤ 4*u 0 := by
+    rw [← htel]
     calc
-      4 * |(schurBoundaryTrajectory lambda initial (6 + m)).2|
-          ≤ 4 * ((1 / 160000 : ℝ) * (1 / 2 : ℝ) ^ m) :=
-        mul_le_mul_of_nonneg_left hb_m_abs (by norm_num)
-      _ = (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := by ring
-  have hupper :
-      schurBootstrapA1AtLevel lambda (m + N) -
-          schurBootstrapA1AtLevel lambda m ≤
-        (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := by
+      (∑ k ∈ Finset.range N, (f (k+1)-f k))
+          ≤ 2 * (∑ k ∈ Finset.range N, u k) := hsuminc1
+      _ ≤ 2 * (2*u 0) := mul_le_mul_of_nonneg_left hsumu (by norm_num)
+      _ = 4*u 0 := by ring
+  have hsmall : 4*u 0 ≤ (1/40000 : ℝ)*(1/2 : ℝ)^m := by
     calc
-      schurBootstrapA1AtLevel lambda (m + N) -
-          schurBootstrapA1AtLevel lambda m
-          ≤ 4 * |(schurBoundaryTrajectory lambda initial (6 + m)).2| := by
-            simpa [schurBootstrapA1AtLevel, initial] using htotal.2
-      _ ≤ (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := htail_upper
-  have hlower :
-      0 ≤ schurBootstrapA1AtLevel lambda (m + N) -
-        schurBootstrapA1AtLevel lambda m := by
-    simpa [schurBootstrapA1AtLevel, initial] using htotal.1
-  exact ⟨hlower, hupper⟩
-
+      4*u 0 ≤ 4*((1/160000 : ℝ)*(1/2 : ℝ)^m) :=
+        mul_le_mul_of_nonneg_left hu0 (by norm_num)
+      _ = (1/40000 : ℝ)*(1/2 : ℝ)^m := by ring
+  have hA (k : ℕ) :
+      schurBootstrapA1AtLevel lambda k =
+        (schurBoundaryTrajectory lambda s3 (3+k)).1 +
+          2*(schurBoundaryTrajectory lambda s3 (3+k)).2 := by
+    unfold schurBootstrapA1AtLevel
+    have hk : 6+k = 3+(3+k) := by omega
+    rw [hk, schurBoundaryTrajectory_add lambda initial 3 (3+k)]
+    rfl
+  have hstart : schurBootstrapA1AtLevel lambda m = f 0 := by rw [hA]; simp [f]
+  have hend : schurBootstrapA1AtLevel lambda (m+N) = f N := by
+    rw [hA]; simp [f, Nat.add_assoc]
+  constructor
+  · rw [hend,hstart]
+    exact hlower
+  · calc
+      schurBootstrapA1AtLevel lambda (m+N) -
+          schurBootstrapA1AtLevel lambda m = f N-f 0 := by rw [hend,hstart]
+      _ ≤ 4*u 0 := hupper
+      _ ≤ (1/40000 : ℝ)*(1/2 : ℝ)^m := hsmall
 
 end PhiGenesis.SpectralGap
