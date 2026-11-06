@@ -295,7 +295,7 @@ theorem schurMidpointPivotSolve_sum (c b : ℝ) (y : Fin 3 → ℝ)
     rw [← hden]
     exact hc3
   simp only [schurMidpointPivotSolve, Fin.sum_univ_succ]
-  field_simp [hc, hc3'] <;> ring
+  field_simp [hc, hc3'] <;> ring_nf
 
 /-- The midpoint pivot c I + b J sends the explicit inverse action
 back to the original vector. This is the coordinate-level inverse
@@ -313,6 +313,6 @@ theorem schurMidpointPivotSolve_rightInverse (c b : ℝ)
   unfold schurCornerAction
   rw [show (c + b) - b = c by ring, hsum]
   unfold schurMidpointPivotSolve
-  field_simp [hc, hc3'] <;> ring
+  field_simp [hc, hc3'] <;> ring_nf
 
 end PhiGenesis.SpectralGap
