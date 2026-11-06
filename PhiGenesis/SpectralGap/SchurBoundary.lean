@@ -2151,4 +2151,219 @@ theorem schurBootstrap_levelOne_state_box
         le_trans hupp.2 hB_upper⟩⟩
 
 
+
+/-- Uniform coarse enclosure of the level-two Schur state over the full
+narrow parameter interval. The first-level interval is propagated using
+rational numerator/denominator bounds, keeping every division denominator
+strictly positive. -/
+theorem schurBootstrap_levelTwo_state_box
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    |(schurBoundaryTrajectory lambda (2 - lambda, 1) 2).1| ≤
+        (1 / 1000 : ℝ) ∧
+      -(7 / 1000 : ℝ) ≤
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2 ∧
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2 ≤ 0 := by
+  let a1 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).1
+  let b1 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).2
+  let c1 : ℝ := schurMidpointPivot a1 b1 lambda
+  let c13 : ℝ := c1 + 3 * b1
+  let rA : ℝ := (c1 + b1) / (c1 * c13)
+  let rB : ℝ := (c1 - b1) / (c1 * c13)
+  let a2 : ℝ := (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).1
+  let b2 : ℝ := (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2
+  have hparam_lower : (130912 / 100000 : ℝ) ≤ lambda := by
+    exact le_trans (by norm_num [schurBootstrapLambdaLower])
+      (le_trans hlambda.1 (le_of_lt (by norm_num)))
+  have hparam_upper : lambda ≤ (130914 / 100000 : ℝ) := by
+    exact le_trans hlambda.2 (by norm_num [schurBootstrapLambdaUpper])
+  have hlevelOne := schurBootstrap_levelOne_state_box lambda hlambda
+  have ha1_lower : (123569 / 10 ^ 7 : ℝ) ≤ a1 := by
+    have hExact :
+        (1235695422588800493636603471580679174544749349869 /
+          10 ^ 50 : ℝ) ≤ a1 := by
+      simpa [a1] using hlevelOne.1.1
+    exact le_trans (by norm_num) hExact
+  have ha1_upper : a1 ≤ (123570 / 10 ^ 7 : ℝ) := by
+    have hExact :
+        a1 ≤
+          (1235695422588800493636603471580679433299227360878 /
+            10 ^ 50 : ℝ) := by
+      simpa [a1] using hlevelOne.1.2
+    exact le_trans hExact (by norm_num)
+  have hb1_lower : -(871030 / 10 ^ 7 : ℝ) ≤ b1 := by
+    have hExact :
+        -(8710298126456400450881962728061450813934618792872 /
+          10 ^ 50 : ℝ) ≤ b1 := by
+      simpa [b1] using hlevelOne.2.1
+    exact le_trans (by norm_num) hExact
+  have hb1_upper : b1 ≤ -(871029 / 10 ^ 7 : ℝ) := by
+    have hExact :
+        b1 ≤
+          -(8710298126456400450881962728061450802735668500291 /
+            10 ^ 50 : ℝ) := by
+      simpa [b1] using hlevelOne.2.2
+    exact le_trans hExact (by norm_num)
+  have hc1_lower : (142093 / 100000 : ℝ) ≤ c1 := by
+    dsimp [c1, schurMidpointPivot]
+    nlinarith
+  have hc1_upper : c1 ≤ (142096 / 100000 : ℝ) := by
+    dsimp [c1, schurMidpointPivot]
+    nlinarith
+  have hc13_lower : (115962 / 100000 : ℝ) ≤ c13 := by
+    dsimp [c13]
+    linarith
+  have hc13_upper : c13 ≤ (115966 / 100000 : ℝ) := by
+    dsimp [c13]
+    linarith
+  have hc_pos : 0 < c1 := by linarith
+  have hc13_pos : 0 < c13 := by linarith
+  have hden_pos : 0 < c1 * c13 := mul_pos hc_pos hc13_pos
+  have hc1_coarse_lower : (142 / 100 : ℝ) ≤ c1 := by linarith
+  have hc1_coarse_upper : c1 ≤ (1422 / 1000 : ℝ) := by linarith
+  have hc13_coarse_lower : (1159 / 1000 : ℝ) ≤ c13 := by linarith
+  have hc13_coarse_upper : c13 ≤ (1161 / 1000 : ℝ) := by linarith
+  have hden_lower : (1647 / 1000 : ℝ) ≤ c1 * c13 := by
+    have hmul := mul_le_mul hc1_coarse_lower hc13_coarse_lower
+      (by norm_num) (le_trans (by norm_num) hc1_coarse_lower)
+    nlinarith
+  have hden_upper : c1 * c13 ≤ (1649 / 1000 : ℝ) := by
+    have hmul := mul_le_mul hc1_coarse_upper hc13_coarse_upper
+      (by norm_num) (by norm_num)
+    nlinarith
+  have hnumA_lower : (1333 / 1000 : ℝ) ≤ c1 + b1 := by
+    dsimp [c1]
+    linarith
+  have hnumA_upper : c1 + b1 ≤ (1335 / 1000 : ℝ) := by
+    dsimp [c1]
+    linarith
+  have hnumB_lower : (1508 / 1000 : ℝ) ≤ c1 - b1 := by
+    dsimp [c1]
+    linarith
+  have hnumB_upper : c1 - b1 ≤ (1509 / 1000 : ℝ) := by
+    dsimp [c1]
+    linarith
+  have hrA_lower : (4 / 5 : ℝ) ≤ rA := by
+    dsimp [rA]
+    apply (le_div_iff₀ hden_pos).2
+    calc
+      (4 / 5 : ℝ) * (c1 * c13)
+          ≤ (4 / 5 : ℝ) * (1649 / 1000 : ℝ) :=
+            mul_le_mul_of_nonneg_left hden_upper (by norm_num)
+      _ ≤ (1333 / 1000 : ℝ) := by norm_num
+      _ ≤ c1 + b1 := hnumA_lower
+  have hrA_upper : rA ≤ (82 / 100 : ℝ) := by
+    dsimp [rA]
+    apply (div_le_iff₀ hden_pos).2
+    calc
+      c1 + b1 ≤ (1335 / 1000 : ℝ) := hnumA_upper
+      _ ≤ (82 / 100 : ℝ) * (1647 / 1000 : ℝ) := by norm_num
+      _ ≤ (82 / 100 : ℝ) * (c1 * c13) :=
+        mul_le_mul_of_nonneg_left hden_lower (by norm_num)
+  have hrB_lower : (91 / 100 : ℝ) ≤ rB := by
+    dsimp [rB]
+    apply (le_div_iff₀ hden_pos).2
+    calc
+      (91 / 100 : ℝ) * (c1 * c13)
+          ≤ (91 / 100 : ℝ) * (1649 / 1000 : ℝ) :=
+            mul_le_mul_of_nonneg_left hden_upper (by norm_num)
+      _ ≤ (1508 / 1000 : ℝ) := by norm_num
+      _ ≤ c1 - b1 := hnumB_lower
+  have hrB_upper : rB ≤ (92 / 100 : ℝ) := by
+    dsimp [rB]
+    apply (div_le_iff₀ hden_pos).2
+    calc
+      c1 - b1 ≤ (1509 / 1000 : ℝ) := hnumB_upper
+      _ ≤ (92 / 100 : ℝ) * (1647 / 1000 : ℝ) := by norm_num
+      _ ≤ (92 / 100 : ℝ) * (c1 * c13) :=
+        mul_le_mul_of_nonneg_left hden_lower (by norm_num)
+  have hb1_mag_lower : (871 / 10000 : ℝ) ≤ -b1 := by
+    dsimp [b1]
+    linarith
+  have hb1_mag_upper : -b1 ≤ (8711 / 100000 : ℝ) := by
+    dsimp [b1]
+    linarith
+  have hb1_sq_lower : (75 / 10000 : ℝ) ≤ b1 ^ 2 := by
+    have hcross := mul_nonneg
+      (sub_nonneg.mpr hb1_mag_lower)
+      (by linarith : 0 ≤ -b1 + (871 / 10000 : ℝ))
+    nlinarith [hcross]
+  have hb1_sq_upper : b1 ^ 2 ≤ (76 / 10000 : ℝ) := by
+    have hcross := mul_nonneg
+      (sub_nonneg.mpr hb1_mag_upper)
+      (by linarith : 0 ≤ -b1 + (8711 / 100000 : ℝ))
+    nlinarith [hcross]
+  have hprodA_lower :
+      (3 / 400 : ℝ) * (4 / 5 : ℝ) ≤ b1 ^ 2 * rA := by
+    calc
+      (3 / 400 : ℝ) * (4 / 5 : ℝ)
+          ≤ b1 ^ 2 * (4 / 5 : ℝ) :=
+            mul_le_mul_of_nonneg_right hb1_sq_lower (by norm_num)
+      _ ≤ b1 ^ 2 * rA :=
+        mul_le_mul_of_nonneg_left hrA_lower (sq_nonneg b1)
+  have hprodA_upper :
+      b1 ^ 2 * rA ≤
+        (76 / 10000 : ℝ) * (82 / 100 : ℝ) := by
+    calc
+      b1 ^ 2 * rA ≤ b1 ^ 2 * (82 / 100 : ℝ) :=
+        mul_le_mul_of_nonneg_left hrA_upper (sq_nonneg b1)
+      _ ≤ (76 / 10000 : ℝ) * (82 / 100 : ℝ) :=
+        mul_le_mul_of_nonneg_right hb1_sq_upper (by norm_num)
+  have hqA_lower :
+      (12 / 1000 : ℝ) ≤ 2 * b1 ^ 2 * rA := by
+    nlinarith [hprodA_lower]
+  have hqA_upper :
+      2 * b1 ^ 2 * rA ≤ (12464 / 10 ^ 6 : ℝ) := by
+    nlinarith [hprodA_upper]
+  have ha2_step :
+      a2 = schurNextDiagonal a1 b1 c1 := by
+    dsimp [a2, a1, b1, c1]
+    rfl
+  have ha2_change : a2 - a1 = -(2 * b1 ^ 2 * rA) := by
+    have h := schurNextDiagonal_sub_eq a1 b1 c1
+    rw [ha2_step] at h
+    simpa [rA] using h
+  have ha2_lower : -(1 / 1000 : ℝ) ≤ a2 := by
+    linarith [ha1_lower, hqA_upper, ha2_change]
+  have ha2_upper : a2 ≤ (1 / 1000 : ℝ) := by
+    linarith [ha1_upper, hqA_lower, ha2_change]
+  have hb2_step :
+      b2 = schurNextOffDiagonal b1 c1 := by
+    dsimp [b2, a1, b1, c1]
+    rfl
+  have hb2_formula : -b2 = b1 ^ 2 * rB := by
+    rw [hb2_step]
+    unfold schurNextOffDiagonal
+    dsimp [rB]
+    ring
+  have hprodB_upper :
+      b1 ^ 2 * rB ≤
+        (76 / 10000 : ℝ) * (92 / 100 : ℝ) := by
+    calc
+      b1 ^ 2 * rB ≤ b1 ^ 2 * (92 / 100 : ℝ) :=
+        mul_le_mul_of_nonneg_left hrB_upper (sq_nonneg b1)
+      _ ≤ (76 / 10000 : ℝ) * (92 / 100 : ℝ) :=
+        mul_le_mul_of_nonneg_right hb1_sq_upper (by norm_num)
+  have hb2_upper : b2 ≤ 0 := by
+    rw [← neg_nonneg]
+    rw [hb2_formula]
+    exact mul_nonneg (sq_nonneg b1) (le_of_lt (by linarith [hrB_lower]))
+  have hb2_lower : -(7 / 1000 : ℝ) ≤ b2 := by
+    rw [← neg_nonneg]
+    rw [hb2_formula]
+    have hnum : b1 ^ 2 * rB ≤ (7 / 1000 : ℝ) := by
+      calc
+        b1 ^ 2 * rB ≤
+            (76 / 10000 : ℝ) * (92 / 100 : ℝ) :=
+          hprodB_upper
+        _ ≤ (7 / 1000 : ℝ) := by norm_num
+    linarith
+  exact ⟨abs_le.mpr ⟨ha2_lower, ha2_upper⟩,
+    hb2_lower, hb2_upper⟩
+
+
 end PhiGenesis.SpectralGap
