@@ -529,12 +529,23 @@ Dividing these by the squared A1 increments gives the stable coefficient
 
 An even sharper relation appears numerically:
 (E_m-A1_m)/(A1_(m+1)-A1_m) → 3/2.
-For m=7,8,9,10 the ratio is 1.5 to approximately 144, 289, 579, and 1,161 decimal places, respectively (the last figures depend on the 1,250-dps root calculations).
+An independent 2,450-dps recomputation resolves the deviations from 3/2 as approximately:
+- m=7: 1.212619483e-71
+- m=8: 4.770512016e-144
+- m=9: 3.736959211e-289
+- m=10: 1.153626845e-579
+- m=11: 5.514032e-1161.
+Thus the corresponding agreement is about 70, 143, 288, 578, and 1,160 decimal places. This corrects the earlier level-index shift in the first report. These are high-precision numerical comparisons, not interval-certified bounds.
+
+The E-boundary continuation is now explicitly regression-compared with the independent full E-sector matrix values at levels 5–8. An additional 2,450-dps test checks the 3/2 relation through level 11; the test only asserts the displayed numerical precision and does not promote it to a theorem.
 
 Conditional derivation: at an A1 root f_m=0, hence a_m=-2b_m and g_m=a_m-b_m=-3b_m. The next A1 characteristic at the same point is
 f_(m+1)(λ_m)=-2b_m(c_m+5b_m)/(c_m+3b_m)≈-2b_m.
 If g'_m(λ_m) and f'_(m+1)(λ_m) approach the same nonzero limit L, the two root shifts are approximately -3b_m/L and -2b_m/L, producing the 3/2 relation. This in turn yields the conditional relation c_E=(3/2)c_A1. The derivative-limit and root-convergence hypotheses still need proof.
 
-Local test suite for the extended A1/E module: 25 tests passed. The preceding A1-only implementation commit 8208de4 passed its exact-SHA GitHub CI: 103 passed, 8 deselected. The current E-extension commit will receive its own CI run.
+The extended A1/E Schur test module now has 30 test cases: direct Schur-complement comparisons, forward-derivative checks, A1 level-12 roots, E/A1 splitting, independent E-matrix comparisons at levels 5–8, the 3/2 shift-ratio check at 2,450 dps, and insufficient-precision guards. The preceding A1-only implementation commit 8208de4 passed its exact-SHA GitHub CI: 103 passed, 8 deselected. The current E-extension commit will receive its own CI run.
 
 The E-sector full matrix job in workflow 42172777291 was still in progress at the last check. Do not treat the Schur E9–E11 roots as already cross-checked by that separate matrix job. The alternating A2 sector at level 9 and the global bottom-mode certification remain open.
+
+
+The ordinary CI for the preceding E-extension SHA f29353313bb1c30cb3f30db6badd04ff839b1061 passed on exact HEAD in run 42175671043: 104 passed, 8 deselected. The follow-up test/log correction adds independent E-matrix anchors and fixes the decimal-order indexing in the 3/2 comparison; it requires its own exact-SHA CI.

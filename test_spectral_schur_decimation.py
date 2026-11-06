@@ -119,6 +119,55 @@ def test_level_eleven_e_a1_boundary_splitting():
         assert abs(ratio_11 - expected) < mp.mpf("1e-35")
 
 
+
+@pytest.mark.parametrize(
+    ("level", "expected", "tol"),
+    [
+        (
+            5,
+            "1.30912892028081342256412215905048560442889305924618119065096",
+            "1e-50",
+        ),
+        (
+            6,
+            "1.30912892028081342188862308817081018900310247512198013098385",
+            "1e-55",
+        ),
+        (
+            7,
+            "1.30912892028081342188862308817081018855232425111732634343353598445268169760514245722344731949215782007648",
+            "1e-80",
+        ),
+        (
+            8,
+            "1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341960876021582905006341",
+            "1e-140",
+        ),
+    ],
+)
+def test_e_boundary_roots_match_independent_matrix_spectrum(level, expected, tol):
+    roots = schur_decimation.e_boundary_root_sequence(level, dps=220)
+    with mp.workdps(220):
+        assert abs(roots[level] - mp.mpf(expected)) < mp.mpf(tol)
+
+
+def test_e_a1_shift_ratio_converges_to_three_halves():
+    a1_roots = schur_decimation.a1_boundary_root_sequence(12, dps=2450)
+    e_roots = schur_decimation.e_boundary_root_sequence(11, dps=2450)
+    expected_decimal_orders = {
+        7: 70,
+        8: 143,
+        9: 288,
+        10: 578,
+        11: 1160,
+    }
+    with mp.workdps(2450):
+        for level, decimal_order in expected_decimal_orders.items():
+            next_a1_increment = a1_roots[level + 1] - a1_roots[level]
+            ratio = (e_roots[level] - a1_roots[level]) / next_a1_increment
+            assert abs(ratio - mp.mpf("1.5")) < mp.power(10, -decimal_order)
+
+
 def test_insufficient_precision_does_not_repeat_a_boundary_root():
     with pytest.raises(ArithmeticError, match="cannot resolve"):
         schur_decimation.a1_boundary_root_sequence(10, dps=100)
