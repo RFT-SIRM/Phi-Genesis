@@ -171,12 +171,11 @@ theorem schurNextA1_at_old_root (a b c : ℝ)
       -2 * b * (c + 5 * b) / (c + 3 * b) := by
   unfold schurNextDiagonal schurNextOffDiagonal
   have ha : a = -2 * b := by linarith
-  have hden : c + 3 * b = b * 3 + c := by ring
-  have hc3' : b * 3 + c ≠ 0 := by
-    rw [← hden]
-    exact hc3
+  have hX : (c + 3 * b) * (c + 3 * b)⁻¹ = 1 := mul_inv_cancel₀ hc3
+  have hY : c * c⁻¹ = 1 := mul_inv_cancel₀ hc
   rw [ha]
-  field_simp [hc, hc3'] <;> ring
+  simp only [div_eq_mul_inv, mul_inv]
+  linear_combination (-4 * b ^ 2 * (c + 3 * b)⁻¹) * hY + (2 * b) * hX
 
 /-- The off-diagonal Schur coefficient changes quadratically in b,
 with an exact finite-level prefactor. -/
