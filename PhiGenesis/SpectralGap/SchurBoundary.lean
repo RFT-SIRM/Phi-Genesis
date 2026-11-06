@@ -1456,4 +1456,65 @@ theorem schurBoundaryTrajectory_A1_neg_of_initial_margin
     lt_of_le_of_lt hstrict_margin (by norm_num)
   simpa [f] using hnegative
 
+
+/-- Exact rational lower endpoint of the narrow level-six bootstrap window.
+The 36 decimal digits are represented as an integer divided by 10^36. -/
+def schurBootstrapLambdaLower : ℝ :=
+  (1309128920280813421888623088170810187 / 10 ^ 36 : ℝ)
+
+/-- Exact rational upper endpoint of the narrow level-six bootstrap window. -/
+def schurBootstrapLambdaUpper : ℝ :=
+  (1309128920280813421888623088170810189 / 10 ^ 36 : ℝ)
+
+/-- The two fixed rational endpoints lie in the coarse parameter window
+used by the conditional all-level Schur state-box theorem. -/
+theorem schurBootstrapEndpoints_in_parameter_window :
+    (1309 / 1000 : ℝ) ≤ schurBootstrapLambdaLower ∧
+      schurBootstrapLambdaLower ≤ (131 / 100 : ℝ) ∧
+    (1309 / 1000 : ℝ) ≤ schurBootstrapLambdaUpper ∧
+      schurBootstrapLambdaUpper ≤ (131 / 100 : ℝ) := by
+  norm_num [schurBootstrapLambdaLower, schurBootstrapLambdaUpper]
+
+/-- Exact level-six starting enclosure and positive A1 sign at the lower
+rational endpoint. This is computed from six exact Schur steps starting
+from the original state (2-lambda,1), not from rounded decimal data. -/
+theorem schurBootstrapLower_levelSix_certificate :
+    |(schurBoundaryTrajectory schurBootstrapLambdaLower
+        (2 - schurBootstrapLambdaLower, 1) 6).1| ≤
+          (3 / 10 ^ 36 : ℝ) ∧
+      -(6 / 10 ^ 37 : ℝ) ≤
+        (schurBoundaryTrajectory schurBootstrapLambdaLower
+          (2 - schurBootstrapLambdaLower, 1) 6).2 ∧
+      (schurBoundaryTrajectory schurBootstrapLambdaLower
+        (2 - schurBootstrapLambdaLower, 1) 6).2 ≤ 0 ∧
+      0 <
+        (schurBoundaryTrajectory schurBootstrapLambdaLower
+          (2 - schurBootstrapLambdaLower, 1) 6).1 +
+          2 * (schurBoundaryTrajectory schurBootstrapLambdaLower
+            (2 - schurBootstrapLambdaLower, 1) 6).2 := by
+  norm_num [schurBootstrapLambdaLower, schurBoundaryTrajectory,
+    schurBoundaryStateStep, schurNextDiagonal, schurNextOffDiagonal,
+    schurMidpointPivot]
+
+/-- Exact level-six starting enclosure and strict negative A1 margin at
+the upper rational endpoint. The margin is stronger than 1.7e-36, which
+is the amount required by the finite-level sign-transport theorem. -/
+theorem schurBootstrapUpper_levelSix_certificate :
+    |(schurBoundaryTrajectory schurBootstrapLambdaUpper
+        (2 - schurBootstrapLambdaUpper, 1) 6).1| ≤
+          (3 / 10 ^ 36 : ℝ) ∧
+      -(6 / 10 ^ 37 : ℝ) ≤
+        (schurBoundaryTrajectory schurBootstrapLambdaUpper
+          (2 - schurBootstrapLambdaUpper, 1) 6).2 ∧
+      (schurBoundaryTrajectory schurBootstrapLambdaUpper
+        (2 - schurBootstrapLambdaUpper, 1) 6).2 ≤ 0 ∧
+      (schurBoundaryTrajectory schurBootstrapLambdaUpper
+        (2 - schurBootstrapLambdaUpper, 1) 6).1 +
+          2 * (schurBoundaryTrajectory schurBootstrapLambdaUpper
+            (2 - schurBootstrapLambdaUpper, 1) 6).2 ≤
+              -(17 / 10 ^ 37 : ℝ) := by
+  norm_num [schurBootstrapLambdaUpper, schurBoundaryTrajectory,
+    schurBoundaryStateStep, schurNextDiagonal, schurNextOffDiagonal,
+    schurMidpointPivot]
+
 end PhiGenesis.SpectralGap

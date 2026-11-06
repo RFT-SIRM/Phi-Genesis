@@ -479,3 +479,17 @@ coarser quarter-contraction; the finite sum of |b_n| is at most
 negative at every finite level. This conditional sign-transport theorem
 does not itself certify the rational level-six endpoint states or establish
 root existence by continuity.
+
+
+The narrow common parameter window now has exact rational endpoints
+encoded in Lean, not rounded floating-point literals:
+L = 1.309128920280813421888623088170810187 and
+U = 1.309128920280813421888623088170810189.
+Unfolding the exact Schur recurrence for six steps from (a,b)=(2-lambda,1),
+Lean certifies at both endpoints
+|a_6| <= 3e-36 and -6e-37 <= b_6 <= 0.
+It also certifies f_6(L)>0 and f_6(U)<=-1.7e-36.
+These endpoint certificates discharge the numeric start assumptions
+required by the finite-level sign-transport lemmas. They do not yet give
+a uniform starting box for every lambda in [L,U] or a continuity/root
+existence theorem for later levels.

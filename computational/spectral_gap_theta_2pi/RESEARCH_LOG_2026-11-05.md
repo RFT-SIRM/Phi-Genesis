@@ -1026,3 +1026,28 @@ It does not yet prove those rational start inequalities in Lean, establish
 continuity/root existence for every level, or prove convergence of the
 root sequence. The next proof obligation is the exact rational level-six
 endpoint certificate.
+
+
+## 52. Exact rational level-six endpoint certificates (2026-11-06)
+
+The narrow common parameter interval is now represented by two exact
+rationals in Lean:
+- L = 1309128920280813421888623088170810187 / 10^36;
+- U = 1309128920280813421888623088170810189 / 10^36.
+
+Both are proved to lie in [1.309,1.31]. The new theorems
+`schurBootstrapLower_levelSix_certificate` and
+`schurBootstrapUpper_levelSix_certificate` unfold the exact three-corner
+Schur recurrence for six steps, starting from the original state
+(a,b)=(2-lambda,1). They establish at each endpoint:
+`|a_6| <= 3e-36` and `-6e-37 <= b_6 <= 0`.
+The lower endpoint has `f_6(L)>0); the upper endpoint has the stronger
+margin `f_6(U)<=-17e-37`.
+
+This removes the floating-point/interval-computation starting-state
+assumption at the two rational endpoints. Combined with Section 51, it
+will give exact opposite A1 signs at every finite level at L and U.
+It still does not show a uniform state enclosure for every lambda in the
+entire interval, prove continuity of the level-n characteristic there,
+or prove root existence and convergence. Those form the next analytic
+bridge.
