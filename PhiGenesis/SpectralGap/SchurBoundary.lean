@@ -1164,4 +1164,75 @@ theorem schurBoundaryTrajectory_state_box
   intro n
   simpa [a, b] using hstate n
 
+
+/-- At a fixed parameter in the spectral window and inside the invariant
+state box, one Schur step increases the A1 boundary characteristic by a
+nonnegative amount no larger than twice the magnitude of the old
+off-diagonal coefficient. -/
+theorem schurNextA1_increment_bounds_of_state_box
+    (a b lambda : ℝ)
+    (ha_lower : -(1 / 10 ^ 35 : ℝ) ≤ a)
+    (ha_upper : a ≤ (1 / 10 ^ 35 : ℝ))
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda) :
+    0 ≤
+        (schurNextDiagonal a b (schurMidpointPivot a b lambda) +
+          2 * schurNextOffDiagonal b (schurMidpointPivot a b lambda)) -
+          (a + 2 * b) ∧
+      (schurNextDiagonal a b (schurMidpointPivot a b lambda) +
+        2 * schurNextOffDiagonal b (schurMidpointPivot a b lambda)) -
+          (a + 2 * b) ≤ 2 * (-b) := by
+  have hc_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_upper, hlambda_lower]
+  have hc3_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda + 3 * b := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  have hc_pos : 0 < schurMidpointPivot a b lambda :=
+    lt_of_lt_of_le (by norm_num) hc_lower
+  have hc3_pos :
+      0 < schurMidpointPivot a b lambda + 3 * b :=
+    lt_of_lt_of_le (by norm_num) hc3_lower
+  have hnum_pos : 0 < lambda + 2 * (a + 2 * b) := by
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  have hden_pos :
+      0 < lambda + 2 * (a + 2 * b) - 2 * b := by
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  have hratio_pos :
+      0 < (lambda + 2 * (a + 2 * b)) /
+        (lambda + 2 * (a + 2 * b) - 2 * b) :=
+    div_pos hnum_pos hden_pos
+  have hratio_le :
+      (lambda + 2 * (a + 2 * b)) /
+        (lambda + 2 * (a + 2 * b) - 2 * b) ≤ 1 := by
+    apply (div_le_iff₀ hden_pos).2
+    nlinarith [hb_upper]
+  have hupdate :=
+    schurNextA1_midpoint_update a b lambda
+      (ne_of_gt hc_pos) (ne_of_gt hc3_pos)
+  have hincrement :
+      (schurNextDiagonal a b (schurMidpointPivot a b lambda) +
+        2 * schurNextOffDiagonal b (schurMidpointPivot a b lambda)) -
+          (a + 2 * b) =
+        (-2 * b) *
+          ((lambda + 2 * (a + 2 * b)) /
+            (lambda + 2 * (a + 2 * b) - 2 * b)) := by
+    rw [hupdate]
+    ring
+  constructor
+  · rw [hincrement]
+    exact mul_nonneg (by linarith [hb_upper]) (le_of_lt hratio_pos)
+  · rw [hincrement]
+    have hfactor : 0 ≤ -2 * b := by linarith [hb_upper]
+    calc
+      (-2 * b) *
+          ((lambda + 2 * (a + 2 * b)) /
+            (lambda + 2 * (a + 2 * b) - 2 * b))
+          ≤ (-2 * b) * 1 :=
+        mul_le_mul_of_nonneg_left hratio_le hfactor
+      _ = 2 * (-b) := by ring
+
 end PhiGenesis.SpectralGap

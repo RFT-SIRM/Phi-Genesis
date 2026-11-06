@@ -457,3 +457,13 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `test_spectral_schur_bootstrap_box.py` | regression test for the finite common-window signs, bootstrap box, and contraction bounds |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |
+
+
+The A1 characteristic has now been linked directly to the invariant state
+box. Writing f_n = a_n + 2*b_n, one exact Schur step satisfies
+0 <= f_(n+1)-f_n <= 2*|b_n| throughout the fixed parameter window and
+state box. This is the endpoint-sign transport estimate: the lower-end
+positive sign is preserved immediately, while the upper-end negative sign
+will be preserved after summing the increments using the strong geometric
+contraction of b. This one-step result alone does not yet prove the
+all-level common root bracket.

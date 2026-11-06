@@ -977,3 +977,21 @@ window and the level-six starting state enclosure. It does not yet prove
 that the actual A1 root belongs to that window, establish the common
 window endpoint signs for all levels, or prove convergence of the
 root-sampled derivative. Those are the remaining spectral steps.
+
+
+## 50. One-step A1 characteristic drift inside the invariant state box (2026-11-06)
+
+Added the Lean theorem schurNextA1_increment_bounds_of_state_box.
+For a and b in the established invariant state box and lambda >= 1.309,
+the exact characteristic update is
+f_next - f = (-2*b) * (lambda + 2*f) / (lambda + 2*f - 2*b),
+where f = a + 2*b. The positive numerator and denominator, together
+with b <= 0, put the quotient in (0,1]. Lean therefore proves
+0 <= f_next-f <= 2*(-b) = 2*|b|.
+
+This is the next missing bridge from state-coordinate invariance to a
+common endpoint-sign argument. The lower endpoint sign is monotone under
+the recurrence. For the upper endpoint, the increments must be summed;
+the existing 10^-36 contraction gives a much sharper budget than the
+coarser half-contraction. The finite sum and endpoint initial signs have
+not yet been combined into an all-level A1 root bracket.
