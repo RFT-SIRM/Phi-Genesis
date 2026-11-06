@@ -20,7 +20,7 @@ import time
 
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse.linalg import eigsh
+from scipy.sparse.linalg import eigsh, splu
 from mpmath import mp, mpf, matrix
 
 mp.dps = 75
@@ -429,6 +429,178 @@ def a2_bottom(level: int, iterations: int = 40):
         "iterations": iterations,
         "seconds": time.time() - started,
     }
+
+
+
+
+def mixed_precision_bottom(
+    level: int,
+    sector: str,
+    iterations: int = 110,
+    dps: int = 110,
+):
+    """Resolve a sector bottom using sparse LU plus multiprecision refinement.
+
+    The sparse LU factorization is formed in float64 as a preconditioner.
+    Every correction residual, matrix-vector product, normalization, and
+    Rayleigh quotient is evaluated in mpmath arithmetic. This is much faster
+    than running high-precision Jacobi-PCG to a tiny tolerance at every outer
+    inverse-iteration step, while retaining a directly checked MP residual.
+    """
+    started = time.time()
+    sector = sector.upper()
+    if sector not in {"A1", "A2", "E"}:
+        raise ValueError("sector must be one of A1, A2, or E")
+    if iterations < 1 or dps < 50:
+        raise ValueError("iterations must be positive and dps must be at least 50")
+
+    with mp.workdps(dps):
+        if sector == "A1":
+            K_mp, K_float, _full_graph, full_n, sector_n = build_a1_quotient(level)
+            matrix_for_factor = sp.csc_matrix(K_float)
+            seed_matrix = matrix_for_factor
+            complex_mode = False
+            rows = [
+                [(j, K_mp[i, j]) for j in range(sector_n) if K_mp[i, j] != 0]
+                for i in range(sector_n)
+            ]
+        elif sector == "A2":
+            K_mp, K_float, full_n, sector_n = build_a2_quotient(level)
+            matrix_for_factor = sp.csc_matrix(K_float)
+            seed_matrix = matrix_for_factor
+            complex_mode = False
+            rows = [
+                [(j, K_mp[i, j]) for j in range(sector_n) if K_mp[i, j] != 0]
+                for i in range(sector_n)
+            ]
+        else:
+            rows, _diagonal, K_float, _full_graph, full_n, sector_n = build_e_sector(level)
+            # build_e_sector returns Q_sector for the float64 seed eigensolver,
+            # while rows represent Q_sector - I for inverse iteration.
+            seed_matrix = K_float
+            matrix_for_factor = (K_float - sp.eye(sector_n, format="csr")).tocsc()
+            complex_mode = True
+
+        if matrix_for_factor.shape != (sector_n, sector_n):
+            raise ArithmeticError("sector matrix has an unexpected shape")
+        if complex_mode:
+            inner = real_inner
+            vector_norm = complex_norm
+            zero = mp.mpc(0)
+        else:
+            inner = dot
+            vector_norm = norm
+            zero = mpf(0)
+
+        lu = splu(matrix_for_factor)
+        _float_values, float_vectors = eigsh(
+            seed_matrix, k=4, which="SA", tol=1e-13
+        )
+        seed = float_vectors[:, int(np.argmin(_float_values))]
+        if complex_mode:
+            vector = [
+                mp.mpc(float(value.real), float(value.imag)) for value in seed
+            ]
+        else:
+            vector = [mpf(float(value)) for value in seed]
+        seed_norm = vector_norm(vector)
+        vector = [value / seed_norm for value in vector]
+
+        solve_tolerance = mpf("1e-60")
+        max_corrections = 8
+        max_correction_rounds = 0
+        max_linear_residual = mpf(0)
+
+        def refined_solve(rhs):
+            rhs_norm = vector_norm(rhs)
+            if complex_mode:
+                rhs_float = np.asarray(
+                    [complex(float(mp.re(value)), float(mp.im(value))) for value in rhs],
+                    dtype=np.complex128,
+                )
+                solution_float = lu.solve(rhs_float)
+                solution = [
+                    mp.mpc(float(value.real), float(value.imag))
+                    for value in solution_float
+                ]
+            else:
+                rhs_float = np.asarray([float(value) for value in rhs], dtype=np.float64)
+                solution_float = lu.solve(rhs_float)
+                solution = [mpf(float(value)) for value in solution_float]
+
+            relative_residual = mpf(1)
+            correction_rounds = 0
+            for correction_rounds in range(max_corrections + 1):
+                product = [
+                    mp.fsum(coefficient * solution[j] for j, coefficient in row)
+                    for row in rows
+                ]
+                residual = [rhs[i] - product[i] for i in range(sector_n)]
+                relative_residual = vector_norm(residual) / rhs_norm
+                if relative_residual < solve_tolerance:
+                    break
+                if correction_rounds == max_corrections:
+                    raise RuntimeError(
+                        "mixed-precision refinement stalled at relative residual "
+                        + mp.nstr(relative_residual, 8)
+                    )
+                if complex_mode:
+                    residual_float = np.asarray(
+                        [
+                            complex(float(mp.re(value)), float(mp.im(value)))
+                            for value in residual
+                        ],
+                        dtype=np.complex128,
+                    )
+                    correction = lu.solve(residual_float)
+                    solution = [
+                        solution[i]
+                        + mp.mpc(float(correction[i].real), float(correction[i].imag))
+                        for i in range(sector_n)
+                    ]
+                else:
+                    residual_float = np.asarray(
+                        [float(value) for value in residual], dtype=np.float64
+                    )
+                    correction = lu.solve(residual_float)
+                    solution = [
+                        solution[i] + mpf(float(correction[i]))
+                        for i in range(sector_n)
+                    ]
+
+            return solution, relative_residual, correction_rounds
+
+        outer_residual = mpf(0)
+        for _ in range(iterations):
+            solution, linear_residual, correction_rounds = refined_solve(vector)
+            max_linear_residual = max(max_linear_residual, linear_residual)
+            max_correction_rounds = max(max_correction_rounds, correction_rounds)
+            solution_norm = vector_norm(solution)
+            vector = [value / solution_norm for value in solution]
+
+        product = [
+            mp.fsum(coefficient * vector[j] for j, coefficient in row)
+            for row in rows
+        ]
+        ritz_value = inner(vector, product)
+        outer_residual = vector_norm(
+            [product[i] - ritz_value * vector[i] for i in range(sector_n)]
+        )
+
+        return {
+            "level": level,
+            "sector": sector,
+            "lambda": ritz_value + 1,
+            "residual": outer_residual,
+            "linear_residual": max_linear_residual,
+            "full_dimension": full_n,
+            "sector_dimension": sector_n,
+            "iterations": iterations,
+            "dps": dps,
+            "correction_rounds": max_correction_rounds,
+            "seconds": time.time() - started,
+        }
+
 
 
 def main():
