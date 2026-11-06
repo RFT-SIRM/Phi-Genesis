@@ -662,7 +662,10 @@ def mixed_precision_bottom(
         vector = [value / vector_norm(vector) for value in vector]
 
         solve_tolerance = mp.power(10, -(dps - 15))
-        max_corrections = 12
+        # A float64 LU preconditioner typically contributes about 15 digits
+        # per refinement step. Scale the cap with requested precision, with
+        # extra headroom for conditioning and nonuniform pivot growth.
+        max_corrections = max(12, (dps - 15 + 7) // 8 + 4)
         max_correction_rounds = 0
         max_linear_residual = mpf(0)
 
