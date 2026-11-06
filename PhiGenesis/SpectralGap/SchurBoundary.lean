@@ -446,9 +446,11 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
   have hLambda_pos : 0 < lambda := by linarith
   have hleft_pos : 0 < lambda - 5 * b := by linarith
   have hright_pos : 0 < lambda - 2 * b := by linarith
+  have hden_left_pos : 0 < lambda * (lambda - 5 * b) :=
+    mul_pos hLambda_pos hleft_pos
   have hden_pos :
       0 < lambda * (lambda - 5 * b) * (lambda - 2 * b) :=
-    mul_pos hLambda_pos (mul_pos hleft_pos hright_pos)
+    mul_pos hden_left_pos hright_pos
   have hnum_pos :
       0 < (-b) * (lambda - 10 * b) :=
     mul_pos (by linarith) (by linarith)
@@ -459,7 +461,7 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
           (lambda * (lambda - 5 * b) * (lambda - 2 * b)) := by
     rw [schurNextOffDiagonal_ratio_at_A1_root a b lambda hA1 hLambda hb]
     field_simp [ne_of_gt hLambda_pos, ne_of_gt hleft_pos, ne_of_gt hright_pos]
-    ring
+    ring_nf
   have hpositive :
       0 <
         1 / lambda +
