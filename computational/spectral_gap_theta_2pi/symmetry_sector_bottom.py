@@ -204,12 +204,16 @@ def build_a1_quotient_sparse(level: int):
     rows = []
     float_rows, float_cols, float_data = [], [], []
     for a, counts in enumerate(counts_by_orbit):
-        row = []
+        # The diagonal exists even when an orbit has no internal neighbors.
+        diagonal = mpf(orbit_degree[a] + counts.get(a, 0) - 1)
+        row = [(a, diagonal)]
+        float_rows.append(a)
+        float_cols.append(a)
+        float_data.append(float(diagonal))
         for b, multiplicity in sorted(counts.items()):
-            if a == b:
-                value = mpf(orbit_degree[a] + multiplicity - 1)
-            else:
-                value = mpf(multiplicity) * mp.sqrt(mpf(sizes[a]) / sizes[b])
+            if b == a:
+                continue
+            value = mpf(multiplicity) * mp.sqrt(mpf(sizes[a]) / sizes[b])
             if value != 0:
                 row.append((b, value))
                 float_rows.append(a)
