@@ -41,7 +41,7 @@ The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** c
 
 The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
 that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve the `A1` bottom candidate through level 9 and the complex
-`E` sector through level 8. The `S3` symmetry-sector decomposition has also been checked against
+`E` sector through level 8. An exact rational boundary-Schur recursion independently computes the continued `A1` boundary-characteristic root through level 12; identifying this branch as the lowest `A1` eigenvalue at every high level still requires independent spectral/inertia checks. The `S3` symmetry-sector decomposition has also been checked against
 the complete spectrum at levels 2–5.
 
 Run the reproducible calculation from the repository root:
@@ -84,11 +84,7 @@ The positive increments `δ_m = λ_m − λ_(m−1)` and their quadratic ratios 
 | 7→8 | 4.01484948291304833402·10⁻⁷³ | 0.4939504899001989529 |
 | 8→9 | 7.96199603289170721200·10⁻¹⁴⁶ | 0.49395048990019895288 |
 
-Six successive ratios are now consistent with a quadratic correction law with coefficient near
-`0.4939504899001989529`. The latest two ratios agree to about 19 significant digits. This is strong
-numerical evidence, but remains an empirical pattern rather than a theorem. Extrapolations based on
-it are conditional and carry no certified error bound. The convergence law and the limiting value
-remain open.
+The six ratios in the spectral table extend through `8→9`. The exact Schur recursion below extends the same continued `A1` boundary-root sequence through levels 10–12; the ratios `δ_10/δ_9²`, `δ_11/δ_10²`, and `δ_12/δ_11²` agree near `0.49395048990019895285628827965354…`. This is strong numerical evidence and a structural explanation candidate, but not yet a theorem: convergence of the root sequence and uniform control of the derivative have not been proved. Extrapolations remain conditional and carry no certified error bound.
 
 The observed eigenvectors are concentrated near the three corners, but they do not have compact
 support: the apparent support depends on the numerical threshold used to display small components.
@@ -143,10 +139,68 @@ and `0.7409257348502984` at level 8. The agreement is about 13 significant digit
 second empirical scaling observation, distinct from the increment coefficient `0.49395049`.
 Residuals are numerical diagnostics, not interval certificates.
 
+
+### Exact A1 boundary Schur recursion
+
+Let \(S_m(\lambda)\) be the 3×3 Schur complement of \(Q_m-\lambda I\) after eliminating every non-corner vertex. By \(S_3\) symmetry it has the form
+
+\[
+S_m(\lambda)=(a_m(\lambda)-b_m(\lambda))I_3+b_m(\lambda)J_3.
+\]
+
+At level zero, \((a_0,b_0)=(2-\lambda,1)\). To pass from level \(m\) to \(m+1\), glue three level-\(m\) cells along their three midpoint vertices. Each midpoint belongs to two child boundaries, so the assembled boundary matrix receives a correction \(+\lambda\) on each midpoint diagonal: the child Schur complements each included a \(-\lambda\) term, whereas the global matrix contains it only once. With \(T=J_3-I_3\) and \(c_m=2a_m+\lambda-b_m\), eliminating the midpoints gives the exact rational recursion
+
+\[
+\begin{aligned}
+a_{m+1}&=a_m-\frac{2b_m^2(c_m+b_m)}{c_m(c_m+3b_m)},\\
+b_{m+1}&=-\frac{b_m^2(c_m-b_m)}{c_m(c_m+3b_m)}.
+\end{aligned}
+\]
+
+Away from poles of the eliminated interior block, the symmetric-boundary eigenvalue condition is \(a_m(\lambda)+2b_m(\lambda)=0\). The new script continues its low root from levels 1 and 2 by high-precision Newton steps. Its finite-level algebraic recursion is exact; finding roots and identifying the continued root as the lowest A1 eigenvalue at every large level are still numerical tasks.
+
+The recursion was compared with direct dense Schur complements of the graph matrices at levels 0–4 and three regular spectral parameters (1.234, 1.309, 1.411). The maximum float64 discrepancy was below 1.4·10⁻¹⁶. Forward-mode derivatives were also compared with mpmath.diff through level 6.
+
+The continued boundary roots give:
+
+| Transition | Schur-root increment |
+| --- | ---: |
+| 9→10 | 3.13131915163134327525017302593668834473·10⁻²⁹¹ |
+| 10→11 | 4.84326340247856280976678937076391662801·10⁻⁵⁸² |
+| 11→12 | 1.15866956222472296571000231092429262929·10⁻¹¹⁶³ |
+
+The three corresponding quadratic ratios agree to about 48 significant digits:
+0.493950489900198952856288279653540948210748109986…
+
+There is a useful conditional explanation for this coefficient. At a level-m root, \(a_m=-2b_m\). The recursion then gives
+\[
+f_{m+1}(\lambda_m)=-2b_m\frac{c_m+5b_m}{c_m+3b_m},
+\qquad
+\frac{b_{m+1}(\lambda_m)}{b_m(\lambda_m)^2}
+\longrightarrow -\frac{1}{\lambda_\infty}
+\]
+provided \(\lambda_m\to\lambda_\infty\) and \(b_m\to0\). If additionally
+\(f'_{m+1}(\lambda_m)\to L\ne0\), Taylor expansion predicts
+\[
+\frac{\delta_{m+1}}{\delta_m^2}
+\longrightarrow
+\frac{1/\lambda_\infty}{-2/L}.
+\]
+Numerically, \(-2/L\approx1.54644387367797039232151350963469\ldots\), while
+\(1/\lambda_\infty\approx0.76386670900639485955066454013148\ldots\).
+This gives the observed coefficient near 0.493950489900198952856288… The limit and derivative hypotheses are not yet proved, so this is a route toward a proof, not the proof itself.
+
+Reproduce the level-12 Schur calculation with:
+
+~~~bash
+python computational/spectral_gap_theta_2pi/schur_decimation.py --max-level 12 --dps 1250
+~~~
+
+
 ## 4. What is not claimed
 
 - That `1.309128920280813421889…` is the exact limit, or a closed form for it. It is a conditional numerical extrapolation.
-- That the quadratic correction law holds for all levels. Six successive ratios are currently available, but no proof controls all subsequent levels.
+- That the quadratic correction law holds for all levels. The exact finite-level Schur recursion explains the observed asymptotic mechanism conditionally, but convergence and the derivative limit still need proof.
 - That the local-face model is *the* external θ = 2π model. The cited external `sg.py`/`gap.py` sources were not present in the repository, so this identification is **conditional**.
 - That this operator equals the pivot-zero all-hole-flux representative produced by the default `mobius.py` solver. It does not.
 - That the constant is an analogue of π. No such definition or theorem exists yet.
@@ -171,7 +225,8 @@ python -m pip install -e .
 python -m pip install mpmath
 python computational/spectral_gap_theta_2pi/audit_triangle_gauge.py --max-level 10
 python computational/spectral_gap_theta_2pi/high_precision_bottom.py
-pytest -q test_spectral_gap_high_precision.py
+python computational/spectral_gap_theta_2pi/schur_decimation.py --max-level 12 --dps 1250
+pytest -q test_spectral_gap_high_precision.py test_spectral_schur_decimation.py
 lake build
 ```
 
@@ -186,5 +241,6 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `RESEARCH_LOG_2026-11-05.md` | derivation, audits, earlier eigenvalue tables, and evidence boundary |
 | `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
 | `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
+| `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1` boundary-root continuation |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |

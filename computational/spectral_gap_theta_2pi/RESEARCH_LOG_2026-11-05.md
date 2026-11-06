@@ -458,6 +458,56 @@ At the time of this entry, the corrected parallel campaign is run `42172447828` 
 
 Using the latest increment coefficient `c_A=0.4939504899001989528801830492…` and `δ_9=7.96199603289170721200e-146…`, the conditional prediction is `δ_10≈3.1313191516313432757046040823810254e-291`. Using the latest sector-splitting coefficient `c_E=0.74092573485029842926…`, the conditional level-nine splitting prediction is `E_9-A1_9≈4.6969787274470149131748052224579652e-291`. Both are extrapolations used to choose computational precision, not assumed results.
 
-The numerical target is intentionally conservative: if the observed separation to the next mode remains approximately `0.69087108`, a residual below `sqrt(0.69087108·4.70e-291)≈5.70e-146` makes the residual-squared Rayleigh diagnostic smaller than the expected sector splitting. The configured `1e-210` linear-solve target plus 250 inverse iterations is intended to give a substantial margin; the measured final Ritz residual must still be inspected, and this remains a numerical diagnostic rather than an interval certificate.
+The numerical target is intentionally conservative: if the observed separation to the next mode remains approximately `0.69087108`, a residual below `sqrt(0.69087108·4.70e-291)≈5.70e-146` makes the residual-squared Rayleigh diagnostic smaller than the expected sector splitting. The `1e-210` linear-solve target controls only the accuracy of each linear solve; it does not certify eigenvector convergence. A rough inverse-iteration contraction estimate uses `(λ_1-1)/(λ_2-1)≈0.309/1.0` and a float64-seeded starting vector, placing 250 outer iterations near `1e-143` residual scale, which may be several orders above the `5.70e-146` acceptance target. The final measured Ritz residual is therefore decisive; if it exceeds the target, increase the iteration count and rerun. This remains a numerical diagnostic, not an interval certificate.
 
 The main convergence theorem, exact limit, full spectral proof at levels 9–10, interval certification, and identification with the external theta=2π operator remain open.
+
+## 35. Exact A1 boundary Schur recursion and level-12 roots (2026-11-06)
+
+A separate exact finite-level reduction has been derived for the fully symmetric A1 sector. Let S_m(λ) be the 3×3 Schur complement of Q_m-λI onto the three outer corners after all other vertices are eliminated. S3 symmetry forces S_m=(a_m-b_m)I+b_m J. At level zero, a_0=2-λ and b_0=1.
+
+When three level-m cells are glued, their three midpoint vertices are shared pairwise. The child Schur complements each contain a -λ term at a child corner, so the midpoint diagonal in the global assembled boundary matrix needs a +λ correction: each midpoint is counted in two child boundary matrices but only once in the global -λI. In the outer-corner/midpoint ordering, the assembled 6×6 matrix is
+
+\[
+\begin{pmatrix}
+a_m I_3 & b_m T\\
+b_m T^T & (2a_m+\lambda-b_m)I_3+b_mJ_3
+\end{pmatrix},
+\qquad T=J_3-I_3.
+\]
+
+Eliminating the midpoints gives the exact rational update, with c_m=2a_m+λ-b_m:
+
+\[
+a_{m+1}=a_m-\frac{2b_m^2(c_m+b_m)}{c_m(c_m+3b_m)},\qquad
+b_{m+1}=-\frac{b_m^2(c_m-b_m)}{c_m(c_m+3b_m)}.
+\]
+
+The A1 boundary-characteristic equation is a_m(λ)+2b_m(λ)=0, provided the eliminated interior block is nonsingular. The recursion is exact algebraically; numerical root continuation does not alone prove that the selected branch remains the lowest A1 eigenvalue at all levels.
+
+Validation:
+- Direct dense Schur complements built from the graph matrices at levels 0–4 were compared at λ=1.234, 1.309, and 1.411. The maximum discrepancy was less than 1.4e-16 in float64.
+- The forward-mode derivative of the scalar characteristic was compared with mpmath.diff at levels 0–6.
+- The continued root sequence through level 6 agrees with the independent mixed-precision A1 quotient result. Its continuation through levels 9–12 is an independent exact-recursion calculation, not a direct diagonalization of those full quotient matrices.
+- The new regression suite contains direct Schur-complement checks, derivative checks, a level-12 root/ratio check, and a guard against silently repeating a root when requested precision is insufficient. Local isolated run: 24 tests passed.
+
+The 360-dps/420-dps and 700-dps/1250-dps Schur calculations give:
+- δ_10 = 3.1313191516313432752501730259366883447320897694671e-291
+- δ_11 = 4.8432634024785628097667893707639166280078554951701e-582
+- δ_12 = 1.1586695622247229657100023109242926292894362355858e-1163
+
+The ratios δ_10/δ_9², δ_11/δ_10², and δ_12/δ_11² agree near
+0.493950489900198952856288279653540948210748109987…
+
+The recursion also exposes a conditional asymptotic mechanism. At a level-m root, a_m=-2b_m, so
+f_(m+1)(λ_m)=-2b_m(c_m+5b_m)/(c_m+3b_m). If λ_m→λ∞ and b_m→0, the exact update implies
+b_(m+1)(λ_m)/b_m(λ_m)²→-1/λ∞. If in addition f'_(m+1)(λ_m)→L≠0, then Taylor expansion yields
+δ_(m+1)/δ_m²→(1/λ∞)/(-2/L). The observed derivative factor is
+-2/L≈1.54644387367797039232151350963469…; the other factor is
+1/λ∞≈0.76386670900639485955066454013148…. Their quotient reproduces the observed quadratic coefficient. Neither convergence nor the derivative limit has yet been proved, so this is a proof strategy, not a theorem.
+
+CI correction status: the earlier ordinary test run failed only because a substring assertion confused the valid line mixed A1 level 2: n=... with the baseline-only line A1 level 2: n=.... Commit d91bb227c5d4acbf7cb8b2db5ff5f40c0243cca7 anchors that assertion to the start of each output line. Exact-SHA test run 42173641928 passed: 79 passed, 8 deselected.
+
+The separate high-precision workflow run 42172777291 remains in progress on code SHA 4565d362b80fc7c36e03351014e0abfaee2c6193, with independent jobs for A1_9, A1_10, and E_9. Its configured 250 outer inverse iterations must not be assumed sufficient: final Ritz residuals need to be checked against 5.70e-146 before using either expected 1e-291 difference. The exact A1 recursion is a new independent check of the A1 boundary-root sequence; it does not replace the E_9 computation or its independent residual inspection.
+
+The convergence theorem, interval certification, proof that the continued root is the bottom of A1 at every level, and identification with the external theta=2π operator remain open.
