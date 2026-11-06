@@ -433,19 +433,87 @@ def a2_bottom(level: int, iterations: int = 40):
 
 
 
+def multiprecision_lu_solver(lu, dimension: int, complex_mode: bool):
+    """Solve with SuperLU's sparse L/U factors using mpmath substitutions.
+
+    SuperLU computes a float64 factorization. Reusing its L/U factors in
+    multiple-precision forward/back substitution avoids rounding every
+    correction back to float64, which otherwise stalls iterative refinement
+    near machine precision.
+    """
+    lower = lu.L.tocsr()
+    upper = lu.U.tocsr()
+
+    def convert(value):
+        if complex_mode:
+            return mp.mpc(float(np.real(value)), float(np.imag(value)))
+        return mpf(float(value))
+
+    lower_rows = []
+    upper_rows = []
+    for i in range(dimension):
+        lower_rows.append([
+            (int(lower.indices[k]), convert(lower.data[k]))
+            for k in range(lower.indptr[i], lower.indptr[i + 1])
+        ])
+        upper_rows.append([
+            (int(upper.indices[k]), convert(upper.data[k]))
+            for k in range(upper.indptr[i], upper.indptr[i + 1])
+        ])
+
+    # SuperLU's identity is A[inv(perm_r), :][:, inv(perm_c)] = L * U.
+    inverse_row_permutation = np.argsort(lu.perm_r)
+    inverse_column_permutation = np.argsort(lu.perm_c)
+    zero = mp.mpc(0) if complex_mode else mpf(0)
+
+    def solve(rhs):
+        permuted_rhs = [rhs[int(i)] for i in inverse_row_permutation]
+        forward = [zero for _ in range(dimension)]
+        for i, row in enumerate(lower_rows):
+            subtotal = zero
+            diagonal = None
+            for j, coefficient in row:
+                if j < i:
+                    subtotal += coefficient * forward[j]
+                elif j == i:
+                    diagonal = coefficient
+            if diagonal is None or abs(diagonal) == 0:
+                raise ArithmeticError(f"zero diagonal in SuperLU L factor at row {i}")
+            forward[i] = (permuted_rhs[i] - subtotal) / diagonal
+
+        permuted_solution = [zero for _ in range(dimension)]
+        for i in range(dimension - 1, -1, -1):
+            subtotal = zero
+            diagonal = None
+            for j, coefficient in upper_rows[i]:
+                if j > i:
+                    subtotal += coefficient * permuted_solution[j]
+                elif j == i:
+                    diagonal = coefficient
+            if diagonal is None or abs(diagonal) == 0:
+                raise ArithmeticError(f"zero diagonal in SuperLU U factor at row {i}")
+            permuted_solution[i] = (forward[i] - subtotal) / diagonal
+
+        solution = [zero for _ in range(dimension)]
+        for i, original_index in enumerate(inverse_column_permutation):
+            solution[int(original_index)] = permuted_solution[i]
+        return solution
+
+    return solve
+
+
 def mixed_precision_bottom(
     level: int,
     sector: str,
     iterations: int = 110,
     dps: int = 110,
 ):
-    """Resolve a sector bottom using sparse LU plus multiprecision refinement.
+    """Resolve a sector bottom with sparse-LU preconditioning and MP refinement.
 
-    The sparse LU factorization is formed in float64 as a preconditioner.
-    Every correction residual, matrix-vector product, normalization, and
-    Rayleigh quotient is evaluated in mpmath arithmetic. This is much faster
-    than running high-precision Jacobi-PCG to a tiny tolerance at every outer
-    inverse-iteration step, while retaining a directly checked MP residual.
+    SuperLU supplies a sparse float64 factorization. Its L/U factors are then
+    applied by mpmath forward/back substitution, so every iterative-refinement
+    correction is accumulated at the requested precision rather than rounded
+    back to float64. Matrix-vector products and Rayleigh diagnostics are also MP.
     """
     started = time.time()
     sector = sector.upper()
@@ -483,10 +551,9 @@ def mixed_precision_bottom(
 
         if matrix_for_factor.shape != (sector_n, sector_n):
             raise ArithmeticError("sector matrix has an unexpected shape")
-        inner = real_inner
-        vector_norm = complex_norm
 
         lu = splu(matrix_for_factor)
+        solve_lu = multiprecision_lu_solver(lu, sector_n, complex_mode)
         _float_values, float_vectors = eigsh(
             seed_matrix, k=4, which="SA", tol=1e-13
         )
@@ -497,11 +564,10 @@ def mixed_precision_bottom(
             ]
         else:
             vector = [mpf(float(value)) for value in seed]
-        seed_norm = vector_norm(vector)
-        vector = [value / seed_norm for value in vector]
 
-        # Match the linear-solve target to the active precision while leaving
-        # guard digits for the outer inverse iteration.
+        vector_norm = complex_norm
+        vector = [value / vector_norm(vector) for value in vector]
+
         solve_tolerance = mp.power(10, -(dps - 15))
         max_corrections = 12
         max_correction_rounds = 0
@@ -509,21 +575,7 @@ def mixed_precision_bottom(
 
         def refined_solve(rhs):
             rhs_norm = vector_norm(rhs)
-            if complex_mode:
-                rhs_float = np.asarray(
-                    [complex(float(mp.re(value)), float(mp.im(value))) for value in rhs],
-                    dtype=np.complex128,
-                )
-                solution_float = lu.solve(rhs_float)
-                solution = [
-                    mp.mpc(float(value.real), float(value.imag))
-                    for value in solution_float
-                ]
-            else:
-                rhs_float = np.asarray([float(value) for value in rhs], dtype=np.float64)
-                solution_float = lu.solve(rhs_float)
-                solution = [mpf(float(value)) for value in solution_float]
-
+            solution = solve_lu(rhs)
             relative_residual = mpf(1)
             correction_rounds = 0
             for correction_rounds in range(max_corrections + 1):
@@ -537,36 +589,15 @@ def mixed_precision_bottom(
                     break
                 if correction_rounds == max_corrections:
                     raise RuntimeError(
-                        "mixed-precision refinement stalled at relative residual "
+                        "multiprecision LU refinement stalled at relative residual "
                         + mp.nstr(relative_residual, 8)
                     )
-                if complex_mode:
-                    residual_float = np.asarray(
-                        [
-                            complex(float(mp.re(value)), float(mp.im(value)))
-                            for value in residual
-                        ],
-                        dtype=np.complex128,
-                    )
-                    correction = lu.solve(residual_float)
-                    solution = [
-                        solution[i]
-                        + mp.mpc(float(correction[i].real), float(correction[i].imag))
-                        for i in range(sector_n)
-                    ]
-                else:
-                    residual_float = np.asarray(
-                        [float(value) for value in residual], dtype=np.float64
-                    )
-                    correction = lu.solve(residual_float)
-                    solution = [
-                        solution[i] + mpf(float(correction[i]))
-                        for i in range(sector_n)
-                    ]
-
+                correction = solve_lu(residual)
+                solution = [
+                    solution[i] + correction[i] for i in range(sector_n)
+                ]
             return solution, relative_residual, correction_rounds
 
-        outer_residual = mpf(0)
         for _ in range(iterations):
             solution, linear_residual, correction_rounds = refined_solve(vector)
             max_linear_residual = max(max_linear_residual, linear_residual)
@@ -578,8 +609,8 @@ def mixed_precision_bottom(
             mp.fsum(coefficient * vector[j] for j, coefficient in row)
             for row in rows
         ]
-        ritz_value = inner(vector, product)
-        outer_residual = vector_norm(
+        ritz_value = real_inner(vector, product)
+        residual = vector_norm(
             [product[i] - ritz_value * vector[i] for i in range(sector_n)]
         )
 
@@ -587,7 +618,7 @@ def mixed_precision_bottom(
             "level": level,
             "sector": sector,
             "lambda": ritz_value + 1,
-            "residual": outer_residual,
+            "residual": residual,
             "linear_residual": max_linear_residual,
             "full_dimension": full_n,
             "sector_dimension": sector_n,
@@ -596,6 +627,7 @@ def mixed_precision_bottom(
             "correction_rounds": max_correction_rounds,
             "seconds": time.time() - started,
         }
+
 
 
 
