@@ -642,10 +642,10 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
           (fun p => decide (p ≠ (gasketScale (n + 3), 0))) ++
           ((((gasketVertexOrder (n + 3)).map
               (gasketChildPoint (n + 3) .corner2)).filter
-            (fun p => decide (p ≠ (0, gasketScale (n + 3)))).filter
+            (fun p => decide (p ≠ (0, gasketScale (n + 3))))).filter
             (fun p => decide
               (p ≠ (gasketScale (n + 3), gasketScale (n + 3)))))) := by
-    simpa only [T] using hBlocks
+    simpa only [T, List.nil_append] using hBlocks
   rw [gasketVertexOrder_succ_explicit (n + 3)]
   rw [hShape]
   exact hBlocksCanonical
