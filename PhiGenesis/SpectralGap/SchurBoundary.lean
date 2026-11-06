@@ -2407,7 +2407,7 @@ theorem schurBootstrap_levelThree_state_box
   have hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda :=
     le_trans hwindow.1 hlambda.1
   have hlambda_upper : lambda ≤ (131 / 100 : ℝ) :=
-    le_trans hlambda.2.2.2 hlambda.2
+    le_trans hlambda.2 hwindow.2.2.2
   have hlevelTwo :=
     schurBootstrap_levelTwo_state_box lambda hlambda
   have ha2_lower : -(1 / 1000 : ℝ) ≤ a2 := by
