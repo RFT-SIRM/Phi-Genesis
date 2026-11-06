@@ -1,0 +1,52 @@
+name: spectral-gap-high-precision
+
+on:
+  push:
+    branches:
+      - research/spectral-gap-high-precision-2026-11-06
+    paths:
+      - ".github/workflows/spectral-gap-high-precision.yml"
+      - "computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py"
+      - "phi_genesis/**"
+      - "pyproject.toml"
+  workflow_dispatch:
+
+jobs:
+  level-ten-and-e-nine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: pip install -e .
+      - name: Compute A1 bottom at level 10 (330 decimal digits)
+        shell: bash
+        run: |
+          set -o pipefail
+          python computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py \
+            --mixed-precision-levels 10 \
+            --mixed-precision-sectors A1 \
+            --mixed-precision-dps 330 \
+            --mixed-precision-iterations 110 2>&1 | tee a1-level10.txt
+      - name: Compute E-sector bottom at level 9 (200 decimal digits)
+        if: always()
+        shell: bash
+        run: |
+          set -o pipefail
+          python computational/spectral_gap_theta_2pi/symmetry_sector_bottom.py \
+            --mixed-precision-levels 9 \
+            --mixed-precision-sectors E \
+            --mixed-precision-dps 200 \
+            --mixed-precision-iterations 110 2>&1 | tee e-level9.txt
+      - name: Upload numerical logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spectral-gap-level10-e9-results
+          path: |
+            a1-level10.txt
+            e-level9.txt
+          if-no-files-found: warn
