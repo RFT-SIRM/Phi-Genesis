@@ -883,3 +883,43 @@ prove the Schur state-box induction. The previously derived Schur factor
 parameter hypotheses are valid at each step. Establishing those hypotheses
 for every step, including the root window and the diagonal coordinate, is
 still the outstanding bootstrap task.
+
+
+## 47. Finite-horizon drift estimate with prefix-only hypotheses (2026-11-06)
+
+Section 46 gave the abstract finite sum and drift estimate, but its Lean
+interface quantified the contraction and diagonal-step assumptions over
+all natural numbers. That interface is stronger than needed for a proof
+about a fixed finite Schur-recursion prefix and obscures the induction
+boundary.
+
+Added the theorem diagonal_drift_total_le_four_mul_initial_sq_until.
+Its assumptions are now restricted to the finite prefix:
+
+- 0 <= u_n for n <= N;
+- u_(n+1) <= (1/2) u_n for n < N;
+- |a_(n+1)-a_n| <= 2*u_n^2 for n < N.
+
+The proof defines a zero extension of u after N and a constant
+extension of a after N, then applies the already checked all-index
+summation theorem. This avoids assuming or referring to any values of the
+original sequences beyond the endpoint.
+
+The numeric corollary
+diagonal_drift_total_le_144_e_minus72_until adds only
+u_0 <= 6*10^-37 and concludes
+
+|a_N-a_0| <= 4*(6*10^-37)^2 = 1.44*10^-72.
+
+This is the quantitative margin budget for the diagonal coordinate on
+any finite prefix. It is much smaller than the 10^-35 state-box width.
+The estimate is conditional on the local contraction and diagonal-step
+bounds along that prefix; it does not itself prove the state-box hypotheses.
+
+The next proof step is to use this prefix-only theorem inside a simultaneous
+induction for the concrete Schur sequences (a_n,b_n) at a fixed parameter
+in [1.309,1.31]. The induction needs a separately certified initial
+diagonal margin at level 6, the signed initial b interval, and the
+one-step Schur update identities. The spectral parameter window must still
+be justified for the intended A1 root; no infinite-level limit is claimed
+by this finite-prefix lemma.

@@ -329,23 +329,19 @@ bound can be iterated.
 
 
 
-A finite-sum consequence of the geometric contraction is now formalized
-abstractly in Lean. If `u_n >= 0` and
-`u_(n+1) <= (1/2)u_n`, then for every finite `N`,
+A finite-sum consequence of the geometric contraction is formalized
+abstractly in Lean. If u_n >= 0 and u_(n+1) <= (1/2)u_n, then
+sum_{k < N} u_k^2 <= 2*u_0^2, and the diagonal estimate
+|a_(k+1)-a_k| <= 2*u_k^2 gives |a_N-a_0| <= 4*u_0^2.
 
-`sum_{k < N} u_k^2 <= 2*u_0^2`.
-
-Combining this with the diagonal one-step estimate
-`|a_(k+1)-a_k| <= 2*u_k^2` gives
-
-`|a_N-a_0| <= 4*u_0^2`.
-
-The proof is finite and conditional on the displayed sequence bounds.
-The actual Schur contraction `10^-36` is stronger than the required
-`1/2`, but the level-by-level state-box and root-window hypotheses needed
-to iterate it have not yet been proved invariant. The result therefore
-provides the summation mechanism, not yet an unconditional all-level
-spectral-limit theorem.
+The finite-horizon version diagonal_drift_total_le_four_mul_initial_sq_until
+requires these hypotheses only for indices before N; its proof extends the
+finite segment by zero/constant tails. With u_0 <= 6e-37, Lean further gives
+the explicit bound |a_N-a_0| <= 1.44e-72. This is the summable-drift
+estimate needed to close the diagonal coordinate once the local Schur
+bounds and initial margin are established. The all-level state-box and
+root-window induction remain separate obligations, so this is not yet an
+unconditional spectral-limit theorem.
 
 ### A1 derivative-transition interval certificate (levels 5–14)
 

@@ -885,4 +885,79 @@ theorem diagonal_drift_total_le_four_mul_initial_sq
         (by norm_num)
     _ = 4 * (u 0) ^ 2 := by ring
 
+
+/-- Finite-horizon diagonal drift bound. Only the hypotheses on indices
+strictly before N are needed; after N, extend u by zero and hold a fixed. -/
+theorem diagonal_drift_total_le_four_mul_initial_sq_until
+    (u a : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, n ≤ N → 0 ≤ u n)
+    (hcontract : ∀ n, n < N →
+      u (n + 1) ≤ (1 / 2 : ℝ) * u n)
+    (hdiagonal_step :
+      ∀ n, n < N → |a (n + 1) - a n| ≤ 2 * (u n) ^ 2) :
+    |a N - a 0| ≤ 4 * (u 0) ^ 2 := by
+  let uExt : ℕ → ℝ := fun n => if n ≤ N then u n else 0
+  let aExt : ℕ → ℝ := fun n => if n ≤ N then a n else a N
+  have huExt_nonneg : ∀ n, 0 ≤ uExt n := by
+    intro n
+    by_cases hn : n ≤ N
+    · simpa [uExt, hn] using hu_nonneg n hn
+    · simp [uExt, hn]
+  have hcontractExt : ∀ n,
+      uExt (n + 1) ≤ (1 / 2 : ℝ) * uExt n := by
+    intro n
+    by_cases hn : n ≤ N
+    · by_cases hn1 : n + 1 ≤ N
+      · have hlt : n < N := by omega
+        simpa [uExt, hn, hn1] using hcontract n hlt
+      · have heq : n = N := by omega
+        subst n
+        have hnonneg : 0 ≤ u N := hu_nonneg N le_rfl
+        have hnext : ¬ N + 1 ≤ N := by omega
+        simp [uExt, hnext]
+        exact mul_nonneg (by norm_num) hnonneg
+    · have hn1 : ¬ n + 1 ≤ N := by omega
+      simp [uExt, hn, hn1]
+  have hdiagonalExt : ∀ n,
+      |aExt (n + 1) - aExt n| ≤ 2 * (uExt n) ^ 2 := by
+    intro n
+    by_cases hn : n ≤ N
+    · by_cases hn1 : n + 1 ≤ N
+      · have hlt : n < N := by omega
+        simpa [aExt, uExt, hn, hn1] using hdiagonal_step n hlt
+      · have heq : n = N := by omega
+        subst n
+        have hnext : ¬ N + 1 ≤ N := by omega
+        simp [aExt, uExt, hnext]
+        positivity
+    · have hn1 : ¬ n + 1 ≤ N := by omega
+      simp [aExt, uExt, hn, hn1]
+  have htotal :=
+    diagonal_drift_total_le_four_mul_initial_sq
+      uExt aExt N huExt_nonneg hcontractExt hdiagonalExt
+  simpa [uExt, aExt] using htotal
+
+/-- With the level-6 off-diagonal bound, the finite total diagonal drift
+is at most 1.44e-72. The hypotheses are only required through N. -/
+theorem diagonal_drift_total_le_144_e_minus72_until
+    (u a : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, n ≤ N → 0 ≤ u n)
+    (hcontract : ∀ n, n < N →
+      u (n + 1) ≤ (1 / 2 : ℝ) * u n)
+    (hdiagonal_step :
+      ∀ n, n < N → |a (n + 1) - a n| ≤ 2 * (u n) ^ 2)
+    (hu0_upper : u 0 ≤ (6 / 10 ^ 37 : ℝ)) :
+    |a N - a 0| ≤ (144 / 10 ^ 74 : ℝ) := by
+  have htotal :=
+    diagonal_drift_total_le_four_mul_initial_sq_until
+      u a N hu_nonneg hcontract hdiagonal_step
+  have hu0_nonneg : 0 ≤ u 0 := hu_nonneg 0 (Nat.zero_le N)
+  have hsq :
+      (u 0) ^ 2 ≤ (6 / 10 ^ 37 : ℝ) ^ 2 := by
+    nlinarith
+  calc
+    |a N - a 0| ≤ 4 * (u 0) ^ 2 := htotal
+    _ ≤ 4 * (6 / 10 ^ 37 : ℝ) ^ 2 := by nlinarith
+    _ = (144 / 10 ^ 74 : ℝ) := by norm_num
+
 end PhiGenesis.SpectralGap
