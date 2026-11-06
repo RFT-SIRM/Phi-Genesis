@@ -438,7 +438,7 @@ def main():
     args = parser.parse_args()
 
     results_a1 = {}
-    for level in (4, 5, 6):
+    for level in (2, 3, 4, 5, 6):
         result = a1_bottom(level, args.a1_iterations)
         results_a1[level] = result
         print(
@@ -477,19 +477,26 @@ def main():
             flush=True,
         )
 
-    delta5 = results_a1[5]["lambda"] - results_a1[4]["lambda"]
-    delta6 = results_a1[6]["lambda"] - results_a1[5]["lambda"]
-    ratio5 = delta5 / mpf("1.06331839720311836478e-2")**2
-    ratio6 = delta6 / delta5**2
+    deltas = {
+        level: results_a1[level]["lambda"] - results_a1[level - 1]["lambda"]
+        for level in (3, 4, 5, 6)
+    }
+    ratios = {
+        level: deltas[level] / deltas[level - 1] ** 2
+        for level in (4, 5, 6)
+    }
     splitting5 = results_e[5]["lambda"] - results_a1[5]["lambda"]
     splitting6 = results_e[6]["lambda"] - results_a1[6]["lambda"]
-    predicted_delta7 = ratio6 * delta6**2
+    predicted_delta7 = ratios[6] * deltas[6] ** 2
     conditional_limit = results_a1[6]["lambda"] + predicted_delta7
 
-    print(f"delta_5={mp.nstr(delta5, 45)}")
-    print(f"delta_6={mp.nstr(delta6, 45)}")
-    print(f"delta_5/delta_4^2={mp.nstr(ratio5, 35)}")
-    print(f"delta_6/delta_5^2={mp.nstr(ratio6, 35)}")
+    for level in (3, 4, 5, 6):
+        print(f"delta_{level}={mp.nstr(deltas[level], 45)}")
+    for level in (4, 5, 6):
+        print(
+            f"delta_{level}/delta_{level - 1}^2="
+            f"{mp.nstr(ratios[level], 35)}"
+        )
     print(f"A1_E_splitting_5={mp.nstr(splitting5, 35)}")
     print(f"A1_E_splitting_6={mp.nstr(splitting6, 35)}")
     print(f"conditional_delta_7={mp.nstr(predicted_delta7, 35)}")
