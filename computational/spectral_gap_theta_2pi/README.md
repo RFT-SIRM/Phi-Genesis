@@ -13,19 +13,17 @@ recurrence in `computational/higher_moments_z2` and from the vertex-order formal
 
 ## 1. The object
 
-At the central twist angle **θ = 2π** the phase on a flux edge is the pure sign **−1**. The SU(2)
-operator is then gauge-equivalent to the **signless Laplacian**
+At the central twist angle **θ = 2π**, the connection link variable is the pure sign **−1**. To keep the edge-sign conventions distinct, write the connection sign as `U_uv=-s_uv`, where the local-face signed-adjacency convention used in `H = D + A_s` has `s_ab=+1` on the first (horizontal) edge of each ordered upward face and `s_ac=s_bc=-1` on the other two edges.
+
+Thus every elementary face has `s_ab s_ac s_bc = +1`, while the connection holonomy is `U_ab U_ac U_bc = -1`. The signed adjacency `A_s` is therefore a vertex-gauge transform of the ordinary adjacency `A`: with `ε(i,j)=(-1)^j`, one has `s_uv=ε(u)ε(v)` on every edge. Consequently
 
 $$
-Q \;=\; D + A_s ,
+H = D + A_s = G(D+A)G, \qquad G=\operatorname{diag}(ε),
 $$
 
-where `D` is the degree matrix and `A_s` is the adjacency matrix carrying the local-face signing.
-The project audit reports gauge-equivalence error `0.00e+00` at levels 1–5.
+so `H` is exactly gauge-equivalent to the **ordinary signless graph Laplacian** `Q = D + A`. The product +1 belongs to the signed-adjacency convention `s`; the product −1 belongs to the connection convention `U=-s`. They are not contradictory.
 
-Every triangular face of the gasket then carries sign product **−1** (an odd, frustrated cycle).
-Frustration is what keeps `Q` away from singularity: a signless Laplacian of a connected graph with no
-balanced signing has trivial kernel.
+The gasket graph contains triangular cycles and is non-bipartite, so its ordinary signless Laplacian has trivial kernel. The project audit reports gauge-equivalence error `0.00e+00` at levels 1–5.
 
 ## 2. What is proved (Lean 4)
 
@@ -43,11 +41,15 @@ The earlier 14-digit plateau was caused by ordinary floating-point resolution an
 that the bottom eigenvalue is constant from level 5 onward. Direct high-precision quotient calculations resolve the `A1` bottom through level 9 and the `E` mode through level 8. A separate outward-rounded interval/Schur-inertia certificate now verifies, for every finite level 1–12, that the `A1` root is the simple global minimum and the `E` root is the next eigenvalue with multiplicity two. The limiting value and convergence law as the level tends to infinity remain open. The `S3` symmetry-sector decomposition has also been checked against
 the complete spectrum at levels 2–5.
 
+A focused, independent scalar Schur-root computation is documented in [HIGH_PRECISION_2026-11-06.md](HIGH_PRECISION_2026-11-06.md), with runnable source [schur_bottom_eigenvalue.py](schur_bottom_eigenvalue.py). It reproduces the A1 bottom through level 9 and resolves the A1/E splitting. This corrected note **supersedes the erroneous high-precision conclusions merged in PR #12**: the earlier collapse and non-constant ratio came from Rayleigh quotients of double-precision vectors mixing the nearly degenerate A1 and E channels. The corrected data support a stable quadratic ratio numerically; they do not prove convergence or a limiting law.
+
+
 Run the reproducible calculation from the repository root:
 
 ```bash
 python -m pip install mpmath
 python computational/spectral_gap_theta_2pi/high_precision_bottom.py
+python computational/spectral_gap_theta_2pi/schur_bottom_eigenvalue.py
 ```
 
 The computation uses 80 decimal digits in `mpmath`. Float64 is used only to seed the initial
@@ -277,6 +279,8 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `RESEARCH_LOG_2026-11-05.md` | derivation, audits, earlier eigenvalue tables, and evidence boundary |
 | `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
 | `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
+| `HIGH_PRECISION_2026-11-06.md` | corrected 260-dps A1-root table, quadratic increment ratios, and A1/E splitting; retracts the erroneous PR #12 note |
+| `schur_bottom_eigenvalue.py` | compact independent 260-dps Schur-recursion calculation for A1 and E boundary roots |
 | `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1`/`E` boundary-root continuation |
 | `schur_inertia_certificate.py` | outward-rounded Decimal interval checks and finite-level Schur/inertia certificates for the ground state and first E doublet |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
