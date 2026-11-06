@@ -40,9 +40,9 @@ The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** c
 ## 3. What is observed numerically (not proved)
 
 The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
-that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve
-the bottom eigenvalue through level 8 and independently separate the symmetry sectors of the graph's
-S3 action.
+that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve the `A1` bottom candidate through level 9 and the complex
+`E` sector through level 8. The `S3` symmetry-sector decomposition has also been checked against
+the complete spectrum at levels 2–5.
 
 Run the reproducible calculation from the repository root:
 
@@ -56,7 +56,7 @@ three-dimensional low-eigenspace; block inverse iteration for `(H-I)^{-1}`, prec
 gradients, orthogonalization, and the final 3×3 Rayleigh–Ritz diagonalization are carried out in
 multiple precision. The residual diagnostics are numerical, not interval-arithmetic certificates.
 
-| level m | dim(H) | λ_min (high-precision Rayleigh–Ritz) |
+| level m | dim(H) | computed bottom candidate (high precision) |
 | ---: | ---: | ---: |
 | 2 | 15 | 1.2984378812835756567558911626890933677398… |
 | 3 | 42 | 1.3090710652556068404036933845248248253260… |
@@ -64,7 +64,8 @@ multiple precision. The residual diagnostics are numerical, not interval-arithme
 | 5 | 366 | 1.3091289202808134205376249464114593830015… |
 | 6 | 1,095 | 1.3091289202808134218886230881708101876508… |
 | 7 | 3,282 | 1.3091289202808134218886230881708101885523242511173263434335359844526816970029… |
-| 8 | 9,843 | 1.3091289202808134218886230881708101885523242511173263434335359844526816974044… |
+| 8 | 9,843 | 1.3091289202808134218886230881708101885523242511173263434335359844526816974043999830777949027911712… |
+| 9 | 29,526 | 1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341956895023566459152736… |
 
 At level 5 the next two eigenvalues form a near-degenerate pair at approximately
 `1.309128920280813422564122159050485604429…`. Their separation from the bottom eigenvalue
@@ -81,11 +82,13 @@ The positive increments `δ_m = λ_m − λ_(m−1)` and their quadratic ratios 
 | 5→6 | 1.35099814175935080465·10⁻¹⁸ | 0.4939504986563758755 |
 | 6→7 | 9.01556448009307575101·10⁻³⁷ | 0.4939504899001989666 |
 | 7→8 | 4.01484948291304833402·10⁻⁷³ | 0.4939504899001989529 |
+| 8→9 | 7.96199603289170721200·10⁻¹⁴⁶ | 0.49395048990019895288 |
 
-Five successive ratios are now consistent with a quadratic correction law with coefficient near
-`0.49395049`. The latest two ratios agree to about 17 significant digits. This is strong numerical
-evidence, but remains an empirical pattern rather than a theorem. Extrapolations based on it are
-conditional and carry no certified error bound. The convergence law and the limiting value remain open.
+Six successive ratios are now consistent with a quadratic correction law with coefficient near
+`0.4939504899001989529`. The latest two ratios agree to about 19 significant digits. This is strong
+numerical evidence, but remains an empirical pattern rather than a theorem. Extrapolations based on
+it are conditional and carry no certified error bound. The convergence law and the limiting value
+remain open.
 
 The observed eigenvectors are concentrated near the three corners, but they do not have compact
 support: the apparent support depends on the numerical threshold used to display small components.
@@ -120,16 +123,30 @@ Their difference is approximately `6.02227422437·10⁻⁷³`; the high-precisio
 the observed splitting. The next eigenvalues in both sectors are near 2, giving a gap of about
 `0.69087108` above the bottom mode.
 
-At level 8 the `A1) quotient has dimension `1,645` and gives
-`1.3091289202808134218886230881708101885523242511173263434335359844526816974044…`,
-with residual `1.25·10⁻⁶³`. A level-8 `E) calculation has not yet been completed. The
-level-7/8 increment ratio agrees with the previous ratio to about 17 significant digits.
+At level 8, `dim(A1)=1,645`, `dim(A2)=1,636`, and `dim(E)=3,281`, so
+`1,645 + 1,636 + 2·3,281 = 9,843`. The high-precision `A1` bottom is
+`1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341948933027533567445524…`,
+with residual `1.04·10⁻⁹⁷`. The bottom of one `E` copy is
+`1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341960876021582905006341…`,
+with residual `9.45·10⁻⁹⁸`. Their splitting is approximately
+`1.1942994049337560817·10⁻¹⁴⁵`. The float64 sector spectrum places the next modes near 2,
+about `0.69087108` above the bottom. Using this numerically observed separation, the residual-squared
+Rayleigh error estimates are around `10⁻¹⁹⁴`, much smaller than the splitting; these are not
+interval certificates.
+
+At level 9, `dim(A1)=4,926` in a graph of `29,526` vertices. Its bottom is
+`1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341956895023566459152736…`,
+with residual `8.11·10⁻⁹⁸`. The `A2` and `E` sectors at level 9 have not yet been computed.
+
+The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.7409257348503510` at level 7
+and `0.7409257348502984` at level 8. The agreement is about 13 significant digits. This is a
+second empirical scaling observation, distinct from the increment coefficient `0.49395049`.
 Residuals are numerical diagnostics, not interval certificates.
 
 ## 4. What is not claimed
 
 - That `1.309128920280813421889…` is the exact limit, or a closed form for it. It is a conditional numerical extrapolation.
-- That the quadratic correction law holds for all levels. Five successive ratios are currently available, but no proof controls all subsequent levels.
+- That the quadratic correction law holds for all levels. Six successive ratios are currently available, but no proof controls all subsequent levels.
 - That the local-face model is *the* external θ = 2π model. The cited external `sg.py`/`gap.py` sources were not present in the repository, so this identification is **conditional**.
 - That this operator equals the pivot-zero all-hole-flux representative produced by the default `mobius.py` solver. It does not.
 - That the constant is an analogue of π. No such definition or theorem exists yet.
@@ -142,7 +159,7 @@ Residuals are numerical diagnostics, not interval certificates.
    evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation:
    thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly
    constant between levels 4 and 5.
-3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` beyond the two observed ratios.
+3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` beyond the six observed ratios.
 4. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
