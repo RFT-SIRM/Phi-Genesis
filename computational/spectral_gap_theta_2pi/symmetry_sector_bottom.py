@@ -793,7 +793,39 @@ def main():
     parser.add_argument("--mixed-precision-solve-digits", type=int, default=None)
     parser.add_argument("--mixed-precision-iterations", type=int, default=110)
     parser.add_argument("--mixed-precision-progress-every", type=int, default=0)
+    parser.add_argument(
+        "--mixed-precision-only",
+        action="store_true",
+        help="skip the standard level-2-to-6 diagnostics and run only requested sectors",
+    )
     args = parser.parse_args()
+
+    if args.mixed_precision_only:
+        if not args.mixed_precision_levels:
+            parser.error("--mixed-precision-only requires --mixed-precision-levels")
+        for level in args.mixed_precision_levels:
+            for sector in args.mixed_precision_sectors:
+                result = mixed_precision_bottom(
+                    level,
+                    sector,
+                    iterations=args.mixed_precision_iterations,
+                    dps=args.mixed_precision_dps,
+                    solve_digits=args.mixed_precision_solve_digits,
+                    progress_every=args.mixed_precision_progress_every,
+                )
+                print(
+                    f"mixed {sector} level {level}: "
+                    f"n={result['full_dimension']} "
+                    f"sector_n={result['sector_dimension']} "
+                    f"lambda={mp.nstr(result['lambda'], 320)} "
+                    f"residual={mp.nstr(result['residual'], 12)} "
+                    f"linear_residual={mp.nstr(result['linear_residual'], 12)} "
+                    f"solve_digits={result['solve_digits']} "
+                    f"correction_rounds={result['correction_rounds']} "
+                    f"elapsed={result['seconds']:.2f}s",
+                    flush=True,
+                )
+        return
 
     results_a1 = {}
     for level in (2, 3, 4, 5, 6):
