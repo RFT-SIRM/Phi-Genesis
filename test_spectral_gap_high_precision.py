@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import subprocess
+import sys
 
 import mpmath as mp
 import numpy as np
@@ -190,3 +192,31 @@ def test_sparse_a1_quotient_matches_dense_reference(level):
     for i, row in enumerate(rows):
         for j, value in row:
             assert abs(value - dense_mp[i, j]) < mp.mpf("1e-60")
+
+
+
+def test_mixed_precision_only_cli_skips_baseline_diagnostics():
+    command = [
+        sys.executable,
+        str(SYMMETRY_SCRIPT),
+        "--mixed-precision-only",
+        "--mixed-precision-levels", "2",
+        "--mixed-precision-sectors", "A1",
+        "--mixed-precision-dps", "75",
+        "--mixed-precision-solve-digits", "55",
+        "--mixed-precision-iterations", "8",
+        "--mixed-precision-progress-every", "4",
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=Path(__file__).parent,
+        capture_output=True,
+        text=True,
+        timeout=90,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert "mixed A1 level 2:" in completed.stdout
+    assert "iteration 4/8" in completed.stdout
+    assert "iteration 8/8" in completed.stdout
+    assert "A1 level 2: n=" not in completed.stdout
