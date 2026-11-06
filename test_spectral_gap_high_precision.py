@@ -68,8 +68,29 @@ symmetry_sector_bottom = importlib.util.module_from_spec(SYMMETRY_SPEC)
 SYMMETRY_SPEC.loader.exec_module(symmetry_sector_bottom)
 
 
-@pytest.mark.parametrize("level", [3, 4, 5])
+@pytest.mark.parametrize("level", [3, 4, 5, 6])
 def test_alternating_a2_sector_bottom_is_two(level):
     result = symmetry_sector_bottom.a2_bottom(level, iterations=40)
     assert abs(result["lambda"] - mp.mpf("2")) < mp.mpf("1e-25")
     assert result["residual"] < mp.mpf("1e-25")
+
+
+
+def test_level_six_a1_sector_bottom():
+    result = symmetry_sector_bottom.a1_bottom(6, iterations=60)
+    expected = mp.mpf(
+        "1.309128920280813421888623088170810187650767803108018768"
+    )
+    assert result["sector_dimension"] == 186
+    assert abs(result["lambda"] - expected) < mp.mpf("1e-35")
+    assert result["residual"] < mp.mpf("1e-40")
+
+
+def test_level_six_e_sector_near_degenerate_mode():
+    result = symmetry_sector_bottom.e_sector_bottom(6, iterations=15)
+    expected = mp.mpf(
+        "1.309128920280813421888623088170810189003102475121980131"
+    )
+    assert result["sector_dimension"] == 365
+    assert abs(result["lambda"] - expected) < mp.mpf("1e-30")
+    assert result["residual"] < mp.mpf("1e-20")
