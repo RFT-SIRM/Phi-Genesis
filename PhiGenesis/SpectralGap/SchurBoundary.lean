@@ -1318,14 +1318,21 @@ theorem schurBoundaryTrajectory_A1_increment_bounds
       2 * (schurBoundaryTrajectory lambda (a₀, b₀) k).2
   have hmono : f n ≤ f (n + 1) := by
     simpa [f, schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal.1
-  have hupper : f (n + 1) ≤ 2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| + f n := by
+  have hupper_diff :
+      f (n + 1) - f n ≤
+        2 * (-(schurBoundaryTrajectory lambda (a₀, b₀) n).2) := by
     simpa [f, schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal.2
+  have hb_abs :
+      |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| =
+        -(schurBoundaryTrajectory lambda (a₀, b₀) n).2 :=
+    abs_of_nonpos hstate.2.2
   constructor
   · change 0 ≤ f (n + 1) - f n
     exact sub_nonneg.mpr hmono
   · change f (n + 1) - f n ≤
       2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
-    linarith
+    rw [hb_abs]
+    exact hupper_diff
 
 
 /-- The A1 characteristic stays nonnegative at every finite Schur level
