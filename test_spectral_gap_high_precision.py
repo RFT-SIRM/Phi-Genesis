@@ -11,6 +11,7 @@ import importlib.util
 from pathlib import Path
 
 import mpmath as mp
+import numpy as np
 import pytest
 
 SCRIPT = (
@@ -94,3 +95,46 @@ def test_level_six_e_sector_near_degenerate_mode():
     assert result["sector_dimension"] == 365
     assert abs(result["lambda"] - expected) < mp.mpf("1e-30")
     assert result["residual"] < mp.mpf("1e-20")
+
+
+
+@pytest.mark.parametrize("level", [2, 3, 4, 5])
+def test_s3_irreducible_sector_spectra_reconstruct_full_graph(level):
+    """The A1, A2, and two conjugate E sectors exhaust the full spectrum."""
+    (
+        a1_shifted,
+        a1_float,
+        full_graph,
+        full_dimension,
+        a1_dimension,
+    ) = symmetry_sector_bottom.build_a1_quotient(level)
+    (
+        a2_shifted,
+        a2_float,
+        a2_full_dimension,
+        a2_dimension,
+    ) = symmetry_sector_bottom.build_a2_quotient(level)
+    (
+        _e_rows,
+        _e_diagonal,
+        e_float,
+        e_full_dimension,
+        e_dimension,
+    ) = symmetry_sector_bottom.build_e_sector(level)
+
+    assert a2_full_dimension == full_dimension
+    assert e_full_dimension == full_dimension
+    assert a1_dimension + a2_dimension + 2 * e_dimension == full_dimension
+
+    a1_spectrum = np.linalg.eigvalsh(a1_float + np.eye(a1_dimension))
+    a2_spectrum = np.linalg.eigvalsh(a2_float + np.eye(a2_dimension))
+    e_spectrum = np.linalg.eigvalsh(e_float.toarray())
+    sector_union = np.sort(
+        np.concatenate([a1_spectrum, a2_spectrum, e_spectrum, e_spectrum])
+    )
+    full_spectrum = np.linalg.eigvalsh(full_graph.toarray())
+
+    # Independent dense diagonalizations are compared with a tolerance
+    # comfortably above the observed float64 roundoff (<= 1.2e-14).
+    assert sector_union.shape == full_spectrum.shape
+    assert np.max(np.abs(sector_union - full_spectrum)) < 5e-12
