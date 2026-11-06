@@ -118,6 +118,7 @@ def test_s3_irreducible_sector_spectra_reconstruct_full_graph(level):
         _e_rows,
         _e_diagonal,
         e_float,
+        _e_full_graph,
         e_full_dimension,
         e_dimension,
     ) = symmetry_sector_bottom.build_e_sector(level)
