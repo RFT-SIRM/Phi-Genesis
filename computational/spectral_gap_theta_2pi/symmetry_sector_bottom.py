@@ -8,9 +8,11 @@ coordinates. Its low cluster is resolved into the fully symmetric A1 sector
 and one complex C3-character sector (the two conjugate copies form the
 two-dimensional E representation).
 
-Float64 is used only to seed inverse iteration. The quotient matrices,
-factorization / preconditioned CG solves, Rayleigh quotients, and residuals
-are computed with mpmath. Residuals are diagnostics, not interval certificates.
+Float64 is used for graph assembly, the starting eigensolver, and sparse
+SuperLU factorization. The mixed-precision path applies those sparse L/U
+factors with mpmath forward/back substitution and iterative refinement;
+quotient matrix-vector products, Rayleigh quotients, and residuals are also
+computed in mpmath. Residuals are diagnostics, not interval certificates.
 """
 from __future__ import annotations
 
