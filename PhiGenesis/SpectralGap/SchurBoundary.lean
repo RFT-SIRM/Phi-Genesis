@@ -1560,4 +1560,173 @@ theorem schurBootstrapEndpoints_A1_signs_all_finite_levels :
         hupp.1 hupp.2.1 hupp.2.2.1
         hwindow.2.2.1 hwindow.2.2.2 hupp.2.2.2
 
+
+
+/-- The next diagonal Schur coefficient is continuous at a parameter
+whenever the input coordinates are continuous there and both scalar
+Schur denominators are nonzero at that parameter. -/
+theorem schurNextDiagonal_continuousAt
+    (a b c : ℝ → ℝ) (x : ℝ)
+    (ha : ContinuousAt a x)
+    (hb : ContinuousAt b x)
+    (hc : ContinuousAt c x)
+    (hc0 : c x ≠ 0)
+    (hc3 : c x + 3 * b x ≠ 0) :
+    ContinuousAt
+      (fun y => schurNextDiagonal (a y) (b y) (c y)) x := by
+  have hcb : ContinuousAt (fun y => c y + b y) x := hc.add hb
+  have hc3_cont : ContinuousAt (fun y => c y + 3 * b y) x :=
+    hc.add (continuousAt_const.mul hb)
+  have hden : ContinuousAt
+      (fun y => c y * (c y + 3 * b y)) x :=
+    hc.mul hc3_cont
+  have hbsq : ContinuousAt (fun y => (b y) ^ 2) x := hb.pow 2
+  have hnum2 : ContinuousAt (fun y => 2 * (b y) ^ 2) x :=
+    continuousAt_const.mul hbsq
+  have hnum : ContinuousAt
+      (fun y => (2 * (b y) ^ 2) * (c y + b y)) x :=
+    hnum2.mul hcb
+  have hquot : ContinuousAt
+      (fun y =>
+        ((2 * (b y) ^ 2) * (c y + b y)) /
+          (c y * (c y + 3 * b y))) x :=
+    hnum.div hden (mul_ne_zero hc0 hc3)
+  simpa [schurNextDiagonal] using ha.sub hquot
+
+
+/-- The next off-diagonal Schur coefficient is continuous under the
+same pointwise nonvanishing condition on the two Schur denominators. -/
+theorem schurNextOffDiagonal_continuousAt
+    (b c : ℝ → ℝ) (x : ℝ)
+    (hb : ContinuousAt b x)
+    (hc : ContinuousAt c x)
+    (hc0 : c x ≠ 0)
+    (hc3 : c x + 3 * b x ≠ 0) :
+    ContinuousAt
+      (fun y => schurNextOffDiagonal (b y) (c y)) x := by
+  have hcb : ContinuousAt (fun y => c y - b y) x := hc.sub hb
+  have hc3_cont : ContinuousAt (fun y => c y + 3 * b y) x :=
+    hc.add (continuousAt_const.mul hb)
+  have hden : ContinuousAt
+      (fun y => c y * (c y + 3 * b y)) x :=
+    hc.mul hc3_cont
+  have hbsq : ContinuousAt (fun y => (b y) ^ 2) x := hb.pow 2
+  have hneg_sq : ContinuousAt (fun y => -((b y) ^ 2)) x := by
+    simpa using
+      (continuousAt_const.mul hbsq :
+        ContinuousAt (fun y => (-1 : ℝ) * (b y) ^ 2) x)
+  have hnum : ContinuousAt
+      (fun y => (-((b y) ^ 2)) * (c y - b y)) x :=
+    hneg_sq.mul hcb
+  have hquot : ContinuousAt
+      (fun y =>
+        ((-((b y) ^ 2)) * (c y - b y)) /
+          (c y * (c y + 3 * b y))) x :=
+    hnum.div hden (mul_ne_zero hc0 hc3)
+  simpa [schurNextOffDiagonal] using hquot
+
+
+/-- Both coordinates of the original Schur trajectory are continuous at
+a fixed parameter through level n, provided every pivot denominator
+encountered before level n is nonzero there. -/
+theorem schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots
+    (lambda₀ : ℝ) :
+    ∀ n : ℕ,
+      (∀ k, k < n →
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ ≠ 0 ∧
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ +
+            3 * (schurBoundaryTrajectory lambda₀
+              (2 - lambda₀, 1) k).2 ≠ 0) →
+      ContinuousAt
+        (fun lambda =>
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) n).1)
+        lambda₀ ∧
+      ContinuousAt
+        (fun lambda =>
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) n).2)
+        lambda₀ := by
+  intro n
+  induction n with
+  | zero =>
+      intro hden
+      constructor
+      · simpa [schurBoundaryTrajectory] using
+          (continuousAt_const.sub continuousAt_id :
+            ContinuousAt (fun lambda : ℝ => 2 - lambda) lambda₀)
+      · simpa [schurBoundaryTrajectory] using
+          (continuousAt_const :
+            ContinuousAt (fun _ : ℝ => (1 : ℝ)) lambda₀)
+  | succ n ih =>
+      intro hden
+      have hprev := ih (by
+        intro k hk
+        exact hden k (by omega))
+      let af : ℝ → ℝ := fun lambda =>
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) n).1
+      let bf : ℝ → ℝ := fun lambda =>
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) n).2
+      let cf : ℝ → ℝ := fun lambda =>
+        schurMidpointPivot (af lambda) (bf lambda) lambda
+      have hAprev : ContinuousAt af lambda₀ := by
+        simpa [af] using hprev.1
+      have hBprev : ContinuousAt bf lambda₀ := by
+        simpa [bf] using hprev.2
+      have htwoA : ContinuousAt (fun lambda => 2 * af lambda) lambda₀ :=
+        continuousAt_const.mul hAprev
+      have htwoA_add_lambda :
+          ContinuousAt (fun lambda => 2 * af lambda + lambda) lambda₀ :=
+        htwoA.add continuousAt_id
+      have hC : ContinuousAt cf lambda₀ := by
+        simpa [cf, schurMidpointPivot] using htwoA_add_lambda.sub hBprev
+      have hnonzero :
+          cf lambda₀ ≠ 0 ∧ cf lambda₀ + 3 * bf lambda₀ ≠ 0 := by
+        simpa [cf, af, bf] using hden n (by omega)
+      have hA_next :=
+        schurNextDiagonal_continuousAt af bf cf lambda₀
+          hAprev hBprev hC hnonzero.1 hnonzero.2
+      have hB_next :=
+        schurNextOffDiagonal_continuousAt bf cf lambda₀
+          hBprev hC hnonzero.1 hnonzero.2
+      constructor
+      · simpa [af, bf, cf, schurBoundaryTrajectory,
+          schurBoundaryStateStep] using hA_next
+      · simpa [af, bf, cf, schurBoundaryTrajectory,
+          schurBoundaryStateStep] using hB_next
+
+
+/-- The A1 characteristic at each finite level is continuous at any
+parameter where the finitely many preceding Schur denominators are
+nonzero. Uniform nonvanishing on the whole bootstrap interval remains
+a separate hypothesis to be established. -/
+theorem schurBoundaryTrajectory_A1_continuousAt_of_nonzero_pivots
+    (lambda₀ : ℝ) (n : ℕ)
+    (hden :
+      ∀ k, k < n →
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ ≠ 0 ∧
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ +
+            3 * (schurBoundaryTrajectory lambda₀
+              (2 - lambda₀, 1) k).2 ≠ 0) :
+    ContinuousAt
+      (fun lambda =>
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) n).1 +
+          2 * (schurBoundaryTrajectory lambda (2 - lambda, 1) n).2)
+      lambda₀ := by
+  have hcoords :=
+    schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots
+      lambda₀ n hden
+  exact hcoords.1.add (continuousAt_const.mul hcoords.2)
+
+
 end PhiGenesis.SpectralGap

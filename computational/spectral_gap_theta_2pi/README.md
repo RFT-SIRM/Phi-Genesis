@@ -506,3 +506,10 @@ It is still only a statement at the two fixed endpoints: continuity of
 the level-n characteristic throughout the interval, and a uniform
 all-parameter state/pivot enclosure, remain to be proved before inferring
 a root at every level.
+
+
+The finite-level A1 characteristic is now proved continuous at a parameter
+whenever every Schur denominator encountered before that finite level is
+nonzero there. The Lean result is conditional on this pointwise pivot
+nonvanishing; a uniform denominator bound over the full narrow interval
+is still required before applying the intermediate value theorem.

@@ -1072,3 +1072,25 @@ The next missing condition for an intermediate-value argument is a
 uniform state/pivot bound for all lambda in [L,U], so that each finite
 level characteristic is continuous on that interval. Root existence at
 each finite level and convergence remain open.
+
+
+## 54. Finite-level continuity of the Schur characteristic (2026-11-06)
+
+Added two local continuity lemmas for the rational diagonal/off-diagonal
+Schur updates and an induction theorem
+schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots.
+For the original parameterized initial state (2-lambda, 1), both
+coordinates at level n are continuous at a fixed lambda₀ whenever the
+two scalar denominators c and c+3b are nonzero at every preceding
+step k<n. Consequently,
+schurBoundaryTrajectory_A1_continuousAt_of_nonzero_pivots proves
+continuity at that parameter for the finite-level A1 characteristic.
+
+This is a genuine analytic lemma, but its premise is pointwise
+nonvanishing along the finite trajectory. It does not establish
+nonvanishing uniformly for every lambda in the narrow interval
+[L,U], and it does not yet infer a root from the endpoint signs.
+The next required bridge is a verified finite-prefix denominator bound
+on the whole parameter interval, followed by the interval-closed
+continuity/IVT argument. The infinite-level root convergence problem
+remains open.
