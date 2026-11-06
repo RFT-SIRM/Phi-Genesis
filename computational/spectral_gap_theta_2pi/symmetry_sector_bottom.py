@@ -597,6 +597,8 @@ def mixed_precision_bottom(
     sector: str,
     iterations: int = 110,
     dps: int = 110,
+    solve_digits: int | None = None,
+    progress_every: int = 0,
 ):
     """Resolve a sector bottom with sparse-LU preconditioning and MP refinement.
 
@@ -611,8 +613,19 @@ def mixed_precision_bottom(
         raise ValueError("sector must be one of A1, A2, or E")
     if iterations < 1 or dps < 50:
         raise ValueError("iterations must be positive and dps must be at least 50")
+    if progress_every < 0:
+        raise ValueError("progress_every must be nonnegative")
+    if solve_digits is None:
+        solve_digits = dps - 15
+    if not 30 <= solve_digits < dps:
+        raise ValueError("solve_digits must be at least 30 and less than dps")
 
     with mp.workdps(dps):
+        print(
+            f"mixed {sector} level {level}: assembling graph/quotient "
+            f"(dps={dps}, solve_digits={solve_digits}, iterations={iterations})",
+            flush=True,
+        )
         if sector == "A1":
             (
                 rows,
@@ -645,8 +658,19 @@ def mixed_precision_bottom(
         if matrix_for_factor.shape != (sector_n, sector_n):
             raise ArithmeticError("sector matrix has an unexpected shape")
 
+        print(
+            f"mixed {sector} level {level}: factoring sparse shifted matrix "
+            f"of dimension {sector_n}",
+            flush=True,
+        )
+        factor_started = time.time()
         lu = splu(matrix_for_factor)
         solve_lu = multiprecision_lu_solver(lu, sector_n, complex_mode)
+        print(
+            f"mixed {sector} level {level}: sparse LU ready in "
+            f"{time.time() - factor_started:.1f}s",
+            flush=True,
+        )
         _float_values, float_vectors = eigsh(
             seed_matrix, k=4, which="SA", tol=1e-13
         )
@@ -661,11 +685,11 @@ def mixed_precision_bottom(
         vector_norm = complex_norm
         vector = [value / vector_norm(vector) for value in vector]
 
-        solve_tolerance = mp.power(10, -(dps - 15))
+        solve_tolerance = mp.power(10, -solve_digits)
         # A float64 LU preconditioner typically contributes about 15 digits
-        # per refinement step. Scale the cap with requested precision, with
-        # extra headroom for conditioning and nonuniform pivot growth.
-        max_corrections = max(12, (dps - 15 + 7) // 8 + 4)
+        # per refinement step. Scale the cap with the requested solve accuracy,
+        # with extra headroom for conditioning and nonuniform pivot growth.
+        max_corrections = max(12, (solve_digits + 7) // 8 + 4)
         max_correction_rounds = 0
         max_linear_residual = mpf(0)
 
@@ -694,12 +718,31 @@ def mixed_precision_bottom(
                 ]
             return solution, relative_residual, correction_rounds
 
-        for _ in range(iterations):
+        for iteration in range(1, iterations + 1):
             solution, linear_residual, correction_rounds = refined_solve(vector)
             max_linear_residual = max(max_linear_residual, linear_residual)
             max_correction_rounds = max(max_correction_rounds, correction_rounds)
             solution_norm = vector_norm(solution)
             vector = [value / solution_norm for value in solution]
+            if progress_every and (
+                iteration % progress_every == 0 or iteration == iterations
+            ):
+                progress_product = [
+                    mp.fsum(coefficient * vector[j] for j, coefficient in row)
+                    for row in rows
+                ]
+                progress_ritz = real_inner(vector, progress_product)
+                progress_residual = vector_norm([
+                    progress_product[i] - progress_ritz * vector[i]
+                    for i in range(sector_n)
+                ])
+                print(
+                    f"mixed {sector} level {level}: iteration {iteration}/{iterations} "
+                    f"lambda={mp.nstr(progress_ritz + 1, 70)} "
+                    f"residual={mp.nstr(progress_residual, 6)} "
+                    f"linear_residual={mp.nstr(max_linear_residual, 6)}",
+                    flush=True,
+                )
 
         product = [
             mp.fsum(coefficient * vector[j] for j, coefficient in row)
@@ -720,6 +763,7 @@ def mixed_precision_bottom(
             "sector_dimension": sector_n,
             "iterations": iterations,
             "dps": dps,
+            "solve_digits": solve_digits,
             "correction_rounds": max_correction_rounds,
             "seconds": time.time() - started,
         }
@@ -746,7 +790,9 @@ def main():
         help="sectors to compute when --mixed-precision-levels is supplied",
     )
     parser.add_argument("--mixed-precision-dps", type=int, default=110)
+    parser.add_argument("--mixed-precision-solve-digits", type=int, default=None)
     parser.add_argument("--mixed-precision-iterations", type=int, default=110)
+    parser.add_argument("--mixed-precision-progress-every", type=int, default=0)
     args = parser.parse_args()
 
     results_a1 = {}
@@ -822,6 +868,8 @@ def main():
                 sector,
                 iterations=args.mixed_precision_iterations,
                 dps=args.mixed_precision_dps,
+                solve_digits=args.mixed_precision_solve_digits,
+                progress_every=args.mixed_precision_progress_every,
             )
             print(
                 f"mixed {sector} level {level}: "
@@ -830,6 +878,7 @@ def main():
                 f"lambda={mp.nstr(result['lambda'], 90)} "
                 f"residual={mp.nstr(result['residual'], 8)} "
                 f"linear_residual={mp.nstr(result['linear_residual'], 8)} "
+                f"solve_digits={result['solve_digits']} "
                 f"correction_rounds={result['correction_rounds']} "
                 f"elapsed={result['seconds']:.2f}s",
                 flush=True,
