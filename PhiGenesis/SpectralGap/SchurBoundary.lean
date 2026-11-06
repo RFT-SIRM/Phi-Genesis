@@ -1260,7 +1260,6 @@ theorem sum_range_le_four_thirds_initial_of_quarter_contraction
                   (u n + (4 / 3 : ℝ) * u (n + 1)) := by ring
           _ ≤ (∑ k ∈ Finset.range n, u k) +
                 (4 / 3 : ℝ) * u n := by
-                apply add_le_add_left
                 nlinarith [hcontract n]
           _ ≤ (4 / 3 : ℝ) * u 0 := ih
   have htailN := htail N
@@ -1314,7 +1313,7 @@ theorem schurBoundaryTrajectory_A1_increment_bounds
       (schurBoundaryTrajectory lambda (a₀, b₀) n).1
       (schurBoundaryTrajectory lambda (a₀, b₀) n).2
       lambda ha_bounds.1 ha_bounds.2 hstate.2.1 hstate.2.2 hlambda_lower
-  simpa [schurBoundaryTrajectory] using hlocal
+  simpa [schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal
 
 
 /-- The A1 characteristic stays nonnegative at every finite Schur level
@@ -1388,7 +1387,7 @@ theorem schurBoundaryTrajectory_A1_neg_of_initial_margin
         hlambda_lower hlambda_upper
     calc
       u (n + 1) ≤ (1 / 10 ^ 36 : ℝ) * u n := by
-        simpa [u, schurBoundaryTrajectory] using hlinear
+        simpa [u, schurBoundaryTrajectory, schurBoundaryStateStep] using hlinear
       _ ≤ (1 / 4 : ℝ) * u n :=
         mul_le_mul_of_nonneg_right (by norm_num) (hu_nonneg n)
   have hsum_u (N : ℕ) :
