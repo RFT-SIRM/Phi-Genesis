@@ -41,7 +41,7 @@ The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** c
 
 The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
 that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve
-the bottom eigenvalue through level 6 and independently separate the symmetry sectors of the graph's
+the bottom eigenvalue through level 8 and independently separate the symmetry sectors of the graph's
 S3 action.
 
 Run the reproducible calculation from the repository root:
@@ -63,6 +63,8 @@ multiple precision. The residual diagnostics are numerical, not interval-arithme
 | 4 | 123 | 1.3091289186270032373372269265507617266049… |
 | 5 | 366 | 1.3091289202808134205376249464114593830015… |
 | 6 | 1,095 | 1.3091289202808134218886230881708101876508… |
+| 7 | 3,282 | 1.3091289202808134218886230881708101885523242511173263434335359844526816970029… |
+| 8 | 9,843 | 1.3091289202808134218886230881708101885523242511173263434335359844526816974044… |
 
 At level 5 the next two eigenvalues form a near-degenerate pair at approximately
 `1.309128920280813422564122159050485604429…`. Their separation from the bottom eigenvalue
@@ -77,12 +79,13 @@ The positive increments `δ_m = λ_m − λ_(m−1)` and their quadratic ratios 
 | 3→4 | 5.78533713963969335335·10⁻⁵ | 0.5116842114039808057 |
 | 4→5 | 1.65381018320039801986·10⁻⁹ | 0.4941153170828634048 |
 | 5→6 | 1.35099814175935080465·10⁻¹⁸ | 0.4939504986563758755 |
+| 6→7 | 9.01556448009307575101·10⁻³⁷ | 0.4939504899001989666 |
+| 7→8 | 4.01484948291304833402·10⁻⁷³ | 0.4939504899001989529 |
 
-The three successive ratios are now consistent with a quadratic correction law with coefficient near
-`0.494`, but this remains an empirical pattern. Using only the latest ratio gives the conditional
-prediction `δ_7 ≈ 9.01556463991·10⁻³⁷` and the conditional limit estimate
-`1.3091289202808134218886230881708101885523…`. This is an empirical extrapolation, not a theorem
-or a certified error bound. The convergence law and the limiting value remain open.
+Five successive ratios are now consistent with a quadratic correction law with coefficient near
+`0.49395049`. The latest two ratios agree to about 17 significant digits. This is strong numerical
+evidence, but remains an empirical pattern rather than a theorem. Extrapolations based on it are
+conditional and carry no certified error bound. The convergence law and the limiting value remain open.
 
 The observed eigenvectors are concentrated near the three corners, but they do not have compact
 support: the apparent support depends on the numerical threshold used to display small components.
@@ -107,10 +110,26 @@ inverse-iteration residual `6.81·10⁻²⁸`). Thus the global bottom is in `A1
 supplies the extremely close near-degenerate pair. Residuals are numerical diagnostics, not
 interval certificates.
 
+At level 7 the sector dimensions are `dim(A1)=551`, `dim(A2)=543`, and `dim(E)=1,094`,
+so `551 + 543 + 2·1,094 = 3,282`. The `A1` bottom is
+`1.3091289202808134218886230881708101885523242511173263434335359844526816970029…`.
+The bottom of one `E` copy is
+`1.3091289202808134218886230881708101885523242511173263434335359844526816976051…`.
+Their difference is approximately `6.02227422437·10⁻⁷³`; the high-precision residuals are
+`2.18·10⁻⁹⁴` in `A1` and `1.82·10⁻⁷⁷` in `E`. Thus the numerical resolution is below
+the observed splitting. The next eigenvalues in both sectors are near 2, giving a gap of about
+`0.69087108` above the bottom mode.
+
+At level 8 the `A1) quotient has dimension `1,645` and gives
+`1.3091289202808134218886230881708101885523242511173263434335359844526816974044…`,
+with residual `1.25·10⁻⁶³`. A level-8 `E) calculation has not yet been completed. The
+level-7/8 increment ratio agrees with the previous ratio to about 17 significant digits.
+Residuals are numerical diagnostics, not interval certificates.
+
 ## 4. What is not claimed
 
 - That `1.309128920280813421889…` is the exact limit, or a closed form for it. It is a conditional numerical extrapolation.
-- That the quadratic correction law holds for all levels. Only two successive ratios are currently available.
+- That the quadratic correction law holds for all levels. Five successive ratios are currently available, but no proof controls all subsequent levels.
 - That the local-face model is *the* external θ = 2π model. The cited external `sg.py`/`gap.py` sources were not present in the repository, so this identification is **conditional**.
 - That this operator equals the pivot-zero all-hole-flux representative produced by the default `mobius.py` solver. It does not.
 - That the constant is an analogue of π. No such definition or theorem exists yet.
@@ -149,6 +168,6 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | --- | --- |
 | `RESEARCH_LOG_2026-11-05.md` | derivation, audits, earlier eigenvalue tables, and evidence boundary |
 | `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
-| `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations |
+| `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |
