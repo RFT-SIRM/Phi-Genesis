@@ -176,8 +176,7 @@ theorem schurNextA1_at_old_root (a b c : ℝ)
     rw [← hden]
     exact hc3
   rw [ha]
-  field_simp [hc, hc3']
-  ring
+  field_simp [hc, hc3'] <;> ring
 
 /-- The off-diagonal Schur coefficient changes quadratically in b,
 with an exact finite-level prefactor. -/
