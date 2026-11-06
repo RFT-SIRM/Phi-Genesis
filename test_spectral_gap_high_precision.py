@@ -219,4 +219,6 @@ def test_mixed_precision_only_cli_skips_baseline_diagnostics():
     assert "mixed A1 level 2:" in completed.stdout
     assert "iteration 4/8" in completed.stdout
     assert "iteration 8/8" in completed.stdout
-    assert "A1 level 2: n=" not in completed.stdout
+    output_lines = completed.stdout.splitlines()
+    assert any(line.startswith("mixed A1 level 2: n=") for line in output_lines)
+    assert not any(line.startswith("A1 level 2: n=") for line in output_lines)
