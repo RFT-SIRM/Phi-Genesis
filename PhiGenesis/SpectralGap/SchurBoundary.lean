@@ -2177,10 +2177,15 @@ theorem schurBootstrap_levelTwo_state_box
   let a2 : ℝ := (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).1
   let b2 : ℝ := (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2
   have hparam_lower : (130912 / 100000 : ℝ) ≤ lambda := by
-    exact le_trans (by norm_num [schurBootstrapLambdaLower])
-      (le_trans hlambda.1 (le_of_lt (by norm_num)))
+    calc
+      (130912 / 100000 : ℝ) ≤ schurBootstrapLambdaLower := by
+        norm_num [schurBootstrapLambdaLower]
+      _ ≤ lambda := hlambda.1
   have hparam_upper : lambda ≤ (130914 / 100000 : ℝ) := by
-    exact le_trans hlambda.2 (by norm_num [schurBootstrapLambdaUpper])
+    calc
+      lambda ≤ schurBootstrapLambdaUpper := hlambda.2
+      _ ≤ (130914 / 100000 : ℝ) := by
+        norm_num [schurBootstrapLambdaUpper]
   have hlevelOne := schurBootstrap_levelOne_state_box lambda hlambda
   have ha1_lower : (123569 / 10 ^ 7 : ℝ) ≤ a1 := by
     have hExact :
@@ -2228,13 +2233,20 @@ theorem schurBootstrap_levelTwo_state_box
   have hc13_coarse_lower : (1159 / 1000 : ℝ) ≤ c13 := by linarith
   have hc13_coarse_upper : c13 ≤ (1161 / 1000 : ℝ) := by linarith
   have hden_lower : (1647 / 1000 : ℝ) ≤ c1 * c13 := by
-    have hmul := mul_le_mul hc1_coarse_lower hc13_coarse_lower
-      (by norm_num) (le_trans (by norm_num) hc1_coarse_lower)
-    nlinarith
+    calc
+      (1647 / 1000 : ℝ) ≤
+          (142093 / 100000 : ℝ) * (115962 / 100000 : ℝ) := by
+        norm_num
+      _ ≤ c1 * (115962 / 100000 : ℝ) :=
+        mul_le_mul_of_nonneg_right hc1_lower (by norm_num)
+      _ ≤ c1 * c13 :=
+        mul_le_mul_of_nonneg_left hc13_lower (le_of_lt hc_pos)
   have hden_upper : c1 * c13 ≤ (1649 / 1000 : ℝ) := by
-    have hmul := mul_le_mul hc1_coarse_upper hc13_coarse_upper
-      (by norm_num) (by norm_num)
-    nlinarith
+    calc
+      c1 * c13 ≤
+          (142096 / 100000 : ℝ) * (115966 / 100000 : ℝ) :=
+        mul_le_mul hc1_upper hc13_upper (le_of_lt hc13_pos) (by norm_num)
+      _ ≤ (1649 / 1000 : ℝ) := by norm_num
   have hnumA_lower : (1333 / 1000 : ℝ) ≤ c1 + b1 := by
     dsimp [c1]
     linarith
@@ -2287,7 +2299,7 @@ theorem schurBootstrap_levelTwo_state_box
   have hb1_mag_upper : -b1 ≤ (8711 / 100000 : ℝ) := by
     dsimp [b1]
     linarith
-  have hb1_sq_lower : (75 / 10000 : ℝ) ≤ b1 ^ 2 := by
+  have hb1_sq_lower : (3 / 400 : ℝ) ≤ b1 ^ 2 := by
     have hcross := mul_nonneg
       (sub_nonneg.mpr hb1_mag_lower)
       (by linarith : 0 ≤ -b1 + (871 / 10000 : ℝ))
@@ -2325,7 +2337,7 @@ theorem schurBootstrap_levelTwo_state_box
     rfl
   have ha2_change : a2 - a1 = -(2 * b1 ^ 2 * rA) := by
     have h := schurNextDiagonal_sub_eq a1 b1 c1
-    rw [ha2_step] at h
+    rw [← ha2_step] at h
     simpa [rA] using h
   have ha2_lower : -(1 / 1000 : ℝ) ≤ a2 := by
     linarith [ha1_lower, hqA_upper, ha2_change]
@@ -2353,15 +2365,15 @@ theorem schurBootstrap_levelTwo_state_box
     rw [hb2_formula]
     exact mul_nonneg (sq_nonneg b1) (le_of_lt (by linarith [hrB_lower]))
   have hb2_lower : -(7 / 1000 : ℝ) ≤ b2 := by
-    rw [← neg_nonneg]
-    rw [hb2_formula]
     have hnum : b1 ^ 2 * rB ≤ (7 / 1000 : ℝ) := by
       calc
         b1 ^ 2 * rB ≤
             (76 / 10000 : ℝ) * (92 / 100 : ℝ) :=
           hprodB_upper
         _ ≤ (7 / 1000 : ℝ) := by norm_num
-    linarith
+    calc
+      -(7 / 1000 : ℝ) ≤ -(b1 ^ 2 * rB) := neg_le_neg hnum
+      _ = b2 := by linarith [hb2_formula]
   exact ⟨abs_le.mpr ⟨ha2_lower, ha2_upper⟩,
     hb2_lower, hb2_upper⟩
 
