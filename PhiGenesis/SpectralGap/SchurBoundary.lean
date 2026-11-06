@@ -1549,7 +1549,7 @@ theorem schurBootstrapEndpoints_A1_signs_all_finite_levels :
         (schurBoundaryTrajectory schurBootstrapLambdaLower
           (2 - schurBootstrapLambdaLower, 1) 6).2
         hlow.1 hlow.2.1 hlow.2.2.1
-        hwindow.1 hwindow.2.1 hlow.2.2.2
+        hwindow.1 hwindow.2.1 (le_of_lt hlow.2.2.2)
   · exact
       schurBoundaryTrajectory_A1_neg_of_initial_margin
         schurBootstrapLambdaUpper
