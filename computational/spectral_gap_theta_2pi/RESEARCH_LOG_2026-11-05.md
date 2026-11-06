@@ -953,3 +953,27 @@ combines this sharpened start bound with the finite-prefix drift budget
 margin for the planned simultaneous state induction. It does not yet
 prove the all-level induction itself or the root-window endpoint signs
 inside Lean.
+
+## 49. Conditional all-level invariance of the two Schur state coordinates (2026-11-06)
+
+Added an explicit fixed-parameter trajectory constructor and the theorem
+`schurBoundaryTrajectory_state_box`. Its hypotheses are a fixed rational
+spectral window `lambda in [1.309,1.31]`, a starting diagonal value
+`|a_0| <= 3e-36`, and a starting signed off-diagonal value
+`b_0 in [-6e-37,0]`.
+
+The proof is a simultaneous induction over the concrete Schur update.
+At each prefix it derives the half-contraction of `|b_n|` from the existing
+stronger `1e-36` one-step factor, derives the exact diagonal increment
+`|a_(n+1)-a_n| <= 2|b_n|^2`, and applies the prefix-only drift theorem.
+The total diagonal displacement is bounded by `1.44e-72`; combined with
+the initial `3e-36` margin this preserves `|a_n| <= 1e-35`. The signed
+off-diagonal interval is preserved by the existing Schur sign/contraction
+lemma. Thus the state coordinates are now genuinely invariant for every
+finite index, not merely checked through level 101.
+
+Scope remains conditional: this theorem assumes the fixed parameter
+window and the level-six starting state enclosure. It does not yet prove
+that the actual A1 root belongs to that window, establish the common
+window endpoint signs for all levels, or prove convergence of the
+root-sampled derivative. Those are the remaining spectral steps.

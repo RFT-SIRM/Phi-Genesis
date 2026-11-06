@@ -349,6 +349,16 @@ bounds and initial margin are established. The all-level state-box and
 root-window induction remain separate obligations, so this is not yet an
 unconditional spectral-limit theorem.
 
+The next Lean result, `schurBoundaryTrajectory_state_box`, proves a full
+conditional all-level invariant for the exact fixed-parameter Schur trajectory.
+For `lambda in [1.309,1.31]` and initial state `|a_0| <= 3e-36`,
+`b_0 in [-6e-37,0]`, induction gives `|a_n| <= 1e-35` and
+`b_n in [-6e-37,0]` for every n. The proof combines the one-step
+`1e-36` contraction with the finite summable diagonal-drift bound.
+This closes the state-coordinate invariance conditional on the parameter
+window and starting-state enclosure; proving that the actual A1 root and
+all common-window endpoint signs satisfy those hypotheses remains open.
+
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
