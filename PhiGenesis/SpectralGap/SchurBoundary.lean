@@ -513,4 +513,35 @@ theorem schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
       mul_le_mul_of_nonneg_left hratio (sq_nonneg b)
     _ = (4 / 5 : ℝ) * b ^ 2 := by ring
 
+
+/-- The explicit tiny off-diagonal interval is invariant under one Schur
+step, provided the coarse midpoint-pivot box holds. -/
+theorem schurNextOffDiagonal_abs_le_six_e_minus37_of_box
+    (b c : ℝ)
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    |schurNextOffDiagonal b c| ≤ (6 / 10 ^ 37 : ℝ) := by
+  have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b := by
+    have hscale : -(1 / 100 : ℝ) ≤ -(6 / 10 ^ 37 : ℝ) := by norm_num
+    exact le_trans hscale hb_lower
+  have hcontract :=
+    schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+      b c hb_coarse_lower hb_upper hc_lower hc_upper hc3_lower
+  have hBminus : 0 ≤ (6 / 10 ^ 37 : ℝ) - b := by
+    linarith
+  have hBplus : 0 ≤ (6 / 10 ^ 37 : ℝ) + b := by
+    linarith
+  have hbsq : b ^ 2 ≤ (6 / 10 ^ 37 : ℝ) ^ 2 := by
+    have hprod := mul_nonneg hBminus hBplus
+    nlinarith
+  calc
+    |schurNextOffDiagonal b c|
+        ≤ (4 / 5 : ℝ) * b ^ 2 := hcontract
+    _ ≤ (4 / 5 : ℝ) * (6 / 10 ^ 37 : ℝ) ^ 2 :=
+      mul_le_mul_of_nonneg_left hbsq (by norm_num)
+    _ ≤ (6 / 10 ^ 37 : ℝ) := by norm_num
+
 end PhiGenesis.SpectralGap
