@@ -2447,7 +2447,10 @@ theorem schurBootstrap_levelThree_state_box
   have hrA_upper : rA ≤ 1 := by
     dsimp [rA]
     apply (div_le_iff₀ hden_pos).2
-    exact le_trans hnumA_upper hden_c_lower
+    calc
+      c2 + b2 ≤ c2 := hnumA_upper
+      _ ≤ c2 * c23 := hden_c_lower
+      _ = 1 * (c2 * c23) := by ring
   have hnumB_pos : 0 < c2 - b2 := by linarith
   have hrB_lower : 0 ≤ rB := by
     dsimp [rB]
@@ -2466,7 +2469,10 @@ theorem schurBootstrap_levelThree_state_box
   have hrB_upper : rB ≤ 1 := by
     dsimp [rB]
     apply (div_le_iff₀ hden_pos).2
-    exact le_trans hnumB_upper hdenB_lower
+    calc
+      c2 - b2 ≤ (1326 / 1000 : ℝ) := hnumB_upper
+      _ ≤ c2 * c23 := hdenB_lower
+      _ = 1 * (c2 * c23) := by ring
   have ha3_step :
       a3 = schurNextDiagonal a2 b2 c2 := by
     dsimp [a3, a2, b2, c2]
@@ -2502,9 +2508,13 @@ theorem schurBootstrap_levelThree_state_box
     linarith
   have hchange_lower : -(2 * b2 ^ 2) ≤ a3 - a2 := by
     rw [ha3_change]
+    have hcoeff : 0 ≤ (2 * b2 ^ 2 : ℝ) := by positivity
     have hprod :
-        2 * b2 ^ 2 * rA ≤ 2 * b2 ^ 2 :=
-      mul_le_mul_of_nonneg_left hrA_upper (by positivity)
+        2 * b2 ^ 2 * rA ≤ 2 * b2 ^ 2 := by
+      calc
+        (2 * b2 ^ 2) * rA ≤ (2 * b2 ^ 2) * 1 :=
+          mul_le_mul_of_nonneg_left hrA_upper hcoeff
+        _ = 2 * b2 ^ 2 := by ring
     linarith
   have ha3_lower : -(1 / 500 : ℝ) ≤ a3 := by
     nlinarith [ha2_lower, hb2_sq_upper, hchange_lower]
