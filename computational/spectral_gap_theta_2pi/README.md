@@ -520,3 +520,11 @@ are nonzero for all parameters in the narrow interval through a fixed
 finite level, then the all-level opposite endpoint signs force an A1 root
 at that level. The remaining task before unconditional finite-level root
 existence is to prove these denominators uniformly nonzero on the interval.
+
+
+A uniform level-three Schur enclosure has now been formalized over the
+full narrow parameter interval: `|a_3| <= 1/500` and
+`b_3 in [-1/20000, 0]`. The proof gives positive level-two pivot
+denominators. This is the proposed coarse starting box for an all-level
+denominator invariant; unconditional root existence and convergence
+are not claimed yet.

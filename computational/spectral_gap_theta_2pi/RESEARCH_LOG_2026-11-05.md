@@ -1114,3 +1114,26 @@ yet in the file. Thus this theorem is the IVT bridge, not yet an
 unconditional finite-level root-existence theorem. Uniform initial
 level-six state enclosure and the finite prefix pivot check remain the
 next obligations; convergence of the roots is still separate.
+
+
+## 56. Uniform level-three coarse Schur enclosure (2026-11-07)
+
+Added the theorem `schurBootstrap_levelThree_state_box`. It starts from
+the already-proved level-two enclosure on the entire narrow parameter
+interval:
+`|a_2| <= 1/1000` and `b_2 in [-7/1000, 0]`.
+
+The third-step pivot pair is bounded below by
+`c_2 >= 1307/1000` and `c_2 + 3*b_2 >= 1293/1000`. The exact
+Schur update ratios are both between zero and one. Consequently
+`|a_3| <= 1/500` and `b_3 in [-1/20000, 0]`, uniformly for every
+parameter in the full interval.
+
+This is a deliberately coarse enclosure, not the narrow level-six
+starting box. Its purpose is to seed a separate all-finite-level
+coarse invariant: after level three, the off-diagonal coordinate is
+small enough that its quadratic update gives at least half-contraction,
+while the total diagonal drift can be bounded by a finite geometric
+sum. That invariant is intended to prove all later pivot denominators
+positive and remove the uniform-pivot hypothesis from the finite-level
+IVT theorem. Root convergence remains a separate open step.

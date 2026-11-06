@@ -2377,5 +2377,158 @@ theorem schurBootstrap_levelTwo_state_box
   exact ⟨abs_le.mpr ⟨ha2_lower, ha2_upper⟩,
     hb2_lower, hb2_upper⟩
 
+/-- Uniform level-three enclosure over the narrow bootstrap parameter
+interval. The level-two coarse box has positive Schur denominators; one
+more exact Schur step contracts the off-diagonal coordinate below
+1/20000 and keeps the diagonal coordinate below 1/500. -/
+theorem schurBootstrap_levelThree_state_box
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    |(schurBoundaryTrajectory lambda (2 - lambda, 1) 3).1| ≤
+        (1 / 500 : ℝ) ∧
+      -(1 / 20000 : ℝ) ≤
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).2 ∧
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).2 ≤ 0 := by
+  let a2 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).1
+  let b2 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2
+  let c2 : ℝ := schurMidpointPivot a2 b2 lambda
+  let c23 : ℝ := c2 + 3 * b2
+  let rA : ℝ := (c2 + b2) / (c2 * c23)
+  let rB : ℝ := (c2 - b2) / (c2 * c23)
+  let a3 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).1
+  let b3 : ℝ :=
+    (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).2
+  have hwindow := schurBootstrapEndpoints_in_parameter_window
+  have hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda :=
+    le_trans hwindow.1 hlambda.1
+  have hlambda_upper : lambda ≤ (131 / 100 : ℝ) :=
+    le_trans hlambda.2.2.2 hlambda.2
+  have hlevelTwo :=
+    schurBootstrap_levelTwo_state_box lambda hlambda
+  have ha2_lower : -(1 / 1000 : ℝ) ≤ a2 := by
+    have h := (abs_le.mp hlevelTwo.1).1
+    simpa [a2] using h
+  have ha2_upper : a2 ≤ (1 / 1000 : ℝ) := by
+    have h := (abs_le.mp hlevelTwo.1).2
+    simpa [a2] using h
+  have hb2_lower : -(7 / 1000 : ℝ) ≤ b2 := by
+    simpa [b2] using hlevelTwo.2.1
+  have hb2_upper : b2 ≤ 0 := by
+    simpa [b2] using hlevelTwo.2.2
+  have hc2_lower : (1307 / 1000 : ℝ) ≤ c2 := by
+    dsimp [c2, schurMidpointPivot]
+    nlinarith [ha2_lower, hb2_upper, hlambda_lower]
+  have hc2_upper : c2 ≤ (132 / 100 : ℝ) := by
+    dsimp [c2, schurMidpointPivot]
+    nlinarith [ha2_upper, hb2_lower, hlambda_upper]
+  have hc23_lower : (1293 / 1000 : ℝ) ≤ c23 := by
+    dsimp [c23, c2, schurMidpointPivot]
+    nlinarith [ha2_lower, hb2_lower, hlambda_lower]
+  have hc_pos : 0 < c2 := by linarith
+  have hc23_pos : 0 < c23 := by linarith
+  have hden_pos : 0 < c2 * c23 := mul_pos hc_pos hc23_pos
+  have hnumA_pos : 0 < c2 + b2 := by
+    linarith [hc2_lower, hb2_lower]
+  have hrA_lower : 0 ≤ rA := by
+    dsimp [rA]
+    exact le_of_lt (div_pos hnumA_pos hden_pos)
+  have hc23_one : (1 : ℝ) ≤ c23 := by linarith
+  have hden_c_lower : c2 ≤ c2 * c23 := by
+    calc
+      c2 = c2 * 1 := by ring
+      _ ≤ c2 * c23 :=
+        mul_le_mul_of_nonneg_left hc23_one (le_of_lt hc_pos)
+  have hnumA_upper : c2 + b2 ≤ c2 := by linarith
+  have hrA_upper : rA ≤ 1 := by
+    dsimp [rA]
+    apply (div_le_iff₀ hden_pos).2
+    exact le_trans hnumA_upper hden_c_lower
+  have hnumB_pos : 0 < c2 - b2 := by linarith
+  have hrB_lower : 0 ≤ rB := by
+    dsimp [rB]
+    exact le_of_lt (div_pos hnumB_pos hden_pos)
+  have hnumB_upper : c2 - b2 ≤ (1326 / 1000 : ℝ) := by
+    dsimp [c2, schurMidpointPivot]
+    nlinarith [ha2_upper, hb2_lower, hlambda_upper]
+  have hdenB_lower : (1326 / 1000 : ℝ) ≤ c2 * c23 := by
+    calc
+      (1326 / 1000 : ℝ) ≤
+          (1307 / 1000 : ℝ) * (1293 / 1000 : ℝ) := by norm_num
+      _ ≤ c2 * (1293 / 1000 : ℝ) :=
+        mul_le_mul_of_nonneg_right hc2_lower (by norm_num)
+      _ ≤ c2 * c23 :=
+        mul_le_mul_of_nonneg_left hc23_lower (le_of_lt hc_pos)
+  have hrB_upper : rB ≤ 1 := by
+    dsimp [rB]
+    apply (div_le_iff₀ hden_pos).2
+    exact le_trans hnumB_upper hdenB_lower
+  have ha3_step :
+      a3 = schurNextDiagonal a2 b2 c2 := by
+    dsimp [a3, a2, b2, c2]
+    rfl
+  have hb3_step :
+      b3 = schurNextOffDiagonal b2 c2 := by
+    dsimp [b3, a2, b2, c2]
+    rfl
+  have ha3_change : a3 - a2 = -(2 * b2 ^ 2 * rA) := by
+    have h := schurNextDiagonal_sub_eq a2 b2 c2
+    rw [← ha3_step] at h
+    simpa [rA] using h
+  have hb3_formula : -b3 = b2 ^ 2 * rB := by
+    rw [hb3_step]
+    unfold schurNextOffDiagonal
+    dsimp [rB]
+    ring
+  have hb2_mag_nonneg : 0 ≤ -b2 := by linarith
+  have hb2_mag_upper : -b2 ≤ (7 / 1000 : ℝ) := by linarith
+  have hb2_sq_upper : b2 ^ 2 ≤ (49 / 10 ^ 6 : ℝ) := by
+    have hmul₁ :
+        (-b2) * (-b2) ≤ (7 / 1000 : ℝ) * (-b2) :=
+      mul_le_mul_of_nonneg_right hb2_mag_upper hb2_mag_nonneg
+    have hmul₂ :
+        (7 / 1000 : ℝ) * (-b2) ≤
+          (7 / 1000 : ℝ) * (7 / 1000 : ℝ) :=
+      mul_le_mul_of_nonneg_left hb2_mag_upper (by norm_num)
+    nlinarith [hmul₁, hmul₂]
+  have hchange_upper : a3 - a2 ≤ 0 := by
+    rw [ha3_change]
+    have hprod : 0 ≤ 2 * b2 ^ 2 * rA :=
+      mul_nonneg (by positivity) hrA_lower
+    linarith
+  have hchange_lower : -(2 * b2 ^ 2) ≤ a3 - a2 := by
+    rw [ha3_change]
+    have hprod :
+        2 * b2 ^ 2 * rA ≤ 2 * b2 ^ 2 :=
+      mul_le_mul_of_nonneg_left hrA_upper (by positivity)
+    linarith
+  have ha3_lower : -(1 / 500 : ℝ) ≤ a3 := by
+    nlinarith [ha2_lower, hb2_sq_upper, hchange_lower]
+  have ha3_upper : a3 ≤ (1 / 500 : ℝ) := by
+    linarith [ha2_upper, hchange_upper]
+  have hprodB_upper :
+      b2 ^ 2 * rB ≤ (1 / 20000 : ℝ) := by
+    calc
+      b2 ^ 2 * rB ≤ b2 ^ 2 * 1 :=
+        mul_le_mul_of_nonneg_left hrB_upper (sq_nonneg b2)
+      _ = b2 ^ 2 := by ring
+      _ ≤ (49 / 10 ^ 6 : ℝ) := hb2_sq_upper
+      _ ≤ (1 / 20000 : ℝ) := by norm_num
+  have hb3_lower : -(1 / 20000 : ℝ) ≤ b3 := by
+    calc
+      -(1 / 20000 : ℝ) ≤ -(b2 ^ 2 * rB) :=
+        neg_le_neg hprodB_upper
+      _ = b3 := by linarith [hb3_formula]
+  have hb3_upper : b3 ≤ 0 := by
+    rw [← neg_nonneg]
+    rw [hb3_formula]
+    exact mul_nonneg (sq_nonneg b2) hrB_lower
+  exact ⟨abs_le.mpr ⟨ha3_lower, ha3_upper⟩,
+    hb3_lower, hb3_upper⟩
+
 
 end PhiGenesis.SpectralGap
