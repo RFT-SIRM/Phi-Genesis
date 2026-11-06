@@ -113,6 +113,7 @@ python -m pip install -e .
 python -m pip install mpmath
 python computational/spectral_gap_theta_2pi/audit_triangle_gauge.py --max-level 10
 python computational/spectral_gap_theta_2pi/high_precision_bottom.py
+pytest -q test_spectral_gap_high_precision.py
 lake build
 ```
 
