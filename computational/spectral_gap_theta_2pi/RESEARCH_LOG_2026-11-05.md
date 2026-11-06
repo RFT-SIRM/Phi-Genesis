@@ -750,3 +750,44 @@ under the differentiated Schur map, rather than merely checking a long finite or
 lemma added alongside this experiment proves the one-step four-fifths off-diagonal contraction
 under the coarse pivot/sign box assumptions; it does not prove those assumptions remain invariant.
 
+
+
+## 43. Signed one-step invariance of the small off-diagonal interval (2026-11-06)
+
+After the one-step Lean contraction theorem was checked by the complete
+`lake build PhiGenesis` workflow on the preceding source revision, the off-diagonal
+estimate was strengthened in two ways.
+
+First, combining
+`schurNextOffDiagonal_abs_le_six_e_minus37_of_box` with the existing
+`schurNextOffDiagonal_neg` sign lemma (and handling `b=0` separately) gives
+
+`-6e-37 <= b_next <= 0`
+
+whenever the coarse pivot hypotheses hold and `b` already belongs to
+`[-6e-37,0]`. This is the signed interval statement, not only an absolute-value
+bound.
+
+Second, `schurNextOffDiagonal_signed_interval_of_state_box` derives the coarse
+pivot hypotheses from the state-coordinate assumptions
+
+- `-1e-35 <= a <= 1e-35`;
+- `-6e-37 <= b <= 0`;
+- `1309/1000 <= lambda <= 131/100`.
+
+Indeed, with `c=2a+lambda-b` and `c+3b=2a+lambda+2b`, these hypotheses imply
+`13/10 <= c <= 132/100` and `13/10 <= c+3b`; the previously proved
+off-diagonal contraction then gives the signed interval at the next Schur step.
+
+The parameter interval `[1.309,1.31]` is an explicit hypothesis of this generic
+Lean implication. It is not yet a Lean theorem about the level-6 root or about every
+subsequent root. Likewise, the current proof does not establish preservation of the
+`a`, first-derivative, or second-derivative coordinates. Consequently this is a
+conditional one-step closure of the signed `b)-coordinate only, not an all-level
+bootstrap theorem.
+
+The remaining induction work is now localized: prove compatible propagation bounds for
+`a`, `a'`, `b'`, `a''`, and `b''`, and separately justify the spectral-parameter
+window in Lean. The finite interval calculation through level 101 remains numerical
+evidence for the hypotheses, rather than a proof that those hypotheses persist at all
+levels.

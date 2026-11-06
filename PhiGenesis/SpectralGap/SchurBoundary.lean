@@ -544,4 +544,58 @@ theorem schurNextOffDiagonal_abs_le_six_e_minus37_of_box
       mul_le_mul_of_nonneg_left hbsq (by norm_num)
     _ ≤ (6 / 10 ^ 37 : ℝ) := by norm_num
 
+
+/-- Under the coarse midpoint-pivot box, the small off-diagonal interval is
+preserved with its sign: the next coefficient remains in [-6e-37, 0]. -/
+theorem schurNextOffDiagonal_signed_interval_of_box
+    (b c : ℝ)
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    -(6 / 10 ^ 37 : ℝ) ≤ schurNextOffDiagonal b c ∧
+      schurNextOffDiagonal b c ≤ 0 := by
+  have habs :=
+    schurNextOffDiagonal_abs_le_six_e_minus37_of_box
+      b c hb_lower hb_upper hc_lower hc_upper hc3_lower
+  have hnonpos : schurNextOffDiagonal b c ≤ 0 := by
+    by_cases hb : b = 0
+    · simp [schurNextOffDiagonal, hb]
+    · have hc_pos : 0 < c := by linarith
+      have hc3_pos : 0 < c + 3 * b := by linarith
+      have hcb : b < c := by linarith
+      exact le_of_lt (schurNextOffDiagonal_neg b c hb hc_pos hc3_pos hcb)
+  exact ⟨(abs_le.mp habs).1, hnonpos⟩
+
+/-- The signed small off-diagonal interval is one-step invariant when the
+input diagonal, off-diagonal, and spectral parameter lie in the stated
+coarse state box. The parameter interval is an explicit hypothesis here. -/
+theorem schurNextOffDiagonal_signed_interval_of_state_box
+    (a b lambda : ℝ)
+    (ha_lower : -(1 / 10 ^ 35 : ℝ) ≤ a)
+    (ha_upper : a ≤ (1 / 10 ^ 35 : ℝ))
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    -(6 / 10 ^ 37 : ℝ) ≤
+        schurNextOffDiagonal b (schurMidpointPivot a b lambda) ∧
+      schurNextOffDiagonal b (schurMidpointPivot a b lambda) ≤ 0 := by
+  have hc_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_upper, hlambda_lower]
+  have hc_upper :
+      schurMidpointPivot a b lambda ≤ (132 / 100 : ℝ) := by
+    unfold schurMidpointPivot
+    nlinarith [ha_upper, hb_lower, hlambda_upper]
+  have hc3_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda + 3 * b := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  exact schurNextOffDiagonal_signed_interval_of_box
+    b (schurMidpointPivot a b lambda)
+    hb_lower hb_upper hc_lower hc_upper hc3_lower
+
 end PhiGenesis.SpectralGap

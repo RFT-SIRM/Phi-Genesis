@@ -271,6 +271,21 @@ The focused regression test takes about nine seconds in the checked environment.
 finite-level interval output is computational evidence, not a Lean-kernel theorem or an
 infinite-level proof.
 
+The Lean development also records the exact scope of the one-step off-diagonal argument.
+Under the coarse pivot/sign box it proves `|b_next| <= (4/5) |b|^2`, then
+`b_next in [-6e-37,0]`. A state-coordinate version derives the needed pivot bounds
+from the additional explicit assumptions
+
+- `a in [-1e-35,1e-35]`;
+- `b in [-6e-37,0]`;
+- `lambda in [1.309,1.31]`.
+
+This closes only the one-step preservation of the small signed `b)-coordinate.
+The spectral-parameter interval is an assumption of the generic Lean implication, not
+yet a Lean theorem about the level-6 root or all subsequent roots. No preservation theorem
+for `a` or the derivative/curvature coordinates has been proved, so the full bootstrap
+box and the all-level limit argument remain open.
+
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
