@@ -125,22 +125,39 @@ Reproduce with `python -m phi_genesis.higher_moments_z2 --validate-reference --m
 
 ## Lean 4 formalization: current verified scope
 
-A pinned Lean 4 project is maintained on the `formalize/h10-lean4` branch.
+The Lean 4 project is on `main` (package `PhiGenesis`, entry point `PhiGenesis.lean`) and is built by the `Lean formalization` workflow on every pull request.
 
 - Lean toolchain: `leanprover/lean4:v4.33.1`.
 - Mathlib: pinned by `lake-manifest.json` to revision `0df444a360eaa60ab8c11dca51a86af692955474`.
 - Build target: `lake build PhiGenesis`.
-- Latest verified build: [GitHub Actions run](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41848273814).
+- CI: [Lean formalization workflow](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/lean.yml).
+- Audit: no `sorry` and no user-declared axioms under `PhiGenesis/`. The theorems listed below depend only on `propext`, `Classical.choice` and `Quot.sound`.
 
-The current Lean development formalizes finite indexed edges with source and target maps, so parallel edges remain distinct. Incidence entries take values in `ZMod 2`; both endpoints are counted, making a loop contribute zero modulo two. The main theorem proves that the indexed incidence columns are linearly independent over `ZMod 2` if and only if every nonempty finite edge subset has a vertex of odd degree parity.
+| Block | What is formalized | Where |
+|---|---|---|
+| Incidence forests over GF(2) | Indexed incidence columns are linearly independent over `ZMod 2` if and only if every nonempty finite edge subset has a vertex of odd degree parity. | `PhiGenesis/H10/IncidenceForest.lean` |
+| Vertex order of the gasket | The recursive vertex list, an explicit formula for level `n + 1` (`gasketVertexOrder_succ_explicit`), state A of the root cell at all levels (`gasketVertexOrder_stateA`), child cells A / A / B (`gasketVertexOrder_child0_cellA`, `gasketVertexOrder_child1_cellA`, `gasketVertexOrder_child2_cellB`), and concrete state orders at addresses 20 and 22 (`gasketVertexOrder_address22_cellB`). | `PhiGenesis/H10/GasketVertex*.lean` |
+| Signed Laplacian | The signed Laplacian is identified with the Gram matrix of a signed incidence matrix, and every real eigenvalue with a nonzero real eigenvector is at least 1 at every level (`sgSignedLaplacianMatrix_eigenvalue_ge_one`). | `PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` |
 
-**Scope limitation:** in the current file, `IsIncidenceForest` is defined by this odd-degree condition. The separate equivalence between that condition and the conventional graph-theoretic definition of a forest has not yet been formalized. Nor does this result prove the all-level H10 recurrence. Those are subsequent proof obligations, not claims established by the current CI run.
+**Scope limitation.** In `IncidenceForest.lean`, `IsIncidenceForest` is defined by the odd-degree condition; its equivalence with the conventional graph-theoretic definition of a forest is not yet formalized. The vertex-order lemmas are purely combinatorial and say nothing about the spectrum. Still open: states B and C for cells of arbitrary depth, monotonicity of hypotenuses, the address tree and its cuts, and the finite certificates. The all-level H10 recurrence is **not** a Lean-verified theorem.
 
-The Lean source is in [`PhiGenesis/H10/IncidenceForest.lean`](PhiGenesis/H10/IncidenceForest.lean). To reproduce the build:
+To reproduce the build:
 
 ~~~bash
 lake build PhiGenesis
 ~~~
+
+## Spectral gap at theta = 2 pi
+
+For the explicit local-face operator `H = D + A_s` at the central twist angle, the full record is in [`computational/spectral_gap_theta_2pi/`](computational/spectral_gap_theta_2pi/README.md).
+
+| Status | Statement |
+|---|---|
+| Proved in Lean 4 | Every real eigenvalue is at least 1 for every refinement level, so the gap does not close. |
+| Computed numerically | The bottom eigenvalue is 1.30912891862700 at level 4 and 1.30912892028081 at levels 5 to 8 (matrix dimension 366 to 9,843). |
+| Open | That 1.30912892028081... is the exact limit, and a closed form for it. No analogue of pi is claimed. |
+
+The identification of this model with the external theta = 2 pi operator remains conditional; see the research log in that directory.
 
 ## Mathematical core
 
@@ -433,6 +450,58 @@ These computations use the committed cached count data and/or perform numerical 
 
 ---
 
+## How this connects to the wider RFT-SIRM programme
+
+Phi-Genesis is part of a family of related research repositories. Their topics are connected by broad questions about recursive structures, invariants, and reproducible evidence, but **their mathematical objects and evidence status are not interchangeable**.
+
+| Programme | What it studies | What must not be inferred |
+|---|---|---|
+| [**Evgeny-Theorem**](https://github.com/RFT-SIRM/Evgeny-Theorem) | A specified SU(2)-connected Sierpiński-gasket operator and a fourth-moment trace-defect identity; the source repository reports a Lean 4 formalization for its stated concrete operators. | Its formal proof does not transfer to Phi-Genesis's signed Z₂-flux Laplacian or its mass-index conjecture. |
+| [**Evgeny's Theory of Everything**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything) | A broader research programme and dissertation covering recursive operators, trace defects, finite-level higher-moment certificates, numerical holdouts, and open recurrence questions. | The title describes the programme's scope; it is not a claim that a complete physical Theory of Everything has been established. Finite-level evidence does not automatically prove an all-level recurrence. |
+| [**UltraCore-RFT**](https://github.com/RFT-SIRM/UltraCore-RFT) | A research and engineering hub for invariant systems, deterministic execution, mathematical foundations, and runtime architecture, with an evidence ledger across workstreams. | An engineering result, stress test, or application prototype is not automatically a mathematical theorem or independent validation of Phi-Genesis. |
+
+### Mathematical relationship: explicit, not assumed
+
+The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed Z₂-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
+
+The dissertation is useful context and a source of related mathematical questions, not a shortcut around Phi-Genesis's own unresolved tests.
+
+- [Complete dissertation](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
+- [Fourth-moment theorem statement](https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/THEOREM.md)
+- [Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/tree/main/formalization)
+- [UltraCore-RFT research hub](https://github.com/RFT-SIRM/UltraCore-RFT)
+
+---
+
+## Authorship and correspondence
+
+**Evgeny Zaprudnov**  
+*Research author · RFT-SIRM*
+
+For research correspondence, use [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry). For machine-readable citation and author metadata, see [`CITATION.cff`](CITATION.cff).
+
+---
+
+## Research standards and citation
+
+This repository aims to make the computational record auditable:
+
+1. **State the operator and conventions.** Boundary degrees, graph level, signed edges, and the definition of the counted spectrum matter.
+2. **Keep methods and results together.** Link every important number to code, a test, protocol, or data artifact.
+3. **Preserve negative results.** Failed searches and uninformative tests are part of the record.
+4. **Control selection effects.** Count all configurations tried and use null ensembles and power checks defined before evaluation.
+5. **Distinguish evidence types.** Passing a test supports only the assertions that test actually executes.
+6. **Do not silently promote claims.** A fit is not a prediction; a finite computation is not an all-level proof; related projects are not automatically equivalent.
+
+If you use this code or cite the reported numerical results, cite the repository and identify the commit, environment, and relevant protocol/data version. Acknowledge explicitly that the mass-index formula currently lacks an independent selection rule.
+
+- [Repository](https://github.com/RFT-SIRM/Phi-Genesis)
+- [Citation and author metadata](CITATION.cff)
+- [Commit history](https://github.com/RFT-SIRM/Phi-Genesis/commits/main/)
+- [Research history timeline](https://rft-sirm.github.io/Phi-Genesis/history.html)
+- [Issue tracker](https://github.com/RFT-SIRM/Phi-Genesis/issues)
+- [Project files and declared reuse terms](https://github.com/RFT-SIRM/Phi-Genesis) — check the repository's actual license metadata before reusing code or text.
+
 ## Repository map
 
 The repository is organized as a connected research record: formal proofs, exact computational audits, numerical experiments, preregistered statistical tests, and the documentation history are kept in distinct, traceable locations. The tree below reflects the files and directories present on the official `main` branch.
@@ -625,60 +694,6 @@ The repository is organized as a connected research record: formal proofs, exact
 | Open questions | [Open problems](docs/open-problems.md) · [Verified results](docs/verified-results.md) |
 
 The repository keeps formal statements, finite computational certificates, numerical observations, and unresolved questions separate. A file's presence in the tree is not itself evidence that the claim it concerns has been proved; use the linked research notes, logs, tests, and CI records to determine the status of each result.
-
----
-
-## How this connects to the wider RFT-SIRM programme
-
-Phi-Genesis is part of a family of related research repositories. Their topics are connected by broad questions about recursive structures, invariants, and reproducible evidence, but **their mathematical objects and evidence status are not interchangeable**.
-
-| Programme | What it studies | What must not be inferred |
-|---|---|---|
-| [**Evgeny-Theorem**](https://github.com/RFT-SIRM/Evgeny-Theorem) | A specified SU(2)-connected Sierpiński-gasket operator and a fourth-moment trace-defect identity; the source repository reports a Lean 4 formalization for its stated concrete operators. | Its formal proof does not transfer to Phi-Genesis's signed Z₂-flux Laplacian or its mass-index conjecture. |
-| [**Evgeny's Theory of Everything**](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything) | A broader research programme and dissertation covering recursive operators, trace defects, finite-level higher-moment certificates, numerical holdouts, and open recurrence questions. | The title describes the programme's scope; it is not a claim that a complete physical Theory of Everything has been established. Finite-level evidence does not automatically prove an all-level recurrence. |
-| [**UltraCore-RFT**](https://github.com/RFT-SIRM/UltraCore-RFT) | A research and engineering hub for invariant systems, deterministic execution, mathematical foundations, and runtime architecture, with an evidence ledger across workstreams. | An engineering result, stress test, or application prototype is not automatically a mathematical theorem or independent validation of Phi-Genesis. |
-
-### Mathematical relationship: explicit, not assumed
-
-The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed Z₂-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
-
-The dissertation is useful context and a source of related mathematical questions, not a shortcut around Phi-Genesis's own unresolved tests.
-
-- [Complete dissertation](https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md)
-- [Fourth-moment theorem statement](https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/THEOREM.md)
-- [Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/tree/main/formalization)
-- [UltraCore-RFT research hub](https://github.com/RFT-SIRM/UltraCore-RFT)
-
----
-
-## Authorship and correspondence
-
-**Evgeny Zaprudnov**  
-*Research author · RFT-SIRM*
-
-For research correspondence, use [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry). For machine-readable citation and author metadata, see [`CITATION.cff`](CITATION.cff).
-
----
-
-## Research standards and citation
-
-This repository aims to make the computational record auditable:
-
-1. **State the operator and conventions.** Boundary degrees, graph level, signed edges, and the definition of the counted spectrum matter.
-2. **Keep methods and results together.** Link every important number to code, a test, protocol, or data artifact.
-3. **Preserve negative results.** Failed searches and uninformative tests are part of the record.
-4. **Control selection effects.** Count all configurations tried and use null ensembles and power checks defined before evaluation.
-5. **Distinguish evidence types.** Passing a test supports only the assertions that test actually executes.
-6. **Do not silently promote claims.** A fit is not a prediction; a finite computation is not an all-level proof; related projects are not automatically equivalent.
-
-If you use this code or cite the reported numerical results, cite the repository and identify the commit, environment, and relevant protocol/data version. Acknowledge explicitly that the mass-index formula currently lacks an independent selection rule.
-
-- [Repository](https://github.com/RFT-SIRM/Phi-Genesis)
-- [Citation and author metadata](CITATION.cff)
-- [Commit history](https://github.com/RFT-SIRM/Phi-Genesis/commits/main/)
-- [Research history timeline](https://rft-sirm.github.io/Phi-Genesis/history.html)
-- [Issue tracker](https://github.com/RFT-SIRM/Phi-Genesis/issues)
-- [Project files and declared reuse terms](https://github.com/RFT-SIRM/Phi-Genesis) — check the repository's actual license metadata before reusing code or text.
 
 ---
 
