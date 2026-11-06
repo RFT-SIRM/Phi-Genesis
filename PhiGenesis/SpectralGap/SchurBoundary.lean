@@ -277,4 +277,65 @@ theorem schurNextOffDiagonal_neg (b c : ℝ)
     -(b ^ 2 * (c - b) / (c * (c + 3 * b)) ) by ring]
   nlinarith
 
+
+/-- At an A1 root, the midpoint pivot is lambda - 5*b. -/
+theorem schurMidpointPivot_eq_lambda_sub_five_b_at_A1_root
+    (a b lambda : ℝ) (hA1 : a + 2 * b = 0) :
+    schurMidpointPivot a b lambda = lambda - 5 * b := by
+  simp [schurMidpointPivot]
+  linarith
+
+/-- At an A1 root with lambda >= 1 and b < 0, the factor in the
+quadratic update of the off-diagonal coefficient lies in (0, 1].
+This is a pointwise estimate at the old root; it does not yet compare
+coefficients evaluated at two different level roots. -/
+theorem schurNextOffDiagonal_ratio_bounds_at_A1_root
+    (a b lambda : ℝ) (hA1 : a + 2 * b = 0)
+    (hλ : 1 ≤ lambda) (hb : b < 0) :
+    -1 ≤
+        schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 ∧
+      schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 < 0 := by
+  let c : ℝ := schurMidpointPivot a b lambda
+  have hc_root : c = lambda - 5 * b := by
+    dsimp [c, schurMidpointPivot]
+    linarith
+  have hc_pos : 0 < c := by
+    rw [hc_root]
+    linarith
+  have hc3_pos : 0 < c + 3 * b := by
+    rw [hc_root]
+    linarith
+  have hnum_pos : 0 < c - b := by
+    rw [hc_root]
+    linarith
+  have hden_pos : 0 < c * (c + 3 * b) :=
+    mul_pos hc_pos hc3_pos
+  have hnum_le_den : c - b ≤ c * (c + 3 * b) := by
+    rw [hc_root]
+    have hλ_nonneg : 0 ≤ lambda := by linarith
+    have hλ_sub_one_nonneg : 0 ≤ lambda - 1 := by linarith
+    have hcoeff_nonneg : 0 ≤ 7 * lambda - 6 := by linarith
+    have hminus_b_nonneg : 0 ≤ -b := by linarith
+    nlinarith [
+      mul_nonneg hλ_nonneg hλ_sub_one_nonneg,
+      mul_nonneg hcoeff_nonneg hminus_b_nonneg,
+      sq_nonneg b
+    ]
+  have hfactor_pos : 0 < (c - b) / (c * (c + 3 * b)) :=
+    div_pos hnum_pos hden_pos
+  have hfactor_le : (c - b) / (c * (c + 3 * b)) ≤ 1 := by
+    calc
+      (c - b) / (c * (c + 3 * b)) ≤
+          (c * (c + 3 * b)) / (c * (c + 3 * b)) :=
+        div_le_div_of_nonneg_right hnum_le_den (le_of_lt hden_pos)
+      _ = 1 := div_self (ne_of_gt hden_pos)
+  have hb_ne : b ≠ 0 := ne_of_lt hb
+  have hc_ne : c ≠ 0 := ne_of_gt hc_pos
+  have hratio := schurNextOffDiagonal_div_sq b c hb_ne hc_ne
+  constructor
+  · rw [hratio]
+    linarith
+  · rw [hratio]
+    exact neg_neg_of_pos hfactor_pos
+
 end PhiGenesis.SpectralGap
