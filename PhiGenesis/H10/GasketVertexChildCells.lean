@@ -352,4 +352,17 @@ theorem gasketVertexOrder_child21_stateC_symbols (n : Nat) :
     Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
     gasketVertexOrder_child21_cellC n
 
+
+/-- The concrete state-B order of the root's child-2 cell is exactly the
+abstract B-symbol order under the child-2 coordinate embedding. This
+puts the previously proved geometric B sublist in the same symbol/point
+interface as the address-21 state-C theorem. -/
+theorem gasketVertexOrder_child2_stateB_symbols (n : Nat) :
+    (gasketCornerVertexOrder .B).map
+      (fun v => gasketChildPoint (n + 1) .corner2
+        (gasketCornerVertexPoint (gasketScale n) v)) <+
+      gasketVertexOrder (n + 2) := by
+  simpa [gasketCornerVertexOrder, gasketCornerVertexPoint, cellOrderB] using
+    gasketVertexOrder_child2_cellB n
+
 end PhiGenesis.H10
