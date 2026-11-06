@@ -626,10 +626,16 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
   have hEmpty :
       ([] : List GasketLatticePoint) <+
         (gasketVertexOrder (n + 3)).map
-          (gasketChildPoint (n + 3) .corner0) :=
-    List.Sublist.slnil
+          (gasketChildPoint (n + 3) .corner0) := by
+    induction (gasketVertexOrder (n + 3)) with
+    | nil =>
+        exact List.Sublist.slnil
+    | cons p ps ih =>
+        simp only [List.map_cons]
+        exact List.Sublist.cons _ ih
   have hBlocks := List.Sublist.append hEmpty hChildBlocks
   rw [gasketVertexOrder_succ_explicit (n + 3)]
+  rw [hShape]
   simpa using hBlocks
 
 end PhiGenesis.H10
