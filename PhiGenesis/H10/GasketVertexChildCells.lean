@@ -365,4 +365,29 @@ theorem gasketVertexOrder_child2_stateB_symbols (n : Nat) :
   simpa [gasketCornerVertexOrder, gasketCornerVertexPoint, cellOrderB] using
     gasketVertexOrder_child2_cellB n
 
+
+/-- Concrete realization of the root A-state transition table.
+The three actual first-occurrence child blocks contain, in order, the
+symbolic A, A, and B six-vertex configurations, respectively. This
+combines the geometric child lemmas with the abstract state vocabulary. -/
+theorem gasketVertexOrder_root_stateA_child_table (n : Nat) :
+    ((gasketCornerVertexOrder .A).map
+      (fun v => gasketChildPoint (n + 1) .corner0
+        (gasketCornerVertexPoint (gasketScale n) v)) <+
+      gasketVertexOrder (n + 2)) ∧
+    ((gasketCornerVertexOrder .A).map
+      (fun v => gasketChildPoint (n + 1) .corner1
+        (gasketCornerVertexPoint (gasketScale n) v)) <+
+      gasketVertexOrder (n + 2)) ∧
+    ((gasketCornerVertexOrder .B).map
+      (fun v => gasketChildPoint (n + 1) .corner2
+        (gasketCornerVertexPoint (gasketScale n) v)) <+
+      gasketVertexOrder (n + 2)) := by
+  refine ⟨?_, ?_, ?_⟩
+  · simpa [gasketCornerVertexOrder, gasketCornerVertexPoint,
+      gasketChildPoint, stateAList] using gasketVertexOrder_child0_cellA n
+  · simpa [gasketCornerVertexOrder, gasketCornerVertexPoint,
+      gasketChildPoint, stateAList] using gasketVertexOrder_child1_cellA n
+  · exact gasketVertexOrder_child2_stateB_symbols n
+
 end PhiGenesis.H10
