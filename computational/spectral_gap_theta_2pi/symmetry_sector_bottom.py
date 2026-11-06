@@ -156,6 +156,90 @@ def build_a1_quotient(level: int):
     return K, K_float, Q, len(vertices), len(orbits)
 
 
+
+def build_a1_quotient_sparse(level: int):
+    """Build K = Q_A1-I as sparse rows without an O(n_orbits^2) count table."""
+    vertices, index, neighbors, degree, Q = build_graph(level)
+    side = 1 << level
+    vertex_set = set(vertices)
+    seen = set()
+    orbits = []
+    for vertex in vertices:
+        if vertex in seen:
+            continue
+        orbit = s3_orbit(vertex, side)
+        if not orbit <= vertex_set:
+            raise ArithmeticError("the S3 action does not preserve the vertex set")
+        seen.update(orbit)
+        orbits.append(sorted(orbit))
+    if seen != vertex_set:
+        raise ArithmeticError("S3 orbit partition missed graph vertices")
+
+    orbit_index = {
+        vertex: orbit_id
+        for orbit_id, orbit in enumerate(orbits)
+        for vertex in orbit
+    }
+    sizes = [len(orbit) for orbit in orbits]
+    orbit_degree = []
+    counts_by_orbit = []
+
+    for orbit_id, orbit in enumerate(orbits):
+        reference = None
+        for vertex in orbit:
+            counts = {}
+            ui = index[vertex]
+            for neighbor_index in neighbors[ui]:
+                target_orbit = orbit_index[vertices[neighbor_index]]
+                counts[target_orbit] = counts.get(target_orbit, 0) + 1
+            if reference is None:
+                reference = counts
+            elif reference != counts:
+                raise ArithmeticError(
+                    f"orbit partition is not equitable at level {level}, orbit {orbit_id}"
+                )
+        counts_by_orbit.append(reference)
+        orbit_degree.append(degree[index[orbit[0]]])
+
+    rows = []
+    float_rows, float_cols, float_data = [], [], []
+    for a, counts in enumerate(counts_by_orbit):
+        row = []
+        for b, multiplicity in sorted(counts.items()):
+            if a == b:
+                value = mpf(orbit_degree[a] + multiplicity - 1)
+            else:
+                value = mpf(multiplicity) * mp.sqrt(mpf(sizes[a]) / sizes[b])
+            if value != 0:
+                row.append((b, value))
+                float_rows.append(a)
+                float_cols.append(b)
+                float_data.append(float(value))
+        rows.append(row)
+
+    row_dicts = [dict(row) for row in rows]
+    asymmetry = mpf(0)
+    for i, row in enumerate(row_dicts):
+        for j, value in row.items():
+            asymmetry = max(
+                asymmetry,
+                abs(value - row_dicts[j].get(i, mpf(0))),
+            )
+    if asymmetry > mpf("1e-60"):
+        raise ArithmeticError(f"A1 sparse quotient is not symmetric: {asymmetry}")
+    if any(dict(row).get(i, mpf(0)) <= 0 for i, row in enumerate(rows)):
+        raise ArithmeticError("A1 shifted quotient has a nonpositive diagonal")
+
+    K_float = sp.coo_matrix(
+        (
+            np.asarray(float_data, dtype=np.float64),
+            (float_rows, float_cols),
+        ),
+        shape=(len(orbits), len(orbits)),
+    ).tocsr()
+    return rows, K_float, Q, len(vertices), len(orbits), asymmetry
+
+
 def a1_bottom(level: int, iterations: int = 60):
     """High-precision inverse iteration in the fully symmetric A1 sector."""
     started = time.time()
@@ -526,14 +610,17 @@ def mixed_precision_bottom(
 
     with mp.workdps(dps):
         if sector == "A1":
-            K_mp, K_float, _full_graph, full_n, sector_n = build_a1_quotient(level)
-            matrix_for_factor = sp.csc_matrix(K_float)
-            seed_matrix = matrix_for_factor
+            (
+                rows,
+                K_float,
+                _full_graph,
+                full_n,
+                sector_n,
+                _asymmetry,
+            ) = build_a1_quotient_sparse(level)
+            matrix_for_factor = K_float.tocsc()
+            seed_matrix = K_float
             complex_mode = False
-            rows = [
-                [(j, K_mp[i, j]) for j in range(sector_n) if K_mp[i, j] != 0]
-                for i in range(sector_n)
-            ]
         elif sector == "A2":
             K_mp, K_float, full_n, sector_n = build_a2_quotient(level)
             matrix_for_factor = sp.csc_matrix(K_float)
