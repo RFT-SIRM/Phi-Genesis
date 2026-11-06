@@ -691,3 +691,62 @@ lerac{64cdot10^{-36}}{1-2cdot10^{-36}}
 <6.41cdot10^{-35}.
 ]
 Combined with |D_(m+1)-D_m|<=2^m|b_m|, this would prove convergence of D_m and keep its limit separated from zero. What remains is a proof that these estimates persist for every level, not just the finite transitions through level 14.
+
+
+## 42. Common A1 bootstrap-window interval experiment through level 101 (2026-11-06)
+
+Added `computational/spectral_gap_theta_2pi/schur_bootstrap_box_iv.py` and the focused
+`test_spectral_schur_bootstrap_box.py`. This is a new finite interval experiment, separate from the
+earlier root-to-root derivative certificate.
+
+The script first continues the scalar A1 boundary root to level 6 at 180-digit working precision.
+It then fixes a single asymmetric parameter window
+`[lambda_6 - 10^-140, lambda_6 + 1.1·10^-36]` and propagates the exact three-corner Schur recursion
+and its first two spectral-parameter derivatives through that same window. Every arithmetic
+operation in the interval pass uses `mpmath.iv` outward rounding.
+
+The independent rerun in this session produced the level-6 root candidate
+
+`1.3091289202808134218886230881708101876507678031080187683328996930708725974720891…`.
+
+At the two fixed endpoints, the level-6 A1 characteristic has interval signs
+
+- left endpoint: `+1.2932897430304525804499726533458583·10^-140`;
+- right endpoint: `-1.4226187173334978385507044774490368·10^-36`.
+
+The same endpoint sign pattern was verified for every level from 6 through 101. On the whole
+parameter window, at each of those finite levels, the interval recurrence also verifies:
+- `a_m` lies in `[-10^-35,10^-35]` and `b_m` lies in `[-6·10^-37,0]`;
+- `a'_m` and the A1 derivative lie in `[-1.294,-1.292]`;
+- `b'_m` lies in `[-1.1·10^-35,1.1·10^-35]`;
+- `a''_m` and the A1 second derivative lie in `[-0.286,-0.281]`;
+- `b''_m` lies in `[-2.1·10^-34,2.1·10^-34]`;
+- every midpoint pivot interval used in the recursion is strictly positive.
+
+The minimum lower endpoint among the current midpoint-pivot eigenvalue intervals is
+`1.30912892028081342188862308817081018318197512497465735869384…`.
+For each step 6–100, the interval ratio
+`(c-b)/(c(c+3b)) = |b_(m+1)|/|b_m|^2` is positive and below 0.8; the largest upper endpoint
+is `0.763866709006394859550664540131484644804630685074122411193022…`.
+
+Because the A1 derivative is strictly negative throughout the common interval and the endpoint
+signs are opposite, each finite-level A1 characteristic has exactly one zero in that interval.
+This is a finite-level statement for the continued A1 boundary characteristic. It does not extend
+the separate global spectral-order/inertia certification beyond level 12.
+
+The script reports a conditional all-future root-shift budget of
+`9.28792569659442724458·10^-37`. This budget assumes that the finite bootstrap inequalities,
+including the 0.8 contraction, persist at every future level. It is a conditional estimate, not a
+certificate that the bootstrap box is invariant for all levels.
+
+Local verification:
+`python -m pytest -q test_spectral_schur_bootstrap_box.py` — 1 passed in 8.85 s.
+The direct run
+`python computational/spectral_gap_theta_2pi/schur_bootstrap_box_iv.py --max-level 101 --dps 180 --radius-digits 140`
+reproduces the figures above.
+
+The next mathematical obligation is now sharper: prove the coarse bootstrap region is invariant
+under the differentiated Schur map, rather than merely checking a long finite orbit. The Lean
+lemma added alongside this experiment proves the one-step four-fifths off-diagonal contraction
+under the coarse pivot/sign box assumptions; it does not prove those assumptions remain invariant.
+

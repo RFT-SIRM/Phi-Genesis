@@ -463,4 +463,54 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
   rw [neg_div]
   exact neg_lt_neg hfactor
 
+
+
+/-- A coarse local pivot box gives a strict four-fifths contraction of the
+Schur off-diagonal coefficient. The all-level invariance of this box is a
+separate obligation. -/
+theorem schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+    (b c : ℝ)
+    (hb_lower : -(1 / 100 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    |schurNextOffDiagonal b c| ≤ (4 / 5 : ℝ) * b ^ 2 := by
+  have hc_pos : 0 < c := by linarith
+  have hc3_pos : 0 < c + 3 * b := by linarith
+  have hcb : b < c := by linarith
+  have hden_pos : 0 < c * (c + 3 * b) :=
+    mul_pos hc_pos hc3_pos
+  have hnum_upper : c - b ≤ (133 / 100 : ℝ) := by linarith
+  have hden_lower :
+      (13 / 10 : ℝ) * (13 / 10 : ℝ) ≤ c * (c + 3 * b) := by
+    calc
+      (13 / 10 : ℝ) * (13 / 10 : ℝ) ≤ c * (13 / 10 : ℝ) :=
+        mul_le_mul_of_nonneg_right hc_lower (by norm_num)
+      _ ≤ c * (c + 3 * b) :=
+        mul_le_mul_of_nonneg_left hc3_lower (le_of_lt hc_pos)
+  have hcross :
+      c - b ≤ c * (c + 3 * b) * (4 / 5 : ℝ) := by
+    calc
+      c - b ≤ (133 / 100 : ℝ) := hnum_upper
+      _ ≤ (13 / 10 : ℝ) * (13 / 10 : ℝ) * (4 / 5 : ℝ) := by norm_num
+      _ ≤ c * (c + 3 * b) * (4 / 5 : ℝ) :=
+        mul_le_mul_of_nonneg_right hden_lower (by norm_num)
+  have hratio :
+      (c - b) / (c * (c + 3 * b)) ≤ (4 / 5 : ℝ) :=
+    (div_le_iff₀ hden_pos).2 hcross
+  have hvalue_nonpos : schurNextOffDiagonal b c ≤ 0 := by
+    by_cases hb : b = 0
+    · simp [schurNextOffDiagonal, hb]
+    · exact le_of_lt (schurNextOffDiagonal_neg b c hb hc_pos hc3_pos hcb)
+  calc
+    |schurNextOffDiagonal b c|
+        = b ^ 2 * ((c - b) / (c * (c + 3 * b))) := by
+            rw [abs_of_nonpos hvalue_nonpos]
+            unfold schurNextOffDiagonal
+            ring
+    _ ≤ b ^ 2 * (4 / 5 : ℝ) :=
+      mul_le_mul_of_nonneg_left hratio (sq_nonneg b)
+    _ = (4 / 5 : ℝ) * b ^ 2 := by ring
+
 end PhiGenesis.SpectralGap

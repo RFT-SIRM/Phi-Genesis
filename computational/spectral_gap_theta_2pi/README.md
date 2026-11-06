@@ -234,6 +234,43 @@ python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py --ma
 pytest -q test_spectral_schur_inertia.py
 ~~~
 
+### A1 bootstrap-window interval experiment (levels 6–101)
+
+A separate finite experiment is implemented in `schur_bootstrap_box_iv.py`. It starts from a
+260-digit scalar candidate for the level-6 A1 root, then fixes one asymmetric parameter interval
+`[lambda_6 - 10^-140, lambda_6 + 1.1·10^-36]` and propagates the exact Schur recursion over that
+same interval through level 101 using outward-rounded `mpmath.iv` arithmetic at 180 digits.
+
+For every level 6–101, the run checks opposite signs of the A1 characteristic at the two fixed
+endpoints, a strictly negative A1 derivative throughout the interval, the proposed bootstrap
+ranges for `a,b` and their first two derivatives, and positivity of every midpoint-pivot interval
+encountered in the recursion. Thus each finite-level A1 characteristic has exactly one root in
+the common interval. The minimum lower endpoint among the current midpoint-pivot eigenvalue
+intervals is approximately `1.30912892028081342188862308817081018318…`.
+
+For each bootstrap step 6–100 it also checks the interval ratio
+`R=(c-b)/(c(c+3b))` lies in `(0,0.8)`. The largest upper endpoint is approximately
+`0.76386670900639485955066454013148464480…`. The level-6 endpoint values are approximately
+`+1.29328974303045258045·10^-140` and `-1.42261871733349783855·10^-36`.
+
+The associated conditional root-shift budget is approximately `9.28792569659442724458·10^-37`.
+It assumes the verified finite bootstrap estimates continue to hold at every future level; it is
+not an independent all-level certificate. The experiment therefore extends the finite numerical
+evidence from transitions through level 14 to a common parameter window checked through level 101,
+but it does **not** prove that the bootstrap box is invariant for all levels, nor does it prove
+convergence or the limiting quadratic law.
+
+Reproduce it with:
+
+~~~bash
+python computational/spectral_gap_theta_2pi/schur_bootstrap_box_iv.py --max-level 101 --dps 180 --radius-digits 140
+pytest -q test_spectral_schur_bootstrap_box.py
+~~~
+
+The focused regression test takes about nine seconds in the checked environment. The script's
+finite-level interval output is computational evidence, not a Lean-kernel theorem or an
+infinite-level proof.
+
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
@@ -328,5 +365,7 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `test_schur_bottom_eigenvalue.py` | regression test for the 260-dps standalone roots and equivalence of the two boundary normalizations |
 | `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1`/`E` boundary-root continuation |
 | `schur_inertia_certificate.py` | outward-rounded Decimal interval checks and finite-level Schur/inertia certificates for the ground state and first E doublet |
+| `schur_bootstrap_box_iv.py` | outward-rounded 180-digit common-window A1 Schur bootstrap experiment through level 101 |
+| `test_spectral_schur_bootstrap_box.py` | regression test for the finite common-window signs, bootstrap box, and contraction bounds |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |
