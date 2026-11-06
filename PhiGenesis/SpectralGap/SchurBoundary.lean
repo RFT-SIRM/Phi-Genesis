@@ -3430,8 +3430,8 @@ theorem schurBootstrapA1AtLevel_tail_bound
         schurBootstrapA1AtLevel lambda m ≤
           (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ m := by
   have hwindow := schurBootstrapEndpoints_in_parameter_window
-  have hλlo : (1309 / 1000 : ℝ) ≤ lambda := le_trans hwindow.1 hlambda.1
-  have hλhi : lambda ≤ (131 / 100 : ℝ) := le_trans hlambda.2 hwindow.2.2.2
+  have hlambdaLower : (1309 / 1000 : ℝ) ≤ lambda := le_trans hwindow.1 hlambda.1
+  have hlambdaUpper : lambda ≤ (131 / 100 : ℝ) := le_trans hlambda.2 hwindow.2.2.2
   let initial : ℝ × ℝ := (2 - lambda, 1)
   let s3 := schurBoundaryTrajectory lambda initial 3
   have hs3 := schurBootstrap_levelThree_state_box lambda hlambda
@@ -3443,10 +3443,10 @@ theorem schurBootstrapA1AtLevel_tail_bound
     exact ⟨hs3'.2.1, le_trans hs3'.2.2 (by norm_num)⟩
   have hcontract :=
     schurBoundaryTrajectory_coarse_offDiagonal_half_contract
-      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hλlo hλhi
+      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hlambdaLower hlambdaUpper
   have hinc :=
     schurBoundaryTrajectory_coarse_A1_increment_bounds
-      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hλlo hλhi
+      lambda s3.1 s3.2 hs3'.1 hs3'.2.1 hs3'.2.2 hlambdaLower hlambdaUpper
   intro m N
   let f : ℕ → ℝ := fun k =>
     (schurBoundaryTrajectory lambda s3 (3 + m + k)).1 +
