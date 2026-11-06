@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
 from decimal import Decimal
 from pathlib import Path
 
@@ -17,6 +18,7 @@ SPEC = importlib.util.spec_from_file_location(
 if SPEC is None or SPEC.loader is None:
     raise ImportError(f"cannot load interval certificate at {CERTIFICATE_SCRIPT}")
 certificate = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = certificate
 SPEC.loader.exec_module(certificate)
 
 
