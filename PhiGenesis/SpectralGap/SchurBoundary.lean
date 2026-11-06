@@ -1313,7 +1313,19 @@ theorem schurBoundaryTrajectory_A1_increment_bounds
       (schurBoundaryTrajectory lambda (a₀, b₀) n).1
       (schurBoundaryTrajectory lambda (a₀, b₀) n).2
       lambda ha_bounds.1 ha_bounds.2 hstate.2.1 hstate.2.2 hlambda_lower
-  simpa [schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal
+  let f : ℕ → ℝ := fun k =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) k).1 +
+      2 * (schurBoundaryTrajectory lambda (a₀, b₀) k).2
+  have hmono : f n ≤ f (n + 1) := by
+    simpa [f, schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal.1
+  have hupper : f (n + 1) ≤ 2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| + f n := by
+    simpa [f, schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal.2
+  constructor
+  · change 0 ≤ f (n + 1) - f n
+    exact sub_nonneg.mpr hmono
+  · change f (n + 1) - f n ≤
+      2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
+    linarith
 
 
 /-- The A1 characteristic stays nonnegative at every finite Schur level
