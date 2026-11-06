@@ -156,11 +156,11 @@ def schurMidpointPivot (a b lambda : ℝ) : ℝ :=
   2 * a + lambda - b
 
 /-- Diagonal entry of the next three-corner Schur matrix. -/
-def schurNextDiagonal (a b c : ℝ) : ℝ :=
+noncomputable def schurNextDiagonal (a b c : ℝ) : ℝ :=
   a - 2 * b ^ 2 * (c + b) / (c * (c + 3 * b))
 
 /-- Off-diagonal entry of the next three-corner Schur matrix. -/
-def schurNextOffDiagonal (b c : ℝ) : ℝ :=
+noncomputable def schurNextOffDiagonal (b c : ℝ) : ℝ :=
   -b ^ 2 * (c - b) / (c * (c + 3 * b))
 
 /-- At an A1 root, the next-level A1 characteristic evaluated at the
@@ -173,7 +173,7 @@ theorem schurNextA1_at_old_root (a b c : ℝ)
   have ha : a = -2 * b := by linarith
   rw [ha]
   field_simp [hc, hc3]
-  ring
+  ring_nf
 
 /-- The off-diagonal Schur coefficient changes quadratically in b,
 with an exact finite-level prefactor. -/
@@ -183,7 +183,6 @@ theorem schurNextOffDiagonal_div_sq (b c : ℝ)
       -(c - b) / (c * (c + 3 * b)) := by
   unfold schurNextOffDiagonal
   field_simp [hb, hc, hc3]
-  ring
 
 /-- At an A1 root, the E boundary channel equals -3b. -/
 theorem schurE_at_A1_root (a b : ℝ) (hA1 : a + 2 * b = 0) :
@@ -196,9 +195,11 @@ theorem schurMidpointPivot_energy_nonneg (c b : ℝ) (x : Fin 3 → ℝ)
     (hc : 0 ≤ c) (hc3 : 0 ≤ c + 3 * b) :
     0 ≤ schurCornerEnergy (c + b) b x := by
   apply schurCornerEnergy_nonneg_of_channels
-  · change 0 ≤ (c + b) + 2 * b
+  · have h : (c + b) + 2 * b = c + 3 * b := by ring
+    rw [h]
     exact hc3
-  · change 0 ≤ (c + b) - b
+  · have h : (c + b) - b = c := by ring
+    rw [h]
     exact hc
 
 end PhiGenesis.SpectralGap
