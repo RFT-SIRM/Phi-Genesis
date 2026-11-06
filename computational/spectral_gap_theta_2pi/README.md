@@ -184,7 +184,7 @@ This 3/2 relation has a conditional derivation. At an A1 root, (a_m=-2b_m), so t
 \[
 f_{m+1}(\lambda_m)=-2b_m\frac{c_m+5b_m}{c_m+3b_m}\sim-2b_m.
 \]
-If the derivatives of these two characteristics approach the same nonzero limit, their root corrections are asymptotic to (-3b_m/L) and (-2b_m/L), respectively. Hence
+If the derivatives of these two characteristics approach the same nonzero limit, their root corrections are asymptotic to (3b_m/L) and (2b_m/L), respectively. Hence
 \[
 E_m-A_{1,m}\sim\frac{3}{2}\,(A_{1,m+1}-A_{1,m}).
 \]

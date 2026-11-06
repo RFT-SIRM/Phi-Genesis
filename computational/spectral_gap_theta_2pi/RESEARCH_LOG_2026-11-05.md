@@ -541,7 +541,7 @@ The E-boundary continuation is now explicitly regression-compared with the indep
 
 Conditional derivation: at an A1 root f_m=0, hence a_m=-2b_m and g_m=a_m-b_m=-3b_m. The next A1 characteristic at the same point is
 f_(m+1)(λ_m)=-2b_m(c_m+5b_m)/(c_m+3b_m)≈-2b_m.
-If g'_m(λ_m) and f'_(m+1)(λ_m) approach the same nonzero limit L, the two root shifts are approximately -3b_m/L and -2b_m/L, producing the 3/2 relation. This in turn yields the conditional relation c_E=(3/2)c_A1. The derivative-limit and root-convergence hypotheses still need proof.
+If g'_m(λ_m) and f'_(m+1)(λ_m) approach the same nonzero limit L, the two root shifts are approximately 3b_m/L and 2b_m/L, producing the 3/2 relation. This in turn yields the conditional relation c_E=(3/2)c_A1. The derivative-limit and root-convergence hypotheses still need proof.
 
 The extended A1/E Schur test module now has 30 test cases: direct Schur-complement comparisons, forward-derivative checks, A1 level-12 roots, E/A1 splitting, independent E-matrix comparisons at levels 5–8, the 3/2 shift-ratio check at 2,450 dps, and insufficient-precision guards. The preceding A1-only implementation commit 8208de4 passed its exact-SHA GitHub CI: 103 passed, 8 deselected. The current E-extension commit will receive its own CI run.
 
@@ -574,3 +574,5 @@ pytest -q test_spectral_schur_inertia.py
 Local isolated validation of the interval/inertia logic: all 24 (A1,E) level checks passed, with a minimum midpoint-pivot lower bound above 1.1516. The new regression test runs the complete 12-level certificate from scratch. GitHub CI for this exact source revision is required before marking the repository integration closed.
 
 This is a finite-level computer-assisted interval/inertia result, not a Lean-kernel theorem. It does not prove convergence as m tends to infinity, the quadratic correction law for all levels, or identification with the absent external theta=2pi operator. It does, however, close the finite-level global-bottom and first-excited-doublet ordering for the local-face graph at every level 1 through 12.
+
+The sign of the two first-order root shifts is positive: both b_m and the limiting derivatives L are negative, so 3b_m/L and 2b_m/L are positive. The previous draft displayed an erroneous leading minus sign in these two shifts; the ratio 3/2 and all numerical coefficients were unaffected.
