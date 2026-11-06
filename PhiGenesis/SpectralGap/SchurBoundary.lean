@@ -1975,4 +1975,175 @@ theorem schurBootstrapA1AtLevel_exists_root_of_levelSix_box_and_prefix_pivots
     schurBootstrap_all_pivots_nonzero_of_levelSix_box_and_prefix
       hlevelSix hprefix lambda hlambda k
 
+
+/-- Closed form for the first diagonal Schur coefficient from the
+original initial state (2-lambda,1). -/
+noncomputable def schurLevelOneDiagonal (lambda : ℝ) : ℝ :=
+  (2 - lambda) - 2 * (4 - lambda) / ((3 - lambda) * (6 - lambda))
+
+/-- Closed form for the first off-diagonal Schur coefficient from the
+original initial state (2-lambda,1). -/
+noncomputable def schurLevelOneOffDiagonal (lambda : ℝ) : ℝ :=
+  -(2 - lambda) / ((3 - lambda) * (6 - lambda))
+
+
+/-- The original Schur trajectory at level one is exactly the two
+closed-form rational functions above. -/
+theorem schurBoundaryTrajectory_level_one_formula (lambda : ℝ) :
+    schurBoundaryTrajectory lambda (2 - lambda, 1) 1 =
+      (schurLevelOneDiagonal lambda,
+        schurLevelOneOffDiagonal lambda) := by
+  have hc :
+      schurMidpointPivot (2 - lambda) 1 lambda = 3 - lambda := by
+    simp [schurMidpointPivot]
+    ring
+  simp [schurBoundaryTrajectory, schurBoundaryStateStep, hc,
+    schurNextDiagonal, schurNextOffDiagonal,
+    schurLevelOneDiagonal, schurLevelOneOffDiagonal]
+
+
+/-- Across the narrow bootstrap interval, the first diagonal coefficient
+is decreasing and the first off-diagonal coefficient is increasing. -/
+theorem schurBootstrap_levelOne_antitone_mono
+    (x y : ℝ)
+    (hx : x ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper)
+    (hy : y ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper)
+    (hxy : x ≤ y) :
+    schurLevelOneDiagonal y ≤ schurLevelOneDiagonal x ∧
+      schurLevelOneOffDiagonal x ≤ schurLevelOneOffDiagonal y := by
+  have hwindow := schurBootstrapEndpoints_in_parameter_window
+  have hx_lower : (1309 / 1000 : ℝ) ≤ x := le_trans hwindow.1 hx.1
+  have hx_upper : x ≤ (131 / 100 : ℝ) :=
+    le_trans hx.2 hwindow.2.2.2
+  have hy_lower : (1309 / 1000 : ℝ) ≤ y := le_trans hwindow.1 hy.1
+  have hy_upper : y ≤ (131 / 100 : ℝ) :=
+    le_trans hy.2 hwindow.2.2.2
+  have hx3 : 0 < 3 - x := by linarith
+  have hx6 : 0 < 6 - x := by linarith
+  have hy3 : 0 < 3 - y := by linarith
+  have hy6 : 0 < 6 - y := by linarith
+  have hden_pos :
+      0 < (3 - x) * (6 - x) * (3 - y) * (6 - y) :=
+    mul_pos (mul_pos (mul_pos hx3 hx6) hy3) hy6
+  have hprod_lower :
+      0 ≤ (x - (1309 / 1000 : ℝ)) *
+        (y - (1309 / 1000 : ℝ)) :=
+    mul_nonneg (sub_nonneg.mpr hx_lower)
+      (sub_nonneg.mpr hy_lower)
+  have hpolyA :
+      0 < 18 - 4 * x - 4 * y + x * y := by
+    nlinarith
+  have hprod_upper :
+      0 ≤ ((131 / 100 : ℝ) - x) *
+        ((131 / 100 : ℝ) - y) :=
+    mul_nonneg (sub_nonneg.mpr hx_upper)
+      (sub_nonneg.mpr hy_upper)
+  have hpolyB :
+      0 < 2 * x + 2 * y - x * y := by
+    nlinarith
+  have hquotA :
+      0 < (18 - 4 * x - 4 * y + x * y) /
+        ((3 - x) * (6 - x) * (3 - y) * (6 - y)) :=
+    div_pos hpolyA hden_pos
+  have hquotB :
+      0 < (2 * x + 2 * y - x * y) /
+        ((3 - x) * (6 - x) * (3 - y) * (6 - y)) :=
+    div_pos hpolyB hden_pos
+  have hdiffA :
+      schurLevelOneDiagonal x - schurLevelOneDiagonal y =
+        (y - x) *
+          (1 + 2 * ((18 - 4 * x - 4 * y + x * y) /
+            ((3 - x) * (6 - x) * (3 - y) * (6 - y)))) := by
+    unfold schurLevelOneDiagonal
+    field_simp [ne_of_gt hx3, ne_of_gt hx6,
+      ne_of_gt hy3, ne_of_gt hy6]
+    <;> ring
+  have hdiffB :
+      schurLevelOneOffDiagonal y -
+        schurLevelOneOffDiagonal x =
+        (y - x) *
+          ((2 * x + 2 * y - x * y) /
+            ((3 - x) * (6 - x) * (3 - y) * (6 - y))) := by
+    unfold schurLevelOneOffDiagonal
+    field_simp [ne_of_gt hx3, ne_of_gt hx6,
+      ne_of_gt hy3, ne_of_gt hy6]
+    <;> ring
+  constructor
+  · have hfactor :
+        0 ≤ 1 + 2 * ((18 - 4 * x - 4 * y + x * y) /
+          ((3 - x) * (6 - x) * (3 - y) * (6 - y))) :=
+      le_of_lt (by linarith)
+    rw [← sub_nonneg]
+    rw [hdiffA]
+    exact mul_nonneg (sub_nonneg.mpr hxy) hfactor
+  · rw [← sub_nonneg]
+    rw [hdiffB]
+    exact mul_nonneg (sub_nonneg.mpr hxy) (le_of_lt hquotB)
+
+
+/-- Exact rational enclosure of the first Schur state on the full narrow
+bootstrap interval. This keeps the dependence between the initial
+diagonal value and lambda instead of treating them as independent. -/
+theorem schurBootstrap_levelOne_state_box
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    ((1235695422588800493636603471580679174544749349869 /
+        10 ^ 50 : ℝ) ≤
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).1 ∧
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).1 ≤
+        (1235695422588800493636603471580679433299227360878 /
+          10 ^ 50 : ℝ)) ∧
+    (-(8710298126456400450881962728061450813934618792872 /
+        10 ^ 50 : ℝ) ≤
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).2 ∧
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).2 ≤
+        -(8710298126456400450881962728061450802735668500291 /
+          10 ^ 50 : ℝ)) := by
+  have hle :
+      schurBootstrapLambdaLower ≤ schurBootstrapLambdaUpper := by
+    norm_num [schurBootstrapLambdaLower, schurBootstrapLambdaUpper]
+  have hL :
+      schurBootstrapLambdaLower ∈
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper :=
+    ⟨le_rfl, hle⟩
+  have hU :
+      schurBootstrapLambdaUpper ∈
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper :=
+    ⟨hle, le_rfl⟩
+  have hlow :=
+    schurBootstrap_levelOne_antitone_mono
+      schurBootstrapLambdaLower lambda hL hlambda hlambda.1
+  have hupp :=
+    schurBootstrap_levelOne_antitone_mono
+      lambda schurBootstrapLambdaUpper hlambda hU hlambda.2
+  have hA_lower :
+      (1235695422588800493636603471580679174544749349869 /
+        10 ^ 50 : ℝ) ≤
+        schurLevelOneDiagonal schurBootstrapLambdaUpper := by
+    norm_num [schurLevelOneDiagonal, schurBootstrapLambdaUpper]
+  have hA_upper :
+      schurLevelOneDiagonal schurBootstrapLambdaLower ≤
+        (1235695422588800493636603471580679433299227360878 /
+          10 ^ 50 : ℝ) := by
+    norm_num [schurLevelOneDiagonal, schurBootstrapLambdaLower]
+  have hB_lower :
+      -(8710298126456400450881962728061450813934618792872 /
+        10 ^ 50 : ℝ) ≤
+        schurLevelOneOffDiagonal schurBootstrapLambdaLower := by
+    norm_num [schurLevelOneOffDiagonal, schurBootstrapLambdaLower]
+  have hB_upper :
+      schurLevelOneOffDiagonal schurBootstrapLambdaUpper ≤
+        -(8710298126456400450881962728061450802735668500291 /
+          10 ^ 50 : ℝ) := by
+    norm_num [schurLevelOneOffDiagonal, schurBootstrapLambdaUpper]
+  rw [schurBoundaryTrajectory_level_one_formula]
+  exact
+    ⟨⟨le_trans hA_lower hupp.1,
+        le_trans hlow.1 hA_upper⟩,
+      ⟨le_trans hB_lower hlow.2,
+        le_trans hupp.2 hB_upper⟩⟩
+
+
 end PhiGenesis.SpectralGap
