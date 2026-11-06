@@ -542,16 +542,27 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
         target := by
     simp [gasketCornerVertexOrder, gasketCornerVertexPoint,
       gasketAddress22Point, gasketChildPoint, target, S, U, T]
+  have hMapEq :
+      (gasketCornerVertexOrder .B).map
+        (fun v => gasketAddress22Point n
+          (gasketCornerVertexPoint (gasketScale (n + 1)) v)) =
+      ((gasketCornerVertexOrder .B).map
+          (fun v => gasketChildPoint (n + 2) .corner2
+            (gasketCornerVertexPoint (gasketScale (n + 1)) v))).map
+          (gasketChildPoint (n + 3) .corner2) := by
+    rw [List.map_map]
+    apply List.map_congr_left
+    intro v hv
+    rfl
   have hRaw :
       (gasketCornerVertexOrder .B).map
         (fun v => gasketAddress22Point n
           (gasketCornerVertexPoint (gasketScale (n + 1)) v)) <+
         (gasketVertexOrder (n + 3)).map
           (gasketChildPoint (n + 3) .corner2) := by
-    simpa only [gasketAddress22Point, List.map_map,
-      Function.comp_apply] using
-      (gasketVertexOrder_child2_stateB_symbols (n + 1)).map
-        (gasketChildPoint (n + 3) .corner2)
+    rw [hMapEq]
+    exact (gasketVertexOrder_child2_stateB_symbols (n + 1)).map
+      (gasketChildPoint (n + 3) .corner2)
   rw [hShape] at hRaw
   have hScale1 : U = 2 * S := by
     dsimp [U]
@@ -612,18 +623,7 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
         (fun p => decide (p ≠ (0, T)))).filter
         (fun p => decide (p ≠ (T, T)))) := by
     exact List.sublist_append_of_sublist_right hFiltered
-  have hBlocks : target <+
-      ((gasketVertexOrder (n + 3)).map
-          (gasketChildPoint (n + 3) .corner0)) ++
-        ((((gasketVertexOrder (n + 3)).map
-            (gasketChildPoint (n + 3) .corner1)).filter
-          (fun p => decide (p ≠ (T, 0))) ++
-          ((((gasketVertexOrder (n + 3)).map
-              (gasketChildPoint (n + 3) .corner2)).filter
-            (fun p => decide (p ≠ (0, T)))).filter
-            (fun p => decide (p ≠ (T, T))))) := by
-    exact List.sublist_append_of_sublist_right hChildBlocks
   rw [gasketVertexOrder_succ_explicit (n + 3)]
-  exact hBlocks
+  exact List.sublist_append_of_sublist_right hChildBlocks
 
 end PhiGenesis.H10
