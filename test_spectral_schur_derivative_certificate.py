@@ -24,21 +24,27 @@ SPEC.loader.exec_module(derivative_certificate)
 
 @pytest.mark.parametrize("level", range(5, 8))
 def test_a1_second_derivative_interval_encloses_mpmath_difference(level):
-    with mp.workdps(100):
-        point = mp.mpf("1.309")
-        # Pass the original mpf, not a decimal string rounded to fewer digits.
-        # Otherwise a high-precision interval context can exclude the source mpf
-        # by one or two units in its final binary ulp.
-        interval_point = derivative_certificate.iv.mpf(point)
-        _a, _b, _da, _db, dda, ddb, _pivots = (
-            derivative_certificate._schur_interval_second_order(interval_point, level)
-        )
-        interval_second = dda + 2 * ddb
-        first_derivative = lambda x: derivative_certificate.schur_decimation.a1_characteristic_with_derivative(x, level)[1]
-        expected = mp.diff(first_derivative, point)
-        lower = mp.make_mpf(interval_second.a._mpi_[0])
-        upper = mp.make_mpf(interval_second.b._mpi_[0])
-        assert lower <= expected <= upper
+    interval_context = derivative_certificate.iv
+    previous_interval_dps = interval_context.dps
+    # Keep the interval enclosure a little wider than the independently
+    # rounded 100-digit scalar reference, regardless of earlier tests that
+    # may have changed the shared mpmath.iv precision.
+    interval_context.dps = 80
+    try:
+        with mp.workdps(100):
+            point = mp.mpf("1.309")
+            interval_point = interval_context.mpf(point)
+            _a, _b, _da, _db, dda, ddb, _pivots = (
+                derivative_certificate._schur_interval_second_order(interval_point, level)
+            )
+            interval_second = dda + 2 * ddb
+            first_derivative = lambda x: derivative_certificate.schur_decimation.a1_characteristic_with_derivative(x, level)[1]
+            expected = mp.diff(first_derivative, point)
+            lower = mp.make_mpf(interval_second.a._mpi_[0])
+            upper = mp.make_mpf(interval_second.b._mpi_[0])
+            assert lower <= expected <= upper
+    finally:
+        interval_context.dps = previous_interval_dps
 
 
 def test_derivative_transition_certificate_smoke_through_level_seven():
