@@ -292,7 +292,7 @@ theorem schurMidpointPivotSolve_sum (c b : ℝ) (y : Fin 3 → ℝ)
   classical
   simp only [schurMidpointPivotSolve, Fin.sum_univ_succ]
   field_simp [hc, hc3]
-  ring
+  ring_nf
 
 /-- The midpoint pivot c I + b J sends the explicit inverse action
 back to the original vector. This is the coordinate-level inverse
