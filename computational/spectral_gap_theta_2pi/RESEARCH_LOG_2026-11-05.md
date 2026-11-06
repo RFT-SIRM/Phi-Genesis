@@ -132,8 +132,8 @@ These are floating-point eigensolver outputs, not part of the proof. The spin ma
 
 The initial commit did not trigger a workflow. This is expected from the repository configuration, not evidence of a failed calculation:
 
-- \`.github/workflows/lean.yml\` watches Lean sources, \`lakefile.lean\`, \`lean-toolchain\`, and itself; it does not watch \`computational/**\`.
-- \`.github/workflows/tests.yml\` runs only on pushes to \`main\` and pull requests targeting \`main\`.
+- `.github/workflows/lean.yml` watches Lean sources, `lakefile.lean`, `lean-toolchain`, and itself; it does not watch `computational/**`.
+- `.github/workflows/tests.yml` runs only on pushes to `main` and pull requests targeting `main`.
 - The 4472ddba commit changed only this research log and the Python audit script. Therefore neither existing workflow was eligible to run.
 
 The first audit script also had a weak holonomy assertion: it multiplied a constant expression rather than looking up the three signs stored for each face. The revised script now computes the signed product from the actual edge-sign table.
@@ -141,21 +141,21 @@ The first audit script also had a weak holonomy assertion: it multiplied a const
 ### Checks rerun in the sandbox
 
 1. Exact face/sign audit, levels 0--10:
-   - \`|F_m|=3^m\`, \`|E_m|=3^{m+1}\`, and \`|V_m|=(3^{m+1}+3)/2\`.
+   - `|F_m|=3^m`, `|E_m|=3^{m+1}`, and `|V_m|=(3^{m+1}+3)/2`.
    - Every edge belongs to exactly one elementary face.
    - Every vertex belongs to one or two elementary faces.
-   - The gauge identity \`s_uv = epsilon(u) epsilon(v)\` holds on every edge.
-   - The repository-sign convention \`sigma=-s\` has product \`-1\` around every elementary upward face.
+   - The gauge identity `s_uv = epsilon(u) epsilon(v)` holds on every edge.
+   - The repository-sign convention `sigma=-s` has product `-1` around every elementary upward face.
 
-2. Direct graph comparison against \`phi_genesis.sg_laplacian.sierpinski_graph\`, levels 0--8: vertex and edge sets agree exactly after conversion to integer triangular-lattice coordinates.
+2. Direct graph comparison against `phi_genesis.sg_laplacian.sierpinski_graph`, levels 0--8: vertex and edge sets agree exactly after conversion to integer triangular-lattice coordinates.
 
-3. Lowest eigenvalue of the local-face operator \`L=D-A_sigma\`, with \`sigma=-s\`, levels 1--8:
-   \`1.17157287525381, 1.29843788128358, 1.30907106525561, 1.30912891862700, 1.30912892028081, 1.30912892028081, 1.30912892028081, 1.30912892028082\`.
+3. Lowest eigenvalue of the local-face operator `L=D-A_sigma`, with `sigma=-s`, levels 1--8:
+   `1.17157287525381, 1.29843788128358, 1.30907106525561, 1.30912891862700, 1.30912892028081, 1.30912892028081, 1.30912892028081, 1.30912892028082`.
    These are floating-point sparse-eigensolver outputs. They reproduce the earlier table; they are not the proof of the lower bound.
 
 ### Crucial comparison with the existing hole-flux solver
 
-The default \`phi_genesis.mobius.mobius_spectrum\` representative solves one parity-one equation for every listed hole and sets free variables to zero. The local-face assignment instead sets the GF(2) variable to one on each horizontal \`(a,b)\` face edge and zero on the other two face edges.
+The default `phi_genesis.mobius.mobius_spectrum` representative solves one parity-one equation for every listed hole and sets free variables to zero. The local-face assignment instead sets the GF(2) variable to one on each horizontal `(a,b)` face edge and zero on the other two face edges.
 
 For levels 1--6, the local-face assignment has parity zero on every listed hole row, while the default solver requires parity one on every such row. The two representatives differ on 2, 8, 26, 80, 242, and 728 edges, respectively. Their smallest eigenvalues are:
 
@@ -168,14 +168,14 @@ For levels 1--6, the local-face assignment has parity zero on every listed hole 
 | 5 | 0.459731877707 | 1.309128920281 |
 | 6 | 0.459731877707 | 1.309128920281 |
 
-Consequently, the bound \`lambda_min >= 1\` is a result for the local-face signing, not for the default all-hole-flux calculation already documented in \`mobius.py\`. The two matrices have different elementary/hole cycle data and must not be described as gauge-equivalent. The theta = 2 pi label remains conditional until the original external \`sg.py\` and \`gap.py\` are inspected.
+Consequently, the bound `lambda_min >= 1` is a result for the local-face signing, not for the default all-hole-flux calculation already documented in `mobius.py`. The two matrices have different elementary/hole cycle data and must not be described as gauge-equivalent. The theta = 2 pi label remains conditional until the original external `sg.py` and `gap.py` are inspected.
 
 ## 9. Reproducible automation and next steps
 
-A dedicated workflow, \`.github/workflows/spectral-gap-theta2pi.yml\`, now runs this audit on pushes to \`formalize/h10-lean4\` that touch the spectral-gap audit, the recursive graph builder, or the hole-flux implementation. It runs four checks: exact face/gauge data through level 10, direct graph comparison through level 8, local-face eigenvalues through level 8, and local-face versus pivot-zero hole-solver comparison through level 6.
+A dedicated workflow, `.github/workflows/spectral-gap-theta2pi.yml`, now runs this audit on pushes to `formalize/h10-lean4` that touch the spectral-gap audit, the recursive graph builder, or the hole-flux implementation. It runs four checks: exact face/gauge data through level 10, direct graph comparison through level 8, local-face eigenvalues through level 8, and local-face versus pivot-zero hole-solver comparison through level 6.
 
 Next:
-1. Obtain the original external \`sg.py\` and \`gap.py\`; verify that their face ordering, edge signs, and matrix convention are exactly this local-face operator before treating the theta label as identified.
+1. Obtain the original external `sg.py` and `gap.py`; verify that their face ordering, edge signs, and matrix convention are exactly this local-face operator before treating the theta label as identified.
 2. Formalize the local triangle energy identity and the global lower bound in Lean, together with the recursive face partition/coverage lemmas.
 3. Only after source identification and kernel formalization, study whether the repeated numerical bottom is an exact inherited eigenvalue and derive the sharper spectral edge.
 4. Keep this local-face workstream separate from the canonical GF(2) H10 recurrence and from the default pivot-zero hole-flux data.
@@ -600,8 +600,8 @@ The standalone routine was factored as `compute_roots` so the two normalization 
 
 ## 40. Differentiated A1 Schur update and derivative convergence diagnostics (2026-11-06)
 
-Write the A1 characteristic as \`f_m=a_m+2b_m\` and set
-\`c_m=2a_m+lambda-b_m\`. The exact one-step identity from Section 35 is
+Write the A1 characteristic as `f_m=a_m+2b_m` and set
+`c_m=2a_m+lambda-b_m`. The exact one-step identity from Section 35 is
 \[
 f_{m+1}=f_m-2b_m R_m,
 \qquad
@@ -620,11 +620,11 @@ f'_{m+1}
 -4b_m\frac{c_m b'_m-b_m c'_m}{(c_m+3b_m)^2}.
 \]
 
-This identity was checked independently against the existing forward-mode derivative implementation at 39 parameter/level pairs (levels 0–12 and lambda = 1.234, 1.309, 1.411) at 1,000 decimal digits. The largest observed discrepancy was below \`2.38e-1001\`. A new ordinary regression test now checks the differentiated update at the same 39 points at 100-dps working precision. The test is an implementation consistency check, not a proof of convergence.
+This identity was checked independently against the existing forward-mode derivative implementation at 39 parameter/level pairs (levels 0–12 and lambda = 1.234, 1.309, 1.411) at 1,000 decimal digits. The largest observed discrepancy was below `2.38e-1001`. A new ordinary regression test now checks the differentiated update at the same 39 points at 100-dps working precision. The test is an implementation consistency check, not a proof of convergence.
 
 At the A1 roots, a separate 10,000-dps calculation gives the following derivative values and successive root-sampled differences:
 
-| m | \`D_m=f'_m(lambda_m)\` | \`D_(m+1)-D_m\` |
+| m | `D_m=f'_m(lambda_m)` | `D_(m+1)-D_m` |
 | ---: | ---: | ---: |
 | 5 | -1.2932897430304525953050491537807371… | 1.48044087197e-17 |
 | 6 | -1.2932897430304525805006404340445789… | 2.14274337393e-35 |
@@ -638,7 +638,7 @@ At the A1 roots, a separate 10,000-dps calculation gives the following derivativ
 | 14 | -1.2932897430304525805006404340445789… | — |
 
 The corresponding sampled derivative tends numerically to
-\`-1.293289743030452580500640434044578900991030728263697…\`.
-The derivative coefficient \`b'_m\` is also observed to decay: at the A1 root its magnitude is approximately \`3.56e-4650\` at level 13 and \`7.64e-9303\` at level 14.
+`-1.293289743030452580500640434044578900991030728263697…`.
+The derivative coefficient `b'_m` is also observed to decay: at the A1 root its magnitude is approximately `3.56e-4650` at level 13 and `7.64e-9303` at level 14.
 
-These are high-precision diagnostics only. They do not prove that the derivative sequence converges. In particular, \`D_(m+1)-D_m\` combines the level update and the change from \`lambda_m\` to \`lambda_(m+1)\`. The next proof obligation is a uniform summable bound for the derivative update terms (including \`b'_m\`) and a separate bound for the derivative's change across the root interval. Only then can the nonzero limiting derivative needed for the quadratic root-shift law be concluded.
+These are high-precision diagnostics only. They do not prove that the derivative sequence converges. In particular, `D_(m+1)-D_m` combines the level update and the change from `lambda_m` to `lambda_(m+1)`. The next proof obligation is a uniform summable bound for the derivative update terms (including `b'_m`) and a separate bound for the derivative's change across the root interval. Only then can the nonzero limiting derivative needed for the quadratic root-shift law be concluded.
