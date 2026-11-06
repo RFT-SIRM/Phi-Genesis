@@ -848,6 +848,13 @@ theorem diagonal_drift_total_le_four_mul_initial_sq
     (hdiagonal_step :
       ∀ n, |a (n + 1) - a n| ≤ 2 * (u n) ^ 2) :
     |a N - a 0| ≤ 4 * (u 0) ^ 2 := by
+  have habs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
+    apply abs_le.mpr
+    constructor
+    · calc
+        -(|x| + |y|) = (-|x|) + (-|y|) := by ring
+        _ ≤ x + y := add_le_add (neg_abs_le x) (neg_abs_le y)
+    · exact add_le_add (le_abs_self x) (le_abs_self y)
   have hfinite : ∀ n,
       |a n - a 0| ≤
         2 * (∑ k ∈ Finset.range n, (u k) ^ 2) := by
@@ -863,7 +870,7 @@ theorem diagonal_drift_total_le_four_mul_initial_sq
                   congr 1
                   ring
           _ ≤ |a n - a 0| + |a (n + 1) - a n| :=
-            abs_add _ _
+            habs_add _ _
           _ ≤ 2 * (∑ k ∈ Finset.range n, (u k) ^ 2) +
               2 * (u n) ^ 2 :=
             add_le_add ih (hdiagonal_step n)
