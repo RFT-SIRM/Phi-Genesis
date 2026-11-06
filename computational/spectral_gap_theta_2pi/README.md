@@ -248,6 +248,12 @@ encountered in the recursion. Thus each finite-level A1 characteristic has exact
 the common interval. The minimum lower endpoint among the current midpoint-pivot eigenvalue
 intervals is approximately `1.30912892028081342188862308817081018318…`.
 
+At the starting level 6, the same outward-rounded interval pass gives the sharper diagonal enclosure
+`a_6 ∈ [-1.6514094855799782e-36, 2.5607381821932904e-36]`, hence
+`|a_6| < 3e-36`. The fixed parameter window is strictly contained in `[1.309,1.31]`.
+This supplies a quantified initial margin for the diagonal bootstrap; the all-level Lean induction
+is a separate formal step.
+
 For each bootstrap step 6–100 it also checks the interval ratio
 `R=(c-b)/(c(c+3b))` lies in `(0,0.8)`. The largest upper endpoint is approximately
 `0.76386670900639485955066454013148464480…`. The level-6 endpoint values are approximately

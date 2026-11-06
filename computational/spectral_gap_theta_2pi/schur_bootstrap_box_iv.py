@@ -117,6 +117,7 @@ def certify_bootstrap(max_level=101, dps=180, radius_digits=140):
     min_pivot, max_contraction = None, mp.mpf(0)
     snapshots = []
     endpoint_values = {}
+    level6_a_bounds = None
     for level in range(6, max_level + 1):
         a, b, da, db, dda, ddb, pivots = _interval_state(lam, level)
         fprime, fsecond = da + 2 * db, dda + 2 * ddb
@@ -134,6 +135,10 @@ def certify_bootstrap(max_level=101, dps=180, radius_digits=140):
             raise ArithmeticError(f"bootstrap box failed at level {level}: {[k for k,v in checks.items() if not v]}")
         if not all(p.a > 0 for p in pivots):
             raise ArithmeticError(f"nonpositive pivot at level {level}")
+        if level == 6:
+            if not _inside(a, "-3e-36", "3e-36"):
+                raise ArithmeticError("level-6 diagonal coefficient leaves the sharpened initial box")
+            level6_a_bounds = (_lower(a.a), _upper(a.b))
         c = 2 * a + lam - b
         c3 = c + 3 * b
         for p in (c, c3):
@@ -151,6 +156,8 @@ def certify_bootstrap(max_level=101, dps=180, radius_digits=140):
             snapshots.append((level,_lower(b.a),_upper(b.b),_lower(fprime.a),_upper(fprime.b),_lower(fsecond.a),_upper(fsecond.b)))
     return {
         "root6":mp.nstr(root6,80),"lower":lower,"upper":upper,
+        "level6_a_lower":mp.nstr(level6_a_bounds[0],60),
+        "level6_a_upper":mp.nstr(level6_a_bounds[1],60),
         "level6_left_f":mp.nstr(endpoint_values[6][0],35),"level6_right_f":mp.nstr(endpoint_values[6][1],35),
         "final_left_f":mp.nstr(endpoint_values[max_level][0],35),"final_right_f":mp.nstr(endpoint_values[max_level][1],35),
         "min_pivot_lower":mp.nstr(min_pivot,60),"max_contraction_upper":mp.nstr(max_contraction,60),
@@ -168,6 +175,7 @@ def main():
     print(f"level-6 A1 root candidate: {r['root6']}")
     print(f"fixed asymmetric parameter window: [{r['lower']}, {r['upper']}]")
     print(f"level-6 endpoint signs: {r['level6_left_f']} > 0; {r['level6_right_f']} < 0")
+    print(f"level-6 diagonal interval: [{r['level6_a_lower']}, {r['level6_a_upper']}]")
     print(f"root endpoint signs checked at every level through {r['max_level']}")
     print(f"minimum midpoint-pivot lower endpoint: {r['min_pivot_lower']}")
     print(f"maximum |b_next|/|b|^2 upper endpoint: {r['max_contraction_upper']}")

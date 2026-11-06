@@ -960,4 +960,26 @@ theorem diagonal_drift_total_le_144_e_minus72_until
     _ ≤ 4 * (6 / 10 ^ 37 : ℝ) ^ 2 := by nlinarith
     _ = (144 / 10 ^ 74 : ℝ) := by norm_num
 
+
+/-- A small initial diagonal value remains inside the coarse diagonal box
+whenever the accumulated Schur drift is bounded by 1.44e-72. -/
+theorem schurDiagonal_abs_le_e_minus35_of_initial_three_e_minus36_and_drift
+    (a a₀ : ℝ)
+    (ha₀ : |a₀| ≤ (3 / 10 ^ 36 : ℝ))
+    (hdrift : |a - a₀| ≤ (144 / 10 ^ 74 : ℝ)) :
+    |a| ≤ (1 / 10 ^ 35 : ℝ) := by
+  have habs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
+    apply abs_le.mpr
+    constructor
+    · calc
+        -(|x| + |y|) = (-|x|) + (-|y|) := by ring
+        _ ≤ x + y := add_le_add (neg_abs_le x) (neg_abs_le y)
+    · exact add_le_add (le_abs_self x) (le_abs_self y)
+  calc
+    |a| = |(a - a₀) + a₀| := by congr 1; ring
+    _ ≤ |a - a₀| + |a₀| := habs_add _ _
+    _ ≤ (144 / 10 ^ 74 : ℝ) + (3 / 10 ^ 36 : ℝ) :=
+      add_le_add hdrift ha₀
+    _ ≤ (1 / 10 ^ 35 : ℝ) := by norm_num
+
 end PhiGenesis.SpectralGap

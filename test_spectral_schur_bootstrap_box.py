@@ -19,6 +19,10 @@ def test_level_six_window_brackets_a1_roots_and_bootstraps_through_101():
     result = bootstrap.certify_bootstrap(max_level=101, dps=180, radius_digits=140)
     assert mp.mpf(result["level6_left_f"]) > 0
     assert mp.mpf(result["level6_right_f"]) < 0
+    assert mp.mpf(result["level6_a_lower"]) > mp.mpf("-3e-36")
+    assert mp.mpf(result["level6_a_upper"]) < mp.mpf("3e-36")
+    assert mp.mpf(result["lower"]) > mp.mpf("1.309")
+    assert mp.mpf(result["upper"]) < mp.mpf("1.31")
     assert mp.mpf(result["final_left_f"]) > 0
     assert mp.mpf(result["final_right_f"]) < 0
     assert mp.mpf(result["min_pivot_lower"]) > mp.mpf("1.30")

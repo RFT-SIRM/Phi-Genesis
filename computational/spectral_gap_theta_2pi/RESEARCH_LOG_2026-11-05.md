@@ -923,3 +923,33 @@ diagonal margin at level 6, the signed initial b interval, and the
 one-step Schur update identities. The spectral parameter window must still
 be justified for the intended A1 root; no infinite-level limit is claimed
 by this finite-prefix lemma.
+
+## 48. Sharpened level-six diagonal start box (2026-11-06)
+
+The common-window interval calculation was inspected at its starting level
+rather than only recording the wider invariant box used in the subsequent
+finite propagation. With the same outward-rounded parameter interval
+
+[lambda_6 - 10^-140, lambda_6 + 1.1*10^-36]
+
+the level-six diagonal coefficient is enclosed by
+
+a_6 in [-1.6514094855799782169601637221860967e-36,
+          2.5607381821932903298469192438172193e-36].
+
+Thus |a_6| < 3*10^-36, while the existing level-six off-diagonal
+certificate gives b_6 in [-6*10^-37,0]. The fixed parameter interval is
+strictly inside the coarse rational window [1.309,1.31].
+
+The bootstrap script now returns the outward-rounded level-six diagonal
+endpoints, fails if they leave [-3e-36,3e-36], and the regression test
+checks both endpoints and the inclusion of the fixed parameter window in
+[1.309,1.31].
+
+The Lean lemma
+schurDiagonal_abs_le_e_minus35_of_initial_three_e_minus36_and_drift
+combines this sharpened start bound with the finite-prefix drift budget
+1.44e-72 to recover |a_m| <= 1e-35. This gives a quantified numerical
+margin for the planned simultaneous state induction. It does not yet
+prove the all-level induction itself or the root-window endpoint signs
+inside Lean.
