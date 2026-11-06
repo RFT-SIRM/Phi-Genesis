@@ -290,9 +290,12 @@ theorem schurMidpointPivotSolve_sum (c b : ℝ) (y : Fin 3 → ℝ)
     (∑ i : Fin 3, schurMidpointPivotSolve c b y i) =
       (∑ i : Fin 3, y i) / (c + 3 * b) := by
   classical
+  have hden : c + 3 * b = b * 3 + c := by ring
+  have hc3' : b * 3 + c ≠ 0 := by
+    rw [← hden]
+    exact hc3
   simp only [schurMidpointPivotSolve, Fin.sum_univ_succ]
-  field_simp [hc, hc3]
-  ring_nf
+  field_simp [hc, hc3'] <;> ring
 
 /-- The midpoint pivot c I + b J sends the explicit inverse action
 back to the original vector. This is the coordinate-level inverse
@@ -303,10 +306,13 @@ theorem schurMidpointPivotSolve_rightInverse (c b : ℝ)
     schurCornerAction (c + b) b
       (fun j => schurMidpointPivotSolve c b y j) i = y i := by
   have hsum := schurMidpointPivotSolve_sum c b y hc hc3
+  have hden : c + 3 * b = b * 3 + c := by ring
+  have hc3' : b * 3 + c ≠ 0 := by
+    rw [← hden]
+    exact hc3
   unfold schurCornerAction
   rw [show (c + b) - b = c by ring, hsum]
   unfold schurMidpointPivotSolve
-  field_simp [hc, hc3]
-  ring
+  field_simp [hc, hc3'] <;> ring
 
 end PhiGenesis.SpectralGap
