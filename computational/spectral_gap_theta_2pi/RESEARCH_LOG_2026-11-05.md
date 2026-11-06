@@ -549,3 +549,28 @@ The E-sector full matrix job in workflow 42172777291 was still in progress at th
 
 
 The ordinary CI for the preceding E-extension SHA f29353313bb1c30cb3f30db6badd04ff839b1061 passed on exact HEAD in run 42175671043: 104 passed, 8 deselected. The follow-up test/log correction adds independent E-matrix anchors and fixes the decimal-order indexing in the 3/2 comparison; it requires its own exact-SHA CI.
+
+
+## 37. Outward-rounded finite-level Schur/inertia certificate (2026-11-06)
+
+The exact boundary Schur recursion has now been combined with outward-rounded interval arithmetic and Sylvester inertia. This upgrades the finite-level A1/E branch calculations from high-precision numerical roots to a computer-assisted finite-level spectral-order certificate.
+
+For each level m=1,...,12, the A1 boundary-characteristic root was bracketed at 2,450 decimal digits with radius 10^-2390. For each level m=1,...,12, the E boundary-characteristic root was bracketed independently in the same way. The root finder only supplies candidate centers: the interval verifier checks the sign change at the exact decimal endpoints and verifies that the characteristic derivative is strictly negative throughout the full bracket. Thus each bracket contains exactly one root of its boundary characteristic.
+
+At every step k=0,...,m-1 in the cell-gluing recursion, the midpoint elimination block is C_k=c_k I+b_k J. Its eigenvalues are c_k (multiplicity two) and c_k+3b_k (multiplicity one). The interval checker verifies both lower endpoints are strictly positive throughout each root bracket, before performing the next Schur division. Therefore the full principal block on all non-corner vertices is positive definite, by induction over the three-cell assembly.
+
+At an A1 root, a_m+2b_m=0 and b_m<0, so the three boundary Schur eigenvalues are 0 and -3b_m,-3b_m, all nonnegative. Since the eliminated interior block is positive definite, Sylvester inertia proves that Q_m-lambda I is positive semidefinite with a one-dimensional kernel. The A1 root is therefore the simple global smallest eigenvalue.
+
+At an E root, a_m-b_m=0 and b_m<0, so the boundary Schur eigenvalues are 3b_m<0 and 0,0. The positive interior block and Sylvester inertia then show that Q_m-lambda I has exactly one negative eigenvalue and a two-dimensional kernel. The E root is therefore the second eigenvalue, with multiplicity two; every other mode (including A2) lies above it. The A1 and E root intervals are strictly disjoint and correctly ordered at every level 1–12.
+
+The checker uses Python Decimal arithmetic with explicit ROUND_FLOOR and ROUND_CEILING for every endpoint operation. It verifies all 24 root brackets and all intermediate midpoint pivots. The smallest lower bound found for any midpoint-pivot eigenvalue is greater than 1.151628330238438… . At level 12 the certified E/A1 root separation is about 9.9470402734076901640e-2327. The finite-level certificate does not rely on the large sparse eigensolver, although the previous direct matrix computations at levels 5–8 remain independent cross-checks.
+
+The reproducible command is:
+~~~bash
+python computational/spectral_gap_theta_2pi/schur_inertia_certificate.py --max-level 12 --dps 2450 --radius-digits 2390
+pytest -q test_spectral_schur_inertia.py
+~~~
+
+Local isolated validation of the interval/inertia logic: all 24 (A1,E) level checks passed, with a minimum midpoint-pivot lower bound above 1.1516. The new regression test runs the complete 12-level certificate from scratch. GitHub CI for this exact source revision is required before marking the repository integration closed.
+
+This is a finite-level computer-assisted interval/inertia result, not a Lean-kernel theorem. It does not prove convergence as m tends to infinity, the quadratic correction law for all levels, or identification with the absent external theta=2pi operator. It does, however, close the finite-level global-bottom and first-excited-doublet ordering for the local-face graph at every level 1 through 12.

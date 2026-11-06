@@ -40,8 +40,7 @@ The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** c
 ## 3. What is observed numerically (not proved)
 
 The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
-that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve the `A1` bottom candidate through level 9 and the complex
-`E` sector through level 8. The exact rational boundary-Schur recursion now computes the continued `A1` boundary root through level 12 and the continued `E` boundary root through level 11. The high-level branches still require independent spectral/inertia checks to certify that they remain the lowest modes. The `S3` symmetry-sector decomposition has also been checked against
+that the bottom eigenvalue is constant from level 5 onward. Direct high-precision quotient calculations resolve the `A1` bottom through level 9 and the `E` mode through level 8. A separate outward-rounded interval/Schur-inertia certificate now verifies, for every finite level 1–12, that the `A1` root is the simple global minimum and the `E` root is the next eigenvalue with multiplicity two. The limiting value and convergence law as the level tends to infinity remain open. The `S3` symmetry-sector decomposition has also been checked against
 the complete spectrum at levels 2–5.
 
 Run the reproducible calculation from the repository root:
@@ -132,9 +131,9 @@ interval certificates.
 
 At level 9, `dim(A1)=4,926` in a graph of `29,526` vertices. Its bottom is
 `1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341956895023566459152736…`,
-with residual `8.11·10⁻⁹⁸`. The `A2` sector at level 9 has not yet been independently diagonalized. The `E` boundary-characteristic root is computed below by the Schur recursion; an independent full `E`-sector matrix calculation is still running.
+with residual `8.11·10⁻⁹⁸`. The `A2` sector at level 9 has not been independently diagonalized as a matrix, but the interval/inertia certificate below proves that all modes outside the `A1` ground state and the `E` doublet lie above the certified `E` root.
 
-The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.74092573485029842928443241948031142231612216498…` from level 7 onward. Levels 7–8 come from the high-precision sector matrices; levels 9–11 are continued `E` boundary roots from the exact Schur recursion. The latter give splittings `4.6969787274470149128752595389050·10⁻²⁹¹` at level 9, `7.2648951037178442146501840561459·10⁻⁵⁸²` at level 10, and `1.7380043433370844485650034663864·10⁻¹¹⁶³` at level 11. These are boundary-root calculations, not independent full-matrix diagonalizations at those levels. Residuals are numerical diagnostics, not interval certificates.
+The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.74092573485029842928443241948031142231612216498…` from level 7 onward. Levels 7–8 come from high-precision sector matrices; levels 9–12 are Schur boundary roots now enclosed by the finite-level interval/inertia certificate. The level-9, 10, 11, and 12 splittings are approximately `4.6969787274470149·10⁻²⁹¹`, `7.2648951037178442·10⁻⁵⁸²`, `1.7380043433370844·10⁻¹¹⁶³`, and `9.9470402734076902·10⁻²³²⁷`, respectively. The level-12 ratio `(E_12-A1_12)/δ_12²` is `0.74092573485029842928443241948031142231612216498…`.
 
 
 ### Exact A1/E boundary Schur recursion
@@ -217,6 +216,21 @@ python computational/spectral_gap_theta_2pi/schur_decimation.py --sector E --max
 ~~~
 
 
+### Finite-level interval/inertia certificate (levels 1–12)
+
+The boundary matrix is `S_m=(a_m-b_m)I+b_mJ`, so its three eigenvalues are `f_m=a_m+2b_m` in the A1 channel and `g_m=a_m-b_m` twice in the E channel. The midpoint pivot at each three-cell gluing step is `C_k=c_kI+b_kJ`, with eigenvalues `c_k` (twice) and `c_k+3b_k` (once).
+
+The checker brackets every A1 and E boundary root at 2,450 decimal digits with radius `10^-2390`. The approximate root only chooses the bracket: the checker independently verifies opposite endpoint signs and a strictly negative derivative throughout the interval. It also verifies `b_m<0` and that both midpoint-pivot eigenvalues are strictly positive at every elimination step. The smallest lower bound for any midpoint-pivot eigenvalue across all 24 certificates (A1 and E, levels 1–12) is greater than `1.151628330238438…`.
+
+These signs give an inertia proof for each finite level. At an A1 root, `f_m=0` and `g_m=-3b_m>0`, so the boundary Schur complement is positive semidefinite with a one-dimensional kernel. All eliminated interior blocks are positive definite, hence `Q_m-λI` is positive semidefinite with a simple kernel: this root is the global minimum. At an E root, `g_m=0` twice and `f_m=3b_m<0`, so the full shifted matrix has exactly one negative eigenvalue and a two-dimensional kernel. Thus the E root is the second eigenvalue with multiplicity two, and all remaining modes (including A2) are above it. The A1 and E root brackets are strictly ordered and disjoint at every level 1–12.
+
+This is a reproducible finite-level computer-assisted interval/inertia certificate, not a Lean-kernel theorem and not an infinite-level convergence proof. Run:
+
+~~~bash
+python computational/spectral_gap_theta_2pi/schur_inertia_certificate.py --max-level 12 --dps 2450 --radius-digits 2390
+pytest -q test_spectral_schur_inertia.py
+~~~
+
 ## 4. What is not claimed
 
 - That `1.309128920280813421889…` is the exact limit, or a closed form for it. It is a conditional numerical extrapolation.
@@ -228,12 +242,12 @@ python computational/spectral_gap_theta_2pi/schur_decimation.py --sector E --max
 
 ## 5. Open problems
 
-1. Prove that `λ_min(m)` converges, and identify its limit (closed form or recursion fixed point).
+1. Prove that the certified finite-level `λ_min(m)` sequence converges, and identify its limit (closed form or recursion fixed point).
 2. Explain the corner concentration and derive a controlled description of the nonzero tails. The numerical
    evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation:
    thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly
    constant between levels 4 and 5.
-3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` beyond the six observed ratios.
+3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` for all levels; finite-level ratios and the Schur mechanism are now known, but the limiting derivative hypotheses remain open.
 4. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
@@ -245,8 +259,10 @@ python -m pip install -e .
 python -m pip install mpmath
 python computational/spectral_gap_theta_2pi/audit_triangle_gauge.py --max-level 10
 python computational/spectral_gap_theta_2pi/high_precision_bottom.py
-python computational/spectral_gap_theta_2pi/schur_decimation.py --max-level 12 --dps 1250
-pytest -q test_spectral_gap_high_precision.py test_spectral_schur_decimation.py
+python computational/spectral_gap_theta_2pi/schur_decimation.py --sector A1 --max-level 12 --dps 1250
+python computational/spectral_gap_theta_2pi/schur_decimation.py --sector E --max-level 12 --dps 1250
+python computational/spectral_gap_theta_2pi/schur_inertia_certificate.py --max-level 12 --dps 2450 --radius-digits 2390
+pytest -q test_spectral_gap_high_precision.py test_spectral_schur_decimation.py test_spectral_schur_inertia.py
 lake build
 ```
 
@@ -262,5 +278,6 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
 | `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
 | `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1`/`E` boundary-root continuation |
+| `schur_inertia_certificate.py` | outward-rounded Decimal interval checks and finite-level Schur/inertia certificates for the ground state and first E doublet |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |
