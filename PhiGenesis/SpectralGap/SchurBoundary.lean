@@ -1830,4 +1830,149 @@ theorem schurBootstrapA1AtLevel_exists_root_of_nonzero_pivots
   exact ⟨lambda, hlambda, hvalue⟩
 
 
+
+/-- After the exact level-six state has entered the invariant Schur box,
+all later scalar Schur denominators are automatically positive. Thus the
+only remaining denominator checks are the finite prefix k<6. -/
+theorem schurBootstrap_all_pivots_nonzero_of_levelSix_box_and_prefix
+    (hlevelSix :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        |(schurBoundaryTrajectory lambda (2 - lambda, 1) 6).1| ≤
+            (3 / 10 ^ 36 : ℝ) ∧
+        -(6 / 10 ^ 37 : ℝ) ≤
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).2 ∧
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).2 ≤ 0)
+    (hprefix :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        ∀ k, k < 6 →
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+              3 * (schurBoundaryTrajectory lambda
+                (2 - lambda, 1) k).2 ≠ 0) :
+    ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper →
+      ∀ k,
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+          lambda ≠ 0 ∧
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+          lambda +
+            3 * (schurBoundaryTrajectory lambda
+              (2 - lambda, 1) k).2 ≠ 0 := by
+  intro lambda hlambda k
+  by_cases hk : k < 6
+  · exact hprefix lambda hlambda k hk
+  · have hkge : 6 ≤ k := by omega
+    obtain ⟨m, hm⟩ : ∃ m, k = 6 + m := by
+      refine ⟨k - 6, ?_⟩
+      omega
+    subst k
+    have hwindow := schurBootstrapEndpoints_in_parameter_window
+    have hlambda_lower :
+        (1309 / 1000 : ℝ) ≤ lambda :=
+      le_trans hwindow.1 hlambda.1
+    have hlambda_upper :
+        lambda ≤ (131 / 100 : ℝ) :=
+      le_trans hlambda.2 hwindow.2.2.2
+    have hstart := hlevelSix lambda hlambda
+    have hstate :=
+      schurBoundaryTrajectory_state_box lambda
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).1
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).2
+        hstart.1 hstart.2.1 hstart.2.2
+        hlambda_lower hlambda_upper m
+    rw [schurBoundaryTrajectory_add lambda (2 - lambda, 1) 6 m]
+    have ha_lower :=
+      (abs_le.mp hstate.1).1
+    have hc_lower :
+        (13 / 10 : ℝ) ≤
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).1
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2
+            lambda := by
+      unfold schurMidpointPivot
+      nlinarith [ha_lower, hstate.2.2, hlambda_lower]
+    have hc3_lower :
+        (13 / 10 : ℝ) ≤
+          schurMidpointPivot
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).1
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2
+              lambda +
+            3 * (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2 := by
+      unfold schurMidpointPivot
+      nlinarith [ha_lower, hstate.2.1, hlambda_lower]
+    have hc_pos :
+        0 <
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).1
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2
+            lambda :=
+      lt_of_lt_of_le (by norm_num) hc_lower
+    have hc3_pos :
+        0 <
+          schurMidpointPivot
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).1
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2
+              lambda +
+            3 * (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 6) m).2 :=
+      lt_of_lt_of_le (by norm_num) hc3_lower
+    exact ⟨ne_of_gt hc_pos, ne_of_gt hc3_pos⟩
+
+
+/-- The conditional IVT root theorem only needs a uniform level-six state
+box and positivity of the six initial pivot pairs. The state-box invariant
+then supplies every later denominator automatically. -/
+theorem schurBootstrapA1AtLevel_exists_root_of_levelSix_box_and_prefix_pivots
+    (n : ℕ)
+    (hlevelSix :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        |(schurBoundaryTrajectory lambda (2 - lambda, 1) 6).1| ≤
+            (3 / 10 ^ 36 : ℝ) ∧
+        -(6 / 10 ^ 37 : ℝ) ≤
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).2 ∧
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 6).2 ≤ 0)
+    (hprefix :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        ∀ k, k < 6 →
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+              3 * (schurBoundaryTrajectory lambda
+                (2 - lambda, 1) k).2 ≠ 0) :
+    ∃ lambda ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper,
+      schurBootstrapA1AtLevel lambda n = 0 := by
+  apply schurBootstrapA1AtLevel_exists_root_of_nonzero_pivots n
+  intro lambda hlambda k hk
+  exact
+    schurBootstrap_all_pivots_nonzero_of_levelSix_box_and_prefix
+      hlevelSix hprefix lambda hlambda k
+
 end PhiGenesis.SpectralGap
