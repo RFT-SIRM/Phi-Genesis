@@ -166,3 +166,22 @@ def test_mixed_precision_refinement_reproduces_level_six_bottom(
     assert abs(result["lambda"] - mp.mpf(expected)) < mp.mpf("1e-35")
     assert result["residual"] < mp.mpf("1e-55")
     assert result["linear_residual"] < mp.mpf("1e-55")
+
+
+@pytest.mark.parametrize("level", [2, 3, 4, 5])
+def test_sparse_a1_quotient_matches_dense_reference(level):
+    dense_mp, dense_float, full_graph, full_dimension, sector_dimension = (
+        symmetry_sector_bottom.build_a1_quotient(level)
+    )
+    rows, sparse_float, sparse_graph, sparse_full, sparse_dimension, asymmetry = (
+        symmetry_sector_bottom.build_a1_quotient_sparse(level)
+    )
+
+    assert sparse_full == full_dimension
+    assert sparse_dimension == sector_dimension
+    assert (sparse_graph != full_graph).nnz == 0
+    assert asymmetry < mp.mpf("1e-60")
+    assert np.max(np.abs(sparse_float.toarray() - dense_float)) < 1e-14
+    for i, row in enumerate(rows):
+        for j, value in row:
+            assert abs(value - dense_mp[i, j]) < mp.mpf("1e-60")
