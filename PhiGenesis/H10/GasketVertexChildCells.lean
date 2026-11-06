@@ -623,7 +623,13 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
         (fun p => decide (p ≠ (0, T)))).filter
         (fun p => decide (p ≠ (T, T)))) := by
     exact List.sublist_append_of_sublist_right hFiltered
+  have hEmpty :
+      ([] : List GasketLatticePoint) <+
+        (gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner0) :=
+    List.Sublist.slnil
+  have hBlocks := List.Sublist.append hEmpty hChildBlocks
   rw [gasketVertexOrder_succ_explicit (n + 3)]
-  exact List.sublist_append_of_sublist_right hChildBlocks
+  simpa using hBlocks
 
 end PhiGenesis.H10
