@@ -171,18 +171,19 @@ theorem schurNextA1_at_old_root (a b c : ℝ)
       -2 * b * (c + 5 * b) / (c + 3 * b) := by
   unfold schurNextDiagonal schurNextOffDiagonal
   have ha : a = -2 * b := by linarith
+  have hc3' : b * 3 + c ≠ 0 := by nlinarith [hc3]
   rw [ha]
-  field_simp [hc, hc3]
-  ring_nf
+  field_simp [hc, hc3']
+  ring
 
 /-- The off-diagonal Schur coefficient changes quadratically in b,
 with an exact finite-level prefactor. -/
 theorem schurNextOffDiagonal_div_sq (b c : ℝ)
-    (hb : b ≠ 0) (hc : c ≠ 0) (hc3 : c + 3 * b ≠ 0) :
+    (hb : b ≠ 0) (hc : c ≠ 0) :
     schurNextOffDiagonal b c / b ^ 2 =
       -(c - b) / (c * (c + 3 * b)) := by
   unfold schurNextOffDiagonal
-  field_simp [hb, hc, hc3]
+  field_simp [hb, hc]
 
 /-- At an A1 root, the E boundary channel equals -3b. -/
 theorem schurE_at_A1_root (a b : ℝ) (hA1 : a + 2 * b = 0) :
