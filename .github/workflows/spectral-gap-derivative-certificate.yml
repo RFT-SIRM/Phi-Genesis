@@ -12,7 +12,7 @@ on:
   workflow_dispatch: {}
 
 concurrency:
-  group: spectral-gap-derivative-certificate-\${{ github.ref }}
+  group: spectral-gap-derivative-certificate-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
