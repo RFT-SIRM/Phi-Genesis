@@ -1738,7 +1738,91 @@ theorem schurBoundaryTrajectory_coarse_A1_increment_bounds
       (schurBoundaryTrajectory lambda (a₀, b₀) n).1
       (schurBoundaryTrajectory lambda (a₀, b₀) n).2
       lambda ha_lower hstate.2.1 hstate.2.2 hlambda_lower
-  simpa [schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal
+  change
+    0 ≤
+      (schurNextDiagonal
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          (schurMidpointPivot
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).2 lambda) +
+        2 * schurNextOffDiagonal
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          (schurMidpointPivot
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).2 lambda)) -
+      ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+        2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ∧
+    (schurNextDiagonal
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          (schurMidpointPivot
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).2 lambda) +
+        2 * schurNextOffDiagonal
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          (schurMidpointPivot
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).2 lambda)) -
+      ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+        2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ≤
+      2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
+  constructor
+  · exact hlocal.1
+  · rw [abs_of_nonpos hstate.2.2]
+    exact hlocal.2
+
+
+/-- Finite sums of half-powers are bounded by the geometric limit two. -/
+private theorem half_power_sum_le_two (N : ℕ) :
+    (∑ k ∈ Finset.range N, (1 / 2 : ℝ) ^ k) ≤ 2 := by
+  have htail : ∀ n : ℕ,
+      (∑ k ∈ Finset.range n, (1 / 2 : ℝ) ^ k) +
+        2 * (1 / 2 : ℝ) ^ n ≤ 2 := by
+    intro n
+    induction n with
+    | zero =>
+        norm_num
+    | succ n ih =>
+        rw [Finset.sum_range_succ, pow_succ]
+        have hpow_nonneg : 0 ≤ (1 / 2 : ℝ) ^ n := by positivity
+        nlinarith
+  have htailN := htail N
+  have hnonneg : 0 ≤ 2 * (1 / 2 : ℝ) ^ N := by positivity
+  linarith
+
+
+/-- A nonnegative sequence contracting by one half has every finite
+partial sum bounded by twice its initial value. -/
+theorem sum_range_le_two_mul_initial_of_half_contraction
+    (u : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, 0 ≤ u n)
+    (hcontract : ∀ n, u (n + 1) ≤ (1 / 2 : ℝ) * u n) :
+    (∑ k ∈ Finset.range N, u k) ≤ 2 * u 0 := by
+  have hpoint : ∀ n, u n ≤ u 0 * (1 / 2 : ℝ) ^ n := by
+    intro n
+    induction n with
+    | zero =>
+        simp
+    | succ n ih =>
+        calc
+          u (n + 1) ≤ (1 / 2 : ℝ) * u n := hcontract n
+          _ ≤ (1 / 2 : ℝ) * (u 0 * (1 / 2 : ℝ) ^ n) :=
+            mul_le_mul_of_nonneg_left ih (by norm_num)
+          _ = u 0 * (1 / 2 : ℝ) ^ (n + 1) := by
+            rw [pow_succ]
+            ring
+  calc
+    (∑ k ∈ Finset.range N, u k)
+        ≤ ∑ k ∈ Finset.range N, u 0 * (1 / 2 : ℝ) ^ k := by
+          apply Finset.sum_le_sum
+          intro k hk
+          exact hpoint k
+    _ = u 0 * (∑ k ∈ Finset.range N, (1 / 2 : ℝ) ^ k) := by
+          rw [← Finset.mul_sum]
+    _ ≤ u 0 * 2 :=
+      mul_le_mul_of_nonneg_left (half_power_sum_le_two N) (hu_nonneg 0)
+    _ = 2 * u 0 := by ring
 
 
 /-- A quarter-contractive nonnegative sequence has a finite partial sum
@@ -1838,6 +1922,86 @@ theorem schurBoundaryTrajectory_A1_increment_bounds
       2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
     rw [hb_abs]
     exact hupper_diff
+
+
+/-- From a level-three coarse initial state, the total increase of the
+A1 characteristic over any finite number of Schur steps is at most four
+times the initial off-diagonal magnitude. This finite-tail estimate will
+be shifted to arbitrary starting levels to obtain the Cauchy criterion. -/
+theorem schurBoundaryTrajectory_coarse_A1_total_increment_bound
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (1 / 500 : ℝ))
+    (hb₀_lower : -(1 / 20000 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    ∀ N,
+      0 ≤
+        ((schurBoundaryTrajectory lambda (a₀, b₀) N).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) N).2) -
+        (a₀ + 2 * b₀) ∧
+      ((schurBoundaryTrajectory lambda (a₀, b₀) N).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) N).2) -
+        (a₀ + 2 * b₀) ≤ 4 * |b₀| := by
+  let f : ℕ → ℝ := fun n =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+      2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+  let u : ℕ → ℝ := fun n =>
+    |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
+  have hu_nonneg : ∀ n, 0 ≤ u n := by
+    intro n
+    exact abs_nonneg _
+  have hu_contract :=
+    schurBoundaryTrajectory_coarse_offDiagonal_half_contract
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper
+  have hsum_u (N : ℕ) :
+      (∑ k ∈ Finset.range N, u k) ≤ 2 * u 0 :=
+    sum_range_le_two_mul_initial_of_half_contraction
+      u N hu_nonneg (by
+        intro n
+        simpa [u] using hu_contract n)
+  have hinc :=
+    schurBoundaryTrajectory_coarse_A1_increment_bounds
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper
+  have hsum_inc_nonneg (N : ℕ) :
+      0 ≤ ∑ k ∈ Finset.range N, (f (k + 1) - f k) := by
+    apply Finset.sum_nonneg
+    intro k hk
+    simpa [f] using (hinc k).1
+  have hsum_inc_upper (N : ℕ) :
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k)) ≤
+        2 * (∑ k ∈ Finset.range N, u k) := by
+    calc
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k))
+          ≤ ∑ k ∈ Finset.range N, 2 * u k := by
+            apply Finset.sum_le_sum
+            intro k hk
+            simpa [f, u] using (hinc k).2
+      _ = 2 * (∑ k ∈ Finset.range N, u k) := by
+            rw [← Finset.mul_sum]
+  have htel (N : ℕ) :
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k)) = f N - f 0 :=
+    sum_range_step_difference_eq f N
+  intro N
+  have hlower : 0 ≤ f N - f 0 := by
+    rw [← htel N]
+    exact hsum_inc_nonneg N
+  have hupper : f N - f 0 ≤ 4 * u 0 := by
+    rw [← htel N]
+    calc
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k))
+          ≤ 2 * (∑ k ∈ Finset.range N, u k) := hsum_inc_upper N
+      _ ≤ 2 * (2 * u 0) :=
+        mul_le_mul_of_nonneg_left (hsum_u N) (by norm_num)
+      _ = 4 * u 0 := by ring
+  have hupper' : f N - f 0 ≤ 4 * |b₀| := by
+    calc
+      f N - f 0 ≤ 4 * u 0 := hupper
+      _ = 4 * |b₀| := by simp [u, schurBoundaryTrajectory]
+  change 0 ≤ f N - f 0 ∧ f N - f 0 ≤ 4 * |b₀|
+  exact ⟨hlower, hupper'⟩
 
 
 /-- The A1 characteristic stays nonnegative at every finite Schur level
