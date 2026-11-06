@@ -1459,11 +1459,11 @@ theorem schurBoundaryTrajectory_A1_neg_of_initial_margin
 
 /-- Exact rational lower endpoint of the narrow level-six bootstrap window.
 The 36 decimal digits are represented as an integer divided by 10^36. -/
-def schurBootstrapLambdaLower : ℝ :=
+noncomputable def schurBootstrapLambdaLower : ℝ :=
   (1309128920280813421888623088170810187 / 10 ^ 36 : ℝ)
 
 /-- Exact rational upper endpoint of the narrow level-six bootstrap window. -/
-def schurBootstrapLambdaUpper : ℝ :=
+noncomputable def schurBootstrapLambdaUpper : ℝ :=
   (1309128920280813421888623088170810189 / 10 ^ 36 : ℝ)
 
 /-- The two fixed rational endpoints lie in the coarse parameter window
