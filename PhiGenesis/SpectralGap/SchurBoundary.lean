@@ -490,12 +490,12 @@ theorem schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
       _ ≤ c * (c + 3 * b) :=
         mul_le_mul_of_nonneg_left hc3_lower (le_of_lt hc_pos)
   have hcross :
-      c - b ≤ c * (c + 3 * b) * (4 / 5 : ℝ) := by
+      c - b ≤ (4 / 5 : ℝ) * (c * (c + 3 * b)) := by
     calc
       c - b ≤ (133 / 100 : ℝ) := hnum_upper
-      _ ≤ (13 / 10 : ℝ) * (13 / 10 : ℝ) * (4 / 5 : ℝ) := by norm_num
-      _ ≤ c * (c + 3 * b) * (4 / 5 : ℝ) :=
-        mul_le_mul_of_nonneg_right hden_lower (by norm_num)
+      _ ≤ (4 / 5 : ℝ) * ((13 / 10 : ℝ) * (13 / 10 : ℝ)) := by norm_num
+      _ ≤ (4 / 5 : ℝ) * (c * (c + 3 * b)) :=
+        mul_le_mul_of_nonneg_left hden_lower (by norm_num)
   have hratio :
       (c - b) / (c * (c + 3 * b)) ≤ (4 / 5 : ℝ) :=
     (div_le_iff₀ hden_pos).2 hcross
