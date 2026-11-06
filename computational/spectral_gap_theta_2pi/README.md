@@ -307,6 +307,26 @@ does show that the diagonal drift is quadratically controlled by the already
 small off-diagonal coordinate. A summability theorem still requires a formal
 all-level bound on the successive `b`-coordinates and the root window.
 
+
+
+The off-diagonal estimate can now be made linear on the small signed
+bootstrap interval. Since
+`|b_next| <= (4/5)|b|^2` and `|b| <= 6·10^-37`, the exact
+rational comparison `(4/5)(6·10^-37) < 10^-36` yields
+
+`|b_next| <= 10^-36 |b|`.
+
+Lean proves this both from the coarse pivot box and directly from the
+state-coordinate box with `a in [-10^-35,10^-35]`,
+`b in [-6·10^-37,0]`, and `lambda in [1.309,1.31]`.
+The second result derives the midpoint-pivot bounds internally; the lambda
+window remains an explicit hypothesis.
+
+This is the geometric-contraction step needed for summing the diagonal
+increments. It is still a conditional one-step implication: the state box
+and the root window must be established at every level before the geometric
+bound can be iterated.
+
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),

@@ -693,4 +693,68 @@ theorem schurNextDiagonal_change_abs_le_72e_minus74_of_state_box
       mul_le_mul_of_nonneg_left hbsq (by norm_num)
     _ = (72 / 10 ^ 74 : ℝ) := by norm_num
 
+
+/-- The quadratic off-diagonal estimate and the small signed input box
+give a uniform linear contraction by 10^-36. -/
+theorem schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_box
+    (b c : ℝ)
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    |schurNextOffDiagonal b c| ≤ (1 / 10 ^ 36 : ℝ) * |b| := by
+  have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b := by
+    have hscale : -(1 / 100 : ℝ) ≤ -(6 / 10 ^ 37 : ℝ) := by norm_num
+    exact le_trans hscale hb_lower
+  have hquadratic :=
+    schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+      b c hb_coarse_lower hb_upper hc_lower hc_upper hc3_lower
+  have hb_nonneg : 0 ≤ -b := by linarith
+  have hb_small : 0 ≤ (6 / 10 ^ 37 : ℝ) + b := by linarith
+  have hbsq : (-b) ^ 2 ≤ (6 / 10 ^ 37 : ℝ) * (-b) := by
+    nlinarith [mul_nonneg hb_nonneg hb_small]
+  have hlinear :
+      (4 / 5 : ℝ) * b ^ 2 ≤ (1 / 10 ^ 36 : ℝ) * (-b) := by
+    calc
+      (4 / 5 : ℝ) * b ^ 2 = (4 / 5 : ℝ) * (-b) ^ 2 := by ring
+      _ ≤ (4 / 5 : ℝ) * ((6 / 10 ^ 37 : ℝ) * (-b)) :=
+        mul_le_mul_of_nonneg_left hbsq (by norm_num)
+      _ ≤ (1 / 10 ^ 36 : ℝ) * (-b) :=
+        mul_le_mul_of_nonneg_right (by norm_num) hb_nonneg
+  calc
+    |schurNextOffDiagonal b c|
+        ≤ (4 / 5 : ℝ) * b ^ 2 := hquadratic
+    _ ≤ (1 / 10 ^ 36 : ℝ) * (-b) := hlinear
+    _ = (1 / 10 ^ 36 : ℝ) * |b| := by
+      rw [abs_of_nonpos hb_upper]
+
+/-- The same linear contraction follows from the A1 state-coordinate box
+and its induced positive midpoint-pivot bounds. -/
+theorem schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_state_box
+    (a b lambda : ℝ)
+    (ha_lower : -(1 / 10 ^ 35 : ℝ) ≤ a)
+    (ha_upper : a ≤ (1 / 10 ^ 35 : ℝ))
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    |schurNextOffDiagonal b (schurMidpointPivot a b lambda)| ≤
+      (1 / 10 ^ 36 : ℝ) * |b| := by
+  have hc_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_upper, hlambda_lower]
+  have hc_upper :
+      schurMidpointPivot a b lambda ≤ (132 / 100 : ℝ) := by
+    unfold schurMidpointPivot
+    nlinarith [ha_upper, hb_lower, hlambda_upper]
+  have hc3_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda + 3 * b := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  exact schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_box
+    b (schurMidpointPivot a b lambda)
+    hb_lower hb_upper hc_lower hc_upper hc3_lower
+
 end PhiGenesis.SpectralGap

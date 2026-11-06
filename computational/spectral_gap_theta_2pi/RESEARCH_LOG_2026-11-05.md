@@ -828,3 +828,34 @@ bound on the `b`-sequence to obtain a rigorous summable drift estimate.
 
 The result is conditional on the same finite-dimensional state and spectral
 parameter hypotheses; it is not an infinite-level convergence theorem.
+
+
+## 45. Linear contraction of the off-diagonal coordinate (2026-11-06)
+
+The quadratic estimate from section 43 gives
+`|b_next| <= (4/5)|b|^2`. On the signed state interval
+`-6*10^-37 <= b <= 0`, one has
+`|b| <= 6*10^-37`. Thus
+
+`(4/5)|b|^2 <= ((4/5)*(6*10^-37))|b| < 10^-36|b|`.
+
+This exact rational comparison is now formalized in
+`schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_box`.
+A state-coordinate corollary,
+`schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_state_box`,
+derives the positive midpoint-pivot bounds from
+`|a| <= 10^-35`,
+`b in [-6*10^-37,0]`, and
+`lambda in [1.309,1.31]`.
+
+The result provides a conditional geometric one-step factor
+`q=10^-36`. If the state and spectral-parameter hypotheses are established
+at every subsequent level, then `|b_(m+n)| <= q^n |b_m|`.
+The all-level validity of those hypotheses remains a separate theorem;
+this section does not claim to have proved it.
+
+The next formal task is a finite-sum/tail lemma for the diagonal drift
+`|a_(k+1)-a_k| <= 2|b_k|^2` under the geometric bound, with the resulting
+explicit total tail estimate. That summability estimate will then be used
+to sharpen the diagonal state interval rather than assuming an arbitrary
+fixed margin.
