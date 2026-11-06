@@ -264,7 +264,7 @@ python computational/spectral_gap_theta_2pi/high_precision_bottom.py
 python computational/spectral_gap_theta_2pi/schur_decimation.py --sector A1 --max-level 12 --dps 1250
 python computational/spectral_gap_theta_2pi/schur_decimation.py --sector E --max-level 12 --dps 1250
 python computational/spectral_gap_theta_2pi/schur_inertia_certificate.py --max-level 12 --dps 2450 --radius-digits 2390
-pytest -q test_spectral_gap_high_precision.py test_spectral_schur_decimation.py test_spectral_schur_inertia.py
+pytest -q test_spectral_gap_high_precision.py test_spectral_schur_decimation.py test_spectral_schur_inertia.py test_schur_bottom_eigenvalue.py
 lake build
 ```
 
@@ -281,6 +281,7 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
 | `HIGH_PRECISION_2026-11-06.md` | corrected 260-dps A1-root table, quadratic increment ratios, and A1/E splitting; retracts the erroneous PR #12 note |
 | `schur_bottom_eigenvalue.py` | compact independent 260-dps Schur-recursion calculation for A1 and E boundary roots |
+| `test_schur_bottom_eigenvalue.py` | regression test for the 260-dps standalone roots and equivalence of the two boundary normalizations |
 | `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1`/`E` boundary-root continuation |
 | `schur_inertia_certificate.py` | outward-rounded Decimal interval checks and finite-level Schur/inertia certificates for the ground state and first E doublet |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
