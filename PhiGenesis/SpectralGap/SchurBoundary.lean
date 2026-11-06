@@ -915,7 +915,7 @@ theorem diagonal_drift_total_le_four_mul_initial_sq_until
         have hnonneg : 0 ≤ u N := hu_nonneg N le_rfl
         have hnext : ¬ N + 1 ≤ N := by omega
         simp [uExt, hnext]
-        exact mul_nonneg (by norm_num) hnonneg
+        positivity
     · have hn1 : ¬ n + 1 ≤ N := by omega
       simp [uExt, hn, hn1]
   have hdiagonalExt : ∀ n,
