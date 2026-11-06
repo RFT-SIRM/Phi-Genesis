@@ -1,0 +1,44 @@
+name: spectral-gap-derivative-certificate
+
+on:
+  push:
+    branches:
+      - research/spectral-gap-high-precision-2026-11-06
+    paths:
+      - ".github/workflows/spectral-gap-derivative-certificate.yml"
+      - "computational/spectral_gap_theta_2pi/schur_derivative_certificate.py"
+      - "computational/spectral_gap_theta_2pi/schur_decimation.py"
+      - "pyproject.toml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: spectral-gap-derivative-certificate-\${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  a1-derivative-transition-certificate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package
+        run: pip install -e .
+      - name: Certify derivative transitions 5 through 13
+        shell: bash
+        run: |
+          set -o pipefail
+          python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py \
+            --max-level 14 \
+            --start-level 5 \
+            --dps 10000 \
+            --radius-digits 9400 2>&1 | tee schur-derivative-certificate.txt
+      - name: Upload certificate log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schur-derivative-transition-certificate
+          path: schur-derivative-certificate.txt
+          if-no-files-found: warn

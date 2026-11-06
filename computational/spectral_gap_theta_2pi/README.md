@@ -230,8 +230,52 @@ This is a reproducible finite-level computer-assisted interval/inertia certifica
 
 ~~~bash
 python computational/spectral_gap_theta_2pi/schur_inertia_certificate.py --max-level 12 --dps 2450 --radius-digits 2390
+python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py --max-level 14 --start-level 5 --dps 10000 --radius-digits 9400
 pytest -q test_spectral_schur_inertia.py
 ~~~
+
+### A1 derivative-transition interval certificate (levels 5–14)
+
+The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
+\[
+D_{m+1}-D_m
+=
+G_m+\bigl(f'_{m+1}(\lambda_{m+1})-f'_{m+1}(\lambda_m)\bigr),
+\]
+where
+\[
+G_m=-2b'_m\frac{c_m+5b_m}{c_m+3b_m}
+-4b_m\frac{c_mb'_m-b_mc'_m}{(c_m+3b_m)^2}.
+\]
+The second term is controlled by f''_{m+1} on the full segment from lambda_m to lambda_(m+1).
+
+An outward-rounded interval calculation at 10,000 decimal digits and root-bracket radius 10^-9400 certifies transitions m=5,...,13. For every transition it checks the A1 root brackets and their order, the negative A1 derivative, the negative off-diagonal coefficient, positive midpoint pivots, and
+\[
+-0.29<f''_{m+1}(x)<-0.07
+\quad (x\in[\lambda_m,\lambda_{m+1}]).
+\]
+It also certifies the finite-level bounds
+\[
+\frac{|G_m|}{2^m|b_m|}<0.7,\qquad
+\frac{|D_{m+1}-D_m|}{2^m|b_m|}<1,\qquad
+\frac{|b_{m+1}|}{|b_m|^2}<0.8.
+\]
+The largest interval upper bounds in this run are approximately 0.6187181, 0.6187729, and 0.7638668, respectively.
+
+Reproduce the high-precision certificate with:
+~~~bash
+python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py \
+  --max-level 14 --start-level 5 --dps 10000 --radius-digits 9400
+~~~
+
+These are finite-level interval certificates, not uniform estimates for every m. If the three bounds above are proved uniformly, then |b_6|<10^-36 and |b_(m+1)|<=|b_m|^2 give the conditional tail majorant
+\[
+\sum_{m=6}^{\infty}2^m|b_m|
+\le
+\frac{64\cdot10^{-36}}{1-2\cdot10^{-36}}
+<6.41\cdot10^{-35}.
+\]
+Combined with |D_(m+1)-D_m|<=2^m|b_m|, this would prove convergence of D_m and keep its limit strictly negative. The missing step is a proof that these inequalities persist at every level, not only through level 14.
 
 ## 4. What is not claimed
 
@@ -249,7 +293,7 @@ pytest -q test_spectral_schur_inertia.py
    evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation:
    thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly
    constant between levels 4 and 5.
-3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` for all levels; finite-level ratios and the Schur mechanism are now known, but the limiting derivative hypotheses remain open.
+3. Prove the quadratic correction law `δ_(m+1) ≈ c·δ_m²` uniformly in the level. The derivative-transition interval certificate controls root-sampled slopes through level 14; the uniform summability estimates and infinite-level limit remain open.
 4. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce

@@ -642,3 +642,52 @@ The corresponding sampled derivative tends numerically to
 The derivative coefficient `b'_m` is also observed to decay: at the A1 root its magnitude is approximately `3.56e-4650` at level 13 and `7.64e-9303` at level 14.
 
 These are high-precision diagnostics only. They do not prove that the derivative sequence converges. In particular, `D_(m+1)-D_m` combines the level update and the change from `lambda_m` to `lambda_(m+1)`. The next proof obligation is a uniform summable bound for the derivative update terms (including `b'_m`) and a separate bound for the derivative's change across the root interval. Only then can the nonzero limiting derivative needed for the quadratic root-shift law be concluded.
+
+
+## 41. Interval control of the A1 derivative across successive roots (2026-11-06)
+
+Let D_m=f'_m(lambda_m). Differentiating the exact scalar Schur update gives
+\[
+G_m:=f'_{m+1}(\lambda_m)-f'_m(\lambda_m)
+=-2b'_m R_m-2b_mR'_m,
+\]
+where
+\[
+R_m=\frac{c_m+5b_m}{c_m+3b_m},\qquad
+R'_m=\frac{2(c_mb'_m-b_mc'_m)}{(c_m+3b_m)^2}.
+\]
+The remaining root-motion term is
+\[
+f'_{m+1}(\lambda_{m+1})-f'_{m+1}(\lambda_m)
+=f''_{m+1}(\xi_m)(\lambda_{m+1}-\lambda_m)
+\]
+for some xi_m in the interval between the two roots.
+
+A new outward-rounded interval checker propagates second lambda derivatives through the exact rational Schur recursion. It brackets each A1 root at 10,000 decimal digits with radius 10^-9400, checks endpoint signs and a negative first derivative, and verifies all midpoint pivots and the E-channel sign. For every transition m=5,...,13, it evaluates the second derivative over an interval containing the entire segment [lambda_m, lambda_(m+1)]. The certified curvature enclosure lies inside
+\[
+-0.29<f''_{m+1}(x)<-0.07.
+\]
+
+The same interval run certifies, for each m=5,...,13,
+\[
+\frac{|G_m|}{2^m|b_m|}<0.7,\qquad
+\frac{|D_{m+1}-D_m|}{2^m|b_m|}<1,\qquad
+\frac{|b_{m+1}|}{|b_m|^2}<0.8.
+\]
+The largest upper bounds reported were approximately 0.6187181, 0.6187729, and 0.7638668. The root-sampled curvature tends numerically to
+\[
+-0.283520408592536398378348378958136777568\ldots
+\]
+but this displayed value is a numerical diagnostic; the interval claim is the coarser bound on the full root-to-root segment.
+
+The reproducible command is
+`python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py --max-level 14 --start-level 5 --dps 10000 --radius-digits 9400`.
+The regression suite includes a lower-precision smoke test of the interval certificate. A separate GitHub Actions workflow runs the 10,000-dps certificate on the research branch and uploads its log.
+
+The finite-level estimates point to a clean convergence route. If the three bounds above are established uniformly for all m>=6, then |b_6|<10^-36 and |b_(m+1)|<=|b_m|^2 imply
+[
+sum_{m=6}^{infty}2^m|b_m|
+lerac{64cdot10^{-36}}{1-2cdot10^{-36}}
+<6.41cdot10^{-35}.
+]
+Combined with |D_(m+1)-D_m|<=2^m|b_m|, this would prove convergence of D_m and keep its limit separated from zero. What remains is a proof that these estimates persist for every level, not just the finite transitions through level 14.
