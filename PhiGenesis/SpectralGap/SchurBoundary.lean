@@ -1743,10 +1743,10 @@ theorem schurBoundaryTrajectory_add
         (schurBoundaryTrajectory lambda initial m) n := by
   induction n with
   | zero =>
-      rfl
+      simp only [Nat.add_zero, schurBoundaryTrajectory]
   | succ n ih =>
       simp only [Nat.add_succ, schurBoundaryTrajectory]
-      rw [ih]
+      exact congrArg (schurBoundaryStateStep lambda) ih
 
 
 /-- The A1 characteristic at level 6+n, starting from the original
