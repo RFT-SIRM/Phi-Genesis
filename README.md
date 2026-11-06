@@ -666,20 +666,18 @@ The repository is organized as a connected research record: formal proofs, exact
 
 ### Architecture at a glance
 
-| Research layer | Main location | Role in the project |
-|---|---|---|
-| Lean 4 entry point and build | `PhiGenesis.lean`, `lakefile.lean`, `lake-manifest.json`, `lean-toolchain` | Defines the formalization entry point, dependencies, and reproducible Lean environment. |
-| H10 / GF(2) formalization | `PhiGenesis/H10/` | Formal work on boundary-row transforms, incidence forests, gasket coordinates, recursive vertex geometry, and vertex ordering. |
-| Signed spectral-gap formalization | `PhiGenesis/SpectralGap/` | Lean development for finite-face covers, recursive gasket faces, signed Laplacians, gauge energy, and triangle energy. |
-| Exact H10 computational record | `computational/higher_moments_z2/`, `phi_genesis/higher_moments_z2.py` | Finite-level exact calculations, pivot-tree audits, formalization checkpoints, and the accompanying research ledger. |
-| Spectral-gap computational record | `computational/spectral_gap_theta_2pi/` | Research log and triangle-gauge audit for the signed spectral-gap line. |
-| Numerical research package | `phi_genesis/` | Python implementations for gasket Laplacians, decimation checks, flux operators, inertia counts, moments, and related numerical studies. |
-| Statistical protocols and evidence | `PREREGISTRATION*.md`, `protocol_data/`, `protocol_ledger.md` | Preregistered selection rules, null pools, power checks, recorded outcomes, and the cumulative protocol history. |
-| Regression and audit suite | Root-level `test_*.py` files | Executable checks for numerical conventions, spectral behavior, flux experiments, statistical protocols, and reported caveats. |
-| Research documentation and history | `docs/`, `CHANGELOG.md`, `METHODOLOGY.md` | Research map, foundations, methods, data provenance, open problems, verified results, chronology, and documentation history. |
-| Documentation and visual site | `mkdocs.yml`, `.github/workflows/docs.yml`, `visual/` | Site configuration, publication workflow, and visual assets. |
-| Project automation | `.github/workflows/`, `scripts/` | CI, Lean builds, tests, nightly diagnostics, documentation, and ecosystem-status tooling. |
-| Citation and package metadata | `CITATION.cff`, `pyproject.toml` | Canonical author attribution, research-group affiliation, contact email, and software citation metadata. |
+- **Lean 4 entry point and build.** `PhiGenesis.lean`, `lakefile.lean`, `lake-manifest.json`, `lean-toolchain`. Define the formalization entry point, the dependencies and the reproducible Lean environment.
+- **H10 / GF(2) formalization.** `PhiGenesis/H10/`. Boundary-row transforms, incidence forests, gasket coordinates, recursive vertex geometry and vertex ordering.
+- **Signed spectral-gap formalization.** `PhiGenesis/SpectralGap/`. Finite-face covers, recursive gasket faces, signed Laplacians, gauge energy and triangle energy.
+- **Exact H10 computational record.** `computational/higher_moments_z2/`, `phi_genesis/higher_moments_z2.py`. Finite-level exact calculations, pivot-tree audits, formalization checkpoints and the research ledger.
+- **Spectral-gap computational record.** `computational/spectral_gap_theta_2pi/`. Research log and triangle-gauge audit for the signed spectral-gap line.
+- **Numerical research package.** `phi_genesis/`. Gasket Laplacians, decimation checks, flux operators, inertia counts, moments and related numerical studies.
+- **Statistical protocols and evidence.** `PREREGISTRATION*.md`, `protocol_data/`, `protocol_ledger.md`. Preregistered selection rules, null pools, power checks, recorded outcomes and the cumulative protocol history.
+- **Regression and audit suite.** Root-level `test_*.py` files. Executable checks for numerical conventions, spectral behavior, flux experiments, statistical protocols and reported caveats.
+- **Research documentation and history.** `docs/`, `CHANGELOG.md`, `METHODOLOGY.md`. Research map, foundations, methods, data provenance, open problems, verified results, chronology and documentation history.
+- **Documentation and visual site.** `mkdocs.yml`, `.github/workflows/docs.yml`, `visual/`. Site configuration, publication workflow and visual assets.
+- **Project automation.** `.github/workflows/`, `scripts/`. CI, Lean builds, tests, nightly diagnostics, documentation and ecosystem-status tooling.
+- **Citation and package metadata.** `CITATION.cff`, `pyproject.toml`. Author attribution, research-group affiliation, contact email and software citation metadata.
 
 ### Recommended navigation
 
