@@ -1216,6 +1216,262 @@ theorem schurBoundaryTrajectory_state_box
   simpa [a, b] using hstate n
 
 
+/-- A coarser Schur state box is invariant at every finite horizon
+when the initial diagonal coefficient is at most 1/500 and the initial
+off-diagonal coefficient lies in [-1/20000,0]. The proof sums the
+quadratically small diagonal drift and uses the induced half-contraction
+of the off-diagonal coordinate. -/
+theorem schurStateBox_coarse_invariant_of_recursion
+    (a b : ℕ → ℝ) (lambda : ℝ)
+    (ha0 : |a 0| ≤ (1 / 500 : ℝ))
+    (hb0_lower : -(1 / 20000 : ℝ) ≤ b 0)
+    (hb0_upper : b 0 ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ))
+    (ha_step : ∀ n,
+      a (n + 1) =
+        schurNextDiagonal (a n) (b n)
+          (schurMidpointPivot (a n) (b n) lambda))
+    (hb_step : ∀ n,
+      b (n + 1) =
+        schurNextOffDiagonal (b n)
+          (schurMidpointPivot (a n) (b n) lambda)) :
+    ∀ n, |a n| ≤ (1 / 400 : ℝ) ∧
+      -(1 / 20000 : ℝ) ≤ b n ∧ b n ≤ 0 := by
+  have hb0_abs : |b 0| ≤ (1 / 20000 : ℝ) := by
+    apply abs_le.mpr
+    constructor
+    · exact hb0_lower
+    · exact le_trans hb0_upper (by norm_num)
+  have hsq_abs (x : ℝ) : (|x|) ^ 2 = x ^ 2 := by
+    by_cases hx : 0 ≤ x
+    · rw [abs_of_nonneg hx]
+    · rw [abs_of_neg (lt_of_not_ge hx)]
+      ring
+  have hprefix : ∀ n, ∀ k ≤ n,
+      |a k| ≤ (1 / 400 : ℝ) ∧
+        -(1 / 20000 : ℝ) ≤ b k ∧ b k ≤ 0 := by
+    intro n
+    induction n with
+    | zero =>
+        intro k hk
+        have hk0 : k = 0 := by omega
+        subst k
+        have ha0_box : |a 0| ≤ (1 / 400 : ℝ) :=
+          le_trans ha0 (by norm_num)
+        exact ⟨ha0_box, hb0_lower, hb0_upper⟩
+    | succ n ih =>
+        intro k hk
+        by_cases hk_old : k ≤ n
+        · exact ih k hk_old
+        · have hk_eq : k = n + 1 := by omega
+          subst k
+          have hstate_n :
+              |a n| ≤ (1 / 400 : ℝ) ∧
+                -(1 / 20000 : ℝ) ≤ b n ∧ b n ≤ 0 :=
+            ih n le_rfl
+          have hu_nonneg : ∀ j, j ≤ n + 1 → 0 ≤ |b j| := by
+            intro j hj
+            exact abs_nonneg (b j)
+          have hcontract_prefix : ∀ j, j < n + 1 →
+              |b (j + 1)| ≤ (1 / 2 : ℝ) * |b j| := by
+            intro j hj
+            have hj_le : j ≤ n := by omega
+            have hstate_j := ih j hj_le
+            have ha_j_bounds := abs_le.mp hstate_j.1
+            have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b j := by
+              have hscale :
+                  -(1 / 100 : ℝ) ≤ -(1 / 20000 : ℝ) := by norm_num
+              exact le_trans hscale hstate_j.2.1
+            have hc_lower :
+                (13 / 10 : ℝ) ≤
+                  schurMidpointPivot (a j) (b j) lambda := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.1, hstate_j.2.2, hlambda_lower]
+            have hc_upper :
+                schurMidpointPivot (a j) (b j) lambda ≤
+                  (132 / 100 : ℝ) := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.2, hstate_j.2.1, hlambda_upper]
+            have hc3_lower :
+                (13 / 10 : ℝ) ≤
+                  schurMidpointPivot (a j) (b j) lambda + 3 * b j := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.1, hstate_j.2.1, hlambda_lower]
+            have hquadratic :=
+              schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+                (b j) (schurMidpointPivot (a j) (b j) lambda)
+                hb_coarse_lower hstate_j.2.2
+                hc_lower hc_upper hc3_lower
+            have hnext_interval :=
+              schurNextOffDiagonal_signed_interval_of_coarse_box
+                (b j) (schurMidpointPivot (a j) (b j) lambda)
+                hstate_j.2.1 hstate_j.2.2
+                hc_lower hc_upper hc3_lower
+            have hb_mag_nonneg : 0 ≤ -(b j) := by
+              linarith [hstate_j.2.2]
+            have hb_mag_upper : -(b j) ≤ (1 / 20000 : ℝ) := by
+              linarith [hstate_j.2.1]
+            have hbsq :
+                (b j) ^ 2 ≤ (1 / 20000 : ℝ) * (-(b j)) := by
+              calc
+                (b j) ^ 2 = (-(b j)) * (-(b j)) := by ring
+                _ ≤ (1 / 20000 : ℝ) * (-(b j)) :=
+                  mul_le_mul_of_nonneg_right hb_mag_upper hb_mag_nonneg
+            have hcoeff :
+                (4 / 5 : ℝ) * (1 / 20000 : ℝ) ≤ (1 / 2 : ℝ) := by
+              norm_num
+            calc
+              |b (j + 1)| =
+                  |schurNextOffDiagonal (b j)
+                    (schurMidpointPivot (a j) (b j) lambda)| := by
+                      rw [hb_step j]
+              _ = -schurNextOffDiagonal (b j)
+                    (schurMidpointPivot (a j) (b j) lambda) :=
+                abs_of_nonpos hnext_interval.2
+              _ ≤ (4 / 5 : ℝ) * (b j) ^ 2 := by
+                have h := hquadratic
+                rw [abs_of_nonpos hnext_interval.2] at h
+                exact h
+              _ ≤ (4 / 5 : ℝ) *
+                  ((1 / 20000 : ℝ) * (-(b j))) :=
+                mul_le_mul_of_nonneg_left hbsq (by norm_num)
+              _ ≤ (1 / 2 : ℝ) * (-(b j)) :=
+                mul_le_mul_of_nonneg_right hcoeff hb_mag_nonneg
+              _ = (1 / 2 : ℝ) * |b j| := by
+                rw [abs_of_nonpos hstate_j.2.2]
+          have hdiagonal_prefix : ∀ j, j < n + 1 →
+              |a (j + 1) - a j| ≤ 2 * (|b j|) ^ 2 := by
+            intro j hj
+            have hj_le : j ≤ n := by omega
+            have hstate_j := ih j hj_le
+            have ha_j_bounds := abs_le.mp hstate_j.1
+            have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b j := by
+              have hscale :
+                  -(1 / 100 : ℝ) ≤ -(1 / 20000 : ℝ) := by norm_num
+              exact le_trans hscale hstate_j.2.1
+            have hc_lower :
+                (13 / 10 : ℝ) ≤
+                  schurMidpointPivot (a j) (b j) lambda := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.1, hstate_j.2.2, hlambda_lower]
+            have hc_upper :
+                schurMidpointPivot (a j) (b j) lambda ≤
+                  (132 / 100 : ℝ) := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.2, hstate_j.2.1, hlambda_upper]
+            have hc3_lower :
+                (13 / 10 : ℝ) ≤
+                  schurMidpointPivot (a j) (b j) lambda + 3 * b j := by
+              unfold schurMidpointPivot
+              nlinarith [ha_j_bounds.1, hstate_j.2.1, hlambda_lower]
+            have hlocal :=
+              schurNextDiagonal_change_abs_le_two_mul_sq_of_box
+                (a j) (b j)
+                (schurMidpointPivot (a j) (b j) lambda)
+                hb_coarse_lower hstate_j.2.2
+                hc_lower hc_upper hc3_lower
+            calc
+              |a (j + 1) - a j| =
+                  |schurNextDiagonal (a j) (b j)
+                    (schurMidpointPivot (a j) (b j) lambda) - a j| := by
+                      rw [ha_step j]
+              _ ≤ 2 * (b j) ^ 2 := hlocal
+              _ = 2 * (|b j|) ^ 2 := by rw [← hsq_abs (b j)]
+          have hdrift :=
+            diagonal_drift_total_le_four_mul_initial_sq_until
+              (fun j => |b j|) a (n + 1)
+              hu_nonneg hcontract_prefix hdiagonal_prefix
+          have hbsq0 :
+              (|b 0|) ^ 2 ≤ (1 / 20000 : ℝ) ^ 2 := by
+            nlinarith [hb0_abs, abs_nonneg (b 0)]
+          have hdrift_upper :
+              |a (n + 1) - a 0| ≤
+                4 * (1 / 20000 : ℝ) ^ 2 := by
+            calc
+              |a (n + 1) - a 0| ≤ 4 * (|b 0|) ^ 2 := hdrift
+              _ ≤ 4 * (1 / 20000 : ℝ) ^ 2 := by nlinarith [hbsq0]
+          have habs_add (x y : ℝ) : |x + y| ≤ |x| + |y| := by
+            apply abs_le.mpr
+            constructor
+            · calc
+                -(|x| + |y|) = (-|x|) + (-|y|) := by ring
+                _ ≤ x + y := add_le_add (neg_abs_le x) (neg_abs_le y)
+            · exact add_le_add (le_abs_self x) (le_abs_self y)
+          have ha_new : |a (n + 1)| ≤ (1 / 400 : ℝ) := by
+            calc
+              |a (n + 1)| =
+                  |(a (n + 1) - a 0) + a 0| := by congr 1; ring
+              _ ≤ |a (n + 1) - a 0| + |a 0| :=
+                habs_add _ _
+              _ ≤ 4 * (1 / 20000 : ℝ) ^ 2 + (1 / 500 : ℝ) :=
+                add_le_add hdrift_upper ha0
+              _ ≤ (1 / 400 : ℝ) := by norm_num
+          have ha_n_bounds := abs_le.mp hstate_n.1
+          have hc_lower :
+              (13 / 10 : ℝ) ≤
+                schurMidpointPivot (a n) (b n) lambda := by
+            unfold schurMidpointPivot
+            nlinarith [ha_n_bounds.1, hstate_n.2.2, hlambda_lower]
+          have hc_upper :
+              schurMidpointPivot (a n) (b n) lambda ≤
+                (132 / 100 : ℝ) := by
+            unfold schurMidpointPivot
+            nlinarith [ha_n_bounds.2, hstate_n.2.1, hlambda_upper]
+          have hc3_lower :
+              (13 / 10 : ℝ) ≤
+                schurMidpointPivot (a n) (b n) lambda + 3 * b n := by
+            unfold schurMidpointPivot
+            nlinarith [ha_n_bounds.1, hstate_n.2.1, hlambda_lower]
+          have hb_new :=
+            schurNextOffDiagonal_signed_interval_of_coarse_box
+              (b n) (schurMidpointPivot (a n) (b n) lambda)
+              hstate_n.2.1 hstate_n.2.2
+              hc_lower hc_upper hc3_lower
+          rw [← hb_step n] at hb_new
+          exact ⟨ha_new, hb_new.1, hb_new.2⟩
+  intro n
+  exact hprefix n n le_rfl
+
+
+/-- The concrete Schur trajectory inherits the coarse invariant state
+box from any initial state in the level-three starting box. -/
+theorem schurBoundaryTrajectory_coarse_state_box
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (1 / 500 : ℝ))
+    (hb₀_lower : -(1 / 20000 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    ∀ n, |(schurBoundaryTrajectory lambda (a₀, b₀) n).1| ≤
+        (1 / 400 : ℝ) ∧
+      -(1 / 20000 : ℝ) ≤
+        (schurBoundaryTrajectory lambda (a₀, b₀) n).2 ∧
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).2 ≤ 0 := by
+  let a : ℕ → ℝ := fun n =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+  let b : ℕ → ℝ := fun n =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+  have ha_step : ∀ n,
+      a (n + 1) =
+        schurNextDiagonal (a n) (b n)
+          (schurMidpointPivot (a n) (b n) lambda) := by
+    intro n
+    rfl
+  have hb_step : ∀ n,
+      b (n + 1) =
+        schurNextOffDiagonal (b n)
+          (schurMidpointPivot (a n) (b n) lambda) := by
+    intro n
+    rfl
+  have hstate :=
+    schurStateBox_coarse_invariant_of_recursion
+      a b lambda ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper ha_step hb_step
+  intro n
+  simpa [a, b] using hstate n
+
+
 /-- At a fixed parameter in the spectral window and inside the invariant
 state box, one Schur step increases the A1 boundary characteristic by a
 nonnegative amount no larger than twice the magnitude of the old
