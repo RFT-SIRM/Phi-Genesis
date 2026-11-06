@@ -510,4 +510,120 @@ theorem gasketVertexOrder_address20_cellA (n : Nat) :
   rw [gasketVertexOrder_succ_explicit (n + 3)]
   exact hBlocks
 
+
+/-- The geometric embedding of address 22: enter child 2, then child 2
+again. -/
+def gasketAddress22Point (n : Nat) (p : GasketLatticePoint) :
+    GasketLatticePoint :=
+  gasketChildPoint (n + 3) .corner2
+    (gasketChildPoint (n + 2) .corner2 p)
+
+/-- The child-2 descendant of the B cell at address 2 has the concrete
+state-B order in the global first-occurrence list. The local B order is
+transported through the outer child-2 map; all six points lie strictly
+above the root child-2 interface and strictly to its left, so neither
+shared-midpoint filter removes any of them. -/
+theorem gasketVertexOrder_address22_cellB (n : Nat) :
+    (gasketCornerVertexOrder .B).map
+      (fun v => gasketAddress22Point n
+        (gasketCornerVertexPoint (gasketScale (n + 1)) v)) <+
+      gasketVertexOrder (n + 4) := by
+  let S := gasketScale (n + 1)
+  let U := gasketScale (n + 2)
+  let T := gasketScale (n + 3)
+  let target : List GasketLatticePoint :=
+    [(0, U + T), (S + S, U + T), (S, U + T),
+      (0, (S + U) + T), (S, (S + U) + T),
+      (0, ((S + S) + U) + T)]
+  have hShape :
+      (gasketCornerVertexOrder .B).map
+        (fun v => gasketAddress22Point n
+          (gasketCornerVertexPoint (gasketScale (n + 1)) v)) =
+        target := by
+    simp [gasketCornerVertexOrder, gasketCornerVertexPoint,
+      gasketAddress22Point, gasketChildPoint, target, S, U, T]
+  have hRaw :
+      (gasketCornerVertexOrder .B).map
+        (fun v => gasketAddress22Point n
+          (gasketCornerVertexPoint (gasketScale (n + 1)) v)) <+
+        (gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner2) := by
+    simpa only [gasketAddress22Point, List.map_map,
+      Function.comp_apply] using
+      (gasketVertexOrder_child2_stateB_symbols (n + 1)).map
+        (gasketChildPoint (n + 3) .corner2)
+  rw [hShape] at hRaw
+  have hScale1 : U = 2 * S := by
+    dsimp [U]
+    rw [show n + 2 = (n + 1) + 1 by omega, gasketScale_succ]
+    dsimp [S]
+    omega
+  have hScale2 : T = 2 * U := by
+    dsimp [T]
+    rw [show n + 3 = (n + 2) + 1 by omega, gasketScale_succ]
+    dsimp [U]
+    omega
+  have hS : 0 < S := by
+    dsimp [S, gasketScale]
+    positivity
+  have hSeparation : ∀ p ∈ target, p.1 < T ∧ T < p.2 := by
+    intro p hp
+    simp only [target, List.mem_cons, List.mem_singleton] at hp
+    rcases hp with h1 | h2 | h3 | h4 | h5 | h6 | hnil
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · subst p
+      exact ⟨by omega, by omega⟩
+    · simp at hnil
+  have hLeft : ∀ p ∈ target,
+      decide (p ≠ (0, T)) = true := by
+    intro p hp
+    rcases hSeparation p hp with ⟨_, hgt⟩
+    exact decide_eq_true (by
+      intro heq
+      have hsnd : p.2 = T := congrArg Prod.snd heq
+      omega)
+  have hRight : ∀ p ∈ target,
+      decide (p ≠ (T, T)) = true := by
+    intro p hp
+    rcases hSeparation p hp with ⟨hlt, _⟩
+    exact decide_eq_true (by
+      intro heq
+      have hfst : p.1 = T := congrArg Prod.fst heq
+      omega)
+  have hFiltered0 := sublist_filter_of_forall
+    (fun p => decide (p ≠ (0, T))) hRaw hLeft
+  have hFiltered := sublist_filter_of_forall
+    (fun p => decide (p ≠ (T, T))) hFiltered0 hRight
+  have hChildBlocks : target <+
+      (((gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner1)).filter
+        (fun p => decide (p ≠ (T, 0)))) ++
+      ((((gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner2)).filter
+        (fun p => decide (p ≠ (0, T)))).filter
+        (fun p => decide (p ≠ (T, T)))) := by
+    exact List.sublist_append_of_sublist_right hFiltered
+  have hBlocks : target <+
+      ((gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner0)) ++
+        ((((gasketVertexOrder (n + 3)).map
+            (gasketChildPoint (n + 3) .corner1)).filter
+          (fun p => decide (p ≠ (T, 0))) ++
+          ((((gasketVertexOrder (n + 3)).map
+              (gasketChildPoint (n + 3) .corner2)).filter
+            (fun p => decide (p ≠ (0, T)))).filter
+            (fun p => decide (p ≠ (T, T))))) := by
+    exact List.sublist_append_of_sublist_right hChildBlocks
+  rw [gasketVertexOrder_succ_explicit (n + 3)]
+  exact hBlocks
+
 end PhiGenesis.H10
