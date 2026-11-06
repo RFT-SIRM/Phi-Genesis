@@ -333,9 +333,9 @@ theorem schurNextOffDiagonal_ratio_bounds_at_A1_root
   have hc_ne : c ≠ 0 := ne_of_gt hc_pos
   have hratio := schurNextOffDiagonal_div_sq b c hb_ne hc_ne
   constructor
-  · rw [hratio]
-    linarith
-  · rw [hratio]
+  · rw [hratio, neg_div]
+    exact neg_le_neg hfactor_le
+  · rw [hratio, neg_div]
     exact neg_neg_of_pos hfactor_pos
 
 end PhiGenesis.SpectralGap
