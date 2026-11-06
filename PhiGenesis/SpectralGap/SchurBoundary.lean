@@ -171,7 +171,10 @@ theorem schurNextA1_at_old_root (a b c : ℝ)
       -2 * b * (c + 5 * b) / (c + 3 * b) := by
   unfold schurNextDiagonal schurNextOffDiagonal
   have ha : a = -2 * b := by linarith
-  have hc3' : b * 3 + c ≠ 0 := by nlinarith [hc3]
+  have hden : c + 3 * b = b * 3 + c := by ring
+  have hc3' : b * 3 + c ≠ 0 := by
+    rw [← hden]
+    exact hc3
   rw [ha]
   field_simp [hc, hc3']
   ring
