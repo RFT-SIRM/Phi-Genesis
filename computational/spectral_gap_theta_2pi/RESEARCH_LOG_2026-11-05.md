@@ -791,3 +791,40 @@ The remaining induction work is now localized: prove compatible propagation boun
 window in Lean. The finite interval calculation through level 101 remains numerical
 evidence for the hypotheses, rather than a proof that those hypotheses persist at all
 levels.
+
+
+## 44. Diagonal-coordinate Schur drift estimate (2026-11-06)
+
+The diagonal update was read directly from the implementation
+`schurNextDiagonal a b c = a - 2*b^2*(c+b)/(c*(c+3*b))`
+and formalized without a numerical approximation.
+
+Under
+`-1/100 <= b <= 0`,
+`13/10 <= c <= 132/100`, and
+`13/10 <= c+3*b`,
+the numerator `c+b` is nonnegative and at most `132/100`, whereas
+the denominator `c*(c+3*b)` is at least `(13/10)^2`. Since
+`132/100 <= (13/10)^2`, the update fraction lies in `[0,1]).
+Consequently Lean proves
+
+`|schurNextDiagonal a b c - a| <= 2*b^2`.
+
+A state-box corollary takes
+`|a| <= 10^-35`,
+`b in [-6*10^-37,0]`, and
+`lambda in [1.309,1.31]`; as in the previous signed off-diagonal result,
+the lambda interval is an explicit hypothesis. It derives the midpoint-pivot
+bounds and proves the numerical one-step drift estimate
+
+`|a_next-a| <= 72*10^-74 = 7.2*10^-73`.
+
+This does not yet prove that the whole `a in [-10^-35,10^-35]` box is
+invariant: a uniform interval argument must account for the current value's
+interior margin (or sharpen the box). What is now proved is that each local
+diagonal increment is bounded by twice the square of the old off-diagonal
+coefficient. The next step is to combine this inequality with an all-level
+bound on the `b)-sequence to obtain a rigorous summable drift estimate.
+
+The result is conditional on the same finite-dimensional state and spectral
+parameter hypotheses; it is not an infinite-level convergence theorem.

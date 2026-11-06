@@ -598,4 +598,98 @@ theorem schurNextOffDiagonal_signed_interval_of_state_box
     b (schurMidpointPivot a b lambda)
     hb_lower hb_upper hc_lower hc_upper hc3_lower
 
+
+/-- The exact change of the diagonal Schur coefficient in one step. -/
+theorem schurNextDiagonal_sub_eq (a b c : ℝ) :
+    schurNextDiagonal a b c - a =
+      -(2 * b ^ 2 * ((c + b) / (c * (c + 3 * b)))) := by
+  unfold schurNextDiagonal
+  ring
+
+/-- On the coarse positive-pivot box, the diagonal Schur coefficient moves
+by at most twice the square of the old off-diagonal coefficient. -/
+theorem schurNextDiagonal_change_abs_le_two_mul_sq_of_box
+    (a b c : ℝ)
+    (hb_lower : -(1 / 100 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    |schurNextDiagonal a b c - a| ≤ 2 * b ^ 2 := by
+  have hc_pos : 0 < c := by linarith
+  have hc3_pos : 0 < c + 3 * b := by linarith
+  have hden_pos : 0 < c * (c + 3 * b) :=
+    mul_pos hc_pos hc3_pos
+  have hnum_nonneg : 0 ≤ c + b := by linarith
+  have hnum_upper : c + b ≤ (132 / 100 : ℝ) := by linarith
+  have hden_lower :
+      (13 / 10 : ℝ) * (13 / 10 : ℝ) ≤ c * (c + 3 * b) := by
+    calc
+      (13 / 10 : ℝ) * (13 / 10 : ℝ) ≤ c * (13 / 10 : ℝ) :=
+        mul_le_mul_of_nonneg_right hc_lower (by norm_num)
+      _ ≤ c * (c + 3 * b) :=
+        mul_le_mul_of_nonneg_left hc3_lower (le_of_lt hc_pos)
+  have hcross : c + b ≤ c * (c + 3 * b) := by
+    calc
+      c + b ≤ (132 / 100 : ℝ) := hnum_upper
+      _ ≤ (13 / 10 : ℝ) * (13 / 10 : ℝ) := by norm_num
+      _ ≤ c * (c + 3 * b) := hden_lower
+  have hratio_nonneg :
+      0 ≤ (c + b) / (c * (c + 3 * b)) :=
+    div_nonneg hnum_nonneg (le_of_lt hden_pos)
+  have hratio_le :
+      (c + b) / (c * (c + 3 * b)) ≤ 1 :=
+    (div_le_iff₀ hden_pos).2 hcross
+  have hcoef_nonneg : 0 ≤ 2 * b ^ 2 := by positivity
+  calc
+    |schurNextDiagonal a b c - a|
+        = 2 * b ^ 2 * ((c + b) / (c * (c + 3 * b))) := by
+          rw [schurNextDiagonal_sub_eq, abs_neg,
+            abs_of_nonneg (mul_nonneg hcoef_nonneg hratio_nonneg)]
+    _ ≤ 2 * b ^ 2 * 1 :=
+      mul_le_mul_of_nonneg_left hratio_le hcoef_nonneg
+    _ = 2 * b ^ 2 := by ring
+
+/-- With the numerical A1 bootstrap state bounds, the diagonal Schur
+increment has the explicit bound 72*10^-74. -/
+theorem schurNextDiagonal_change_abs_le_72e_minus74_of_state_box
+    (a b lambda : ℝ)
+    (ha_lower : -(1 / 10 ^ 35 : ℝ) ≤ a)
+    (ha_upper : a ≤ (1 / 10 ^ 35 : ℝ))
+    (hb_lower : -(6 / 10 ^ 37 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    |schurNextDiagonal a b (schurMidpointPivot a b lambda) - a| ≤
+      (72 / 10 ^ 74 : ℝ) := by
+  have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b := by
+    have hscale : -(1 / 100 : ℝ) ≤ -(6 / 10 ^ 37 : ℝ) := by norm_num
+    exact le_trans hscale hb_lower
+  have hc_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_upper, hlambda_lower]
+  have hc_upper :
+      schurMidpointPivot a b lambda ≤ (132 / 100 : ℝ) := by
+    unfold schurMidpointPivot
+    nlinarith [ha_upper, hb_lower, hlambda_upper]
+  have hc3_lower :
+      (13 / 10 : ℝ) ≤ schurMidpointPivot a b lambda + 3 * b := by
+    unfold schurMidpointPivot
+    nlinarith [ha_lower, hb_lower, hlambda_lower]
+  have hchange :=
+    schurNextDiagonal_change_abs_le_two_mul_sq_of_box
+      a b (schurMidpointPivot a b lambda)
+      hb_coarse_lower hb_upper hc_lower hc_upper hc3_lower
+  have hBminus : 0 ≤ (6 / 10 ^ 37 : ℝ) - b := by linarith
+  have hBplus : 0 ≤ (6 / 10 ^ 37 : ℝ) + b := by linarith
+  have hbsq : b ^ 2 ≤ (6 / 10 ^ 37 : ℝ) ^ 2 := by
+    nlinarith [mul_nonneg hBminus hBplus]
+  calc
+    |schurNextDiagonal a b (schurMidpointPivot a b lambda) - a|
+        ≤ 2 * b ^ 2 := hchange
+    _ ≤ 2 * (6 / 10 ^ 37 : ℝ) ^ 2 :=
+      mul_le_mul_of_nonneg_left hbsq (by norm_num)
+    _ = (72 / 10 ^ 74 : ℝ) := by norm_num
+
 end PhiGenesis.SpectralGap

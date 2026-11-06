@@ -280,11 +280,32 @@ from the additional explicit assumptions
 - `b in [-6e-37,0]`;
 - `lambda in [1.309,1.31]`.
 
-This closes only the one-step preservation of the small signed `b)-coordinate.
+This closes only the one-step preservation of the small signed `b`-coordinate.
 The spectral-parameter interval is an assumption of the generic Lean implication, not
 yet a Lean theorem about the level-6 root or all subsequent roots. No preservation theorem
 for `a` or the derivative/curvature coordinates has been proved, so the full bootstrap
 box and the all-level limit argument remain open.
+
+
+
+The next coordinate has now been treated by an exact one-step Lean estimate.
+The update identity is
+`a_next-a = -2*b^2*(c+b)/(c*(c+3*b))`. Under the same coarse pivot box,
+the fraction is between zero and one, so
+
+`|a_next-a| <= 2*b^2`.
+
+For the state box used in the level-101 interval experiment, Lean derives the
+pivot bounds from `a in [-1e-35,1e-35]`, `b in [-6e-37,0]`, and
+`lambda in [1.309,1.31]`, and obtains the explicit increment bound
+`|a_next-a| <= 72e-74 = 7.2e-73`.
+
+This is a one-step drift estimate, not yet preservation of the stated
+`a)-interval: a proof of that preservation must use the actual interior
+margin of the current `a)-bound, or first sharpen the `a)-box. The estimate
+does show that the diagonal drift is quadratically controlled by the already
+small off-diagonal coordinate. A summability theorem still requires a formal
+all-level bound on the successive `b)-coordinates and the root window.
 
 ### A1 derivative-transition interval certificate (levels 5–14)
 
