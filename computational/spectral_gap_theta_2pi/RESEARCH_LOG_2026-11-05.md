@@ -364,3 +364,16 @@ The high-precision calculation was independently rerun in a clean Python runtime
 Added test_spectral_gap_high_precision.py to make the computation part of the ordinary fast test suite. It checks the four tabulated bottom eigenvalues, the low-cluster residuals, and the level-5 splitting. The test explicitly labels the tolerances as reproducibility checks, not formal certification. The README reproduction commands now include this test.
 
 The new test commit is dd1753782696c094790d70868da3709693948183. The original PR #11 CI was green before this test was added; the new exact SHA requires its own CI run before the test integration can be considered verified.
+
+
+## 31. Level-six refinement and complete S3-sector audit
+
+The level-six bottom eigenvalue was recomputed independently in the fully symmetric `A1` quotient (dimension 186) using 70-digit arithmetic and dense multiprecision inverse iteration. The result is `1.309128920280813421888623088170810187650767803108018768…`, with residual `6.02e-47`. The corresponding level-5 value is `1.309128920280813420537624946411459383001454565271922517…`, with residual `7.65e-47`.
+
+The standard `E` sector was computed independently using its sparse complex Hermitian quotient and multiprecision Jacobi-PCG inverse iteration. At level 5 its lowest eigenvalue is `1.309128920280813422564122159050485604428893059246181191…` (residual `1.24e-41`). At level 6 it is `1.309128920280813421888623088170810189003102475121980131…` (residual `1.30e-41`). The `A1`–`E` splitting therefore falls from `2.0264972126390262214e-18` at level 5 to `1.3523346720139613627e-36` at level 6. This is an extremely close near-degeneracy, not exact equality at the precision computed.
+
+The alternating `A2` quotient has dimensions 5, 18, 58, and 179 at levels 3–6. Its lowest eigenvalue is 2 at all four levels; the level-6 inverse-iteration residual is `6.81e-28`. The full representation dimensions at levels 2–5 decompose as `dim(A1)+dim(A2)+2 dim(E) = |V|`; the sorted union of independently built sector spectra matches the full dense graph spectrum with maximum float64 discrepancy between `3.6e-15` and `1.51e-14`. At level 6 the dimensions are `186 + 179 + 2·365 = 1095`.
+
+The fully symmetric `A1` bottom is therefore the global bottom in these calculations; the `E` sector provides the next pair at a separation of about `1.35e-36` at level 6. The level increments and ratios are `δ_5=1.65381018320039801986e-9`, `δ_6=1.35099814175935080465e-18`, `δ_5/δ_4²=0.4941153170828634`, and `δ_6/δ_5²=0.4939504986563759`. The conditional one-step extrapolation based on the last ratio is `λ_∞≈1.3091289202808134218886230881708101885523…`; it is not a proof, interval bound, or exact value.
+
+These computations are independent numerical checks performed in a clean local runtime. The repository CI on the earlier `b133fc2` SHA passed the ordinary non-nightly test suite. The follow-up correction that makes the script compute all consecutive ratios dynamically is committed separately and requires its own exact-SHA CI run. No full level-six interval certificate is claimed.
