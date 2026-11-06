@@ -783,7 +783,7 @@ The parameter interval `[1.309,1.31]` is an explicit hypothesis of this generic
 Lean implication. It is not yet a Lean theorem about the level-6 root or about every
 subsequent root. Likewise, the current proof does not establish preservation of the
 `a`, first-derivative, or second-derivative coordinates. Consequently this is a
-conditional one-step closure of the signed `b)-coordinate only, not an all-level
+conditional one-step closure of the signed `b`-coordinate only, not an all-level
 bootstrap theorem.
 
 The remaining induction work is now localized: prove compatible propagation bounds for
@@ -805,7 +805,7 @@ Under
 `13/10 <= c+3*b`,
 the numerator `c+b` is nonnegative and at most `132/100`, whereas
 the denominator `c*(c+3*b)` is at least `(13/10)^2`. Since
-`132/100 <= (13/10)^2`, the update fraction lies in `[0,1]).
+`132/100 <= (13/10)^2`, the update fraction lies in `[0,1].
 Consequently Lean proves
 
 `|schurNextDiagonal a b c - a| <= 2*b^2`.
@@ -824,7 +824,7 @@ invariant: a uniform interval argument must account for the current value's
 interior margin (or sharpen the box). What is now proved is that each local
 diagonal increment is bounded by twice the square of the old off-diagonal
 coefficient. The next step is to combine this inequality with an all-level
-bound on the `b)-sequence to obtain a rigorous summable drift estimate.
+bound on the `b`-sequence to obtain a rigorous summable drift estimate.
 
 The result is conditional on the same finite-dimensional state and spectral
 parameter hypotheses; it is not an infinite-level convergence theorem.

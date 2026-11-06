@@ -301,11 +301,11 @@ pivot bounds from `a in [-1e-35,1e-35]`, `b in [-6e-37,0]`, and
 `|a_next-a| <= 72e-74 = 7.2e-73`.
 
 This is a one-step drift estimate, not yet preservation of the stated
-`a)-interval: a proof of that preservation must use the actual interior
-margin of the current `a)-bound, or first sharpen the `a)-box. The estimate
+`a`-interval: a proof of that preservation must use the actual interior
+margin of the current `a`-bound, or first sharpen the `a`-box. The estimate
 does show that the diagonal drift is quadratically controlled by the already
 small off-diagonal coordinate. A summability theorem still requires a formal
-all-level bound on the successive `b)-coordinates and the root window.
+all-level bound on the successive `b`-coordinates and the root window.
 
 ### A1 derivative-transition interval certificate (levels 5–14)
 

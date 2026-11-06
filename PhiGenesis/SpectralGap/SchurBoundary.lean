@@ -638,8 +638,9 @@ theorem schurNextDiagonal_change_abs_le_two_mul_sq_of_box
       0 ≤ (c + b) / (c * (c + 3 * b)) :=
     div_nonneg hnum_nonneg (le_of_lt hden_pos)
   have hratio_le :
-      (c + b) / (c * (c + 3 * b)) ≤ 1 :=
-    (div_le_iff₀ hden_pos).2 hcross
+      (c + b) / (c * (c + 3 * b)) ≤ 1 := by
+    apply (div_le_iff₀ hden_pos).2
+    simpa only [one_mul] using hcross
   have hcoef_nonneg : 0 ≤ 2 * b ^ 2 := by positivity
   calc
     |schurNextDiagonal a b c - a|
