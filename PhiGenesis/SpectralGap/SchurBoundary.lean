@@ -1122,7 +1122,7 @@ theorem schurStateBox_invariant_of_recursion
               ha_n_bounds.1 ha_n_bounds.2
               hstate_n.2.1 hstate_n.2.2
               hlambda_lower hlambda_upper
-          rw [hb_step n] at hb_new
+          rw [← hb_step n] at hb_new
           exact ⟨ha_new, hb_new.1, hb_new.2⟩
   intro n
   exact hprefix n n le_rfl
