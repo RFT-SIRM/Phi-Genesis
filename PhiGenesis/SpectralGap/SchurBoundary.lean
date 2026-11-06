@@ -338,4 +338,81 @@ theorem schurNextOffDiagonal_ratio_bounds_at_A1_root
   · rw [hratio, neg_div]
     exact neg_neg_of_pos hfactor_pos
 
+
+/-- General A1-characteristic update for one three-midpoint Schur step.
+The old characteristic is a+2*b; the correction term is independent
+of the diagonal parameter a. -/
+theorem schurNextA1_general (a b c : ℝ)
+    (hc : c ≠ 0) (hc3 : c + 3 * b ≠ 0) :
+    schurNextDiagonal a b c + 2 * schurNextOffDiagonal b c =
+      (a + 2 * b) - 2 * b * (c + 5 * b) / (c + 3 * b) := by
+  calc
+    schurNextDiagonal a b c + 2 * schurNextOffDiagonal b c =
+        (a + 2 * b) +
+          (schurNextDiagonal (-2 * b) b c +
+            2 * schurNextOffDiagonal b c) := by
+          unfold schurNextDiagonal
+          ring
+    _ = (a + 2 * b) - 2 * b * (c + 5 * b) / (c + 3 * b) := by
+          rw [schurNextA1_at_old_root (-2 * b) b c (by ring) hc hc3]
+          ring
+
+/-- The general characteristic update written in the natural coordinates
+f=a+2*b and the spectral parameter lambda. -/
+theorem schurNextA1_midpoint_update (a b lambda : ℝ)
+    (hc : schurMidpointPivot a b lambda ≠ 0)
+    (hc3 : schurMidpointPivot a b lambda + 3 * b ≠ 0) :
+    schurNextDiagonal a b (schurMidpointPivot a b lambda) +
+        2 * schurNextOffDiagonal b (schurMidpointPivot a b lambda) =
+      (a + 2 * b) -
+        2 * b * (lambda + 2 * (a + 2 * b)) /
+          (lambda + 2 * (a + 2 * b) - 2 * b) := by
+  rw [schurNextA1_general a b (schurMidpointPivot a b lambda) hc hc3]
+  have hnum :
+      schurMidpointPivot a b lambda + 5 * b =
+        lambda + 2 * (a + 2 * b) := by
+    unfold schurMidpointPivot
+    ring
+  have hden :
+      schurMidpointPivot a b lambda + 3 * b =
+        lambda + 2 * (a + 2 * b) - 2 * b := by
+    unfold schurMidpointPivot
+    ring
+  rw [hnum, hden]
+
+/-- At an A1 root with lambda>=1 and b<0, the next A1 boundary
+characteristic is strictly positive when evaluated at the old root. -/
+theorem schurNextA1_pos_at_A1_root (a b lambda : ℝ)
+    (hA1 : a + 2 * b = 0) (hLambda : 1 ≤ lambda) (hb : b < 0) :
+    0 <
+      schurNextDiagonal a b (schurMidpointPivot a b lambda) +
+        2 * schurNextOffDiagonal b (schurMidpointPivot a b lambda) := by
+  have hc_eq :
+      schurMidpointPivot a b lambda = lambda - 5 * b :=
+    schurMidpointPivot_eq_lambda_sub_five_b_at_A1_root a b lambda hA1
+  have hc_pos : 0 < schurMidpointPivot a b lambda := by
+    rw [hc_eq]
+    linarith
+  have hc3_eq :
+      schurMidpointPivot a b lambda + 3 * b = lambda - 2 * b := by
+    rw [hc_eq]
+    ring
+  have hc3_pos :
+      0 < schurMidpointPivot a b lambda + 3 * b := by
+    rw [hc3_eq]
+    linarith
+  rw [schurNextA1_midpoint_update a b lambda
+    (ne_of_gt hc_pos) (ne_of_gt hc3_pos)]
+  have hpos : 0 < (-2 * b) * lambda / (lambda - 2 * b) :=
+    div_pos (mul_pos (by linarith) (by linarith)) (by linarith)
+  have hrewrite :
+      (a + 2 * b) -
+          2 * b * (lambda + 2 * (a + 2 * b)) /
+            (lambda + 2 * (a + 2 * b) - 2 * b) =
+        (-2 * b) * lambda / (lambda - 2 * b) := by
+    rw [hA1]
+    ring
+  rw [hrewrite]
+  exact hpos
+
 end PhiGenesis.SpectralGap
