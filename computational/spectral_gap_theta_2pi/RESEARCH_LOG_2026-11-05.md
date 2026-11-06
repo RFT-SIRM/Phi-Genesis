@@ -389,20 +389,22 @@ with residual `1.82e-77`. The observed difference is about `6.02227422437e-73`; 
 The level-7 dimensions are `dim(A1)=551`, `dim(A2)=543`, and `dim(E)=1094`, with `551+543+2·1094=3282`. The low modes in `A1` and `E` are followed by eigenvalues near 2; the numerical gap to the next mode is about `0.69087108`. The alternating `A2` sector's lowest eigenvalue remains 2 in the level-7 sparse float64 spectral check. A full level-7 spectrum reconstruction has not been done.
 
 The level-8 `A1` value is
-`1.3091289202808134218886230881708101885523242511173263434335359844526816974043999830777949027911712…`,
-with residual `1.25e-63` and dimension 1645. The `E` sector at level 8 has not yet been computed.
+`1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341948933027533567445524…`,
+with residual `1.04e-97` and dimension 1645. The independent level-8 `E)-sector calculation and its splitting from `A1` are recorded in section 33 below.
 
 The positive increments and latest ratios are:
 - `δ_7 = 9.01556448009307575100636291381781697002915e-37`
-- `δ_8 = 4.01484948291304833401973239e-73`
+- `δ_8 = 4.01484948291304833401973239259953413011432912771828840881734659026453419489330275335674455e-73`
+- `δ_9 = 7.96199603289170721200e-146…`
 - `δ_7/δ_6² = 0.4939504899001989666185600009…`
 - `δ_8/δ_7² = 0.4939504899001989528562882789…`
+- `δ_9/δ_8² = 0.4939504899001989528801830492…`
 
-The two latest ratios agree to about 17 significant digits. This is empirical evidence for the quadratic correction pattern, not a proof of convergence or of the law for all levels.
+The latest two ratios agree to about 19 significant digits. This is empirical evidence for the quadratic correction pattern, not a proof of convergence or of the law for all levels.
 
 To improve runtime without discarding high-precision residual checks, the script now includes a sparse-LU preconditioner formed in float64 and iterative refinement whose residuals, matrix-vector products, normalization, and Rayleigh quotient are evaluated in `mpmath`. The solve tolerance scales with the working precision. Regression tests compare the new solver against the previously established level-6 `A1` and `E` values. The CLI supports optional `--mixed-precision-levels`, `--mixed-precision-sectors`, `--mixed-precision-dps`, and `--mixed-precision-iterations` arguments.
 
-The level-7 and level-8 calculations above were obtained in the independent local numerical run. The new repository implementation is separately covered by the level-6 regression tests; its exact-HEAD CI result must be checked before treating that implementation as integrated.
+The level-7 through level-9 calculations above were obtained in independent local numerical runs. The repository implementation is covered by the level-six regression tests; exact-HEAD CI on code commit `592c7b2a1bd51c076718126def9df3837c882f7b` passed with 74 tests passed and 8 nightly-marked tests deselected. The high-level numerical runs themselves are not CI tests.
 
 ## 33. Level-eight E-sector splitting and level-nine A1 increment
 
