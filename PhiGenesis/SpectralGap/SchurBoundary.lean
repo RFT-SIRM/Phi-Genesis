@@ -1614,6 +1614,133 @@ theorem schurNextA1_increment_bounds_of_coarse_state_box
       _ = 2 * (-b) := by ring
 
 
+/-- The one-step off-diagonal update is at least a half-contraction
+in absolute value throughout the level-three coarse box. -/
+theorem schurNextOffDiagonal_half_contract_of_coarse_box
+    (b c : ℝ)
+    (hb_lower : -(1 / 20000 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    |schurNextOffDiagonal b c| ≤ (1 / 2 : ℝ) * |b| := by
+  have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b := by
+    have hscale : -(1 / 100 : ℝ) ≤ -(1 / 20000 : ℝ) := by
+      norm_num
+    exact le_trans hscale hb_lower
+  have hquadratic :=
+    schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+      b c hb_coarse_lower hb_upper hc_lower hc_upper hc3_lower
+  have hb_mag_nonneg : 0 ≤ -b := by linarith
+  have hb_mag_upper : -b ≤ (1 / 20000 : ℝ) := by linarith
+  have hbsq : b ^ 2 ≤ (1 / 20000 : ℝ) * (-b) := by
+    calc
+      b ^ 2 = (-b) * (-b) := by ring
+      _ ≤ (1 / 20000 : ℝ) * (-b) :=
+        mul_le_mul_of_nonneg_right hb_mag_upper hb_mag_nonneg
+  have hcoeff :
+      (4 / 5 : ℝ) * (1 / 20000 : ℝ) ≤ (1 / 2 : ℝ) := by
+    norm_num
+  calc
+    |schurNextOffDiagonal b c|
+        ≤ (4 / 5 : ℝ) * b ^ 2 := hquadratic
+    _ ≤ (4 / 5 : ℝ) *
+        ((1 / 20000 : ℝ) * (-b)) :=
+      mul_le_mul_of_nonneg_left hbsq (by norm_num)
+    _ = ((4 / 5 : ℝ) * (1 / 20000 : ℝ)) * (-b) := by ring
+    _ ≤ (1 / 2 : ℝ) * (-b) :=
+      mul_le_mul_of_nonneg_right hcoeff hb_mag_nonneg
+    _ = (1 / 2 : ℝ) * |b| := by
+      rw [abs_of_nonpos hb_upper]
+
+
+/-- Along every trajectory starting in the level-three coarse box, each
+Schur step contracts the off-diagonal magnitude by at least one half. -/
+theorem schurBoundaryTrajectory_coarse_offDiagonal_half_contract
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (1 / 500 : ℝ))
+    (hb₀_lower : -(1 / 20000 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    ∀ n,
+      |(schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).2| ≤
+        (1 / 2 : ℝ) *
+          |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| := by
+  intro n
+  have hstate :=
+    schurBoundaryTrajectory_coarse_state_box lambda a₀ b₀
+      ha₀ hb₀_lower hb₀_upper hlambda_lower hlambda_upper n
+  have ha_bounds := abs_le.mp hstate.1
+  have hc_lower :
+      (13 / 10 : ℝ) ≤
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          lambda := by
+    unfold schurMidpointPivot
+    nlinarith [ha_bounds.1, hstate.2.2, hlambda_lower]
+  have hc_upper :
+      schurMidpointPivot
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+          (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+          lambda ≤ (132 / 100 : ℝ) := by
+    unfold schurMidpointPivot
+    nlinarith [ha_bounds.2, hstate.2.1, hlambda_upper]
+  have hc3_lower :
+      (13 / 10 : ℝ) ≤
+        schurMidpointPivot
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+            (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+            lambda +
+          3 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2 := by
+    unfold schurMidpointPivot
+    nlinarith [ha_bounds.1, hstate.2.1, hlambda_lower]
+  have hlocal :=
+    schurNextOffDiagonal_half_contract_of_coarse_box
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+      (schurMidpointPivot
+        (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+        (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+        lambda)
+      hstate.2.1 hstate.2.2 hc_lower hc_upper hc3_lower
+  simpa [schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal
+
+
+/-- Along every trajectory starting in the level-three coarse box, the A1
+boundary characteristic is monotone and its one-step increase is bounded
+by twice the current off-diagonal magnitude. -/
+theorem schurBoundaryTrajectory_coarse_A1_increment_bounds
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (1 / 500 : ℝ))
+    (hb₀_lower : -(1 / 20000 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    ∀ n,
+      0 ≤
+        ((schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).2) -
+          ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+            2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ∧
+      ((schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).2) -
+        ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ≤
+        2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| := by
+  intro n
+  have hstate :=
+    schurBoundaryTrajectory_coarse_state_box lambda a₀ b₀
+      ha₀ hb₀_lower hb₀_upper hlambda_lower hlambda_upper n
+  have ha_lower := (abs_le.mp hstate.1).1
+  have hlocal :=
+    schurNextA1_increment_bounds_of_coarse_state_box
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+      lambda ha_lower hstate.2.1 hstate.2.2 hlambda_lower
+  simpa [schurBoundaryTrajectory, schurBoundaryStateStep] using hlocal
+
+
 /-- A quarter-contractive nonnegative sequence has a finite partial sum
 bounded by four thirds of its initial value. The proof retains the
 remaining geometric tail in its induction invariant. -/
