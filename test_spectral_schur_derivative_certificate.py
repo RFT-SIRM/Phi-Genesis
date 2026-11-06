@@ -26,7 +26,10 @@ SPEC.loader.exec_module(derivative_certificate)
 def test_a1_second_derivative_interval_encloses_mpmath_difference(level):
     with mp.workdps(100):
         point = mp.mpf("1.309")
-        interval_point = derivative_certificate.iv.mpf(mp.nstr(point, 90))
+        # Pass the original mpf, not a decimal string rounded to fewer digits.
+        # Otherwise a high-precision interval context can exclude the source mpf
+        # by one or two units in its final binary ulp.
+        interval_point = derivative_certificate.iv.mpf(point)
         _a, _b, _da, _db, dda, ddb, _pivots = (
             derivative_certificate._schur_interval_second_order(interval_point, level)
         )
