@@ -634,8 +634,20 @@ theorem gasketVertexOrder_address22_cellB (n : Nat) :
         simp only [List.map_cons]
         exact List.Sublist.cons _ ih
   have hBlocks := List.Sublist.append hEmpty hChildBlocks
+  have hBlocksCanonical : target <+
+      (gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner0) ++
+        (((gasketVertexOrder (n + 3)).map
+            (gasketChildPoint (n + 3) .corner1)).filter
+          (fun p => decide (p ≠ (gasketScale (n + 3), 0))) ++
+          ((((gasketVertexOrder (n + 3)).map
+              (gasketChildPoint (n + 3) .corner2)).filter
+            (fun p => decide (p ≠ (0, gasketScale (n + 3)))).filter
+            (fun p => decide
+              (p ≠ (gasketScale (n + 3), gasketScale (n + 3)))))) := by
+    simpa only [T] using hBlocks
   rw [gasketVertexOrder_succ_explicit (n + 3)]
   rw [hShape]
-  simpa using hBlocks
+  exact hBlocksCanonical
 
 end PhiGenesis.H10
