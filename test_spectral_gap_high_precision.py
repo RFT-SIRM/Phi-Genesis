@@ -51,3 +51,25 @@ def test_level_five_low_cluster_is_resolved_not_collapsed_to_one_value():
     splitting = second - bottom
     assert mp.mpf("1.5e-18") < splitting < mp.mpf("2.5e-18")
     assert abs(third - second) < mp.mpf("1e-30")
+
+
+SYMMETRY_SCRIPT = (
+    Path(__file__).parent
+    / "computational"
+    / "spectral_gap_theta_2pi"
+    / "symmetry_sector_bottom.py"
+)
+SYMMETRY_SPEC = importlib.util.spec_from_file_location(
+    "symmetry_sector_bottom", SYMMETRY_SCRIPT
+)
+if SYMMETRY_SPEC is None or SYMMETRY_SPEC.loader is None:
+    raise ImportError(f"cannot load symmetry-sector script at {SYMMETRY_SCRIPT}")
+symmetry_sector_bottom = importlib.util.module_from_spec(SYMMETRY_SPEC)
+SYMMETRY_SPEC.loader.exec_module(symmetry_sector_bottom)
+
+
+@pytest.mark.parametrize("level", [3, 4, 5])
+def test_alternating_a2_sector_bottom_is_two(level):
+    result = symmetry_sector_bottom.a2_bottom(level, iterations=40)
+    assert abs(result["lambda"] - mp.mpf("2")) < mp.mpf("1e-25")
+    assert result["residual"] < mp.mpf("1e-25")
