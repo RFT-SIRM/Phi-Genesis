@@ -390,7 +390,7 @@ The level-7 dimensions are `dim(A1)=551`, `dim(A2)=543`, and `dim(E)=1094`, with
 
 The level-8 `A1` value is
 `1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341948933027533567445524…`,
-with residual `1.04e-97` and dimension 1645. The independent level-8 `E)-sector calculation and its splitting from `A1` are recorded in section 33 below.
+with residual `1.04e-97` and dimension 1645. The independent level-8 `E`-sector calculation and its splitting from `A1` are recorded in section 33 below.
 
 The positive increments and latest ratios are:
 - `δ_7 = 9.01556448009307575100636291381781697002915e-37`
@@ -442,4 +442,4 @@ Using the latest ratio, the next conditional increment is approximately `δ_10 �
 
 The exact-HEAD GitHub CI for code commit `592c7b2a1bd51c076718126def9df3837c882f7b` passed: 74 tests passed and 8 nightly-marked tests were deselected. That CI covers the new mixed-precision solver's level-six `A1` and `E` regression tests; the level-eight and level-nine numerical runs above were independent local calculations and are not CI tests.
 
-Next numerical bottlenecks: compute the level-nine `E` sector if the splitting law is to be tested one level further, and replace the dense `A1` quotient assembly with a sparse orbit-neighbor representation before attempting level 10. The convergence theorem, exact limit, interval certification, and identification with the external theta=2π operator remain open.
+The dense `A1` quotient assembly has now been replaced in the mixed-precision path by sparse orbit-neighbor rows. The new builder is regression-compared against the dense reference at levels 2–5, and the existing level-six mixed-precision `A1` test exercises it. Its exact-HEAD CI result is pending. Next numerical bottlenecks: attempt the level-ten `A1` bottom with this sparse builder and compute the level-nine `E` sector if the splitting law is to be tested one level further. The convergence theorem, exact limit, interval certification, and identification with the external theta=2π operator remain open.
