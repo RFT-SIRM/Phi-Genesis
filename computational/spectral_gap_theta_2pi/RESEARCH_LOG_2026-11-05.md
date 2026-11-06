@@ -377,3 +377,29 @@ The alternating `A2` quotient has dimensions 5, 18, 58, and 179 at levels 3–6.
 The fully symmetric `A1` bottom is therefore the global bottom in these calculations; the `E` sector provides the next pair at a separation of about `1.35e-36` at level 6. The level increments and ratios are `δ_5=1.65381018320039801986e-9`, `δ_6=1.35099814175935080465e-18`, `δ_5/δ_4²=0.4941153170828634`, and `δ_6/δ_5²=0.4939504986563759`. The conditional one-step extrapolation based on the last ratio is `λ_∞≈1.3091289202808134218886230881708101885523…`; it is not a proof, interval bound, or exact value.
 
 These computations are independent numerical checks performed in a clean local runtime. The repository CI on the earlier `b133fc2` SHA passed the ordinary non-nightly test suite. The follow-up correction that makes the script compute all consecutive ratios dynamically is committed separately and requires its own exact-SHA CI run. No full level-six interval certificate is claimed.
+
+## 32. Levels seven and eight; sparse-LU/multiprecision refinement
+
+A separate high-precision local calculation extended the fully symmetric sector to level 8 and the complex standard-representation sector to level 7. The level-7 `A1` value is
+`1.309128920280813421888623088170810188552324251117326343433535984452681697002915034786490069389197961…`,
+with residual `2.18e-94`. The level-7 `E` value is
+`1.30912892028081342188862308817081018855232425111732634343353598445268169760514245722344731949215782007648…`,
+with residual `1.82e-77`. The observed difference is about `6.02227422437e-73`; both residuals are smaller than that difference. This remains a multiprecision numerical result, not an interval certificate.
+
+The level-7 dimensions are `dim(A1)=551`, `dim(A2)=543`, and `dim(E)=1094`, with `551+543+2·1094=3282`. The low modes in `A1` and `E` are followed by eigenvalues near 2; the numerical gap to the next mode is about `0.69087108`. The alternating `A2` sector's lowest eigenvalue remains 2 in the level-7 sparse float64 spectral check. A full level-7 spectrum reconstruction has not been done.
+
+The level-8 `A1` value is
+`1.3091289202808134218886230881708101885523242511173263434335359844526816974043999830777949027911712…`,
+with residual `1.25e-63` and dimension 1645. The `E` sector at level 8 has not yet been computed.
+
+The positive increments and latest ratios are:
+- `δ_7 = 9.01556448009307575100636291381781697002915e-37`
+- `δ_8 = 4.01484948291304833401973239e-73`
+- `δ_7/δ_6² = 0.4939504899001989666185600009…`
+- `δ_8/δ_7² = 0.4939504899001989528562882789…`
+
+The two latest ratios agree to about 17 significant digits. This is empirical evidence for the quadratic correction pattern, not a proof of convergence or of the law for all levels.
+
+To improve runtime without discarding high-precision residual checks, the script now includes a sparse-LU preconditioner formed in float64 and iterative refinement whose residuals, matrix-vector products, normalization, and Rayleigh quotient are evaluated in `mpmath`. The solve tolerance scales with the working precision. Regression tests compare the new solver against the previously established level-6 `A1` and `E` values. The CLI supports optional `--mixed-precision-levels`, `--mixed-precision-sectors`, `--mixed-precision-dps`, and `--mixed-precision-iterations` arguments.
+
+The level-7 and level-8 calculations above were obtained in the independent local numerical run. The new repository implementation is separately covered by the level-6 regression tests; its exact-HEAD CI result must be checked before treating that implementation as integrated.
