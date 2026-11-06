@@ -452,9 +452,9 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
   have hgap_pos : 0 < (-b) * (lambda - 10 * b) :=
     mul_pos (by linarith) (by linarith)
   have hcross :
-      lambda * (lambda - 6 * b) <
-        (lambda - 5 * b) * (lambda - 2 * b) := by
-    nlinarith
+      (lambda - 6 * b) * lambda <
+        1 * ((lambda - 5 * b) * (lambda - 2 * b)) := by
+    nlinarith [hnum_pos]
   have hfactor :
       (lambda - 6 * b) / ((lambda - 5 * b) * (lambda - 2 * b)) <
         1 / lambda :=
