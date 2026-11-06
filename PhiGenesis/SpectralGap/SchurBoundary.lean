@@ -1336,6 +1336,8 @@ theorem schurStateBox_coarse_invariant_of_recursion
               _ ≤ (4 / 5 : ℝ) *
                   ((1 / 20000 : ℝ) * (-(b j))) :=
                 mul_le_mul_of_nonneg_left hbsq (by norm_num)
+              _ = ((4 / 5 : ℝ) * (1 / 20000 : ℝ)) *
+                  (-(b j)) := by ring
               _ ≤ (1 / 2 : ℝ) * (-(b j)) :=
                 mul_le_mul_of_nonneg_right hcoeff hb_mag_nonneg
               _ = (1 / 2 : ℝ) * |b j| := by
