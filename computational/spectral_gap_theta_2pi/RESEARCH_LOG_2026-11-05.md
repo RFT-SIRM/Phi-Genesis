@@ -355,3 +355,12 @@ The distinction from the pivot-zero all-hole-flux model remains essential. The e
 ## 29. Remove a tactic after the Gram-factorization goal was already closed
 
 Lean run [#41984179386](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41984179386) typechecked the new Gram-factorization proof through the final rewrite. The only reported error was `No goals to be solved` at the following standalone `simp`: `rw [Finset.sum_image hinj]` had already discharged the equality. The correction removes that redundant tactic line only. The factorization statement and injectivity argument are unchanged. A new exact-SHA Lean build is required before marking the extension complete. Python audit [#41984179303](https://github.com/RFT-SIRM/Phi-Genesis/actions/runs/41984179303) passed on the parent.
+
+
+## 30. Reproducible high-precision spectral regression test
+
+The high-precision calculation was independently rerun in a clean Python runtime with NumPy 2.3.5, SciPy 1.17.0, and mpmath 1.3.0. Levels 2–5 reproduced the README bottom eigenvalues to the displayed digits. At level 5, the three-vector Rayleigh–Ritz calculation returned a block residual of approximately 8.69e-21; the individual eigenpair residuals were all below 4e-21. The bottom-to-second-mode splitting was approximately 2.0265e-18. These are numerical residual diagnostics, not interval bounds.
+
+Added test_spectral_gap_high_precision.py to make the computation part of the ordinary fast test suite. It checks the four tabulated bottom eigenvalues, the low-cluster residuals, and the level-5 splitting. The test explicitly labels the tolerances as reproducibility checks, not formal certification. The README reproduction commands now include this test.
+
+The new test commit is dd1753782696c094790d70868da3709693948183. The original PR #11 CI was green before this test was added; the new exact SHA requires its own CI run before the test integration can be considered verified.
