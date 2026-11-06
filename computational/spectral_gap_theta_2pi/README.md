@@ -41,7 +41,7 @@ The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** c
 
 The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
 that the bottom eigenvalue is constant from level 5 onward. High-precision calculations now resolve the `A1` bottom candidate through level 9 and the complex
-`E` sector through level 8. An exact rational boundary-Schur recursion independently computes the continued `A1` boundary-characteristic root through level 12; identifying this branch as the lowest `A1` eigenvalue at every high level still requires independent spectral/inertia checks. The `S3` symmetry-sector decomposition has also been checked against
+`E` sector through level 8. The exact rational boundary-Schur recursion now computes the continued `A1` boundary root through level 12 and the continued `E` boundary root through level 11. The high-level branches still require independent spectral/inertia checks to certify that they remain the lowest modes. The `S3` symmetry-sector decomposition has also been checked against
 the complete spectrum at levels 2–5.
 
 Run the reproducible calculation from the repository root:
@@ -132,15 +132,12 @@ interval certificates.
 
 At level 9, `dim(A1)=4,926` in a graph of `29,526` vertices. Its bottom is
 `1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341956895023566459152736…`,
-with residual `8.11·10⁻⁹⁸`. The `A2` and `E` sectors at level 9 have not yet been computed.
+with residual `8.11·10⁻⁹⁸`. The `A2` sector at level 9 has not yet been independently diagonalized. The `E` boundary-characteristic root is computed below by the Schur recursion; an independent full `E`-sector matrix calculation is still running.
 
-The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.7409257348503510` at level 7
-and `0.7409257348502984` at level 8. The agreement is about 13 significant digits. This is a
-second empirical scaling observation, distinct from the increment coefficient `0.49395049`.
-Residuals are numerical diagnostics, not interval certificates.
+The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.74092573485029842928443241948031142231612216498…` from level 7 onward. Levels 7–8 come from the high-precision sector matrices; levels 9–11 are continued `E` boundary roots from the exact Schur recursion. The latter give splittings `4.6969787274470149128752595389050·10⁻²⁹¹` at level 9, `7.2648951037178442146501840561459·10⁻⁵⁸²` at level 10, and `1.7380043433370844485650034663864·10⁻¹¹⁶³` at level 11. These are boundary-root calculations, not independent full-matrix diagonalizations at those levels. Residuals are numerical diagnostics, not interval certificates.
 
 
-### Exact A1 boundary Schur recursion
+### Exact A1/E boundary Schur recursion
 
 Let \(S_m(\lambda)\) be the 3×3 Schur complement of \(Q_m-\lambda I\) after eliminating every non-corner vertex. By \(S_3\) symmetry it has the form
 
@@ -157,7 +154,7 @@ b_{m+1}&=-\frac{b_m^2(c_m-b_m)}{c_m(c_m+3b_m)}.
 \end{aligned}
 \]
 
-Away from poles of the eliminated interior block, the symmetric-boundary eigenvalue condition is \(a_m(\lambda)+2b_m(\lambda)=0\). The new script continues its low root from levels 1 and 2 by high-precision Newton steps. Its finite-level algebraic recursion is exact; finding roots and identifying the continued root as the lowest A1 eigenvalue at every large level are still numerical tasks.
+Away from poles of the eliminated interior block, the symmetric-boundary eigenvalue condition is \(a_m(\lambda)+2b_m(\lambda)=0\). On the two-dimensional boundary subspace orthogonal to \((1,1,1)\), the all-ones matrix \(J_3\) vanishes, so the standard E-boundary eigenvalue is \(a_m(\lambda)-b_m(\lambda)\); its root satisfies \(a_m-b_m=0\). The script continues both low boundary roots from levels 1 and 2 by high-precision Newton steps. The finite-level algebraic recursion is exact; identifying either continued root as the lowest mode at every large level remains a separate spectral task.
 
 The recursion was compared with direct dense Schur complements of the graph matrices at levels 0–4 and three regular spectral parameters (1.234, 1.309, 1.411). The maximum float64 discrepancy was below 1.4·10⁻¹⁶. Forward-mode derivatives were also compared with mpmath.diff through level 6.
 
@@ -171,6 +168,28 @@ The continued boundary roots give:
 
 The three corresponding quadratic ratios agree to about 48 significant digits:
 0.493950489900198952856288279653540948210748109986…
+
+The standard E-boundary channel is therefore obtained from the same recursion, not from a second matrix construction. Its level-m root minus the A1 root gives:
+
+| Level m | E-boundary root − A1-boundary root |
+| --- | ---: |
+| 9 | 4.69697872744701491287525953890503251710·10⁻²⁹¹ |
+| 10 | 7.26489510371784421465018405614587494201·10⁻⁵⁸² |
+| 11 | 1.73800434333708444856500346638643894393·10⁻¹¹⁶³ |
+
+For levels 9–11 the ratio of this splitting to the square of the A1 increment is stable near
+0.74092573485029842928443241948031142231612216498… . Moreover, the ratio
+\((E_m-A_{1,m})/\delta_{m+1}\) is numerically 3/2 through levels 7–10, with the finite-level deviation shrinking from about 10⁻¹⁴⁴ to about 10⁻¹¹⁶¹.
+
+This 3/2 relation has a conditional derivation. At an A1 root, (a_m=-2b_m), so the E characteristic evaluated there is (a_m-b_m=-3b_m). The next A1 characteristic evaluated at the same point is
+\[
+f_{m+1}(\lambda_m)=-2b_m\frac{c_m+5b_m}{c_m+3b_m}\sim-2b_m.
+\]
+If the derivatives of these two characteristics approach the same nonzero limit, their root corrections are asymptotic to (-3b_m/L) and (-2b_m/L), respectively. Hence
+\[
+E_m-A_{1,m}\sim\frac{3}{2}\,(A_{1,m+1}-A_{1,m}).
+\]
+Combining this with the quadratic A1 increment law predicts that the E-splitting coefficient is 3/2 times the A1 coefficient. The shared derivative limit and convergence assumptions are not proved yet.
 
 There is a useful conditional explanation for this coefficient. At a level-m root, \(a_m=-2b_m\). The recursion then gives
 \[
@@ -193,7 +212,8 @@ This gives the observed coefficient near 0.493950489900198952856288… The limit
 Reproduce the level-12 Schur calculation with:
 
 ~~~bash
-python computational/spectral_gap_theta_2pi/schur_decimation.py --max-level 12 --dps 1250
+python computational/spectral_gap_theta_2pi/schur_decimation.py --sector A1 --max-level 12 --dps 1250
+python computational/spectral_gap_theta_2pi/schur_decimation.py --sector E --max-level 11 --dps 1250
 ~~~
 
 
@@ -241,6 +261,6 @@ reproduces the finite-level values and prints its residual diagnostics. For the 
 | `RESEARCH_LOG_2026-11-05.md` | derivation, audits, earlier eigenvalue tables, and evidence boundary |
 | `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
 | `symmetry_sector_bottom.py` | high-precision `A1`, `A2`, and `E` symmetry-sector calculations, including sparse-LU/multiprecision refinement |
-| `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1` boundary-root continuation |
+| `schur_decimation.py` | exact rational three-corner Schur recursion and high-precision `A1`/`E` boundary-root continuation |
 | `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
 | `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |

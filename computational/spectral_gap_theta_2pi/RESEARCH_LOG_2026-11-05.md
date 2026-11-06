@@ -511,3 +511,30 @@ CI correction status: the earlier ordinary test run failed only because a substr
 The separate high-precision workflow run 42172777291 remains in progress on code SHA 4565d362b80fc7c36e03351014e0abfaee2c6193, with independent jobs for A1_9, A1_10, and E_9. Its configured 250 outer inverse iterations must not be assumed sufficient: final Ritz residuals need to be checked against 5.70e-146 before using either expected 1e-291 difference. The exact A1 recursion is a new independent check of the A1 boundary-root sequence; it does not replace the E_9 computation or its independent residual inspection.
 
 The convergence theorem, interval certification, proof that the continued root is the bottom of A1 at every level, and identification with the external theta=2π operator remain open.
+
+
+## 36. E boundary channel from the same Schur recursion (2026-11-06)
+
+The boundary Schur matrix is S_m=(a_m-b_m)I+b_mJ. The constant corner vector is the A1 channel, with scalar characteristic f_m=a_m+2b_m. On the two-dimensional corner subspace orthogonal to (1,1,1), J vanishes, so the standard E-boundary characteristic is g_m=a_m-b_m. No separate matrix assembly is required. The same rational recursion therefore continues both boundary roots.
+
+The E root sequence is initialized at levels 1 and 2 and then continued downward by high-precision Newton steps. Its levels 5–8 agree with the previously computed bottom eigenvalues of the full E quotient to the displayed precision. The level-9–11 values below are independent Schur-boundary roots and still await the independent full E-sector matrix calculation in workflow 42172777291.
+
+The computed E-boundary minus A1-boundary splittings are:
+- level 9: 4.6969787274470149128752595389050325170981346542007e-291
+- level 10: 7.2648951037178442146501840561458749420117832427551e-582
+- level 11: 1.7380043433370844485650034663864389439341543533787e-1163
+
+Dividing these by the squared A1 increments gives the stable coefficient
+0.74092573485029842928443241948031142231612216498… . This is 3/2 times the A1 coefficient 0.493950489900198952856288279653540948210748109987… at the available precision.
+
+An even sharper relation appears numerically:
+(E_m-A1_m)/(A1_(m+1)-A1_m) → 3/2.
+For m=7,8,9,10 the ratio is 1.5 to approximately 144, 289, 579, and 1,161 decimal places, respectively (the last figures depend on the 1,250-dps root calculations).
+
+Conditional derivation: at an A1 root f_m=0, hence a_m=-2b_m and g_m=a_m-b_m=-3b_m. The next A1 characteristic at the same point is
+f_(m+1)(λ_m)=-2b_m(c_m+5b_m)/(c_m+3b_m)≈-2b_m.
+If g'_m(λ_m) and f'_(m+1)(λ_m) approach the same nonzero limit L, the two root shifts are approximately -3b_m/L and -2b_m/L, producing the 3/2 relation. This in turn yields the conditional relation c_E=(3/2)c_A1. The derivative-limit and root-convergence hypotheses still need proof.
+
+Local test suite for the extended A1/E module: 25 tests passed. The preceding A1-only implementation commit 8208de4 passed its exact-SHA GitHub CI: 103 passed, 8 deselected. The current E-extension commit will receive its own CI run.
+
+The E-sector full matrix job in workflow 42172777291 was still in progress at the last check. Do not treat the Schur E9–E11 roots as already cross-checked by that separate matrix job. The alternating A2 sector at level 9 and the global bottom-mode certification remain open.
