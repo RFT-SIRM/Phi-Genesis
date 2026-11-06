@@ -139,3 +139,30 @@ def test_s3_irreducible_sector_spectra_reconstruct_full_graph(level):
     # comfortably above the observed float64 roundoff (<= 1.2e-14).
     assert sector_union.shape == full_spectrum.shape
     assert np.max(np.abs(sector_union - full_spectrum)) < 5e-12
+
+
+@pytest.mark.parametrize(
+    ("sector", "expected", "dimension"),
+    [
+        (
+            "A1",
+            "1.309128920280813421888623088170810187650767803108018768",
+            186,
+        ),
+        (
+            "E",
+            "1.309128920280813421888623088170810189003102475121980131",
+            365,
+        ),
+    ],
+)
+def test_mixed_precision_refinement_reproduces_level_six_bottom(
+    sector, expected, dimension
+):
+    result = symmetry_sector_bottom.mixed_precision_bottom(
+        6, sector, iterations=110, dps=75
+    )
+    assert result["sector_dimension"] == dimension
+    assert abs(result["lambda"] - mp.mpf(expected)) < mp.mpf("1e-35")
+    assert result["residual"] < mp.mpf("1e-55")
+    assert result["linear_residual"] < mp.mpf("1e-55")
