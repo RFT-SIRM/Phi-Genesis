@@ -2000,6 +2000,11 @@ theorem schurBoundaryTrajectory_level_one_formula (lambda : ℝ) :
   simp [schurBoundaryTrajectory, schurBoundaryStateStep, hc,
     schurNextDiagonal, schurNextOffDiagonal,
     schurLevelOneDiagonal, schurLevelOneOffDiagonal]
+  constructor
+  · rw [show 3 - lambda + 1 = 4 - lambda by ring,
+      show 3 - lambda + 3 = 6 - lambda by ring]
+  · rw [show 1 - (3 - lambda) = lambda - 2 by ring,
+      show 3 - lambda + 3 = 6 - lambda by ring]
 
 
 /-- Across the narrow bootstrap interval, the first diagonal coefficient
