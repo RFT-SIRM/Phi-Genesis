@@ -1,10 +1,16 @@
 name: Deploy Phi-Genesis visual research site
 
 on:
+  # Site publication is reserved for explicit documentation/visual changes
+  # merged to main. Formalization branches and PRs do not build or deploy HTML.
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - "docs/**"
+      - "visual/**"
+      - "mkdocs.yml"
+      - "requirements.txt"
+      - "overrides/**"
   workflow_dispatch:
 
 permissions:

@@ -3,8 +3,16 @@ name: Docs CI
 on:
   push:
     branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements.txt"
   pull_request:
     branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements.txt"
   workflow_dispatch:
 
 jobs:
