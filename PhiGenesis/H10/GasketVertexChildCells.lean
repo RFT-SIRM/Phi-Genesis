@@ -390,4 +390,124 @@ theorem gasketVertexOrder_root_stateA_child_table (n : Nat) :
       gasketChildPoint, stateAList] using gasketVertexOrder_child1_cellA n
   · exact gasketVertexOrder_child2_stateB_symbols n
 
+
+/-- The child-0 descendant of the concrete B cell at address `2`
+realizes the state-A six-point order in the global first-occurrence list.
+Its first point is already present in the root child-0 block; the other
+five points survive both shared-midpoint filters in root child 2. -/
+theorem gasketVertexOrder_address20_cellA (n : Nat) :
+    (stateAList (n + 1)).map
+      (gasketChildPoint (n + 3) .corner2) <+
+      gasketVertexOrder (n + 4) := by
+  let S := gasketScale (n + 1)
+  let T := gasketScale (n + 3)
+  let tail : List GasketLatticePoint :=
+    [(S, T), (0, S + T), (S + S, T),
+      (S, S + T), (0, (S + S) + T)]
+  have hShape :
+      (stateAList (n + 1)).map
+        (gasketChildPoint (n + 3) .corner2) =
+        [(0, T)] ++ tail := by
+    simp [stateAList, gasketChildPoint, tail, S, T]
+  rw [hShape]
+  have hScale1 : gasketScale (n + 2) = 2 * S := by
+    rw [show n + 2 = (n + 1) + 1 by omega, gasketScale_succ]
+    dsimp [S]
+    omega
+  have hScale2 : T = 2 * gasketScale (n + 2) := by
+    dsimp [T]
+    rw [show n + 3 = (n + 2) + 1 by omega, gasketScale_succ]
+    omega
+  have hT : T = 4 * S := by
+    calc
+      T = 2 * gasketScale (n + 2) := hScale2
+      _ = 2 * (2 * S) := by rw [hScale1]
+      _ = 4 * S := by omega
+  have hS : 0 < S := by
+    dsimp [S, gasketScale]
+    positivity
+  have hPrefix : gasketVertexOrder (n + 2) <+
+      gasketVertexOrder (n + 3) := by
+    simpa only [gasketVertexOrder_map_child0] using
+      (gasketVertexOrder_child0_prefix (n + 2)).sublist
+  have hTail : tail <+
+      (gasketVertexOrder (n + 3)).map
+        (gasketChildPoint (n + 3) .corner2) := by
+    have hBase :
+        (stateAList (n + 1)).tail <+ gasketVertexOrder (n + 3) :=
+      (List.tail_sublist _).trans
+        ((stateAList_sublist (n + 1)).trans hPrefix)
+    have h := hBase.map (gasketChildPoint (n + 3) .corner2)
+    simpa [tail, S, T, stateAList, gasketChildPoint] using h
+  have hX : ∀ p ∈ tail, p.1 < T ∧
+      (p.1 ≠ 0 ∨ T < p.2) := by
+    intro p hp
+    simp only [tail, List.mem_cons, List.mem_singleton] at hp
+    rcases hp with h1 | h2 | h3 | h4 | h5 | hnil
+    · subst p
+      exact ⟨by omega, Or.inl (by omega)⟩
+    · subst p
+      exact ⟨by omega, Or.inr (by omega)⟩
+    · subst p
+      exact ⟨by omega, Or.inl (by omega)⟩
+    · subst p
+      exact ⟨by omega, Or.inl (by omega)⟩
+    · subst p
+      exact ⟨by omega, Or.inr (by omega)⟩
+    · simp at hnil
+  have hLeft : ∀ p ∈ tail,
+      decide (p ≠ (0, T)) = true := by
+    intro p hp
+    rcases hX p hp with ⟨_, hsep⟩
+    exact decide_eq_true (by
+      intro heq
+      have hfst : p.1 = 0 := congrArg Prod.fst heq
+      have hsnd : p.2 = T := congrArg Prod.snd heq
+      rcases hsep with hne | hgt
+      · exact hne hfst
+      · omega)
+  have hRight : ∀ p ∈ tail,
+      decide (p ≠ (T, T)) = true := by
+    intro p hp
+    have hlt := (hX p hp).1
+    exact decide_eq_true (by
+      intro heq
+      have hfst : p.1 = T := congrArg Prod.fst heq
+      omega)
+  have hFiltered0 := sublist_filter_of_forall
+    (fun p => decide (p ≠ (0, T))) hTail hLeft
+  have hFiltered := sublist_filter_of_forall
+    (fun p => decide (p ≠ (T, T))) hFiltered0 hRight
+  rcases gasketVertexOrder_outerCorners_mem (n + 3) with
+    ⟨_, _, hCorner2⟩
+  have hq0 : (0, T) ∈
+      (gasketVertexOrder (n + 3)).map
+        (gasketChildPoint (n + 3) .corner0) := by
+    rw [gasketVertexOrder_map_child0]
+    simpa [T, gasketOuterCorner] using hCorner2
+  have hChildTail : tail <+
+      (((gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner1)).filter
+        (fun p => decide (p ≠ (T, 0)))) ++
+      ((((gasketVertexOrder (n + 3)).map
+          (gasketChildPoint (n + 3) .corner2)).filter
+        (fun p => decide (p ≠ (0, T)))).filter
+        (fun p => decide (p ≠ (T, T)))) := by
+    exact List.sublist_append_of_sublist_right hFiltered
+  have hBlocks :
+      [(0, T)] ++ tail <+
+        ((gasketVertexOrder (n + 3)).map
+            (gasketChildPoint (n + 3) .corner0)) ++
+          (((gasketVertexOrder (n + 3)).map
+              (gasketChildPoint (n + 3) .corner1)).filter
+            (fun p => decide (p ≠ (T, 0))) ++
+            ((((gasketVertexOrder (n + 3)).map
+                (gasketChildPoint (n + 3) .corner2)).filter
+              (fun p => decide (p ≠ (0, T)))).filter
+              (fun p => decide (p ≠ (T, T))))) := by
+    exact List.Sublist.append
+      (List.singleton_sublist.mpr hq0) hChildTail
+  rw [gasketVertexOrder_succ_explicit (n + 3)]
+  exact hBlocks
+
 end PhiGenesis.H10
