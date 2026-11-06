@@ -1,9 +1,9 @@
-# The θ = 2π spectral gap and the constant 1.30912892028081…
+# The θ = 2π spectral gap and the limiting bottom eigenvalue
 
 > **Status in one line.** For the explicit local-face operator `H = D + A_s` on the Sierpiński gasket,
-> the bottom eigenvalue is bounded below by **1 for every refinement level** (Lean 4, no `sorry`),
-> and numerically it **stabilizes at 1.30912892028081** from level 5 to level 8.
-> The exact value and the convergence of the bottom eigenvalue to it are **not proved**.
+> the bottom eigenvalue is bounded below by **1 for every refinement level** (Lean 4, no `sorry`).
+> Finite-level computations show very rapid convergence near **1.3091289202808134…**.
+> The limiting value, convergence theorem, and exact characterization remain **open**.
 
 This directory is a spectral-gap workstream. It is **separate** from the scalar canonical GF(2) H10
 recurrence in `computational/higher_moments_z2` and from the vertex-order formalization in
@@ -31,61 +31,100 @@ balanced signing has trivial kernel.
 
 | Statement | Where | Status |
 | --- | --- | --- |
-| `Q` is the Gram matrix of a signed edge-incidence matrix, `Q = BᵀB`, hence positive semidefinite | `PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean`, commit `86d8d1e` (`sgSignedIncidenceMatrix`) | formalized, on `main` |
+| `Q` is the Gram matrix of a signed edge-incidence matrix, `Q = BᵀB`, hence positive semidefinite | `PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean`, theorem `sgSignedLaplacianMatrix_eq_incidenceGram` | formalized, on `main` |
 | Every real eigenvalue (with a nonzero real eigenvector) of the signed Laplacian is **≥ 1**, for every level `m` | same file, `sgSignedLaplacianMatrix_eigenvalue_ge_one` | formalized, on `main` |
-| The gap cannot close at θ = 2π for the stated recursive face/sign model | `RESEARCH_LOG_2026-11-05.md`, lower-bound section | proved; uses only edge-disjoint triangular faces and vertex coverage |
+| The gap cannot close for the stated recursive face/sign model | `RESEARCH_LOG_2026-11-05.md`, lower-bound section | proved; uses edge-disjoint triangular faces and vertex coverage |
 
 The uniform bound `λ_min ≥ 1` is the rigorous content: the gap does **not** close as `m → ∞`.
 
 ## 3. What is observed numerically (not proved)
 
-Bottom eigenvalue of `H` by refinement level (from `RESEARCH_LOG_2026-11-05.md`):
+The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish
+that the bottom eigenvalue is constant from level 5 onward. A subsequent high-precision, three-vector
+Rayleigh–Ritz refinement resolves the tightly clustered bottom spectrum at levels 2–5.
 
-| level m | dim(H) | λ_min |
+Run the reproducible calculation from the repository root:
+
+```bash
+python -m pip install mpmath
+python computational/spectral_gap_theta_2pi/high_precision_bottom.py
+```
+
+The computation uses 80 decimal digits in `mpmath`. Float64 is used only to seed the initial
+three-dimensional low-eigenspace; block inverse iteration for `(H-I)^{-1}`, preconditioned conjugate
+gradients, orthogonalization, and the final 3×3 Rayleigh–Ritz diagonalization are carried out in
+multiple precision. The residual diagnostics are numerical, not interval-arithmetic certificates.
+
+| level m | dim(H) | λ_min (high-precision Rayleigh–Ritz) |
 | ---: | ---: | ---: |
-| 4 | 123 | 1.30912891862700 |
-| 5 | 366 | 1.30912892028081 |
-| 6 | 1,095 | 1.30912892028081 |
-| 7 | 3,282 | 1.30912892028081 |
-| 8 | 9,843 | 1.30912892028081 |
+| 2 | 15 | 1.2984378812835756567558911626890933677398… |
+| 3 | 42 | 1.3090710652556068404036933845248248253260… |
+| 4 | 123 | 1.3091289186270032373372269265507617266049… |
+| 5 | 366 | 1.3091289202808134205376249464114593830015… |
 
-Successive differences: levels 2→3 about 1.1·10⁻², 3→4 about 5.8·10⁻⁵, 4→5 about 1.7·10⁻⁹, then
-zero to 14 digits. The decay is consistent with super-exponential convergence, but three decreasing
-steps followed by numerical stabilization is **evidence, not a proof**.
+At level 5 the next two eigenvalues form a near-degenerate pair at approximately
+`1.309128920280813422564122159050485604429…`. Their separation from the bottom eigenvalue
+is about `2.0264972·10⁻¹⁸`. This explains why a short single-vector inverse iteration can fail to
+resolve the bottom mode: the three lowest eigenvalues are exceptionally close.
+
+The positive increments `δ_m = λ_m − λ_(m−1)` and their quadratic ratios are:
+
+| Transition | δ_m | δ_m / δ_(m−1)² |
+| --- | ---: | ---: |
+| 2→3 | 1.06331839720311836478·10⁻² | — |
+| 3→4 | 5.78533713963969335335·10⁻⁵ | 0.5116842114039808057 |
+| 4→5 | 1.65381018320039801986·10⁻⁹ | 0.4941153170828634048 |
+
+The two available ratios are consistent with a quadratic correction law with coefficient near 1/2.
+If that coefficient were to persist, the next increment would be approximately
+`1.35144893468·10⁻¹⁸`, giving the **conditional extrapolation**
+`1.3091289202808134218890738810913924…` for the limit. This is an empirical extrapolation,
+not a theorem or a certified error bound. The convergence law and the limiting value remain open.
+
+The observed eigenvectors are concentrated near the three corners, but they do not have compact
+support: the apparent support depends on the numerical threshold used to display small components.
+The finite-patch exact-eigenvector explanation is therefore not supported by these computations.
 
 ## 4. What is not claimed
 
-- That `1.30912892028081…` is the exact limit, or a closed form for it. It is an observation.
-- That the model is *the* external θ = 2π model. The cited external `sg.py`/`gap.py` sources were not
-  present in the repository, so this identification is **conditional**.
-- That this operator equals the pivot-zero all-hole-flux representative produced by the default
-  `mobius.py` solver. It does not.
-- That the constant is an analogue of π. π has a definition as a geometric ratio. For this number no
-  such definition or theorem exists yet. It may be a useful invariant; that has to be shown.
-- Any link to the vertex-order lemmas (`gasketVertexOrder_*`). Those are combinatorial and do not
-  involve the spectrum.
+- That `1.309128920280813421889…` is the exact limit, or a closed form for it. It is a conditional numerical extrapolation.
+- That the quadratic correction law holds for all levels. Only two successive ratios are currently available.
+- That the local-face model is *the* external θ = 2π model. The cited external `sg.py`/`gap.py` sources were not present in the repository, so this identification is **conditional**.
+- That this operator equals the pivot-zero all-hole-flux representative produced by the default `mobius.py` solver. It does not.
+- That the constant is an analogue of π. No such definition or theorem exists yet.
+- Any link to the vertex-order lemmas (`gasketVertexOrder_*`). Those are combinatorial and do not involve the spectrum.
 
 ## 5. Open problems
 
-1. Prove that `λ_min(m)` converges, and identify the limit (closed form or recursion fixed point).
-2. Explain why the bottom eigenvalue is constant to 14 digits from level 5. This suggests an exact
-   eigenvector supported on a bounded patch, which would be provable on its own.
-3. Close the conditional step: tie the local-face model to the external θ = 2π operator.
+1. Prove that `λ_min(m)` converges, and identify its limit (closed form or recursion fixed point).
+2. Explain the corner concentration and derive a controlled description of the nonzero tails. The numerical
+   evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation:
+   thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly
+   constant between levels 4 and 5.
+3. Prove or disprove the apparent quadratic correction law `δ_(m+1) ≈ c·δ_m²` beyond the two observed ratios.
+4. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
 
-All numbers above are in `RESEARCH_LOG_2026-11-05.md` in this directory, with the method and the
-exact combinatorial and edge-gauge audits (passing through level 10). Lean check:
+From the repository root:
 
-```
+```bash
+python -m pip install -e .
+python -m pip install mpmath
+python computational/spectral_gap_theta_2pi/audit_triangle_gauge.py --max-level 10
+python computational/spectral_gap_theta_2pi/high_precision_bottom.py
 lake build
 ```
 
-and then `#print axioms` on `sgSignedLaplacianMatrix_eigenvalue_ge_one`.
+The exact combinatorial and edge-gauge audit passes through level 10. The high-precision script
+reproduces the finite-level values and prints its residual diagnostics. For the Lean result, run
+`#print axioms PhiGenesis.SpectralGap.sgSignedLaplacianMatrix_eigenvalue_ge_one`.
 
 ## 7. Files
 
 | Path | Content |
 | --- | --- |
-| `RESEARCH_LOG_2026-11-05.md` | derivation, audits, eigenvalue tables |
-| `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, `λ ≥ 1` |
+| `RESEARCH_LOG_2026-11-05.md` | derivation, audits, earlier eigenvalue tables, and evidence boundary |
+| `high_precision_bottom.py` | high-precision three-vector spectral-cluster refinement |
+| `audit_triangle_gauge.py` | exact combinatorial, gauge, graph, and sparse spectral audits |
+| `../../PhiGenesis/SpectralGap/SignedLaplacianMatrix.lean` | Lean: signed Laplacian, Gram identification, and `λ ≥ 1` |
