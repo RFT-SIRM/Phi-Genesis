@@ -1094,3 +1094,23 @@ The next required bridge is a verified finite-prefix denominator bound
 on the whole parameter interval, followed by the interval-closed
 continuity/IVT argument. The infinite-level root convergence problem
 remains open.
+
+
+## 55. Conditional finite-level root existence by IVT (2026-11-06)
+
+Added the level-index semigroup identity for the Schur trajectory and
+defined schurBootstrapA1AtLevel for the original recursion at level 6+n.
+Using the already-proved opposite signs at the exact rational endpoints,
+the new theorem schurBootstrapA1AtLevel_exists_root_of_nonzero_pivots
+applies the closed-interval intermediate value theorem: for each finite
+n, if both Schur denominators remain nonzero along the trajectory for
+every parameter in [L,U] through level 6+n, then the level-(6+n) A1
+characteristic has a zero in [L,U].
+
+The premise is deliberately explicit. The pointwise continuity induction
+from Section 54 supplies continuity once these denominators are known to
+be nonzero, but a uniform proof of that nonvanishing over [L,U] is not
+yet in the file. Thus this theorem is the IVT bridge, not yet an
+unconditional finite-level root-existence theorem. Uniform initial
+level-six state enclosure and the finite prefix pivot check remain the
+next obligations; convergence of the roots is still separate.

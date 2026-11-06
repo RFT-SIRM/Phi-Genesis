@@ -513,3 +513,10 @@ whenever every Schur denominator encountered before that finite level is
 nonzero there. The Lean result is conditional on this pointwise pivot
 nonvanishing; a uniform denominator bound over the full narrow interval
 is still required before applying the intermediate value theorem.
+
+
+A conditional IVT theorem is now formalized: if the two Schur denominators
+are nonzero for all parameters in the narrow interval through a fixed
+finite level, then the all-level opposite endpoint signs force an A1 root
+at that level. The remaining task before unconditional finite-level root
+existence is to prove these denominators uniformly nonzero on the interval.

@@ -1,5 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic
+import Mathlib.Topology.Order.IntermediateValue
 
 /-!
 # The three-corner Schur boundary channels
@@ -1730,6 +1731,102 @@ theorem schurBoundaryTrajectory_A1_continuousAt_of_nonzero_pivots
     schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots
       lambda₀ n hden
   exact hcoords.1.add (continuousAt_const.mul hcoords.2)
+
+
+
+/-- Schur trajectories satisfy the expected semigroup law in the level
+index: taking m steps and then n more steps equals taking m+n steps. -/
+theorem schurBoundaryTrajectory_add
+    (lambda : ℝ) (initial : ℝ × ℝ) (m n : ℕ) :
+    schurBoundaryTrajectory lambda initial (m + n) =
+      schurBoundaryTrajectory lambda
+        (schurBoundaryTrajectory lambda initial m) n := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      simp [Nat.add_succ, schurBoundaryTrajectory, ih]
+
+
+/-- The A1 characteristic at level 6+n, starting from the original
+boundary state (2-lambda,1). -/
+noncomputable def schurBootstrapA1AtLevel (lambda : ℝ) (n : ℕ) : ℝ :=
+  (schurBoundaryTrajectory lambda (2 - lambda, 1) (6 + n)).1 +
+    2 * (schurBoundaryTrajectory lambda (2 - lambda, 1) (6 + n)).2
+
+
+/-- If all Schur denominators through a fixed finite level are nonzero
+for every parameter in the bootstrap interval, the corresponding A1
+characteristic is continuous on that interval. -/
+theorem schurBootstrapA1AtLevel_continuousOn_of_nonzero_pivots
+    (n : ℕ)
+    (hden :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        ∀ k, k < 6 + n →
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+              3 * (schurBoundaryTrajectory lambda
+                (2 - lambda, 1) k).2 ≠ 0) :
+    ContinuousOn
+      (fun lambda => schurBootstrapA1AtLevel lambda n)
+      (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) := by
+  intro lambda hlambda
+  have hcontinuous :=
+    schurBoundaryTrajectory_A1_continuousAt_of_nonzero_pivots
+      lambda (6 + n) (hden lambda hlambda)
+  simpa [schurBootstrapA1AtLevel] using hcontinuous.continuousWithinAt
+
+
+/-- Conditional finite-level root existence: the exact opposite endpoint
+signs proved above, together with continuity (equivalently here, nonzero
+Schur denominators along the interval), force an A1 root by IVT. -/
+theorem schurBootstrapA1AtLevel_exists_root_of_nonzero_pivots
+    (n : ℕ)
+    (hden :
+      ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper →
+        ∀ k, k < 6 + n →
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+              3 * (schurBoundaryTrajectory lambda
+                (2 - lambda, 1) k).2 ≠ 0) :
+    ∃ lambda ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper,
+      schurBootstrapA1AtLevel lambda n = 0 := by
+  have hle :
+      schurBootstrapLambdaLower ≤ schurBootstrapLambdaUpper := by
+    norm_num [schurBootstrapLambdaLower, schurBootstrapLambdaUpper]
+  have hcontinuous :=
+    schurBootstrapA1AtLevel_continuousOn_of_nonzero_pivots n hden
+  have hsigns := schurBootstrapEndpoints_A1_signs_all_finite_levels
+  have hleft :
+      0 ≤ schurBootstrapA1AtLevel schurBootstrapLambdaLower n := by
+    simpa [schurBootstrapA1AtLevel, schurBoundaryTrajectory_add] using
+      hsigns.1 n
+  have hright :
+      schurBootstrapA1AtLevel schurBootstrapLambdaUpper n < 0 := by
+    simpa [schurBootstrapA1AtLevel, schurBoundaryTrajectory_add] using
+      hsigns.2 n
+  have hzero :
+      (0 : ℝ) ∈ Set.Icc
+        (schurBootstrapA1AtLevel schurBootstrapLambdaUpper n)
+        (schurBootstrapA1AtLevel schurBootstrapLambdaLower n) :=
+    ⟨le_of_lt hright, hleft⟩
+  have himage := intermediate_value_Icc' hle hcontinuous
+  rcases himage hzero with ⟨lambda, hlambda, hvalue⟩
+  exact ⟨lambda, hlambda, hvalue⟩
 
 
 end PhiGenesis.SpectralGap
