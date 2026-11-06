@@ -596,3 +596,49 @@ The outward-rounded interval/inertia check was also repeated locally at 2,450 de
 The compact 260-dps script now computes the A1 sequence through level 9 and the E sequence only through level 7, which is the range actually tabulated in `HIGH_PRECISION_2026-11-06.md`. The E/A1 splitting at level 9 is about `4.7e-291`, below 260 decimal digits; the previous script calculated E roots through level 9 without displaying them, so it could silently ask Newton continuation to resolve a quantity beyond its precision. This unused calculation is removed rather than presented as a computed value.
 
 The standalone routine was factored as `compute_roots` so the two normalization conventions can be tested directly. The new `test_schur_bottom_eigenvalue.py` checks `T_m(lambda)=S_m(lambda)+lambda I_3` at levels 0, 1, 3, 6, 9, and 12 and three spectral parameters, reproduces the level-9 A1 root and increment coefficient, verifies the E/A1 splittings through level 7, and guards the level-range input. A local isolated run of this test module passed all 21 cases.
+
+
+## 40. Differentiated A1 Schur update and derivative convergence diagnostics (2026-11-06)
+
+Write the A1 characteristic as \`f_m=a_m+2b_m\` and set
+\`c_m=2a_m+lambda-b_m\`. The exact one-step identity from Section 35 is
+\[
+f_{m+1}=f_m-2b_m R_m,
+\qquad
+R_m=\frac{c_m+5b_m}{c_m+3b_m}.
+\]
+
+Differentiating with respect to the spectral parameter (primes denote this derivative) gives
+\[
+R'_m=\frac{2(c_m b'_m-b_m c'_m)}{(c_m+3b_m)^2},
+\qquad c'_m=2a'_m+1-b'_m,
+\]
+and therefore the exact derivative update
+\[
+f'_{m+1}
+=f'_m-2b'_m\frac{c_m+5b_m}{c_m+3b_m}
+-4b_m\frac{c_m b'_m-b_m c'_m}{(c_m+3b_m)^2}.
+\]
+
+This identity was checked independently against the existing forward-mode derivative implementation at 39 parameter/level pairs (levels 0–12 and lambda = 1.234, 1.309, 1.411) at 1,000 decimal digits. The largest observed discrepancy was below \`2.38e-1001\`. A new ordinary regression test now checks the differentiated update at the same 39 points at 100-dps working precision. The test is an implementation consistency check, not a proof of convergence.
+
+At the A1 roots, a separate 10,000-dps calculation gives the following derivative values and successive root-sampled differences:
+
+| m | \`D_m=f'_m(lambda_m)\` | \`D_(m+1)-D_m\` |
+| ---: | ---: | ---: |
+| 5 | -1.2932897430304525953050491537807371… | 1.48044087197e-17 |
+| 6 | -1.2932897430304525805006404340445789… | 2.14274337393e-35 |
+| 7 | -1.2932897430304525805006404340445789… | 1.98274217145e-71 |
+| 8 | -1.2932897430304525805006404340445789… | 8.01146709379e-144 |
+| 9 | -1.2932897430304525805006404340445789… | 6.35950828230e-289 |
+| 10 | -1.2932897430304525805006404340445789… | 1.97623585730e-579 |
+| 11 | -1.2932897430304525805006404340445789… | 9.47707172708e-1161 |
+| 12 | -1.2932897430304525805006404340445789… | 1.08602117041e-2323 |
+| 13 | -1.2932897430304525805006404340445789… | 7.11868328265e-4650 |
+| 14 | -1.2932897430304525805006404340445789… | — |
+
+The corresponding sampled derivative tends numerically to
+\`-1.293289743030452580500640434044578900991030728263697…\`.
+The derivative coefficient \`b'_m\` is also observed to decay: at the A1 root its magnitude is approximately \`3.56e-4650\` at level 13 and \`7.64e-9303\` at level 14.
+
+These are high-precision diagnostics only. They do not prove that the derivative sequence converges. In particular, \`D_(m+1)-D_m\` combines the level update and the change from \`lambda_m\` to \`lambda_(m+1)\`. The next proof obligation is a uniform summable bound for the derivative update terms (including \`b'_m\`) and a separate bound for the derivative's change across the root interval. Only then can the nonzero limiting derivative needed for the quadratic root-shift law be concluded.

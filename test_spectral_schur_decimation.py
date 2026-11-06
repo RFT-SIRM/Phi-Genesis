@@ -168,6 +168,25 @@ def test_e_a1_shift_ratio_converges_to_three_halves():
             assert abs(ratio - mp.mpf("1.5")) < mp.power(10, -decimal_order)
 
 
+
+
+@pytest.mark.parametrize("level", range(13))
+@pytest.mark.parametrize("point", ["1.234", "1.309", "1.411"])
+def test_a1_derivative_obeys_differentiated_schur_update(level, point):
+    """Check the derivative of f_(m+1)=f_m-2*b_m*(c+5b)/(c+3b)."""
+    with mp.workdps(100):
+        x = mp.mpf(point)
+        a, b, da, db = schur_decimation._schur_parameters_with_derivative(x, level)
+        c = 2 * a + x - b
+        dc = 2 * da + 1 - db
+        denominator = c + 3 * b
+        ratio = (c + 5 * b) / denominator
+        ratio_derivative = 2 * (c * db - b * dc) / denominator**2
+
+        predicted = (da + 2 * db) - 2 * db * ratio - 2 * b * ratio_derivative
+        actual = schur_decimation.a1_characteristic_with_derivative(x, level + 1)[1]
+        assert abs(actual - predicted) < mp.mpf("1e-85")
+
 def test_insufficient_precision_does_not_repeat_a_boundary_root():
     with pytest.raises(ArithmeticError, match="cannot resolve"):
         schur_decimation.a1_boundary_root_sequence(10, dps=100)
