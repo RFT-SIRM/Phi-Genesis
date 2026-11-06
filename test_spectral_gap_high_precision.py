@@ -157,15 +157,20 @@ def test_s3_irreducible_sector_spectra_reconstruct_full_graph(level):
     ],
 )
 def test_mixed_precision_refinement_reproduces_level_six_bottom(
-    sector, expected, dimension
+    sector, expected, dimension, capsys
 ):
     result = symmetry_sector_bottom.mixed_precision_bottom(
-        6, sector, iterations=110, dps=75
+        6, sector, iterations=110, dps=75,
+        solve_digits=55, progress_every=55,
     )
     assert result["sector_dimension"] == dimension
     assert abs(result["lambda"] - mp.mpf(expected)) < mp.mpf("1e-35")
     assert result["residual"] < mp.mpf("1e-55")
     assert result["linear_residual"] < mp.mpf("1e-55")
+    assert result["solve_digits"] == 55
+    progress = capsys.readouterr().out
+    assert "iteration 55/110" in progress
+    assert "iteration 110/110" in progress
 
 
 @pytest.mark.parametrize("level", [2, 3, 4, 5])
