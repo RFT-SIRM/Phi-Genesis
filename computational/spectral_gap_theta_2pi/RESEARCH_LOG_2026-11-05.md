@@ -403,3 +403,41 @@ The two latest ratios agree to about 17 significant digits. This is empirical ev
 To improve runtime without discarding high-precision residual checks, the script now includes a sparse-LU preconditioner formed in float64 and iterative refinement whose residuals, matrix-vector products, normalization, and Rayleigh quotient are evaluated in `mpmath`. The solve tolerance scales with the working precision. Regression tests compare the new solver against the previously established level-6 `A1` and `E` values. The CLI supports optional `--mixed-precision-levels`, `--mixed-precision-sectors`, `--mixed-precision-dps`, and `--mixed-precision-iterations` arguments.
 
 The level-7 and level-8 calculations above were obtained in the independent local numerical run. The new repository implementation is separately covered by the level-6 regression tests; its exact-HEAD CI result must be checked before treating that implementation as integrated.
+
+## 33. Level-eight E-sector splitting and level-nine A1 increment
+
+The sparse-LU/multiprecision solver was independently exercised beyond its level-six regression tests. The implementation change uses SuperLU's sparse float64 L/U factors but performs forward and backward substitutions, residual evaluation, and correction accumulation in `mpmath`. This avoids the previous `float64` correction-rounding floor near `1e-16`.
+
+At level 8, the fully symmetric sector has dimension 1,645 and the complex `E` sector has dimension 3,281. Their computed bottoms at 170 decimal digits are:
+
+- `A1_8 = 1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341948933027533567445524…`
+- `E_8 = 1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341960876021582905006341…`
+
+The final residuals are `1.04169265081e-97` in `A1` and `9.45013277976e-98` in `E`; the maximum relative linear-solve residuals are `4.10410290987e-109` and `1.77880357893e-111`, respectively. The observed sector splitting is
+
+`E_8-A1_8 = 1.1942994049337560817e-145…`.
+
+The float64 low-spectrum check places the next sector eigenvalues near 2, approximately `0.69087108` above the bottom. With this numerically observed separation, residual-squared Rayleigh error estimates are about `1.6e-194` and `1.3e-194`; they are far below the splitting, but they are not interval certificates.
+
+The ratio of the sector splitting to the square of the corresponding level increment is:
+- level 7: `(E_7-A1_7)/δ_7² ≈ 0.74092573485035102486…`
+- level 8: `(E_8-A1_8)/δ_8² ≈ 0.74092573485029842926…`
+
+These agree to about 13 significant digits. This is a second empirical scaling coefficient, distinct from the increment recurrence coefficient.
+
+The level-nine fully symmetric quotient has dimension 4,926 in a graph with 29,526 vertices. Its 170-digit calculation gives
+
+`A1_9 = 1.30912892028081342188862308817081018855232425111732634343353598445268169740439998307779490279117120025995341301143291277182884088173465902645341956895023566459152736…`
+
+with residual `8.10883078756e-98` and maximum relative linear-solve residual `4.10410290987e-109`. The actual increment and quadratic ratio are:
+
+- `δ_9 = A1_9-A1_8 = 7.96199603289170721200e-146…`
+- `δ_9/δ_8² = 0.4939504899001989528801830492…`
+
+This agrees with the level-eight ratio `0.4939504899001989528562882792…` to about 19 significant digits. The one-step conditional prediction from level 8 was `7.96199603289170721161e-146`; the measured level-nine increment differs from that prediction only at relative scale about `5e-20`.
+
+Using the latest ratio, the next conditional increment is approximately `δ_10 ≈ 3.13131915163e-291`. This is an extrapolation only. The `A2` and `E` sectors at level 9 have not been computed, so no full level-nine spectral decomposition or global-bottom claim is made.
+
+The exact-HEAD GitHub CI for code commit `592c7b2a1bd51c076718126def9df3837c882f7b` passed: 74 tests passed and 8 nightly-marked tests were deselected. That CI covers the new mixed-precision solver's level-six `A1` and `E` regression tests; the level-eight and level-nine numerical runs above were independent local calculations and are not CI tests.
+
+Next numerical bottlenecks: compute the level-nine `E` sector if the splitting law is to be tested one level further, and replace the dense `A1` quotient assembly with a sparse orbit-neighbor representation before attempting level 10. The convergence theorem, exact limit, interval certification, and identification with the external theta=2π operator remain open.
