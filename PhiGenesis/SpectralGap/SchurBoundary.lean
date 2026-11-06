@@ -291,7 +291,7 @@ This is a pointwise estimate at the old root; it does not yet compare
 coefficients evaluated at two different level roots. -/
 theorem schurNextOffDiagonal_ratio_bounds_at_A1_root
     (a b lambda : ℝ) (hA1 : a + 2 * b = 0)
-    (hλ : 1 ≤ lambda) (hb : b < 0) :
+    (hLambda : 1 ≤ lambda) (hb : b < 0) :
     -1 ≤
         schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 ∧
       schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 < 0 := by
@@ -312,12 +312,12 @@ theorem schurNextOffDiagonal_ratio_bounds_at_A1_root
     mul_pos hc_pos hc3_pos
   have hnum_le_den : c - b ≤ c * (c + 3 * b) := by
     rw [hc_root]
-    have hλ_nonneg : 0 ≤ lambda := by linarith
-    have hλ_sub_one_nonneg : 0 ≤ lambda - 1 := by linarith
+    have hLambda_nonneg : 0 ≤ lambda := by linarith
+    have hLambda_sub_one_nonneg : 0 ≤ lambda - 1 := by linarith
     have hcoeff_nonneg : 0 ≤ 7 * lambda - 6 := by linarith
     have hminus_b_nonneg : 0 ≤ -b := by linarith
     nlinarith [
-      mul_nonneg hλ_nonneg hλ_sub_one_nonneg,
+      mul_nonneg hLambda_nonneg hLambda_sub_one_nonneg,
       mul_nonneg hcoeff_nonneg hminus_b_nonneg,
       sq_nonneg b
     ]
