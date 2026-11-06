@@ -454,7 +454,7 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
   have hcross :
       (lambda - 6 * b) * lambda <
         1 * ((lambda - 5 * b) * (lambda - 2 * b)) := by
-    nlinarith [hnum_pos]
+    nlinarith [hgap_pos]
   have hfactor :
       (lambda - 6 * b) / ((lambda - 5 * b) * (lambda - 2 * b)) <
         1 / lambda :=
