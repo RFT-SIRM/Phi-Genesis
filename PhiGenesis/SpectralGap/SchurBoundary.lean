@@ -515,6 +515,56 @@ theorem schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
     _ = (4 / 5 : ℝ) * b ^ 2 := by ring
 
 
+/-- The wider level-three off-diagonal interval is preserved by one
+Schur step under the same coarse positive-pivot hypotheses. -/
+theorem schurNextOffDiagonal_signed_interval_of_coarse_box
+    (b c : ℝ)
+    (hb_lower : -(1 / 20000 : ℝ) ≤ b)
+    (hb_upper : b ≤ 0)
+    (hc_lower : (13 / 10 : ℝ) ≤ c)
+    (hc_upper : c ≤ (132 / 100 : ℝ))
+    (hc3_lower : (13 / 10 : ℝ) ≤ c + 3 * b) :
+    -(1 / 20000 : ℝ) ≤ schurNextOffDiagonal b c ∧
+      schurNextOffDiagonal b c ≤ 0 := by
+  have hb_coarse_lower : -(1 / 100 : ℝ) ≤ b := by
+    have hscale : -(1 / 100 : ℝ) ≤ -(1 / 20000 : ℝ) := by
+      norm_num
+    exact le_trans hscale hb_lower
+  have hcontract :=
+    schurNextOffDiagonal_abs_le_four_fifths_sq_of_box
+      b c hb_coarse_lower hb_upper hc_lower hc_upper hc3_lower
+  have hb_nonneg : 0 ≤ -b := by linarith
+  have hb_mag_upper : -b ≤ (1 / 20000 : ℝ) := by linarith
+  have hbsq : b ^ 2 ≤ (1 / 20000 : ℝ) * (-b) := by
+    calc
+      b ^ 2 = (-b) * (-b) := by ring
+      _ ≤ (1 / 20000 : ℝ) * (-b) :=
+        mul_le_mul_of_nonneg_right hb_mag_upper hb_nonneg
+  have habs :
+      |schurNextOffDiagonal b c| ≤ (1 / 20000 : ℝ) := by
+    calc
+      |schurNextOffDiagonal b c|
+          ≤ (4 / 5 : ℝ) * b ^ 2 := hcontract
+      _ ≤ (4 / 5 : ℝ) *
+          ((1 / 20000 : ℝ) * (-b)) :=
+        mul_le_mul_of_nonneg_left hbsq (by norm_num)
+      _ ≤ (4 / 5 : ℝ) *
+          ((1 / 20000 : ℝ) * (1 / 20000 : ℝ)) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hb_mag_upper (by norm_num))
+          (by norm_num)
+      _ ≤ (1 / 20000 : ℝ) := by norm_num
+  have hnonpos : schurNextOffDiagonal b c ≤ 0 := by
+    by_cases hb : b = 0
+    · simp [schurNextOffDiagonal, hb]
+    · have hc_pos : 0 < c := by linarith
+      have hc3_pos : 0 < c + 3 * b := by linarith
+      have hcb : b < c := by linarith
+      exact le_of_lt
+        (schurNextOffDiagonal_neg b c hb hc_pos hc3_pos hcb)
+  exact ⟨(abs_le.mp habs).1, hnonpos⟩
+
+
 /-- The explicit tiny off-diagonal interval is invariant under one Schur
 step, provided the coarse midpoint-pivot box holds. -/
 theorem schurNextOffDiagonal_abs_le_six_e_minus37_of_box
