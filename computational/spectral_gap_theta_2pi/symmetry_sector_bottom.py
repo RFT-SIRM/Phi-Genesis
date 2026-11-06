@@ -483,14 +483,8 @@ def mixed_precision_bottom(
 
         if matrix_for_factor.shape != (sector_n, sector_n):
             raise ArithmeticError("sector matrix has an unexpected shape")
-        if complex_mode:
-            inner = real_inner
-            vector_norm = complex_norm
-            zero = mp.mpc(0)
-        else:
-            inner = real_inner
-            vector_norm = complex_norm
-            zero = mpf(0)
+        inner = real_inner
+        vector_norm = complex_norm
 
         lu = splu(matrix_for_factor)
         _float_values, float_vectors = eigsh(
@@ -506,8 +500,10 @@ def mixed_precision_bottom(
         seed_norm = vector_norm(vector)
         vector = [value / seed_norm for value in vector]
 
-        solve_tolerance = mpf("1e-60")
-        max_corrections = 8
+        # Match the linear-solve target to the active precision while leaving
+        # guard digits for the outer inverse iteration.
+        solve_tolerance = mp.power(10, -(dps - 15))
+        max_corrections = 12
         max_correction_rounds = 0
         max_linear_residual = mpf(0)
 
