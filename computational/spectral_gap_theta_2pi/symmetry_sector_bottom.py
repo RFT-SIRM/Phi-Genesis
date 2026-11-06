@@ -342,6 +342,95 @@ def full_low_cluster_diagnostic(Q):
     return np.sort(values)
 
 
+
+def build_a2_quotient(level: int):
+    """Build Q-I on the alternating S3 representation (the A2 sector).
+
+    Alternating functions vanish on vertices with two equal barycentric
+    coordinates. Every remaining S3 orbit has size six, so its normalized
+    signed-orbit basis has the same normalization on every orbit.
+    """
+    vertices, index, neighbors, degree, _ = build_graph(level)
+    side = 1 << level
+    orbit_data = {}
+    for vertex in vertices:
+        coordinates = (vertex[0], vertex[1], side - vertex[0] - vertex[1])
+        ordered = tuple(sorted(coordinates))
+        if len(set(ordered)) != 3:
+            continue
+        permutation = [ordered.index(value) for value in coordinates]
+        inversions = sum(
+            permutation[i] > permutation[j]
+            for i in range(3) for j in range(i + 1, 3)
+        )
+        sign = -1 if inversions % 2 else 1
+        orbit_data[vertex] = (ordered, sign)
+
+    representatives = sorted({data[0] for data in orbit_data.values()})
+    orbit_index = {representative: i for i, representative in enumerate(representatives)}
+    vertex_orbit = {
+        vertex: (orbit_index[representative], sign)
+        for vertex, (representative, sign) in orbit_data.items()
+    }
+
+    dimension = len(representatives)
+    K = matrix(dimension, dimension)
+    for p, representative in enumerate(representatives):
+        # The canonical representative is the vertex with sorted barycentric
+        # coordinates. Reflection-fixed neighbors have zero A2 component.
+        u = (representative[0], representative[1])
+        ui = index[u]
+        K[p, p] = degree[ui] - 1
+        for neighbor_index in neighbors[ui]:
+            neighbor = vertices[neighbor_index]
+            orbit_entry = vertex_orbit.get(neighbor)
+            if orbit_entry is None:
+                continue
+            q, sign = orbit_entry
+            K[p, q] += sign
+
+    asymmetry = max(
+        abs(K[i, j] - K[j, i])
+        for i in range(dimension) for j in range(dimension)
+    )
+    if asymmetry > mpf("1e-60"):
+        raise ArithmeticError(f"A2 quotient is not symmetric: {asymmetry}")
+    if min(K[i, i] for i in range(dimension)) <= 0:
+        raise ArithmeticError("A2 shifted quotient has a nonpositive diagonal")
+
+    K_float = np.array(
+        [[float(K[i, j]) for j in range(dimension)] for i in range(dimension)],
+        dtype=np.float64,
+    )
+    return K, K_float, len(vertices), dimension
+
+
+def a2_bottom(level: int, iterations: int = 40):
+    """High-precision inverse iteration for the alternating S3 (A2) sector."""
+    started = time.time()
+    K, K_float, full_n, sector_n = build_a2_quotient(level)
+    _, vectors = np.linalg.eigh(K_float)
+    v = matrix([mpf(float(value)) for value in vectors[:, 0]])
+    LU, pivots = mp.LU_decomp(K)
+    for _ in range(iterations):
+        y = mp.L_solve(LU, v, pivots)
+        v = mp.U_solve(LU, y)
+        v /= mp.norm(v)
+
+    Kv = K * v
+    nu = (v.T * Kv)[0]
+    residual = mp.norm(Kv - nu * v)
+    return {
+        "level": level,
+        "lambda": nu + 1,
+        "residual": residual,
+        "full_dimension": full_n,
+        "sector_dimension": sector_n,
+        "iterations": iterations,
+        "seconds": time.time() - started,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--a1-iterations", type=int, default=60)
@@ -371,6 +460,19 @@ def main():
             f"lambda={mp.nstr(result['lambda'], 60)} "
             f"residual={mp.nstr(result['residual'], 8)} "
             f"CG_iterations={result['cg_iterations']} "
+            f"elapsed={result['seconds']:.2f}s",
+            flush=True,
+        )
+
+    results_a2 = {}
+    for level in (5, 6):
+        result = a2_bottom(level)
+        results_a2[level] = result
+        print(
+            f"A2 level {level}: n={result['full_dimension']} "
+            f"sector_n={result['sector_dimension']} "
+            f"lambda={mp.nstr(result['lambda'], 60)} "
+            f"residual={mp.nstr(result['residual'], 8)} "
             f"elapsed={result['seconds']:.2f}s",
             flush=True,
         )
