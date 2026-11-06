@@ -2849,4 +2849,211 @@ theorem schurBootstrap_levelThree_state_box
     hb3_lower, hb3_upper⟩
 
 
+
+/-- The first three Schur pivot pairs are strictly positive throughout the
+bootstrap parameter interval. The level-one and level-two rational enclosures
+supply the only nontrivial finite-prefix estimates. -/
+theorem schurBootstrap_firstThree_pivots_nonzero :
+    ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper →
+      ∀ k, k < 3 →
+        schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+        schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+          3 * (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2 ≠ 0 := by
+  intro lambda hlambda k hk
+  have hwindow := schurBootstrapEndpoints_in_parameter_window
+  have hlambda_lower :
+      (1309 / 1000 : ℝ) ≤ lambda :=
+    le_trans hwindow.1 hlambda.1
+  have hlambda_upper :
+      lambda ≤ (131 / 100 : ℝ) :=
+    le_trans hlambda.2 hwindow.2.2.2
+  have hcases : k = 0 ∨ k = 1 ∨ k = 2 := by omega
+  rcases hcases with rfl | rfl | rfl
+  · have hc0_pos :
+        0 < schurMidpointPivot (2 - lambda) 1 lambda := by
+      unfold schurMidpointPivot
+      nlinarith [hlambda_upper]
+    have hc03_pos :
+        0 < schurMidpointPivot (2 - lambda) 1 lambda + 3 * (1 : ℝ) := by
+      unfold schurMidpointPivot
+      nlinarith [hlambda_upper]
+    change
+      schurMidpointPivot (2 - lambda) 1 lambda ≠ 0 ∧
+        schurMidpointPivot (2 - lambda) 1 lambda +
+          3 * (1 : ℝ) ≠ 0
+    exact ⟨ne_of_gt hc0_pos, ne_of_gt hc03_pos⟩
+  · let a1 : ℝ :=
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).1
+    let b1 : ℝ :=
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 1).2
+    have hlevelOne := schurBootstrap_levelOne_state_box lambda hlambda
+    have ha1_exact :
+        (1235695422588800493636603471580679174544749349869 /
+          10 ^ 50 : ℝ) ≤ a1 := by
+      simpa [a1] using hlevelOne.1.1
+    have ha1_lower : (1 / 100 : ℝ) ≤ a1 := by
+      have hcoarse :
+          (1 / 100 : ℝ) ≤
+            (1235695422588800493636603471580679174544749349869 /
+              10 ^ 50 : ℝ) := by norm_num
+      exact le_trans hcoarse ha1_exact
+    have hb1_exact_lower :
+        -(8710298126456400450881962728061450813934618792872 /
+          10 ^ 50 : ℝ) ≤ b1 := by
+      simpa [b1] using hlevelOne.2.1
+    have hb1_lower : -(9 / 100 : ℝ) ≤ b1 := by
+      have hcoarse :
+          -(9 / 100 : ℝ) ≤
+            -(8710298126456400450881962728061450813934618792872 /
+              10 ^ 50 : ℝ) := by norm_num
+      exact le_trans hcoarse hb1_exact_lower
+    have hb1_exact_upper :
+        b1 ≤ -(8710298126456400450881962728061450802735668500291 /
+          10 ^ 50 : ℝ) := by
+      simpa [b1] using hlevelOne.2.2
+    have hb1_upper : b1 ≤ 0 := by
+      have hnegative :
+          -(8710298126456400450881962728061450802735668500291 /
+            10 ^ 50 : ℝ) ≤ 0 := by norm_num
+      exact le_trans hb1_exact_upper hnegative
+    have hc1_pos :
+        0 < schurMidpointPivot a1 b1 lambda := by
+      unfold schurMidpointPivot
+      nlinarith [ha1_lower, hb1_upper, hlambda_lower]
+    have hc13_pos :
+        0 < schurMidpointPivot a1 b1 lambda + 3 * b1 := by
+      unfold schurMidpointPivot
+      nlinarith [ha1_lower, hb1_lower, hlambda_lower]
+    change
+      schurMidpointPivot a1 b1 lambda ≠ 0 ∧
+        schurMidpointPivot a1 b1 lambda + 3 * b1 ≠ 0
+    exact ⟨ne_of_gt hc1_pos, ne_of_gt hc13_pos⟩
+  · let a2 : ℝ :=
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).1
+    let b2 : ℝ :=
+      (schurBoundaryTrajectory lambda (2 - lambda, 1) 2).2
+    have hlevelTwo := schurBootstrap_levelTwo_state_box lambda hlambda
+    have ha2_lower : -(1 / 1000 : ℝ) ≤ a2 := by
+      have h := (abs_le.mp hlevelTwo.1).1
+      simpa [a2] using h
+    have hb2_lower : -(7 / 1000 : ℝ) ≤ b2 := by
+      simpa [b2] using hlevelTwo.2.1
+    have hb2_upper : b2 ≤ 0 := by
+      simpa [b2] using hlevelTwo.2.2
+    have hc2_pos :
+        0 < schurMidpointPivot a2 b2 lambda := by
+      unfold schurMidpointPivot
+      nlinarith [ha2_lower, hb2_upper, hlambda_lower]
+    have hc23_pos :
+        0 < schurMidpointPivot a2 b2 lambda + 3 * b2 := by
+      unfold schurMidpointPivot
+      nlinarith [ha2_lower, hb2_lower, hlambda_lower]
+    change
+      schurMidpointPivot a2 b2 lambda ≠ 0 ∧
+        schurMidpointPivot a2 b2 lambda + 3 * b2 ≠ 0
+    exact ⟨ne_of_gt hc2_pos, ne_of_gt hc23_pos⟩
+
+
+/-- The level-three state enclosure and the coarse trajectory invariant make
+every later Schur pivot pair positive. Together with the explicit three-step
+prefix, all denominator checks for the bootstrap interval are discharged. -/
+theorem schurBootstrap_all_pivots_nonzero :
+    ∀ lambda, lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper →
+      ∀ k,
+        schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda ≠ 0 ∧
+        schurMidpointPivot
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).1
+            (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2
+            lambda +
+          3 * (schurBoundaryTrajectory lambda (2 - lambda, 1) k).2 ≠ 0 := by
+  intro lambda hlambda k
+  by_cases hk : k < 3
+  · exact schurBootstrap_firstThree_pivots_nonzero lambda hlambda k hk
+  · have hkge : 3 ≤ k := by omega
+    obtain ⟨m, hm⟩ : ∃ m, k = 3 + m := by
+      refine ⟨k - 3, ?_⟩
+      omega
+    subst k
+    have hwindow := schurBootstrapEndpoints_in_parameter_window
+    have hlambda_lower :
+        (1309 / 1000 : ℝ) ≤ lambda :=
+      le_trans hwindow.1 hlambda.1
+    have hlambda_upper :
+        lambda ≤ (131 / 100 : ℝ) :=
+      le_trans hlambda.2 hwindow.2.2.2
+    have hstart := schurBootstrap_levelThree_state_box lambda hlambda
+    have hstate :=
+      schurBoundaryTrajectory_coarse_state_box lambda
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).1
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) 3).2
+        hstart.1 hstart.2.1 hstart.2.2
+        hlambda_lower hlambda_upper m
+    rw [schurBoundaryTrajectory_add lambda (2 - lambda, 1) 3 m]
+    have ha_lower := (abs_le.mp hstate.1).1
+    have hc_lower :
+        (13 / 10 : ℝ) ≤
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).1
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2
+            lambda := by
+      unfold schurMidpointPivot
+      nlinarith [ha_lower, hstate.2.2, hlambda_lower]
+    have hc3_lower :
+        (13 / 10 : ℝ) ≤
+          schurMidpointPivot
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).1
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2
+              lambda +
+            3 * (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2 := by
+      unfold schurMidpointPivot
+      nlinarith [ha_lower, hstate.2.1, hlambda_lower]
+    have hc_pos :
+        0 <
+          schurMidpointPivot
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).1
+            (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2
+            lambda :=
+      lt_of_lt_of_le (by norm_num) hc_lower
+    have hc3_pos :
+        0 <
+          schurMidpointPivot
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).1
+              (schurBoundaryTrajectory lambda
+                (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2
+              lambda +
+            3 * (schurBoundaryTrajectory lambda
+              (schurBoundaryTrajectory lambda (2 - lambda, 1) 3) m).2 :=
+      lt_of_lt_of_le (by norm_num) hc3_lower
+    exact ⟨ne_of_gt hc_pos, ne_of_gt hc3_pos⟩
+
+
+/-- Every finite-level bootstrap A1 characteristic has a zero in the
+parameter interval: the three initial pivot pairs are positive explicitly,
+and the level-three invariant makes all later denominators positive. -/
+theorem schurBootstrapA1AtLevel_exists_root (n : ℕ) :
+    ∃ lambda ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper,
+      schurBootstrapA1AtLevel lambda n = 0 := by
+  apply schurBootstrapA1AtLevel_exists_root_of_nonzero_pivots n
+  intro lambda hlambda k hk
+  exact schurBootstrap_all_pivots_nonzero lambda hlambda k
+
 end PhiGenesis.SpectralGap
