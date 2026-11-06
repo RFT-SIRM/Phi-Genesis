@@ -488,8 +488,8 @@ def mixed_precision_bottom(
             vector_norm = complex_norm
             zero = mp.mpc(0)
         else:
-            inner = dot
-            vector_norm = norm
+            inner = real_inner
+            vector_norm = complex_norm
             zero = mpf(0)
 
         lu = splu(matrix_for_factor)
