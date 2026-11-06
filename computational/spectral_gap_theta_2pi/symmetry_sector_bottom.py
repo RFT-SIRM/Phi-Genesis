@@ -607,6 +607,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--a1-iterations", type=int, default=60)
     parser.add_argument("--e-iterations", type=int, default=50)
+    parser.add_argument(
+        "--mixed-precision-levels",
+        type=int,
+        nargs="+",
+        default=[],
+        help="optional levels for sparse-LU/multiprecision refinement",
+    )
+    parser.add_argument(
+        "--mixed-precision-sectors",
+        choices=("A1", "A2", "E"),
+        nargs="+",
+        default=("A1", "E"),
+        help="sectors to compute when --mixed-precision-levels is supplied",
+    )
+    parser.add_argument("--mixed-precision-dps", type=int, default=110)
+    parser.add_argument("--mixed-precision-iterations", type=int, default=110)
     args = parser.parse_args()
 
     results_a1 = {}
@@ -674,6 +690,26 @@ def main():
     print(f"conditional_delta_7={mp.nstr(predicted_delta7, 35)}")
     print(f"conditional_limit_estimate={mp.nstr(conditional_limit, 50)}")
     print("NOTE: empirical extrapolation only; residuals are not interval certificates.")
+
+    for level in args.mixed_precision_levels:
+        for sector in args.mixed_precision_sectors:
+            result = mixed_precision_bottom(
+                level,
+                sector,
+                iterations=args.mixed_precision_iterations,
+                dps=args.mixed_precision_dps,
+            )
+            print(
+                f"mixed {sector} level {level}: "
+                f"n={result['full_dimension']} "
+                f"sector_n={result['sector_dimension']} "
+                f"lambda={mp.nstr(result['lambda'], 90)} "
+                f"residual={mp.nstr(result['residual'], 8)} "
+                f"linear_residual={mp.nstr(result['linear_residual'], 8)} "
+                f"correction_rounds={result['correction_rounds']} "
+                f"elapsed={result['seconds']:.2f}s",
+                flush=True,
+            )
 
     for level in (5, 6):
         diagnostic = full_low_cluster_diagnostic(results_a1[level]["full_Q"])
