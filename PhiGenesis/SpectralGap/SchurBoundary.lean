@@ -1517,4 +1517,47 @@ theorem schurBootstrapUpper_levelSix_certificate :
     schurBoundaryStateStep, schurNextDiagonal, schurNextOffDiagonal,
     schurMidpointPivot]
 
+
+/-- Combining the exact rational level-six certificates with the
+conditional finite-level sign-transport lemmas gives opposite A1 signs at
+the two fixed rational endpoints, at every finite Schur level. -/
+theorem schurBootstrapEndpoints_A1_signs_all_finite_levels :
+    (∀ n,
+      0 ≤
+        (schurBoundaryTrajectory schurBootstrapLambdaLower
+          (schurBoundaryTrajectory schurBootstrapLambdaLower
+            (2 - schurBootstrapLambdaLower, 1) 6) n).1 +
+          2 * (schurBoundaryTrajectory schurBootstrapLambdaLower
+            (schurBoundaryTrajectory schurBootstrapLambdaLower
+              (2 - schurBootstrapLambdaLower, 1) 6) n).2) ∧
+    (∀ n,
+      (schurBoundaryTrajectory schurBootstrapLambdaUpper
+        (schurBoundaryTrajectory schurBootstrapLambdaUpper
+          (2 - schurBootstrapLambdaUpper, 1) 6) n).1 +
+        2 * (schurBoundaryTrajectory schurBootstrapLambdaUpper
+          (schurBoundaryTrajectory schurBootstrapLambdaUpper
+            (2 - schurBootstrapLambdaUpper, 1) 6) n).2 < 0) := by
+  have hwindow := schurBootstrapEndpoints_in_parameter_window
+  have hlow := schurBootstrapLower_levelSix_certificate
+  have hupp := schurBootstrapUpper_levelSix_certificate
+  constructor
+  · exact
+      schurBoundaryTrajectory_A1_nonneg_of_initial_nonneg
+        schurBootstrapLambdaLower
+        (schurBoundaryTrajectory schurBootstrapLambdaLower
+          (2 - schurBootstrapLambdaLower, 1) 6).1
+        (schurBoundaryTrajectory schurBootstrapLambdaLower
+          (2 - schurBootstrapLambdaLower, 1) 6).2
+        hlow.1 hlow.2.1 hlow.2.2.1
+        hwindow.1 hwindow.2.1 hlow.2.2.2
+  · exact
+      schurBoundaryTrajectory_A1_neg_of_initial_margin
+        schurBootstrapLambdaUpper
+        (schurBoundaryTrajectory schurBootstrapLambdaUpper
+          (2 - schurBootstrapLambdaUpper, 1) 6).1
+        (schurBoundaryTrajectory schurBootstrapLambdaUpper
+          (2 - schurBootstrapLambdaUpper, 1) 6).2
+        hupp.1 hupp.2.1 hupp.2.2.1
+        hwindow.2.2.1 hwindow.2.2.2 hupp.2.2.2
+
 end PhiGenesis.SpectralGap

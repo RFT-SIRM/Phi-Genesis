@@ -493,3 +493,16 @@ These endpoint certificates discharge the numeric start assumptions
 required by the finite-level sign-transport lemmas. They do not yet give
 a uniform starting box for every lambda in [L,U] or a continuity/root
 existence theorem for later levels.
+
+
+The exact lower/upper level-six certificates are now combined with the
+all-finite-level Schur sign-transport theorems in one Lean result,
+`schurBootstrapEndpoints_A1_signs_all_finite_levels`. It states that
+the lower rational endpoint has nonnegative A1 characteristic at every
+finite Schur level, while the upper rational endpoint has strictly
+negative A1 characteristic at every finite Schur level. This is the
+common endpoint-sign statement needed for an intermediate-value argument.
+It is still only a statement at the two fixed endpoints: continuity of
+the level-n characteristic throughout the interval, and a uniform
+all-parameter state/pivot enclosure, remain to be proved before inferring
+a root at every level.

@@ -1051,3 +1051,24 @@ It still does not show a uniform state enclosure for every lambda in the
 entire interval, prove continuity of the level-n characteristic there,
 or prove root existence and convergence. Those form the next analytic
 bridge.
+
+
+## 53. Exact opposite A1 endpoint signs at every finite level (2026-11-06)
+
+Added `schurBootstrapEndpoints_A1_signs_all_finite_levels`, which applies
+the exact rational level-six certificates from Section 52 to the
+conditional trajectory sign-transport results from Section 51.
+
+For the fixed rational lower endpoint L, the A1 characteristic is
+nonnegative at every finite level. For the fixed rational upper endpoint
+U, it remains strictly negative at every finite level. The proof uses
+only exact Lean theorems: the rational endpoint bounds, the six-step
+Schur certificates, state-box invariance, the one-step A1 increment
+bound, and the finite quarter-geometric sum. It does not use numerical
+interval output as a proof premise.
+
+This establishes the two-endpoint sign part of the common bracket.
+The next missing condition for an intermediate-value argument is a
+uniform state/pivot bound for all lambda in [L,U], so that each finite
+level characteristic is continuous on that interval. Root existence at
+each finite level and convergence remain open.
