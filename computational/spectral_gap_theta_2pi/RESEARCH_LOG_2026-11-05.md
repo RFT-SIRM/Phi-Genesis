@@ -995,3 +995,34 @@ the recurrence. For the upper endpoint, the increments must be summed;
 the existing 10^-36 contraction gives a much sharper budget than the
 coarser half-contraction. The finite sum and endpoint initial signs have
 not yet been combined into an all-level A1 root bracket.
+
+
+## 51. All-finite-level transport of the A1 endpoint signs (2026-11-06)
+
+Added a finite geometric-sum theorem for any nonnegative sequence with
+quarter-contraction:
+`sum_{k<N} u_k <= (4/3) u_0`. The proof uses a tail-preserving induction,
+not an infinite-series argument.
+
+Combined with the conditional Schur state-box theorem and the exact
+one-step A1 increment formula, the new trajectory lemmas establish:
+
+- If the initial A1 characteristic is nonnegative, it remains
+  nonnegative at every finite Schur level.
+- If the initial A1 characteristic is at most `-17e-37`, it remains
+  at most `-1e-37` at every finite level.
+
+For the upper endpoint, the argument uses the already-proved
+`10^-36` off-diagonal linear contraction, weakens it to a factor
+`1/4`, and obtains
+`2 * sum_{k<N}|b_k| <= (8/3)|b_0| <= 16e-37`.
+The initial margin is `17e-37`, leaving a strict negative margin
+`1e-37`. The lower endpoint follows from monotonicity of the A1
+characteristic.
+
+This closes the all-finite-level endpoint-sign transport **conditional on
+the exact level-six endpoint state and characteristic inequalities**.
+It does not yet prove those rational start inequalities in Lean, establish
+continuity/root existence for every level, or prove convergence of the
+root sequence. The next proof obligation is the exact rational level-six
+endpoint certificate.

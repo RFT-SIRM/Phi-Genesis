@@ -467,3 +467,15 @@ positive sign is preserved immediately, while the upper-end negative sign
 will be preserved after summing the increments using the strong geometric
 contraction of b. This one-step result alone does not yet prove the
 all-level common root bracket.
+
+
+The A1 endpoint-sign transport is now formalized for every finite Schur
+level under the existing level-six start box. The lower endpoint remains
+nonnegative because each A1 characteristic increment is nonnegative.
+For the upper endpoint, the strong off-diagonal contraction implies the
+coarser quarter-contraction; the finite sum of |b_n| is at most
+(4/3)|b_0|. With |b_0| <= 6e-37, the total A1 increase is at most
+1.6e-36. Therefore an initial upper-end margin of 1.7e-36 remains strictly
+negative at every finite level. This conditional sign-transport theorem
+does not itself certify the rational level-six endpoint states or establish
+root existence by continuity.

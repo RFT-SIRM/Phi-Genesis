@@ -1235,4 +1235,207 @@ theorem schurNextA1_increment_bounds_of_state_box
         mul_le_mul_of_nonneg_left hratio_le hfactor
       _ = 2 * (-b) := by ring
 
+
+/-- A quarter-contractive nonnegative sequence has a finite partial sum
+bounded by four thirds of its initial value. The proof retains the
+remaining geometric tail in its induction invariant. -/
+theorem sum_range_le_four_thirds_initial_of_quarter_contraction
+    (u : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, 0 ≤ u n)
+    (hcontract : ∀ n, u (n + 1) ≤ (1 / 4 : ℝ) * u n) :
+    (∑ k ∈ Finset.range N, u k) ≤ (4 / 3 : ℝ) * u 0 := by
+  have htail : ∀ n : ℕ,
+      (∑ k ∈ Finset.range n, u k) +
+        (4 / 3 : ℝ) * u n ≤ (4 / 3 : ℝ) * u 0 := by
+    intro n
+    induction n with
+    | zero =>
+        simp
+    | succ n ih =>
+        rw [Finset.sum_range_succ]
+        calc
+          (∑ k ∈ Finset.range n, u k) + u n +
+              (4 / 3 : ℝ) * u (n + 1)
+              = (∑ k ∈ Finset.range n, u k) +
+                  (u n + (4 / 3 : ℝ) * u (n + 1)) := by ring
+          _ ≤ (∑ k ∈ Finset.range n, u k) +
+                (4 / 3 : ℝ) * u n := by
+                apply add_le_add_left
+                nlinarith [hcontract n]
+          _ ≤ (4 / 3 : ℝ) * u 0 := ih
+  have htailN := htail N
+  have hlast_nonneg : 0 ≤ (4 / 3 : ℝ) * u N :=
+    mul_nonneg (by norm_num) (hu_nonneg N)
+  linarith
+
+
+/-- The sum of successive increments of a real sequence telescopes. -/
+private theorem sum_range_step_difference_eq
+    (f : ℕ → ℝ) (N : ℕ) :
+    (∑ k ∈ Finset.range N, (f (k + 1) - f k)) = f N - f 0 := by
+  induction N with
+  | zero =>
+      simp
+  | succ N ih =>
+      rw [Finset.sum_range_succ]
+      rw [ih]
+      ring
+
+
+/-- For a fixed parameter in [1.309,1.31] and an initial state in the
+level-six box, every exact Schur step has a nonnegative A1-characteristic
+increment bounded by twice the old off-diagonal magnitude. -/
+theorem schurBoundaryTrajectory_A1_increment_bounds
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (3 / 10 ^ 36 : ℝ))
+    (hb₀_lower : -(6 / 10 ^ 37 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ)) :
+    ∀ n,
+      0 ≤
+        ((schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).1 +
+            2 * (schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).2) -
+          ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+            2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ∧
+      ((schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) (n + 1)).2) -
+        ((schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+          2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2) ≤
+        2 * |(schurBoundaryTrajectory lambda (a₀, b₀) n).2| := by
+  intro n
+  have hstate :=
+    schurBoundaryTrajectory_state_box
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper n
+  have ha_bounds := abs_le.mp hstate.1
+  have hlocal :=
+    schurNextA1_increment_bounds_of_state_box
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+      lambda ha_bounds.1 ha_bounds.2 hstate.2.1 hstate.2.2 hlambda_lower
+  simpa [schurBoundaryTrajectory] using hlocal
+
+
+/-- The A1 characteristic stays nonnegative at every finite Schur level
+if it is nonnegative in the initial state box. -/
+theorem schurBoundaryTrajectory_A1_nonneg_of_initial_nonneg
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (3 / 10 ^ 36 : ℝ))
+    (hb₀_lower : -(6 / 10 ^ 37 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ))
+    (hf₀ : 0 ≤ a₀ + 2 * b₀) :
+    ∀ n, 0 ≤
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+        2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2 := by
+  let f : ℕ → ℝ := fun n =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+      2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+  have hinc :=
+    schurBoundaryTrajectory_A1_increment_bounds
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper
+  have hf₀' : 0 ≤ f 0 := by
+    simpa [f, schurBoundaryTrajectory] using hf₀
+  intro n
+  induction n with
+  | zero =>
+      exact hf₀'
+  | succ n ih =>
+      have hstep : 0 ≤ f (n + 1) - f n := by
+        simpa [f] using (hinc n).1
+      linarith
+
+
+/-- The upper A1 endpoint sign is also preserved at every finite level:
+the total increase is at most 1.6e-36, strictly below a 1.7e-36
+initial negative margin. This is a finite-level sign theorem, not yet a
+continuity or root-existence theorem. -/
+theorem schurBoundaryTrajectory_A1_neg_of_initial_margin
+    (lambda a₀ b₀ : ℝ)
+    (ha₀ : |a₀| ≤ (3 / 10 ^ 36 : ℝ))
+    (hb₀_lower : -(6 / 10 ^ 37 : ℝ) ≤ b₀)
+    (hb₀_upper : b₀ ≤ 0)
+    (hlambda_lower : (1309 / 1000 : ℝ) ≤ lambda)
+    (hlambda_upper : lambda ≤ (131 / 100 : ℝ))
+    (hf₀ : a₀ + 2 * b₀ ≤ -(17 / 10 ^ 37 : ℝ)) :
+    ∀ n,
+      (schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+        2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2 < 0 := by
+  let f : ℕ → ℝ := fun n =>
+    (schurBoundaryTrajectory lambda (a₀, b₀) n).1 +
+      2 * (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+  let u : ℕ → ℝ := fun n =>
+    |(schurBoundaryTrajectory lambda (a₀, b₀) n).2|
+  have hstate_box :=
+    schurBoundaryTrajectory_state_box
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper
+  have hu_nonneg : ∀ n, 0 ≤ u n := by
+    intro n
+    exact abs_nonneg _
+  have hu_contract : ∀ n, u (n + 1) ≤ (1 / 4 : ℝ) * u n := by
+    intro n
+    have hstate := hstate_box n
+    have ha_bounds := abs_le.mp hstate.1
+    have hlinear :=
+      schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_state_box
+        (schurBoundaryTrajectory lambda (a₀, b₀) n).1
+        (schurBoundaryTrajectory lambda (a₀, b₀) n).2
+        lambda ha_bounds.1 ha_bounds.2 hstate.2.1 hstate.2.2
+        hlambda_lower hlambda_upper
+    calc
+      u (n + 1) ≤ (1 / 10 ^ 36 : ℝ) * u n := by
+        simpa [u, schurBoundaryTrajectory] using hlinear
+      _ ≤ (1 / 4 : ℝ) * u n :=
+        mul_le_mul_of_nonneg_right (by norm_num) (hu_nonneg n)
+  have hsum_u (N : ℕ) :
+      (∑ k ∈ Finset.range N, u k) ≤ (4 / 3 : ℝ) * u 0 :=
+    sum_range_le_four_thirds_initial_of_quarter_contraction
+      u N hu_nonneg hu_contract
+  have hu₀_upper : u 0 ≤ (6 / 10 ^ 37 : ℝ) := by
+    have hb₀_abs : |b₀| ≤ (6 / 10 ^ 37 : ℝ) := by
+      apply abs_le.mpr
+      constructor
+      · exact hb₀_lower
+      · exact le_trans hb₀_upper (by norm_num)
+    simpa [u, schurBoundaryTrajectory] using hb₀_abs
+  have hbudget (N : ℕ) :
+      2 * (∑ k ∈ Finset.range N, u k) ≤ (16 / 10 ^ 37 : ℝ) := by
+    have h := hsum_u N
+    nlinarith [h, hu₀_upper]
+  have hinc :=
+    schurBoundaryTrajectory_A1_increment_bounds
+      lambda a₀ b₀ ha₀ hb₀_lower hb₀_upper
+      hlambda_lower hlambda_upper
+  have hsum_increment_bound (N : ℕ) :
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k)) ≤
+        2 * (∑ k ∈ Finset.range N, u k) := by
+    calc
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k))
+          ≤ ∑ k ∈ Finset.range N, 2 * u k := by
+              apply Finset.sum_le_sum
+              intro k hk
+              simpa [f, u] using (hinc k).2
+      _ = 2 * (∑ k ∈ Finset.range N, u k) := by
+            rw [← Finset.mul_sum]
+  have htel (N : ℕ) :
+      (∑ k ∈ Finset.range N, (f (k + 1) - f k)) = f N - f 0 :=
+    sum_range_step_difference_eq f N
+  have hf₀' : f 0 ≤ -(17 / 10 ^ 37 : ℝ) := by
+    simpa [f, schurBoundaryTrajectory] using hf₀
+  intro N
+  have hsumN := hsum_increment_bound N
+  have hbudgetN := hbudget N
+  have htelN := htel N
+  have hupper : f N ≤ f 0 + (16 / 10 ^ 37 : ℝ) := by
+    linarith
+  have hstrict_margin : f N ≤ -(1 / 10 ^ 37 : ℝ) := by
+    linarith
+  have hnegative : f N < 0 :=
+    lt_of_le_of_lt hstrict_margin (by norm_num)
+  simpa [f] using hnegative
+
 end PhiGenesis.SpectralGap
