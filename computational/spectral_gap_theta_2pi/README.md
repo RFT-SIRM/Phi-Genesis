@@ -68,8 +68,7 @@ steps followed by numerical stabilization is **evidence, not a proof**.
 ## 5. Open problems
 
 1. Prove that `λ_min(m)` converges, and identify the limit (closed form or recursion fixed point).
-2. Explain why the bottom eigenvalue is constant to 14 digits from level 5. This suggests an exact
-   eigenvector supported on a bounded patch, which would be provable on its own.
+2. Establish convergence of the bottom eigenvalue and its rate. High-precision runs ([note](HIGH_PRECISION_2026-11-06.md)) show it still increases after level 5 (levels 5 and 6 differ by 6.8e-19) and agrees at levels 6, 7, 8 to 30 digits. The increments are not a constant multiple of the square of the previous one, and the corner modes are not compactly supported.
 3. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
