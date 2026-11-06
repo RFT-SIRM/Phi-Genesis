@@ -446,28 +446,21 @@ theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
   have hLambda_pos : 0 < lambda := by linarith
   have hleft_pos : 0 < lambda - 5 * b := by linarith
   have hright_pos : 0 < lambda - 2 * b := by linarith
-  have hden_left_pos : 0 < lambda * (lambda - 5 * b) :=
-    mul_pos hLambda_pos hleft_pos
   have hden_pos :
-      0 < lambda * (lambda - 5 * b) * (lambda - 2 * b) :=
-    mul_pos hden_left_pos hright_pos
-  have hnum_pos :
-      0 < (-b) * (lambda - 10 * b) :=
+      0 < (lambda - 5 * b) * (lambda - 2 * b) :=
+    mul_pos hleft_pos hright_pos
+  have hgap_pos : 0 < (-b) * (lambda - 10 * b) :=
     mul_pos (by linarith) (by linarith)
-  have hidentity :
-      1 / lambda +
-          schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 =
-        ((-b) * (lambda - 10 * b)) /
-          (lambda * (lambda - 5 * b) * (lambda - 2 * b)) := by
-    rw [schurNextOffDiagonal_ratio_at_A1_root a b lambda hA1 hLambda hb]
-    field_simp [ne_of_gt hLambda_pos, ne_of_gt hleft_pos, ne_of_gt hright_pos]
-    ring_nf
-  have hpositive :
-      0 <
-        1 / lambda +
-          schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 := by
-    rw [hidentity]
-    exact div_pos hnum_pos hden_pos
-  linarith
+  have hcross :
+      lambda * (lambda - 6 * b) <
+        (lambda - 5 * b) * (lambda - 2 * b) := by
+    nlinarith
+  have hfactor :
+      (lambda - 6 * b) / ((lambda - 5 * b) * (lambda - 2 * b)) <
+        1 / lambda :=
+    (div_lt_div_iff₀ hden_pos hLambda_pos).2 hcross
+  rw [schurNextOffDiagonal_ratio_at_A1_root a b lambda hA1 hLambda hb]
+  rw [neg_div]
+  exact neg_lt_neg hfactor
 
 end PhiGenesis.SpectralGap
