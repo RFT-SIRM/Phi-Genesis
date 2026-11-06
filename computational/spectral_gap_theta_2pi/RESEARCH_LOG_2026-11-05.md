@@ -859,3 +859,27 @@ The next formal task is a finite-sum/tail lemma for the diagonal drift
 explicit total tail estimate. That summability estimate will then be used
 to sharpen the diagonal state interval rather than assuming an arbitrary
 fixed margin.
+
+
+## 46. Finite geometric summation of the diagonal drift (2026-11-06)
+
+Added the abstract Lean theorem
+`sum_sq_le_two_mul_initial_sq_of_half_contraction`. Its hypotheses are
+`0 <= u_n` and `u_(n+1) <= (1/2)u_n`. By induction,
+`u_n <= u_0(1/2)^n); an explicit finite geometric-tail invariant proves
+`sum_{k<N}(1/4)^k <= 2). Hence
+
+`sum_{k<N}u_k^2 <= 2u_0^2`.
+
+The companion theorem
+`diagonal_drift_total_le_four_mul_initial_sq` assumes the local bounds
+`|a_(n+1)-a_n| <= 2u_n^2` and concludes
+
+`|a_N-a_0| <= 4u_0^2`.
+
+This is a finite and abstract summation statement. It does not assume or
+prove the Schur state-box induction. The previously derived Schur factor
+`10^-36` implies the required half-contraction whenever its state and
+parameter hypotheses are valid at each step. Establishing those hypotheses
+for every step, including the root window and the diagonal coordinate, is
+still the outstanding bootstrap task.

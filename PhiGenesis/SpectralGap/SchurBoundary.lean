@@ -761,4 +761,121 @@ theorem schurNextOffDiagonal_abs_le_e_minus36_mul_abs_of_state_box
     b (schurMidpointPivot a b lambda)
     hb_lower hb_upper hc_lower hc_upper hc3_lower
 
+
+/-- The finite geometric sum of quarter-powers is bounded by two.
+The proof keeps the positive geometric tail in the induction invariant. -/
+private theorem quarter_power_sum_le_two (N : ℕ) :
+    (∑ k ∈ Finset.range N, (1 / 4 : ℝ) ^ k) ≤ 2 := by
+  have htail : ∀ n : ℕ,
+      (∑ k ∈ Finset.range n, (1 / 4 : ℝ) ^ k) +
+        2 * (1 / 4 : ℝ) ^ n ≤ 2 := by
+    intro n
+    induction n with
+    | zero =>
+        norm_num
+    | succ n ih =>
+        rw [Finset.sum_range_succ, pow_succ]
+        have hpow_nonneg : 0 ≤ (1 / 4 : ℝ) ^ n := by positivity
+        nlinarith
+  have htailN := htail N
+  have hnonneg : 0 ≤ 2 * (1 / 4 : ℝ) ^ N := by positivity
+  linarith
+
+/-- If a nonnegative sequence contracts by at least a factor 1/2 at each
+step, the sum of its squares over any finite initial segment is at most
+twice the square of its initial value. -/
+theorem sum_sq_le_two_mul_initial_sq_of_half_contraction
+    (u : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, 0 ≤ u n)
+    (hcontract : ∀ n, u (n + 1) ≤ (1 / 2 : ℝ) * u n) :
+    (∑ k ∈ Finset.range N, (u k) ^ 2) ≤ 2 * (u 0) ^ 2 := by
+  have hpoint : ∀ n, u n ≤ u 0 * (1 / 2 : ℝ) ^ n := by
+    intro n
+    induction n with
+    | zero =>
+        simp
+    | succ n ih =>
+        calc
+          u (n + 1) ≤ (1 / 2 : ℝ) * u n := hcontract n
+          _ ≤ (1 / 2 : ℝ) * (u 0 * (1 / 2 : ℝ) ^ n) :=
+            mul_le_mul_of_nonneg_left ih (by norm_num)
+          _ = u 0 * (1 / 2 : ℝ) ^ (n + 1) := by
+            rw [pow_succ]
+            ring
+  have hsquare : ∀ n, (u n) ^ 2 ≤ (u 0) ^ 2 * (1 / 4 : ℝ) ^ n := by
+    intro n
+    have hpoint_n := hpoint n
+    have hhalf_nonneg : 0 ≤ (1 / 2 : ℝ) ^ n := by positivity
+    have hbound_nonneg : 0 ≤ u 0 * (1 / 2 : ℝ) ^ n :=
+      mul_nonneg (hu_nonneg 0) hhalf_nonneg
+    have hmul_left :=
+      mul_le_mul_of_nonneg_right hpoint_n (hu_nonneg n)
+    have hmul_right :=
+      mul_le_mul_of_nonneg_left hpoint_n hbound_nonneg
+    calc
+      (u n) ^ 2 = u n * u n := by ring
+      _ ≤ (u 0 * (1 / 2 : ℝ) ^ n) * u n := hmul_left
+      _ ≤ (u 0 * (1 / 2 : ℝ) ^ n) *
+          (u 0 * (1 / 2 : ℝ) ^ n) := hmul_right
+      _ = (u 0) ^ 2 * (1 / 4 : ℝ) ^ n := by
+        calc
+          (u 0 * (1 / 2 : ℝ) ^ n) *
+              (u 0 * (1 / 2 : ℝ) ^ n)
+              = (u 0) ^ 2 * ((1 / 2 : ℝ) ^ n * (1 / 2 : ℝ) ^ n) := by ring
+          _ = (u 0) ^ 2 * ((1 / 2 : ℝ) * (1 / 2 : ℝ)) ^ n := by
+            rw [← mul_pow]
+          _ = (u 0) ^ 2 * (1 / 4 : ℝ) ^ n := by norm_num
+  calc
+    (∑ k ∈ Finset.range N, (u k) ^ 2)
+        ≤ ∑ k ∈ Finset.range N, (u 0) ^ 2 * (1 / 4 : ℝ) ^ k := by
+          apply Finset.sum_le_sum
+          intro k hk
+          exact hsquare k
+    _ = (u 0) ^ 2 *
+        (∑ k ∈ Finset.range N, (1 / 4 : ℝ) ^ k) := by
+          rw [← Finset.mul_sum]
+    _ ≤ (u 0) ^ 2 * 2 :=
+      mul_le_mul_of_nonneg_left (quarter_power_sum_le_two N) (sq_nonneg (u 0))
+    _ = 2 * (u 0) ^ 2 := by ring
+
+/-- The total finite diagonal Schur drift is at most four times the
+initial off-diagonal magnitude squared, provided the latter contracts
+by at least one half per step. -/
+theorem diagonal_drift_total_le_four_mul_initial_sq
+    (u a : ℕ → ℝ) (N : ℕ)
+    (hu_nonneg : ∀ n, 0 ≤ u n)
+    (hcontract : ∀ n, u (n + 1) ≤ (1 / 2 : ℝ) * u n)
+    (hdiagonal_step :
+      ∀ n, |a (n + 1) - a n| ≤ 2 * (u n) ^ 2) :
+    |a N - a 0| ≤ 4 * (u 0) ^ 2 := by
+  have hfinite : ∀ n,
+      |a n - a 0| ≤
+        2 * (∑ k ∈ Finset.range n, (u k) ^ 2) := by
+    intro n
+    induction n with
+    | zero =>
+        simp
+    | succ n ih =>
+        rw [Finset.sum_range_succ]
+        calc
+          |a (n + 1) - a 0|
+              = |(a n - a 0) + (a (n + 1) - a n)| := by
+                  congr 1
+                  ring
+          _ ≤ |a n - a 0| + |a (n + 1) - a n| :=
+            abs_add _ _
+          _ ≤ 2 * (∑ k ∈ Finset.range n, (u k) ^ 2) +
+              2 * (u n) ^ 2 :=
+            add_le_add ih (hdiagonal_step n)
+          _ = 2 * ((∑ k ∈ Finset.range n, (u k) ^ 2) + (u n) ^ 2) := by
+            ring
+  calc
+    |a N - a 0|
+        ≤ 2 * (∑ k ∈ Finset.range N, (u k) ^ 2) := hfinite N
+    _ ≤ 2 * (2 * (u 0) ^ 2) :=
+      mul_le_mul_of_nonneg_left
+        (sum_sq_le_two_mul_initial_sq_of_half_contraction u N hu_nonneg hcontract)
+        (by norm_num)
+    _ = 4 * (u 0) ^ 2 := by ring
+
 end PhiGenesis.SpectralGap

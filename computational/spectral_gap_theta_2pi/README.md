@@ -327,6 +327,26 @@ increments. It is still a conditional one-step implication: the state box
 and the root window must be established at every level before the geometric
 bound can be iterated.
 
+
+
+A finite-sum consequence of the geometric contraction is now formalized
+abstractly in Lean. If `u_n >= 0` and
+`u_(n+1) <= (1/2)u_n`, then for every finite `N`,
+
+`sum_{k < N} u_k^2 <= 2*u_0^2`.
+
+Combining this with the diagonal one-step estimate
+`|a_(k+1)-a_k| <= 2*u_k^2` gives
+
+`|a_N-a_0| <= 4*u_0^2`.
+
+The proof is finite and conditional on the displayed sequence bounds.
+The actual Schur contraction `10^-36` is stronger than the required
+`1/2`, but the level-by-level state-box and root-window hypotheses needed
+to iterate it have not yet been proved invariant. The result therefore
+provides the summation mechanism, not yet an unconditional all-level
+spectral-limit theorem.
+
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
