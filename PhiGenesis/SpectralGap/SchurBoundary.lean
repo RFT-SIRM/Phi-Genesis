@@ -415,4 +415,57 @@ theorem schurNextA1_pos_at_A1_root (a b lambda : ℝ)
   rw [hrewrite]
   exact hpos
 
+
+/-- Exact off-diagonal update factor evaluated at an A1 root.
+The expression is evaluated at the old root lambda; it is not yet
+the coefficient at the next level's new root. -/
+theorem schurNextOffDiagonal_ratio_at_A1_root
+    (a b lambda : ℝ) (hA1 : a + 2 * b = 0)
+    (hLambda : 1 ≤ lambda) (hb : b < 0) :
+    schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 =
+      -(lambda - 6 * b) / ((lambda - 5 * b) * (lambda - 2 * b)) := by
+  have hc_eq :
+      schurMidpointPivot a b lambda = lambda - 5 * b :=
+    schurMidpointPivot_eq_lambda_sub_five_b_at_A1_root a b lambda hA1
+  have hc_pos : 0 < schurMidpointPivot a b lambda := by
+    rw [hc_eq]
+    linarith
+  have hratio := schurNextOffDiagonal_div_sq b
+    (schurMidpointPivot a b lambda) (ne_of_lt hb) (ne_of_gt hc_pos)
+  rw [hratio, hc_eq]
+  ring
+
+/-- At an A1 root, the old-root off-diagonal update is strictly larger
+than -1/lambda after division by b^2. Equivalently, its positive
+magnitude is strictly below 1/lambda. -/
+theorem schurNextOffDiagonal_ratio_gt_neg_inv_lambda
+    (a b lambda : ℝ) (hA1 : a + 2 * b = 0)
+    (hLambda : 1 ≤ lambda) (hb : b < 0) :
+    -(1 / lambda) <
+      schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 := by
+  have hLambda_pos : 0 < lambda := by linarith
+  have hleft_pos : 0 < lambda - 5 * b := by linarith
+  have hright_pos : 0 < lambda - 2 * b := by linarith
+  have hden_pos :
+      0 < lambda * (lambda - 5 * b) * (lambda - 2 * b) :=
+    mul_pos hLambda_pos (mul_pos hleft_pos hright_pos)
+  have hnum_pos :
+      0 < (-b) * (lambda - 10 * b) :=
+    mul_pos (by linarith) (by linarith)
+  have hidentity :
+      1 / lambda +
+          schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 =
+        ((-b) * (lambda - 10 * b)) /
+          (lambda * (lambda - 5 * b) * (lambda - 2 * b)) := by
+    rw [schurNextOffDiagonal_ratio_at_A1_root a b lambda hA1 hLambda hb]
+    field_simp [ne_of_gt hLambda_pos, ne_of_gt hleft_pos, ne_of_gt hright_pos]
+    ring
+  have hpositive :
+      0 <
+        1 / lambda +
+          schurNextOffDiagonal b (schurMidpointPivot a b lambda) / b ^ 2 := by
+    rw [hidentity]
+    exact div_pos hnum_pos hden_pos
+  linarith
+
 end PhiGenesis.SpectralGap
