@@ -1591,7 +1591,11 @@ theorem schurNextDiagonal_continuousAt
         ((2 * (b y) ^ 2) * (c y + b y)) /
           (c y * (c y + 3 * b y))) x :=
     hnum.div hden (mul_ne_zero hc0 hc3)
-  simpa [schurNextDiagonal] using ha.sub hquot
+  change ContinuousAt
+    (fun y => a y -
+      ((2 * (b y) ^ 2 * (c y + b y)) /
+        (c y * (c y + 3 * b y)))) x
+  exact ha.sub hquot
 
 
 /-- The next off-diagonal Schur coefficient is continuous under the
@@ -1611,10 +1615,8 @@ theorem schurNextOffDiagonal_continuousAt
       (fun y => c y * (c y + 3 * b y)) x :=
     hc.mul hc3_cont
   have hbsq : ContinuousAt (fun y => (b y) ^ 2) x := hb.pow 2
-  have hneg_sq : ContinuousAt (fun y => -((b y) ^ 2)) x := by
-    simpa using
-      (continuousAt_const.mul hbsq :
-        ContinuousAt (fun y => (-1 : ℝ) * (b y) ^ 2) x)
+  have hneg_sq : ContinuousAt (fun y => -((b y) ^ 2)) x :=
+    hbsq.neg
   have hnum : ContinuousAt
       (fun y => (-((b y) ^ 2)) * (c y - b y)) x :=
     hneg_sq.mul hcb
@@ -1656,9 +1658,8 @@ theorem schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots
   | zero =>
       intro hden
       constructor
-      · simpa [schurBoundaryTrajectory] using
-          (continuousAt_const.sub continuousAt_id :
-            ContinuousAt (fun lambda : ℝ => 2 - lambda) lambda₀)
+      · change ContinuousAt (fun lambda : ℝ => 2 - lambda) lambda₀
+        fun_prop
       · simpa [schurBoundaryTrajectory] using
           (continuousAt_const :
             ContinuousAt (fun _ : ℝ => (1 : ℝ)) lambda₀)
@@ -1683,7 +1684,9 @@ theorem schurBoundaryTrajectory_pair_continuousAt_of_nonzero_pivots
           ContinuousAt (fun lambda => 2 * af lambda + lambda) lambda₀ :=
         htwoA.add continuousAt_id
       have hC : ContinuousAt cf lambda₀ := by
-        simpa [cf, schurMidpointPivot] using htwoA_add_lambda.sub hBprev
+        change ContinuousAt
+          (fun lambda => 2 * af lambda + lambda - bf lambda) lambda₀
+        exact htwoA_add_lambda.sub hBprev
       have hnonzero :
           cf lambda₀ ≠ 0 ∧ cf lambda₀ + 3 * bf lambda₀ ≠ 0 := by
         simpa [cf, af, bf] using hden n (by omega)
