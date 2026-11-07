@@ -577,3 +577,16 @@ this file that no Lean theorem about the level-six root exists are superseded by
 Still open: **B2b**, the statement that the 3x3 Schur complement of `Q_{m+1} - lam I` on the outer
 corners is obtained from that of `Q_m - lam I` by `schurNextDiagonal` / `schurNextOffDiagonal`.
 Until B2b is proved the scalar recursion is not formally tied to the graph matrix at levels >= 1.
+
+### Update 2026-11-07: algebraic half of the gluing step (Lean)
+
+`PhiGenesis/SpectralGap/SchurGlueAlgebra.lean` proves the algebra of one gluing step. For three
+copies of a cell with corner Schur matrix `(a, b)`, glued at three midpoints, with
+`c = 2a + lam - b` and nonzero `c` and `c + 3b`, the explicit midpoint values `schurGlueMid`
+solve the midpoint equations (`schurGlue_midpoint_row`), and the resulting response at an outer corner
+is `schurNextDiagonal` / `schurNextOffDiagonal` (`schurGlue_corner_response`).
+
+Still open: the combinatorial half of B2b, i.e. that the edges of `Q_{m+1}` split into three
+translates of the edges of `Q_m` meeting only at the three midpoints, so that these formulas apply to
+`sgSignlessLaplacianMatrix (m+1)`; and the inertia argument that identifies the A1 root with the bottom
+eigenvalue at every level.
