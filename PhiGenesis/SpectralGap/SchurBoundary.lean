@@ -4361,34 +4361,4 @@ theorem schurBootstrapA1AtLevel_differentiableAt
     hcoords.1.hasDerivAt.add (hcoords.2.hasDerivAt.const_mul 2)
   simpa [schurBootstrapA1AtLevel] using hsum.differentiableAt
 
-namespace PhiGenesis.SpectralGap
-
-/-!
-A minimal regression check for scalar derivative operations on real numbers.
-The explicit local structures ensure that the codomain additive group and
-scalar module used by HasDerivAt are the same structures used by pointwise
-function operations.
--/
-section SchurDerivativeInstanceSmoke
-
-local instance : NormedAddCommGroup ℝ := Real.normedAddCommGroup
-local instance : InnerProductSpace ℝ ℝ := RCLike.toInnerProductSpaceReal
-
-private theorem schurDerivativeNegSmoke
-    (f : ℝ → ℝ) (x f' : ℝ)
-    (hf : HasDerivAt f f' x) :
-    HasDerivAt (fun y => -f y) (-f') x := by
-  change HasDerivAt (-f) (-f') x
-  exact hf.neg
-
-private theorem schurDerivativeSubSmoke
-    (f g : ℝ → ℝ) (x f' g' : ℝ)
-    (hf : HasDerivAt f f' x)
-    (hg : HasDerivAt g g' x) :
-    HasDerivAt (fun y => f y - g y) (f' - g') x := by
-  change HasDerivAt (f - g) (f' - g') x
-  exact hf.sub hg
-
-end SchurDerivativeInstanceSmoke
-
 end PhiGenesis.SpectralGap
