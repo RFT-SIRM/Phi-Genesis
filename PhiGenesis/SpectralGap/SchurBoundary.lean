@@ -3778,4 +3778,110 @@ theorem schurBootstrapA1AtLevel_limit_exists_root :
   obtain ⟨lambda, hlambda, hvalue⟩ := himage hzero
   exact ⟨lambda, hlambda, hvalue⟩
 
+
+/-- The pointwise limit differs from a finite-level A1 characteristic by
+at most the uniform geometric tail remaining after that level. -/
+theorem schurBootstrapA1AtLevel_limit_tail_control
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper)
+    (n : ℕ) :
+    0 ≤ schurBootstrapA1AtLevel_limit lambda -
+        schurBootstrapA1AtLevel lambda n ∧
+      schurBootstrapA1AtLevel_limit lambda -
+        schurBootstrapA1AtLevel lambda n ≤
+          (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := by
+  have htail (m : ℕ) (hm : n ≤ m) :
+      0 ≤ schurBootstrapA1AtLevel lambda m -
+          schurBootstrapA1AtLevel lambda n ∧
+        schurBootstrapA1AtLevel lambda m -
+          schurBootstrapA1AtLevel lambda n ≤
+            (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := by
+    have h :=
+      schurBootstrapA1AtLevel_tail_bound lambda hlambda n (m - n)
+    have hindex : n + (m - n) = m := Nat.add_sub_of_le hm
+    rw [hindex] at h
+    exact h
+  have hlim :=
+    Tendsto.sub_const
+      (schurBootstrapA1AtLevel_tendsto_limit lambda hlambda)
+      (schurBootstrapA1AtLevel lambda n)
+  constructor
+  · apply ge_of_tendsto hlim
+    filter_upwards
+      [eventually_atTop.2 ⟨n, fun m hm => (htail m hm).1⟩] with m hm
+    exact hm
+  · apply le_of_tendsto hlim
+    filter_upwards
+      [eventually_atTop.2 ⟨n, fun m hm => (htail m hm).2⟩] with m hm
+    exact hm
+
+/-- A canonical choice of one finite-level A1 root at every level. -/
+noncomputable def schurBootstrapA1AtLevel_chosenRoot (n : ℕ) : ℝ :=
+  Classical.choose (schurBootstrapA1AtLevel_exists_root n)
+
+/-- The selected finite-level root lies in the bootstrap interval and
+annihilates its own finite-level A1 characteristic. -/
+theorem schurBootstrapA1AtLevel_chosenRoot_spec (n : ℕ) :
+    schurBootstrapA1AtLevel_chosenRoot n ∈
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper ∧
+      schurBootstrapA1AtLevel
+        (schurBootstrapA1AtLevel_chosenRoot n) n = 0 :=
+  Classical.choose_spec (schurBootstrapA1AtLevel_exists_root n)
+
+/-- At a chosen finite-level root, the limiting characteristic is
+nonnegative and its absolute value is bounded by the remaining geometric
+tail. -/
+theorem schurBootstrapA1AtLevel_chosenRoot_limit_bound (n : ℕ) :
+    0 ≤ schurBootstrapA1AtLevel_limit
+        (schurBootstrapA1AtLevel_chosenRoot n) ∧
+      |schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_chosenRoot n)| ≤
+        (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := by
+  have hroot := schurBootstrapA1AtLevel_chosenRoot_spec n
+  have htail :=
+    schurBootstrapA1AtLevel_limit_tail_control
+      (schurBootstrapA1AtLevel_chosenRoot n) hroot.1 n
+  rw [hroot.2] at htail
+  constructor
+  · simpa using htail.1
+  · calc
+      |schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_chosenRoot n)| =
+        schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_chosenRoot n) :=
+            abs_of_nonneg htail.1
+      _ ≤ (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := htail.2
+
+/-- Along any fixed choice of a finite-level root at every level, the value
+of the limiting characteristic tends to zero.  Thus the finite roots are
+uniformly controlled approximate roots of the limiting equation. -/
+theorem schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero :
+    Tendsto
+      (fun n : ℕ =>
+        schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_chosenRoot n))
+      atTop (𝓝 (0 : ℝ)) := by
+  let bound : ℕ → ℝ :=
+    fun n => (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n
+  have hpow :
+      Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n)
+        atTop (𝓝 (0 : ℝ)) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  have hbound : Tendsto bound atTop (𝓝 (0 : ℝ)) := by
+    simpa [bound] using
+      (tendsto_const_nhds.mul hpow)
+  refine tendsto_order.2 ⟨?_, ?_⟩
+  · intro a ha
+    filter_upwards with n
+    exact lt_of_lt_of_le ha
+      (schurBootstrapA1AtLevel_chosenRoot_limit_bound n).1
+  · intro a ha
+    filter_upwards
+      [hbound.eventually (gt_mem_nhds ha)] with n hn
+    have hroot := schurBootstrapA1AtLevel_chosenRoot_limit_bound n
+    exact lt_of_le_of_lt
+      (le_trans (le_abs_self _) hroot.2) (by simpa [bound] using hn)
+
 end PhiGenesis.SpectralGap
