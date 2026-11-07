@@ -16,3 +16,4 @@ import PhiGenesis.H10.GasketVertexSplit
 import PhiGenesis.H10.GasketVertexExplicit
 import PhiGenesis.H10.GasketVertexStateA
 import PhiGenesis.H10.GasketVertexChildCells
+import PhiGenesis.SpectralGap.DerivativeScratch
