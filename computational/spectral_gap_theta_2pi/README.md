@@ -68,7 +68,7 @@ steps followed by numerical stabilization is **evidence, not a proof**.
 ## 5. Open problems
 
 1. Prove that `λ_min(m)` converges, and identify the limit (closed form or recursion fixed point).
-2. Establish convergence of the bottom eigenvalue and its rate. High-precision runs ([note](HIGH_PRECISION_2026-11-06.md)) show it still increases after level 5 (levels 5 and 6 differ by 6.8e-19) and agrees at levels 6, 7, 8 to 30 digits. The increments are not a constant multiple of the square of the previous one, and the corner modes are not compactly supported.
+2. Prove convergence of the bottom eigenvalue. An exact Schur recursion ([note](HIGH_PRECISION_2026-11-06.md)) gives it to 145 digits and shows Delta_(m+1) = c Delta_m^2 with c = 0.4939504899 from level 7 on, but this is a numerical observation, not a proof. Find the meaning of c and a closed form for the limit, if one exists.
 3. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
