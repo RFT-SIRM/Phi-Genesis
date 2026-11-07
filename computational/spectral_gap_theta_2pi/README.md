@@ -541,3 +541,17 @@ This is a statement about these scalar objects. It does not by itself prove that
 roots are the bottom eigenvalues `λ_min(m)` of the graph operators, that `λ_min(m)` converges,
 that the root is unique in the interval, or the quadratic law. Those remain open; the next
 step is the identification of the A1 branch with the global bottom of the spectrum at every level.
+
+### Scope of the Lean Schur development (as of 2026-11-07)
+
+Formalized in `PhiGenesis/SpectralGap/SchurBoundary.lean`: the scalar Schur recursion
+(`schurBoundaryTrajectory`, the `schurBootstrapA1AtLevel_*` family), its uniform tail bound, uniform
+convergence on the bootstrap interval, continuity of the limiting A1 characteristic, and
+`schurBootstrapA1AtLevel_rootLimit_is_root`.
+
+Not formalized in Lean: (1) a bridge from the graph matrix to this recursion (the level-`m` signed matrix
+`sgSignedLaplacianMatrix m` is defined in `SignedLaplacianMatrix.lean`, but there is no
+Schur-complement statement connecting it to `schurBoundaryTrajectory`, and the gauge equivalence
+with the signless Laplacian used in the note is not formalized there); (2) identification of the selected A1 roots with the bottom eigenvalue
+`λ_min(m)` at every level; (3) convergence of `λ_min(m)`; (4) the quadratic increment law. Items (1)–(4)
+are open; (1) and (2) are the next steps, in that order.
