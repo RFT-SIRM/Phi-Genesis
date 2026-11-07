@@ -106,7 +106,7 @@ def d3_vertex_permutations(
     floating-point trignometric rotations/reflections when building the group.
     """
     vertices = tuple(vertices)
-    edges = tuple(tuple(sorted((int(a), int(b))))) for a, b in edges)
+    edges = tuple(tuple(sorted((int(a), int(b)))) for a, b in edges)
     index_of: dict[tuple[int, int, int], int] = {}
     keys: list[tuple[int, int, int]] = []
     for index, (x, y) in enumerate(vertices):
@@ -119,6 +119,7 @@ def d3_vertex_permutations(
     edge_set = set(edges)
     if len(edge_set) != len(edges):
         raise ValueError("graph contains duplicate undirected edges")
+
 
     actions: list[np.ndarray] = []
     for order in _D3_ORDERS:
