@@ -551,7 +551,15 @@ convergence on the bootstrap interval, continuity of the limiting A1 characteris
 
 Not formalized in Lean: (1) a bridge from the graph matrix to this recursion (the level-`m` signed matrix
 `sgSignedLaplacianMatrix m` is defined in `SignedLaplacianMatrix.lean`, but there is no
-Schur-complement statement connecting it to `schurBoundaryTrajectory`, and the gauge equivalence
-with the signless Laplacian used in the note is not formalized there); (2) identification of the selected A1 roots with the bottom eigenvalue
+Schur-complement statement connecting it to `schurBoundaryTrajectory`, and the gauge equivalence with the signless Laplacian is formalized only for
+quadratic forms (`sgSignedGraphEnergy_eq_gauged`), not used by the Schur development); (2) identification of the selected A1 roots with the bottom eigenvalue
 `λ_min(m)` at every level; (3) convergence of `λ_min(m)`; (4) the quadratic increment law. Items (1)–(4)
 are open; (1) and (2) are the next steps, in that order.
+
+### Update 2026-11-07: the level-six starting enclosure is a Lean theorem
+
+`schurBootstrapLower_levelSix_certificate` and `schurBootstrapUpper_levelSix_certificate`
+(`PhiGenesis/SpectralGap/SchurBoundary.lean`) compute six exact Schur steps from the original state
+`(2-λ, 1)` at the rational endpoints `schurBootstrapLambdaLower/Upper` (36 decimal digits) and give
+the enclosure `|a_0| <= 3e-36`, `b_0 in [-6e-37, 0]` together with the A1 signs. Earlier remarks in
+this file that no Lean theorem about the level-six root exists are superseded by this entry.
