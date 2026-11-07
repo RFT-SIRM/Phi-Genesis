@@ -4240,10 +4240,12 @@ private theorem schurNextPair_differentiableAt_of_hasDerivAt
           ((2 * (b y) ^ 2) * (c y + b y)) /
             (c y * (c y + 3 * b y))) _ x :=
     ha.sub hquotA
+  have hnegBSq : HasDerivAt (fun y => -((b y) ^ 2)) _ x :=
+    hbSq.neg
   have hnumB :
       HasDerivAt
         (fun y => (-((b y) ^ 2)) * (c y - b y)) _ x :=
-    ((hbSq.const_mul (-1)).mul (hc.sub hb))
+    hnegBSq.mul (hc.sub hb)
   have hquotB :
       HasDerivAt
         (fun y =>
@@ -4287,9 +4289,11 @@ theorem schurBoundaryTrajectory_pair_differentiableAt_of_nonzero_pivots
       constructor
       · have hA :
             HasDerivAt (fun lambda : ℝ => 2 - lambda) (-1) lambda₀ := by
-          simpa using
-            (hasDerivAt_const lambda₀ (2 : ℝ)).sub
-              (hasDerivAt_id lambda₀)
+          change HasDerivAt
+            ((fun _ : ℝ => (2 : ℝ)) + (fun lambda : ℝ => -lambda))
+            (-1) lambda₀
+          exact (hasDerivAt_const lambda₀ (2 : ℝ)).add
+            (hasDerivAt_id lambda₀).neg
         simpa [schurBoundaryTrajectory] using hA.differentiableAt
       · simpa [schurBoundaryTrajectory] using
           (hasDerivAt_const lambda₀ (1 : ℝ)).differentiableAt
