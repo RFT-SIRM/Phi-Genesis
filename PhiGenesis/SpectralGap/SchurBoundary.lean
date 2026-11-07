@@ -3724,4 +3724,58 @@ theorem schurBootstrapA1AtLevel_limit_continuousOn :
   exact Filter.Frequently.of_forall
     schurBootstrapA1AtLevel_continuousOn
 
+
+/-- The limiting A1 characteristic has at least one zero in the bootstrap
+interval.  The finite-level endpoint signs pass to the pointwise limit, and
+continuity of the uniform limit then gives a zero by the intermediate value
+theorem.  This establishes existence, not uniqueness. -/
+theorem schurBootstrapA1AtLevel_limit_exists_root :
+    ∃ lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper,
+      schurBootstrapA1AtLevel_limit lambda = 0 := by
+  have hle :
+      schurBootstrapLambdaLower ≤ schurBootstrapLambdaUpper := by
+    norm_num [schurBootstrapLambdaLower, schurBootstrapLambdaUpper]
+  have hleftMem :
+      schurBootstrapLambdaLower ∈
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper :=
+    ⟨le_rfl, hle⟩
+  have hrightMem :
+      schurBootstrapLambdaUpper ∈
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper :=
+    ⟨hle, le_rfl⟩
+  have hsigns := schurBootstrapEndpoints_A1_signs_all_finite_levels
+  have hleft :
+      0 ≤ schurBootstrapA1AtLevel_limit schurBootstrapLambdaLower := by
+    apply ge_of_tendsto'
+      (schurBootstrapA1AtLevel_tendsto_limit
+        schurBootstrapLambdaLower hleftMem)
+    intro n
+    have hnonneg :
+        0 ≤ schurBootstrapA1AtLevel schurBootstrapLambdaLower n := by
+      simpa [schurBootstrapA1AtLevel, schurBoundaryTrajectory_add] using
+        hsigns.1 n
+    exact hnonneg
+  have hright :
+      schurBootstrapA1AtLevel_limit schurBootstrapLambdaUpper ≤ 0 := by
+    apply le_of_tendsto'
+      (schurBootstrapA1AtLevel_tendsto_limit
+        schurBootstrapLambdaUpper hrightMem)
+    intro n
+    have hnegative :
+        schurBootstrapA1AtLevel schurBootstrapLambdaUpper n < 0 := by
+      simpa [schurBootstrapA1AtLevel, schurBoundaryTrajectory_add] using
+        hsigns.2 n
+    exact le_of_lt hnegative
+  have hzero :
+      (0 : ℝ) ∈ Set.Icc
+        (schurBootstrapA1AtLevel_limit schurBootstrapLambdaUpper)
+        (schurBootstrapA1AtLevel_limit schurBootstrapLambdaLower) :=
+    ⟨hright, hleft⟩
+  have himage :=
+    intermediate_value_Icc' hle
+      schurBootstrapA1AtLevel_limit_continuousOn
+  obtain ⟨lambda, hlambda, hvalue⟩ := himage hzero
+  exact ⟨lambda, hlambda, hvalue⟩
+
 end PhiGenesis.SpectralGap
