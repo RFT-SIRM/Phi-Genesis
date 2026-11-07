@@ -4441,7 +4441,13 @@ private theorem schurNextPair_deriv_formula
     hnumB.div hden (mul_ne_zero hc0 hc3)
   have hnextA := ha.sub hquotA
   constructor
-  · have hfunA :
+  · change
+      deriv (fun y =>
+        a y - ((2 * (b y) ^ 2) * (c y + b y)) /
+          (c y * (c y + 3 * b y))) x =
+        schurNextDiagonalParameterDerivative
+          (b x) (c x) a' b' c'
+    have hfunA :
         (fun y =>
           a y - ((2 * (b y) ^ 2) * (c y + b y)) /
             (c y * (c y + 3 * b y))) =
