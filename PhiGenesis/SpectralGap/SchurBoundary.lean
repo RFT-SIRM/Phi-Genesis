@@ -3899,6 +3899,112 @@ theorem schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero :
     exact lt_of_le_of_lt
       (le_trans (le_abs_self _) hroot.2) (by simpa [bound] using hn)
 
+
+/-- Quotient-rule expression for a parameter-dependent scalar quotient. -/
+noncomputable def schurQuotientParameterDerivative
+    (num num' den den' : ℝ) : ℝ :=
+  (num' * den - num * den') / den ^ 2
+
+/-- Parameter derivative of the diagonal coefficient after one Schur step. -/
+noncomputable def schurNextDiagonalParameterDerivative
+    (b c a' b' c' : ℝ) : ℝ :=
+  a' - schurQuotientParameterDerivative
+    (2 * b ^ 2 * (c + b))
+    (2 * (2 * b * b') * (c + b) + 2 * b ^ 2 * (c' + b'))
+    (c * (c + 3 * b))
+    (c' * (c + 3 * b) + c * (c' + 3 * b'))
+
+/-- Parameter derivative of the off-diagonal coefficient after one Schur step. -/
+noncomputable def schurNextOffDiagonalParameterDerivative
+    (b c b' c' : ℝ) : ℝ :=
+  schurQuotientParameterDerivative
+    (-b ^ 2 * (c - b))
+    (-(2 * b * b') * (c - b) + (-(b ^ 2)) * (c' - b'))
+    (c * (c + 3 * b))
+    (c' * (c + 3 * b) + c * (c' + 3 * b'))
+
+/-- A single rational Schur step has the explicit parameter derivatives
+given by the quotient rule. The only side conditions are precisely the
+two pivot nonvanishing conditions used by the update. -/
+private theorem schurNextPair_hasDerivAt_parameter_formula
+    (a b c : ℝ → ℝ) (x a' b' c' : ℝ)
+    (ha : HasDerivAt a a' x)
+    (hb : HasDerivAt b b' x)
+    (hc : HasDerivAt c c' x)
+    (hc0 : c x ≠ 0)
+    (hc3 : c x + 3 * b x ≠ 0) :
+    HasDerivAt
+        (fun y => schurNextDiagonal (a y) (b y) (c y))
+        (schurNextDiagonalParameterDerivative
+          (b x) (c x) a' b' c') x ∧
+      HasDerivAt
+        (fun y => schurNextOffDiagonal (b y) (c y))
+        (schurNextOffDiagonalParameterDerivative
+          (b x) (c x) b' c') x := by
+  have hcb : HasDerivAt (fun y => c y + b y) (c' + b') x :=
+    hc.add hb
+  have hc3fun :
+      HasDerivAt (fun y => c y + 3 * b y) (c' + 3 * b') x :=
+    hc.add (hb.const_mul 3)
+  have hden :
+      HasDerivAt (fun y => c y * (c y + 3 * b y)) _ x :=
+    hc.mul hc3fun
+  have hbSq : HasDerivAt (fun y => (b y) ^ 2)
+      (2 * b x * b') x := by
+    simpa using hb.fun_pow 2
+  have htwoBSq : HasDerivAt (fun y => 2 * (b y) ^ 2)
+      (2 * (2 * b x * b')) x := by
+    simpa using hbSq.const_mul 2
+  have hnumA :
+      HasDerivAt
+        (fun y => (2 * (b y) ^ 2) * (c y + b y))
+        (2 * (2 * b x * b') * (c x + b x) +
+          2 * (b x) ^ 2 * (c' + b')) x :=
+    htwoBSq.mul hcb
+  have hquotA :
+      HasDerivAt
+        (fun y =>
+          ((2 * (b y) ^ 2) * (c y + b y)) /
+            (c y * (c y + 3 * b y)))
+        (schurQuotientParameterDerivative
+          (2 * (b x) ^ 2 * (c x + b x))
+          (2 * (2 * b x * b') * (c x + b x) +
+            2 * (b x) ^ 2 * (c' + b'))
+          (c x * (c x + 3 * b x))
+          (c' * (c x + 3 * b x) +
+            c x * (c' + 3 * b'))) x := by
+    simpa [schurQuotientParameterDerivative] using
+      hnumA.fun_div hden (mul_ne_zero hc0 hc3)
+  have hnegBSq : HasDerivAt (fun y => -((b y) ^ 2))
+      (-(2 * b x * b')) x := by
+    simpa only [Pi.neg_apply] using hbSq.neg
+  have hnumB :
+      HasDerivAt
+        (fun y => (-((b y) ^ 2)) * (c y - b y))
+        (-(2 * b x * b') * (c x - b x) +
+          (-(b x ^ 2)) * (c' - b')) x :=
+    hnegBSq.mul (hc.sub hb)
+  have hquotB :
+      HasDerivAt
+        (fun y =>
+          ((-((b y) ^ 2)) * (c y - b y)) /
+            (c y * (c y + 3 * b y)))
+        (schurQuotientParameterDerivative
+          (-(b x ^ 2) * (c x - b x))
+          (-(2 * b x * b') * (c x - b x) +
+            (-(b x ^ 2)) * (c' - b'))
+          (c x * (c x + 3 * b x))
+          (c' * (c x + 3 * b x) +
+            c x * (c' + 3 * b'))) x := by
+    simpa [schurQuotientParameterDerivative] using
+      hnumB.fun_div hden (mul_ne_zero hc0 hc3)
+  constructor
+  · have hnext := ha.sub hquotA
+    simpa [schurNextDiagonal, schurNextDiagonalParameterDerivative,
+      schurQuotientParameterDerivative] using hnext
+  · simpa [schurNextOffDiagonal, schurNextOffDiagonalParameterDerivative,
+      schurQuotientParameterDerivative] using hquotB
+
 end PhiGenesis.SpectralGap
 
 
