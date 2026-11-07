@@ -3902,14 +3902,14 @@ theorem schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero :
 
 /-- Derivative of a scalar quotient, written in terms of the values
 and derivatives of its numerator and denominator. -/
-def schurQuotientParameterDerivative
+noncomputable def schurQuotientParameterDerivative
     (num num' den den' : ℝ) : ℝ :=
   (num' * den - num * den') / den ^ 2
 
 /-- Exact parameter derivative of the diagonal coefficient after one
 Schur step. The six arguments are the input state and its parameter
 derivative. -/
-def schurNextDiagonalParameterDerivative
+noncomputable def schurNextDiagonalParameterDerivative
     (a b c a' b' c' : ℝ) : ℝ :=
   a' - schurQuotientParameterDerivative
     (2 * b ^ 2 * (c + b))
@@ -3919,7 +3919,7 @@ def schurNextDiagonalParameterDerivative
 
 /-- Exact parameter derivative of the off-diagonal coefficient after
 one Schur step. -/
-def schurNextOffDiagonalParameterDerivative
+noncomputable def schurNextOffDiagonalParameterDerivative
     (b c b' c' : ℝ) : ℝ :=
   schurQuotientParameterDerivative
     (-b ^ 2 * (c - b))
@@ -3954,7 +3954,7 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
     hc.mul hc3fun
   have hbSq : HasDerivAt (fun y => (b y) ^ 2)
       (2 * b x * b') x := by
-    simpa using hb.pow 2
+    simpa using hb.fun_pow 2
   have htwoBSq : HasDerivAt (fun y => 2 * (b y) ^ 2)
       (2 * (2 * b x * b')) x := by
     simpa using hbSq.const_mul 2
@@ -3976,11 +3976,16 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
           (c x * (c x + 3 * b x))
           (c' * (c x + 3 * b x) +
             c x * (c' + 3 * b'))) x := by
-    simpa [schurQuotientParameterDerivative] using
-      hnumA.div hden (mul_ne_zero hc0 hc3)
+    convert hnumA.div hden (mul_ne_zero hc0 hc3) using 1
+    · ext y
+      rfl
+    · rfl
   have hnegBSq : HasDerivAt (fun y => -((b y) ^ 2))
       (-(2 * b x * b')) x := by
-    simpa using hbSq.neg
+    convert hbSq.neg using 1
+    · ext y
+      rfl
+    · rfl
   have hnumB :
       HasDerivAt
         (fun y => (-((b y) ^ 2)) * (c y - b y))
@@ -3999,13 +4004,20 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
           (c x * (c x + 3 * b x))
           (c' * (c x + 3 * b x) +
             c x * (c' + 3 * b'))) x := by
-    simpa [schurQuotientParameterDerivative] using
-      hnumB.div hden (mul_ne_zero hc0 hc3)
+    convert hnumB.div hden (mul_ne_zero hc0 hc3) using 1
+    · ext y
+      rfl
+    · rfl
   constructor
   · have hnext := ha.sub hquotA
-    simpa [schurNextDiagonal, schurNextDiagonalParameterDerivative] using hnext
-  · simpa [schurNextOffDiagonal,
-      schurNextOffDiagonalParameterDerivative] using hquotB
+    convert hnext using 1
+    · ext y
+      rfl
+    · rfl
+  · convert hquotB using 1
+    · ext y
+      rfl
+    · rfl
 
 end PhiGenesis.SpectralGap
 
