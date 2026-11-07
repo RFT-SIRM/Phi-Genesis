@@ -1,6 +1,8 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic
 import Mathlib.Topology.Order.IntermediateValue
+import Mathlib.Topology.MetricSpace.Cauchy
+import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # The three-corner Schur boundary channels
@@ -3527,5 +3529,51 @@ theorem schurBootstrapA1AtLevel_tail_bound
           schurBootstrapA1AtLevel lambda m = f N-f 0 := by rw [hend,hstart]
       _ ≤ 4*u 0 := hupper
       _ ≤ (1/40000 : ℝ)*(1/2 : ℝ)^m := hsmall
+
+
+/-- For every parameter in the bootstrap interval, the finite-level A1
+characteristics form a Cauchy sequence.  The proof uses the already established
+uniform tail estimate and the geometric decay of its bound.  This is convergence
+of the characteristic values at fixed lambda; it does not yet assert convergence
+or uniqueness of the finite-level roots. -/
+theorem schurBootstrapA1AtLevel_cauchySeq
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    CauchySeq (fun n : ℕ => schurBootstrapA1AtLevel lambda n) := by
+  let bound : ℕ → ℝ :=
+    fun n => (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n
+  have hdist :
+      ∀ n m : ℕ, n ≤ m →
+        dist
+          (schurBootstrapA1AtLevel lambda n)
+          (schurBootstrapA1AtLevel lambda m) ≤ bound n := by
+    intro n m hnm
+    have htail :=
+      schurBootstrapA1AtLevel_tail_bound lambda hlambda n (m - n)
+    have hindex : n + (m - n) = m := Nat.add_sub_of_le hnm
+    rw [hindex] at htail
+    calc
+      dist
+          (schurBootstrapA1AtLevel lambda n)
+          (schurBootstrapA1AtLevel lambda m) =
+        |schurBootstrapA1AtLevel lambda n -
+          schurBootstrapA1AtLevel lambda m| := by
+            rw [Real.dist_eq]
+      _ = schurBootstrapA1AtLevel lambda m -
+            schurBootstrapA1AtLevel lambda n := by
+              rw [abs_of_nonpos]
+              linarith [htail.1]
+      _ ≤ bound n := by
+            simpa [bound] using htail.2
+  have hpow :
+      Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n)
+        atTop (𝓝 (0 : ℝ)) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  have hbound : Tendsto bound atTop (𝓝 (0 : ℝ)) := by
+    simpa [bound] using
+      (tendsto_const_nhds.mul hpow)
+  exact Metric.cauchySeq_of_le_tendsto_0' bound hdist hbound
 
 end PhiGenesis.SpectralGap
