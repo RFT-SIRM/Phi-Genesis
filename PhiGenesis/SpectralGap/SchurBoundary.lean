@@ -6,6 +6,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Topology.UniformSpace.Real
 import Mathlib.Topology.UniformSpace.UniformConvergence
 import Mathlib.Topology.UniformSpace.UniformApproximation
+import Mathlib.Topology.Order.Compact
+import Mathlib.Topology.Sequences
 
 open Filter
 open scoped Topology
@@ -3894,3 +3896,61 @@ theorem schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero :
       (le_trans (le_abs_self _) hroot.2) (by simpa [bound] using hn)
 
 end PhiGenesis.SpectralGap
+
+
+/-- Every sequence of selected finite-level A1 roots has a convergent
+subsequence whose limit is a zero of the limiting characteristic.  Compactness
+keeps the roots in the bootstrap interval; the uniform tail estimate makes
+their limiting-characteristic values tend to zero; continuity identifies the
+subsequence limit as an actual root. -/
+theorem schurBootstrapA1AtLevel_chosenRoots_subseq_limit :
+    ∃ lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper,
+      ∃ φ : ℕ → ℕ,
+        StrictMono φ ∧
+        Tendsto
+          (fun n : ℕ =>
+            schurBootstrapA1AtLevel_chosenRoot (φ n))
+          atTop (𝓝 lambda) ∧
+        schurBootstrapA1AtLevel_limit lambda = 0 := by
+  have hcompact :
+      IsCompact
+        (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) :=
+    isCompact_Icc
+  obtain ⟨lambda, hlambda, φ, hφ, hroots⟩ :=
+    hcompact.tendsto_subseq
+      (fun n =>
+        (schurBootstrapA1AtLevel_chosenRoot_spec n).1)
+  have hφtop : Tendsto φ atTop atTop :=
+    StrictMono.tendsto_atTop hφ
+  have hresidual :
+      Tendsto
+        (fun n : ℕ =>
+          schurBootstrapA1AtLevel_limit
+            (schurBootstrapA1AtLevel_chosenRoot (φ n)))
+        atTop (𝓝 (0 : ℝ)) :=
+    schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero.comp hφtop
+  have hrootsWithin :
+      Tendsto
+        (fun n : ℕ =>
+          schurBootstrapA1AtLevel_chosenRoot (φ n))
+        atTop
+        (𝓝[Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper] lambda) :=
+    tendsto_nhdsWithin_iff.mpr
+      ⟨hroots, Filter.Eventually.of_forall
+        (fun n =>
+          (schurBootstrapA1AtLevel_chosenRoot_spec (φ n)).1)⟩
+  have hlimit :
+      Tendsto
+        (fun n : ℕ =>
+          schurBootstrapA1AtLevel_limit
+            (schurBootstrapA1AtLevel_chosenRoot (φ n)))
+        atTop
+        (𝓝 (schurBootstrapA1AtLevel_limit lambda)) :=
+    (schurBootstrapA1AtLevel_limit_continuousOn lambda hlambda).tendsto
+      |>.comp hrootsWithin
+  have hzero :
+      schurBootstrapA1AtLevel_limit lambda = 0 :=
+    tendsto_nhds_unique hlimit hresidual
+  exact ⟨lambda, hlambda, φ, hφ, hroots, hzero⟩
