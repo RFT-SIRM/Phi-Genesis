@@ -4085,4 +4085,113 @@ theorem schurBootstrapA1AtLevel_rootSequence_tendsto :
     schurBootstrapA1AtLevel_rootSequence_monotone
     schurBootstrapA1AtLevel_rootSequence_bddAbove
 
+
+/-- The supremum of the coherently selected, nondecreasing finite-level
+A1 roots. -/
+noncomputable def schurBootstrapA1AtLevel_rootLimit : ℝ :=
+  ⨆ n : ℕ, (schurBootstrapA1AtLevel_rootSequence n).1
+
+/-- The monotone finite-level root sequence converges to its supremum. -/
+theorem schurBootstrapA1AtLevel_rootSequence_tendsto_rootLimit :
+    Tendsto
+      (fun n : ℕ =>
+        (schurBootstrapA1AtLevel_rootSequence n).1)
+      atTop
+      (𝓝 schurBootstrapA1AtLevel_rootLimit) := by
+  simpa [schurBootstrapA1AtLevel_rootLimit] using
+    schurBootstrapA1AtLevel_rootSequence_tendsto
+
+/-- The supremum of the selected finite-level roots remains in the
+bootstrap interval. -/
+theorem schurBootstrapA1AtLevel_rootLimit_mem :
+    schurBootstrapA1AtLevel_rootLimit ∈
+      Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper := by
+  have hseq :=
+    schurBootstrapA1AtLevel_rootSequence_tendsto_rootLimit
+  constructor
+  · apply ge_of_tendsto hseq
+    exact Filter.Eventually.of_forall
+      (fun n => (schurBootstrapA1AtLevel_rootSequence n).property.1.1)
+  · apply le_of_tendsto hseq
+    exact Filter.Eventually.of_forall
+      (fun n => (schurBootstrapA1AtLevel_rootSequence n).property.1.2)
+
+/-- Along the coherently selected root sequence, the limiting A1
+characteristic tends to zero, by the uniform geometric tail estimate. -/
+theorem schurBootstrapA1AtLevel_rootSequence_limit_value_tendsto_zero :
+    Tendsto
+      (fun n : ℕ =>
+        schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_rootSequence n).1)
+      atTop (𝓝 (0 : ℝ)) := by
+  let bound : ℕ → ℝ :=
+    fun n => (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n
+  have hpow :
+      Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n)
+        atTop (𝓝 (0 : ℝ)) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  have hbound : Tendsto bound atTop (𝓝 (0 : ℝ)) := by
+    simpa [bound] using
+      (tendsto_const_nhds.mul hpow)
+  refine tendsto_order.2 ⟨?_, ?_⟩
+  · intro a ha
+    filter_upwards with n
+    have hroot :=
+      (schurBootstrapA1AtLevel_rootSequence n).property
+    have htail :=
+      schurBootstrapA1AtLevel_limit_tail_control
+        (schurBootstrapA1AtLevel_rootSequence n).1 hroot.1 n
+    rw [hroot.2] at htail
+    have hnonneg :
+        0 ≤ schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_rootSequence n).1 := by
+      simpa only [sub_zero] using htail.1
+    exact lt_of_lt_of_le ha hnonneg
+  · intro a ha
+    filter_upwards
+      [hbound.eventually (gt_mem_nhds ha)] with n hn
+    have hroot :=
+      (schurBootstrapA1AtLevel_rootSequence n).property
+    have htail :=
+      schurBootstrapA1AtLevel_limit_tail_control
+        (schurBootstrapA1AtLevel_rootSequence n).1 hroot.1 n
+    rw [hroot.2] at htail
+    have hupper :
+        schurBootstrapA1AtLevel_limit
+          (schurBootstrapA1AtLevel_rootSequence n).1 ≤ bound n := by
+      simpa only [sub_zero] using htail.2
+    exact lt_of_le_of_lt hupper (by simpa [bound] using hn)
+
+/-- The supremum of the increasing finite-level A1 roots is an actual
+zero of the continuous limiting A1 characteristic. -/
+theorem schurBootstrapA1AtLevel_rootLimit_is_root :
+    schurBootstrapA1AtLevel_limit
+      schurBootstrapA1AtLevel_rootLimit = 0 := by
+  have hmem := schurBootstrapA1AtLevel_rootLimit_mem
+  have hrootsWithin :
+      Tendsto
+        (fun n : ℕ =>
+          (schurBootstrapA1AtLevel_rootSequence n).1)
+        atTop
+        (𝓝[Set.Icc schurBootstrapLambdaLower
+          schurBootstrapLambdaUpper]
+          schurBootstrapA1AtLevel_rootLimit) :=
+    tendsto_nhdsWithin_iff.mpr
+      ⟨schurBootstrapA1AtLevel_rootSequence_tendsto_rootLimit,
+        Filter.Eventually.of_forall
+          (fun n =>
+            (schurBootstrapA1AtLevel_rootSequence n).property.1)⟩
+  have hlimit :
+      Tendsto
+        (fun n : ℕ =>
+          schurBootstrapA1AtLevel_limit
+            (schurBootstrapA1AtLevel_rootSequence n).1)
+        atTop
+        (𝓝 (schurBootstrapA1AtLevel_limit
+          schurBootstrapA1AtLevel_rootLimit)) :=
+    (schurBootstrapA1AtLevel_limit_continuousOn
+      schurBootstrapA1AtLevel_rootLimit hmem).tendsto.comp hrootsWithin
+  exact tendsto_nhds_unique hlimit
+    schurBootstrapA1AtLevel_rootSequence_limit_value_tendsto_zero
+
 end PhiGenesis.SpectralGap
