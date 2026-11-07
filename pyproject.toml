@@ -8,7 +8,7 @@ version = "2.2.1"
 description = "Reproducible spectral research on Sierpiński-gasket graph Laplacians, signed boundary flux, spectral decimation, and numerical evidence audits"
 authors = [{ name = "Evgeny Zaprudnov", email = "evgeniyzaprudnov@gmail.com" }]
 requires-python = ">=3.10"
-dependencies = ["numpy", "scipy"]
+dependencies = ["numpy", "scipy", "mpmath>=1.3"]
 
 [tool.setuptools]
 packages = ["phi_genesis"]

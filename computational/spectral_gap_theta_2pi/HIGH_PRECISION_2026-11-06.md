@@ -10,13 +10,16 @@ Script: [`schur_bottom_eigenvalue.py`](schur_bottom_eigenvalue.py).
 ## Method
 
 All triangle sign products equal +1, so H = D + A_s is gauge-equivalent to the signless Laplacian
-Q = D + A of the Sierpinski graph. Let T_m(lambda) be the Schur complement of Q_m − lambda onto the
-three outer corners (corner diagonal = degree inside the piece). It is S3-symmetric, with diagonal
+Q = D + A of the Sierpinski graph. Let T_m(lambda) be the boundary Schur matrix obtained by eliminating all
+non-corner vertices from Q_m − lambda I while leaving the −lambda shift off
+the three retained outer corners. Equivalently, T_m(lambda) = S_m(lambda) +
+lambda I_3, where S_m is the ordinary Schur complement of Q_m − lambda I.
+Thus the retained corner diagonal starts at the degree inside the piece. It is S3-symmetric, with diagonal
 alpha_m and off-diagonal beta_m. Gluing three copies at three midpoints and eliminating the
 midpoints gives T_(m+1). The corner modes split into the channels A1: alpha + 2 beta − lambda = 0
 and E: alpha − beta − lambda = 0; the bottom eigenvalue is the lowest A1 root. The one-step formulas
 are those of `schurNextDiagonal` and `schurNextOffDiagonal` in
-`PhiGenesis/SpectralGap/SchurBoundary.lean` (numerically identical).
+`PhiGenesis/SpectralGap/SchurBoundary.lean`, where the recursion is formalized.
 
 Validation: the recursion reproduces the directly diagonalized bottom eigenvalues at levels 1 to 4
 to 40 digits (levels 3 and 4 against 40-digit inverse iteration). At level 5, direct diagonalization
