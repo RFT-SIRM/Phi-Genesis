@@ -3587,4 +3587,72 @@ theorem schurBootstrapA1AtLevel_cauchySeq
       (tendsto_const_nhds.mul hpow)
   exact cauchySeq_of_le_tendsto_0' bound hdist hbound
 
+
+/-- The finite-level A1 characteristics are uniformly Cauchy on the full
+bootstrap parameter interval.  The tail estimate is uniform in the parameter;
+the triangle inequality compares any two levels to the same base level N. -/
+theorem schurBootstrapA1AtLevel_uniformCauchyOn :
+    UniformCauchySeqOn
+      (fun n lambda => schurBootstrapA1AtLevel lambda n)
+      atTop
+      (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) := by
+  let bound : ℕ → ℝ :=
+    fun n => (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n
+  have hpow :
+      Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n)
+        atTop (𝓝 (0 : ℝ)) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+  have hbound : Tendsto bound atTop (𝓝 (0 : ℝ)) := by
+    simpa [bound] using
+      (tendsto_const_nhds.mul hpow)
+  have hdouble :
+      Tendsto (fun n => bound n + bound n) atTop (𝓝 (0 : ℝ)) := by
+    simpa using hbound.add hbound
+  rw [Metric.uniformCauchySeqOn_iff]
+  intro ε hε
+  obtain ⟨N, hN⟩ :=
+    (hdouble.eventually (gt_mem_nhds hε)).exists
+  refine ⟨N, ?_⟩
+  intro m hm n hn lambda hlambda
+  have hdistToBase (k : ℕ) (hk : N ≤ k) :
+      dist
+        (schurBootstrapA1AtLevel lambda k)
+        (schurBootstrapA1AtLevel lambda N) ≤ bound N := by
+    have htail :=
+      schurBootstrapA1AtLevel_tail_bound lambda hlambda N (k - N)
+    have hindex : N + (k - N) = k := Nat.add_sub_of_le hk
+    rw [hindex] at htail
+    calc
+      dist
+          (schurBootstrapA1AtLevel lambda k)
+          (schurBootstrapA1AtLevel lambda N) =
+        |schurBootstrapA1AtLevel lambda k -
+          schurBootstrapA1AtLevel lambda N| := by
+            rw [Real.dist_eq]
+      _ = schurBootstrapA1AtLevel lambda k -
+            schurBootstrapA1AtLevel lambda N :=
+              abs_of_nonneg htail.1
+      _ ≤ bound N := by
+            simpa [bound] using htail.2
+  have hmBound := hdistToBase m hm
+  have hnBound := hdistToBase n hn
+  have hnBound' :
+      dist
+        (schurBootstrapA1AtLevel lambda N)
+        (schurBootstrapA1AtLevel lambda n) ≤ bound N := by
+    simpa only [dist_comm] using hnBound
+  calc
+    dist
+        (schurBootstrapA1AtLevel lambda m)
+        (schurBootstrapA1AtLevel lambda n) ≤
+      dist
+          (schurBootstrapA1AtLevel lambda m)
+          (schurBootstrapA1AtLevel lambda N) +
+        dist
+          (schurBootstrapA1AtLevel lambda N)
+          (schurBootstrapA1AtLevel lambda n) :=
+      dist_triangle _ _ _
+    _ ≤ bound N + bound N := add_le_add hmBound hnBound'
+    _ < ε := hN
+
 end PhiGenesis.SpectralGap
