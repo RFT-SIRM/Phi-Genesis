@@ -549,8 +549,9 @@ Formalized in `PhiGenesis/SpectralGap/SchurBoundary.lean`: the scalar Schur recu
 convergence on the bootstrap interval, continuity of the limiting A1 characteristic, and
 `schurBootstrapA1AtLevel_rootLimit_is_root`.
 
-Not formalized in Lean: (1) a bridge from the matrix `Q_m` of the Sierpinski graph to this recursion
-(no definition of the level-`m` matrix and no Schur-complement statement connecting it to
-`schurBoundaryTrajectory`); (2) identification of the selected A1 roots with the bottom eigenvalue
+Not formalized in Lean: (1) a bridge from the graph matrix to this recursion (the level-`m` signed matrix
+`sgSignedLaplacianMatrix m` is defined in `SignedLaplacianMatrix.lean`, but there is no
+Schur-complement statement connecting it to `schurBoundaryTrajectory`, and the gauge equivalence
+with the signless Laplacian used in the note is not formalized there); (2) identification of the selected A1 roots with the bottom eigenvalue
 `λ_min(m)` at every level; (3) convergence of `λ_min(m)`; (4) the quadratic increment law. Items (1)–(4)
 are open; (1) and (2) are the next steps, in that order.
