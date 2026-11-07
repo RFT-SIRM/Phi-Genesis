@@ -8,7 +8,7 @@
 **Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed Z₂-flux / π-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
 
 > [!IMPORTANT]
-> **Scientific status, not marketing status:** spectral and gap observations are numerical results scoped to the implemented operators and tested levels. The proposed mass-index selection rule $\{1,12,17,40\}$ has **not** been established. The formula $m=A n$ is a numerical fit, not a prediction, until an independent rule derives the indices without looking at the masses. Gate A—the full characterization of spectral-decimation exceptions for the implemented corner-degree-2 Laplacian—also remains open.
+> **Scientific status, not marketing status:** spectral and gap observations are numerical results scoped to the implemented operators and tested levels. The proposed mass-index selection rule $\{1,12,17,40\}$ has **not** been established. The formula $m=A n$ is a numerical fit, not a prediction, until an independent rule derives the indices without looking at the masses. Gate A—the full characterization of spectral-decimation exceptions for the implemented corner-degree-2 Laplacian—also remains open. **Open Problem 1 update (7 November 2026):** the documented finite search is frozen with a bounded negative result; the corrected D₃ audit does not select all four target indices. The general mathematical question remains open; see the [D₃ representation audit](docs/d3-representation-audit.md).
 
 <div align="center">
 
@@ -40,7 +40,7 @@
 | Does the Sierpiński-gasket spectrum show the expected decimation and gap structure? | Reproduced numerically on finite graph levels, with explicit corner-defect qualifications. | **NUMERICALLY REPRODUCED** |
 | Can the spectral dimension be recovered from finite-level counts? | The theoretical exponent is $d_s/2=\ln 3/\ln 5$. A theory-motivated chord estimator approaches $\ln 3/\ln(5-\sigma)$ to better than 0.1% on the reported level-9 subset with $N\ge1000$. | **NUMERICAL CONSISTENCY CHECK** |
 | Does a π-flux boundary condition open a gap? | The tested full π-flux case opens a gap; the first level-5 eigenvalue changes from approximately 0.006 to 0.46. | **NUMERICALLY REPRODUCED** |
-| Has a spectral rule independently selected $\{1,12,17,40\}$? | No. Preregistered families did not produce evidence above the specified null thresholds. | **NOT ESTABLISHED** |
+| Has a spectral rule independently selected $\\{1,12,17,40\\}$? | No. Preregistered families and the two audited D₃ criteria did not select the full set. The finite search result is negative within the documented families; the general question remains open. | **BOUNDED NEGATIVE / OPEN** |
 | Is $m=A n$ a predictive mass law? | Not at present: the four integer indices were chosen with the target masses in view, and no independent selection mechanism has been derived. | **FIT, NOT PREDICTION** |
 | Is Gate A closed? | No. Matched eigenvalue pairs can be at machine precision, but the full recursively generated exceptional set and complete correspondence are not yet characterized. | **OPEN** |
 | Does the project reproduce the reported η-invariant value $-4$? | No. The tested potential gives asymmetry $+1$; $-4$ was not observed in the reported checks. | **NOT REPRODUCED** |
@@ -77,7 +77,7 @@ These are scoped to the operators, graph conventions, levels, and numerical proc
 <details>
 <summary><strong>Negative results and caveats that must remain visible</strong></summary>
 
-- The three documented preregistered selection protocols did not establish a selection rule for $\{1,12,17,40\}$.
+- The three documented preregistered selection protocols and the exploratory D₃ audit did not establish a selection rule for the target set. In positive-spectrum indexing, the target clusters are 1–2 (E), 12–14 (A₁ + E), 16–17 (E), and 30–41 (3A₁ + A₂ + 4E); neither “contains A₁” nor “simple A₁” selects the four target ranks.
 - The earliest protocol, v1.0, could not reach its target significance threshold even under its best possible hit pattern. Its negative result is therefore **uninformative**. Later v1.1 and v1.2.1 protocols passed the null-only power check and still did not reach the threshold.
 - The earlier Sierpiński-carpet search produced an apparent four-index match, later identified as vulnerable to a look-elsewhere effect. It is retained in the research history rather than promoted as supporting evidence.
 - Index 1 is selected by the ratio-based gap rule very frequently under random on-site potentials (about 95% in the reported audit); index 40 appears much less often (about 3.4%). These hits do not carry equal evidential weight.
@@ -288,6 +288,31 @@ The index-1 triviality audit is another important caveat: under random on-site p
 - [Top-quark consistency tests](test_top_quark_consistency.py)
 - [Index-1 base-rate audit](test_sg_index_triviality.py)
 
+
+### Corrected D₃ representation audit (7 November 2026)
+
+The target labels `{1, 12, 17, 40}` are **1-based ranks in the positive spectrum**: the constant zero eigenvalue is removed before numbering. This is the convention used by the preregistered mass-index protocol. An earlier exploratory report included the zero mode and therefore shifted its target interpretation by one position.
+
+The six permutations of the gasket's integer barycentric coordinates were checked as graph automorphisms. The numerical decomposition of the eigenspace clusters is the same through the first 60 positive-spectrum ranks at levels 5, 6, and 7:
+
+| Target rank | Positive-spectrum cluster | Multiplicity | D₃ representation |
+|---:|---:|---:|---|
+| 1 | 1–2 | 2 | E |
+| 12 | 12–14 | 3 | A₁ ⊕ E |
+| 17 | 16–17 | 2 | E |
+| 40 | 30–41 | 12 | 3A₁ ⊕ A₂ ⊕ 4E |
+
+Two criteria give different, and both negative, outcomes for the four-index claim:
+
+- **Contains an A₁ component:** hits target ranks 12 and 40, but selects the complete degenerate clusters 12–14 and 30–41, not the individual ranks 12 and 40.
+- **Simple fully symmetric A₁ eigenspace:** hits none of the four target ranks. The simple A₁ ranks in the first 60 are 3, 9, 18, 27, 48, and 54.
+
+Therefore this D₃ diagnostic does **not** select `{1, 12, 17, 40}`. It is an exploratory numerical audit, not a preregistered selection rule, an exact-arithmetic spectral certificate, or a Lean theorem. It does not prove that every possible selection mechanism is impossible.
+
+**v1.3 archive status:** a previous-session summary reports an ancestry/decimation probe, but the ZIP/source/data were not present in the inspected repository snapshot. Those results remain pending independent verification and are excluded from the verified table and configuration count.
+
+Reproduce with `python -m phi_genesis.symmetry_probe` and `pytest -q test_symmetry_probe.py`. The complete method, level-by-level eigenvalue table, and reopening conditions are in the [D₃ audit note](docs/d3-representation-audit.md).
+
 ---
 
 ## Preregistered selection tests
@@ -300,7 +325,7 @@ The central statistical question is not whether a configuration can be found tha
 | v1.1 | $k=6$, window 60 | 75 | $p=0.966$ and $0.997$ | **Informative negative:** threshold was reachable; at most 2/4 targets selected, index 40 selected by none |
 | v1.2.1 | $k=8$, window 60; continuum-circle/spin-structure family | 10 | $p=0.953$ and $0.926$ | **Informative negative:** threshold was reachable; at most 1/4 target selected |
 
-Across the three protocols, the ledger records 193 configuration evaluations, plus the earlier carpet search (about 128 level-3 configurations and an unrecorded level-4 sweep). The combined count is therefore a **lower bound of about 321**, not an exact exhaustive count of every historical exploratory attempt.
+Across the three protocols, the ledger records 193 configuration evaluations, plus the earlier carpet search (about 128 level-3 configurations and an unrecorded level-4 sweep). The combined count is therefore a **lower bound of about 321**, not an exact exhaustive count of every historical exploratory attempt. The D₃ representation audit is a separate structural diagnostic, not a configuration sweep, and is not added to this count. The reported v1.3 ancestry/decimation archive is pending verification because its ZIP/source/data are not present in the inspected repository; it is not included in the verified count.
 
 The carpet's early apparent 4/4 match was subsequently reassessed using null controls and the look-elsewhere effect. The record keeps that episode visible so that it cannot later be cited as clean confirmation.
 
@@ -312,7 +337,7 @@ The carpet's early apparent 4/4 match was subsequently reassessed using null con
 4. Account for the base rate of each target index; common hits and rare hits do not have equal evidential weight.
 5. Keep abandoned branches and exploratory attempts in the ledger, and label post-hoc analyses explicitly.
 
-**Current conclusion:** the tested families did not establish a spectral rule. This does not prove that no such rule exists; it means the tested rules failed to provide the required evidence.
+**Current conclusion (7 November 2026):** the documented finite search phase is frozen with a bounded negative result. The preregistered families and the two exploratory D₃ criteria did not select all four target ranks. This does **not** prove that no spectral selection rule can exist; it means the documented families have not supplied the required independent evidence.
 
 - [Protocol overview](PREREGISTRATION.md)
 - [v1.1 draft / record](PREREGISTRATION_v1.1_DRAFT.md)
@@ -328,13 +353,21 @@ The carpet's early apparent 4/4 match was subsequently reassessed using null con
 ## Open problems and Gate A
 
 <details open>
-<summary><strong>Open Problem 1 — derive the mass indices independently</strong></summary>
+<summary><strong>Open Problem 1 — independent derivation of the mass indices: finite search phase closed</strong></summary>
 
-**Question.** Can an operator invariant, boundary condition, or independently motivated construction select $n\in\{1,12,17,40\}$ before the masses are compared?
+**Question.** Can an operator invariant, boundary condition, or independently motivated construction select the target indices `{1, 12, 17, 40}` before the masses are compared?
 
-**Tried:** generation-wise Z₂ twists, scalar vertex potentials, Dirichlet corner conditions, SG $\times S^1$ with lattice and continuum-circle variants, and the earlier Sierpiński-carpet search. The preregistered protocols did not establish the target rule.
+**Status (7 November 2026).** The documented finite search phase is frozen with a bounded negative result. The general mathematical question remains open; this is not a theorem that such a rule is impossible.
 
-**Required next step:** a genuinely motivated new operator family or an analytical derivation of the indices, committed under a new preregistered protocol with a null-only power check. Repeating the same searches against the same targets would increase the look-elsewhere correction, not the evidence.
+**Preregistered families.** The v1.0 protocol returned an uninformative negative because its significance threshold was unreachable even in the best possible case. The v1.1 and v1.2.1 protocols had reachable thresholds but did not meet the required null criteria. The ledger records 193 configuration evaluations in the documented main protocol families, plus the earlier carpet search (about 128 level-3 configurations and an unrecorded level-4 sweep); this is a lower bound, not an exhaustive historical count.
+
+**Corrected D₃ audit.** Target ranks are 1-based in the positive spectrum, after removing the constant zero mode. At levels 5–7, the numerical cluster decompositions through the first 60 positive ranks agree. The targets lie in clusters 1–2 (E), 12–14 (A₁ ⊕ E), 16–17 (E), and 30–41 (3A₁ ⊕ A₂ ⊕ 4E). The “contains A₁” criterion hits only 12 and 40, and selects their full degenerate clusters; the simple-A₁ criterion hits none. This corrects the previous exploratory off-by-one report.
+
+**v1.3 archive.** A prior-session summary reports an ancestry/decimation probe, but the ZIP/source/data are not present in the inspected repository state. Its results remain pending independent verification and are not included in the verified count.
+
+**Reopening condition.** Reopen the search only after verifying the complete v1.3 archive, or preregistering a new a-priori justified operator family with a null-only power check, or deriving the indices from an operator invariant independent of the masses. The four-mass formula `m = A n` remains a numerical fit, not a spectral prediction.
+
+See the [selection-protocol audit](docs/selection-protocol.md), [corrected D₃ representation audit](docs/d3-representation-audit.md), and [cumulative protocol ledger](protocol_ledger.md).
 
 </details>
 
