@@ -5,6 +5,7 @@ import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Topology.UniformSpace.Real
 import Mathlib.Topology.UniformSpace.UniformConvergence
+import Mathlib.Topology.UniformSpace.UniformApproximation
 
 open Filter
 open scoped Topology
@@ -3699,5 +3700,28 @@ theorem schurBootstrapA1AtLevel_tendstoUniformlyOn_limit :
   schurBootstrapA1AtLevel_uniformCauchyOn.tendstoUniformlyOn_of_tendsto
     (fun lambda hlambda =>
       schurBootstrapA1AtLevel_tendsto_limit lambda hlambda)
+
+
+/-- Every finite-level A1 characteristic is continuous on the bootstrap
+interval.  The existing finite-prefix continuity induction applies because
+the full pivot nonvanishing theorem supplies both denominators at every step. -/
+theorem schurBootstrapA1AtLevel_continuousOn (n : ℕ) :
+    ContinuousOn
+      (fun lambda => schurBootstrapA1AtLevel lambda n)
+      (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) := by
+  apply schurBootstrapA1AtLevel_continuousOn_of_nonzero_pivots n
+  intro lambda hlambda k hk
+  exact schurBootstrap_all_pivots_nonzero lambda hlambda k
+
+/-- The uniformly convergent limiting A1 characteristic is continuous on
+the bootstrap interval. -/
+theorem schurBootstrapA1AtLevel_limit_continuousOn :
+    ContinuousOn
+      schurBootstrapA1AtLevel_limit
+      (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) := by
+  apply TendstoUniformlyOn.continuousOn
+    schurBootstrapA1AtLevel_tendstoUniformlyOn_limit
+  exact Filter.Frequently.of_forall
+    schurBootstrapA1AtLevel_continuousOn
 
 end PhiGenesis.SpectralGap
