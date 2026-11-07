@@ -4289,11 +4289,15 @@ theorem schurBoundaryTrajectory_pair_differentiableAt_of_nonzero_pivots
       constructor
       · have hA :
             HasDerivAt (fun lambda : ℝ => 2 - lambda) (-1) lambda₀ := by
-          change HasDerivAt
-            ((fun _ : ℝ => (2 : ℝ)) + (fun lambda : ℝ => -lambda))
-            (-1) lambda₀
-          exact (hasDerivAt_const lambda₀ (2 : ℝ)).add
-            (hasDerivAt_id lambda₀).neg
+          have hfun :
+              (fun lambda : ℝ => 2 - lambda) =
+                (fun _ : ℝ => (2 : ℝ)) + -id := by
+            ext lambda
+            simp [sub_eq_add_neg]
+          rw [hfun]
+          simpa using
+            (hasDerivAt_const lambda₀ (2 : ℝ)).add
+              (hasDerivAt_id lambda₀).neg
         simpa [schurBoundaryTrajectory] using hA.differentiableAt
       · simpa [schurBoundaryTrajectory] using
           (hasDerivAt_const lambda₀ (1 : ℝ)).differentiableAt
