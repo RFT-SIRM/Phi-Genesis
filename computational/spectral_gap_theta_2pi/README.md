@@ -563,3 +563,17 @@ are open; (1) and (2) are the next steps, in that order.
 `(2-λ, 1)` at the rational endpoints `schurBootstrapLambdaLower/Upper` (36 decimal digits) and give
 the enclosure `|a_0| <= 3e-36`, `b_0 in [-6e-37, 0]` together with the A1 signs. Earlier remarks in
 this file that no Lean theorem about the level-six root exists are superseded by this entry.
+
+### Update 2026-11-07: first steps of the matrix-to-recursion bridge (Lean)
+
+`PhiGenesis/SpectralGap/SchurBridge.lean` and `SchurBridgeLevelZero.lean` prove:
+
+- **B0.** `sgSignedLaplacianMatrix m = diag(g) * Q_m * diag(g)`, where `Q_m = D + A` is the signless
+  Laplacian assembled from the same edge set and `g` is the vertex gauge.
+- **B1.** At level 0, `Q_0` has diagonal 2 and off-diagonal 1, so `Q_0 - lam I` has the Schur start
+  state `(2 - lam, 1)` used by `schurBootstrapA1AtLevel`.
+- **B2a.** Corner coordinates of level-`(m+1)` faces are child translates of level-`m` corners.
+
+Still open: **B2b**, the statement that the 3x3 Schur complement of `Q_{m+1} - lam I` on the outer
+corners is obtained from that of `Q_m - lam I` by `schurNextDiagonal` / `schurNextOffDiagonal`.
+Until B2b is proved the scalar recursion is not formally tied to the graph matrix at levels >= 1.
