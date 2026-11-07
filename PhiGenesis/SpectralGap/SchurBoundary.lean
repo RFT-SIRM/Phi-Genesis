@@ -3910,7 +3910,7 @@ noncomputable def schurQuotientParameterDerivative
 Schur step. The six arguments are the input state and its parameter
 derivative. -/
 noncomputable def schurNextDiagonalParameterDerivative
-    (a b c a' b' c' : ℝ) : ℝ :=
+    (b c a' b' c' : ℝ) : ℝ :=
   a' - schurQuotientParameterDerivative
     (2 * b ^ 2 * (c + b))
     (2 * (2 * b * b') * (c + b) + 2 * b ^ 2 * (c' + b'))
@@ -3939,7 +3939,7 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
     HasDerivAt
         (fun y => schurNextDiagonal (a y) (b y) (c y))
         (schurNextDiagonalParameterDerivative
-          (a x) (b x) (c x) a' b' c') x ∧
+          (b x) (c x) a' b' c') x ∧
       HasDerivAt
         (fun y => schurNextOffDiagonal (b y) (c y))
         (schurNextOffDiagonalParameterDerivative
@@ -3977,14 +3977,12 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
           (c' * (c x + 3 * b x) +
             c x * (c' + 3 * b'))) x := by
     convert hnumA.div hden (mul_ne_zero hc0 hc3) using 1
-    · ext y
-      rfl
-    · rfl
+    · exact funext (fun y => rfl)
+    · simp [schurQuotientParameterDerivative]
   have hnegBSq : HasDerivAt (fun y => -((b y) ^ 2))
       (-(2 * b x * b')) x := by
     convert hbSq.neg using 1
-    · ext y
-      rfl
+    · exact funext (fun y => rfl)
     · rfl
   have hnumB :
       HasDerivAt
@@ -4005,18 +4003,15 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
           (c' * (c x + 3 * b x) +
             c x * (c' + 3 * b'))) x := by
     convert hnumB.div hden (mul_ne_zero hc0 hc3) using 1
-    · ext y
-      rfl
-    · rfl
+    · exact funext (fun y => rfl)
+    · simp [schurQuotientParameterDerivative]
   constructor
   · have hnext := ha.sub hquotA
     convert hnext using 1
-    · ext y
-      rfl
+    · exact funext (fun y => rfl)
     · rfl
   · convert hquotB using 1
-    · ext y
-      rfl
+    · exact funext (fun y => rfl)
     · rfl
 
 end PhiGenesis.SpectralGap
