@@ -3977,7 +3977,7 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
       hnumA.fun_div hden (mul_ne_zero hc0 hc3)
   have hnegBSq : HasDerivAt (fun y => -((b y) ^ 2))
       (-(2 * b x * b')) x := by
-    simpa only [Pi.neg_apply] using hbSq.neg
+    simpa [neg_eq_neg_one_mul] using hbSq.const_mul (-1)
   have hnumB :
       HasDerivAt
         (fun y => (-((b y) ^ 2)) * (c y - b y))
@@ -3999,9 +3999,10 @@ private theorem schurNextPair_hasDerivAt_parameter_formula
     simpa [schurQuotientParameterDerivative] using
       hnumB.fun_div hden (mul_ne_zero hc0 hc3)
   constructor
-  · have hnext := ha.sub hquotA
+  · have hnext := ha.add (hquotA.const_mul (-1))
     simpa [schurNextDiagonal, schurNextDiagonalParameterDerivative,
-      schurQuotientParameterDerivative] using hnext
+      schurQuotientParameterDerivative, sub_eq_add_neg,
+      neg_eq_neg_one_mul] using hnext
   · simpa [schurNextOffDiagonal, schurNextOffDiagonalParameterDerivative,
       schurQuotientParameterDerivative] using hquotB
 
