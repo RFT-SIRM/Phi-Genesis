@@ -590,3 +590,18 @@ Still open: the combinatorial half of B2b, i.e. that the edges of `Q_{m+1}` spli
 translates of the edges of `Q_m` meeting only at the three midpoints, so that these formulas apply to
 `sgSignlessLaplacianMatrix (m+1)`; and the inertia argument that identifies the A1 root with the bottom
 eigenvalue at every level.
+
+### Update 2026-11-07: combinatorial half of the gluing step (Lean)
+
+`PhiGenesis/SpectralGap/SchurSlots.lean` formalizes how level `m+1` is assembled from three level-`m`
+children: the edge slots of level `m+1` are the union of the three children's slots, the child vertex
+sets cover the parent and intersect exactly in the three midpoints, the parent vertex set is the
+quotient of the child vertex sets, and the shifted quadratic form of the parent equals the sum of the
+three child forms plus `lam` times the squared values at the three midpoints
+(`sgSignlessShiftedBilinearForm_childDecomposition`). Interior rows of the parent are equivalent to
+interior rows of the children. `schurMidpointPivot_action_kernel` (in `SchurBoundary.lean`) gives
+uniqueness for the homogeneous midpoint system under positive pivot energy.
+
+Still open: defining the corner response of `sgSignlessLaplacianMatrix m - lam I` at level `m`, and the
+induction step that combines the children with `schurGlue_corner_response` to obtain the corner response
+of level `m+1`; then the inertia argument identifying the A1 root with the bottom eigenvalue.

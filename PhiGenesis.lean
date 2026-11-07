@@ -10,6 +10,7 @@ import PhiGenesis.SpectralGap.SchurBoundary
 import PhiGenesis.SpectralGap.SchurBridge
 import PhiGenesis.SpectralGap.SchurBridgeLevelZero
 import PhiGenesis.SpectralGap.SchurGlueAlgebra
+import PhiGenesis.SpectralGap.SchurSlots
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
 import PhiGenesis.H10.GasketVertexOrder
