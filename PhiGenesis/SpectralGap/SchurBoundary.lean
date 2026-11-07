@@ -5,6 +5,7 @@ import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Analysis.SpecificLimits.Basic
 
 open Filter
+open scoped Topology
 
 /-!
 # The three-corner Schur boundary channels
@@ -3564,8 +3565,17 @@ theorem schurBootstrapA1AtLevel_cauchySeq
           schurBootstrapA1AtLevel lambda m| := by
             rw [Real.dist_eq]
       _ = schurBootstrapA1AtLevel lambda m -
-            schurBootstrapA1AtLevel lambda n :=
-              abs_of_nonpos (by linarith [htail.1])
+            schurBootstrapA1AtLevel lambda n := by
+              have hle :
+                  schurBootstrapA1AtLevel lambda n ≤
+                    schurBootstrapA1AtLevel lambda m :=
+                sub_nonneg.mp htail.1
+              have hdiff :
+                  schurBootstrapA1AtLevel lambda n -
+                    schurBootstrapA1AtLevel lambda m ≤ 0 :=
+                sub_nonpos.mpr hle
+              rw [abs_of_nonpos hdiff]
+              ring
       _ ≤ bound n := by
             simpa [bound] using htail.2
   have hpow :
