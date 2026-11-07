@@ -84,6 +84,7 @@ nav:
   - Strategy:
       - Overview: strategy.md
       - Selection Protocol: selection-protocol.md
+      - D₃ Representation Audit: d3-representation-audit.md
       - Preregistration: preregistration.md
       - Protocol Ledger: protocol-ledger.md
       - Open Problems: open-problems.md

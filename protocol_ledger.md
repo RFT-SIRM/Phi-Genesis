@@ -94,3 +94,18 @@ its "no evidence" verdict is correct but carries no information about whether th
 mechanism. The cause is rule R* (k = 12 of 59 positions), whose base rates for the targets are too high
 (1: 96%, 12: 38%, 17: 23%). A later version must change the rule or the statistic so that the best possible
 outcome can reach the threshold, and must fix that choice before evaluating any family.
+
+
+## Exploratory D₃ representation audit (7 November 2026; not preregistered)
+
+Structural diagnostic, not a protocol configuration sweep; not added to the cumulative configuration count.
+- Six barycentric-coordinate permutations verified as graph automorphisms at levels 5, 6, 7.
+- Indexing is 1-based in the positive spectrum after removing the constant zero mode.
+- First-60 cluster signature agrees numerically across levels 5–7.
+- Target decompositions: 1 in [1,2], E; 12 in [12,14], A1 + E; 17 in [16,17], E; 40 in [30,41], 3A1 + A2 + 4E.
+- “Contains A1” hits {12,40}; simple-A1 hits none. This corrects the earlier pasted exploratory report's off-by-one indexing error.
+- Reproduce with `python -m phi_genesis.symmetry_probe` and `pytest -q test_symmetry_probe.py`. Numerical diagnostic only; not a Lean theorem.
+
+## Reported v1.3 archive (pending verification; excluded from counts)
+
+A previous-session summary reports an ancestry/decimation probe based on `phi(lambda)=lambda*(5-lambda)`. The corresponding ZIP, source, frozen inputs, and expected outputs are not present in the inspected repository state. Reported results are not independently reproduced here and must not be counted as verified. Add the complete archive and a reproducible check before promotion.

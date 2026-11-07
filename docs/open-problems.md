@@ -9,11 +9,17 @@ This page distinguishes unresolved research questions from completed diagnostics
 
 **Question.** Can an operator or boundary-condition invariant select \(n\in\{1,12,17,40\}\) independently of the masses used to identify the target set?
 
-**Current status.** No selection rule has been found in the tested families. Protocol versions v1.1 and v1.2.1 were designed so that the decision threshold was reachable, but neither passed the criterion. The earlier v1.0 test could not reach the threshold even in its best possible case and is therefore not an informative negative.
+**Status (7 November 2026).** The documented finite search phase is frozen with a bounded negative result; the general mathematical question remains open.
 
-**Work already recorded.** Generation twists, scalar vertex potentials and corner Dirichlet conditions, SG × S¹ with lattice and continuum circles, and a Sierpiński-carpet search. The carpet's initial apparent 4/4 match was reassessed against chance and the branch was abandoned.
+**Current evidence.** No independently justified rule has been found in the documented generation-twist, potential/boundary/lattice-circle, continuum-circle/spin-structure, or carpet families. v1.0 was an uninformative negative because its threshold was unreachable; v1.1 and v1.2.1 had reachable thresholds and returned informative negatives within their declared families.
 
-**What would justify reopening the search.** A new operator family with an a-priori mathematical rationale, a new preregistration, null-only power analysis, and an explicit accounting of all previous configuration families. A derivation of the indices from an operator invariant would be stronger than another post-hoc match.
+The corrected exploratory D₃ audit uses 1-based positive-spectrum ranks (zero mode removed). At levels 5, 6, and 7 the first-60 cluster signature agrees numerically. The target clusters are: 1 in [1,2] with representation E; 12 in [12,14] with A1 + E; 17 in [16,17] with E; 40 in [30,41] with 3A1 + A2 + 4E. “Contains A1” hits only 12 and 40 and selects whole clusters; “simple A1” hits none. This corrects the previous exploratory report's off-by-one error from including the zero mode.
+
+**v1.3 archive.** A prior-session summary reports an ancestry/decimation probe, but its ZIP/source/data are not present in the inspected repository state. Its results remain pending independent verification and are not counted as verified.
+
+**Conclusion boundary.** The finite search has not produced an independent selection rule. This is not a theorem that such a rule is mathematically impossible or that every conceivable operator family has been exhausted. The mass formula remains a numerical fit, not a spectral prediction.
+
+**Reopening condition.** Verify the complete v1.3 archive, or preregister a new a-priori justified family with null-only power analysis, or derive the indices from an operator invariant independent of the masses. See [selection-protocol audit](selection-protocol.md) and [corrected D₃ audit](d3-representation-audit.md).
 
 See the [selection-protocol audit](selection-protocol.md).
 
