@@ -269,6 +269,23 @@ theorem schurMidpointPivot_energy_pos (c b : ℝ) (x : Fin 3 → ℝ)
       (mul_nonneg (le_of_lt hA1) (sq_nonneg _))
       (mul_pos hE hcenterPos)
 
+
+/-- Positive midpoint-pivot energy makes the homogeneous midpoint
+system have only the zero solution. -/
+theorem schurMidpointPivot_action_kernel
+    (c b : ℝ) (x : Fin 3 → ℝ)
+    (hc : 0 < c) (hc3 : 0 < c + 3 * b)
+    (hzero : ∀ i : Fin 3, schurCornerAction (c + b) b x i = 0) :
+    x = 0 := by
+  by_contra hne
+  have henergy : schurCornerEnergy (c + b) b x = 0 := by
+    unfold schurCornerEnergy
+    simp [hzero]
+  have hpos :=
+    schurMidpointPivot_energy_pos c b x hne hc hc3
+  rw [henergy] at hpos
+  exact (lt_irrefl (0 : ℝ)) hpos
+
 /-- The two positive midpoint-pivot eigenvalues give a positive
 denominator in the scalar Schur update. -/
 theorem schurMidpointPivot_denominator_pos (c b : ℝ)
