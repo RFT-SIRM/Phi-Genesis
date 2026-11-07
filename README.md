@@ -353,7 +353,6 @@ The carpet's early apparent 4/4 match was subsequently reassessed using null con
 ## Open problems and Gate A
 
 <details open>
-<details open>
 <summary><strong>Open Problem 1 — independent derivation of the mass indices: finite search phase closed</strong></summary>
 
 **Question.** Can an operator invariant, boundary condition, or independently motivated construction select the target indices `{1, 12, 17, 40}` before the masses are compared?
