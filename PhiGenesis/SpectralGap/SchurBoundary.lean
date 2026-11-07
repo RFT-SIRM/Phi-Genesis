@@ -3,6 +3,8 @@ import Mathlib.Tactic
 import Mathlib.Topology.Order.IntermediateValue
 import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Topology.UniformSpace.Real
+import Mathlib.Topology.UniformSpace.UniformConvergence
 
 open Filter
 open scoped Topology
@@ -3654,5 +3656,48 @@ theorem schurBootstrapA1AtLevel_uniformCauchyOn :
       dist_triangle _ _ _
     _ ≤ bound N + bound N := add_le_add hmBound hnBound'
     _ < ε := hN
+
+
+/-- The pointwise limit of the finite-level A1 characteristics on the
+bootstrap interval.  Outside the interval the function is set to zero, since
+the convergence statement below is only asserted on that interval. -/
+noncomputable def schurBootstrapA1AtLevel_limit (lambda : ℝ) : ℝ := by
+  classical
+  exact if hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper then
+    Classical.choose
+      (cauchySeq_tendsto_of_complete
+        (schurBootstrapA1AtLevel_cauchySeq lambda hlambda))
+  else 0
+
+/-- At each parameter in the bootstrap interval, the finite-level
+characteristics converge to the selected pointwise limit. -/
+theorem schurBootstrapA1AtLevel_tendsto_limit
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    Tendsto
+      (fun n : ℕ => schurBootstrapA1AtLevel lambda n)
+      atTop
+      (𝓝 (schurBootstrapA1AtLevel_limit lambda)) := by
+  have hlim :=
+    Classical.choose_spec
+      (cauchySeq_tendsto_of_complete
+        (schurBootstrapA1AtLevel_cauchySeq lambda hlambda))
+  simpa [schurBootstrapA1AtLevel_limit, hlambda] using hlim
+
+/-- The finite-level A1 characteristics converge uniformly on the full
+bootstrap interval to their pointwise limit. -/
+theorem schurBootstrapA1AtLevel_tendstoUniformlyOn_limit :
+    TendstoUniformlyOn
+      (fun n lambda => schurBootstrapA1AtLevel lambda n)
+      (fun lambda => schurBootstrapA1AtLevel_limit lambda)
+      atTop
+      (Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) :=
+  schurBootstrapA1AtLevel_uniformCauchyOn.tendstoUniformlyOn_of_tendsto
+    (fun lambda hlambda =>
+      schurBootstrapA1AtLevel_tendsto_limit lambda hlambda)
 
 end PhiGenesis.SpectralGap
