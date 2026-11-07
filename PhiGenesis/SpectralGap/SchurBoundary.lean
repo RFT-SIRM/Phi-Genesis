@@ -7,6 +7,7 @@ import Mathlib.Topology.UniformSpace.Real
 import Mathlib.Topology.UniformSpace.UniformConvergence
 import Mathlib.Topology.UniformSpace.UniformApproximation
 import Mathlib.Topology.Order.Compact
+import Mathlib.Topology.Order.MonotoneConvergence
 import Mathlib.Topology.Sequences
 
 open Filter
@@ -4000,5 +4001,88 @@ theorem schurBootstrapA1AtLevel_next_root_exists
     intermediate_value_Icc' hle hcontinuous
   rcases himage hzero with ⟨mu, hmu, hvalue⟩
   exact ⟨mu, hmu, hvalue⟩
+
+
+/-- The subtype of parameters that are roots of the level-n A1
+characteristic inside the bootstrap interval. -/
+abbrev schurBootstrapA1RootAtLevel (n : ℕ) :=
+  {lambda : ℝ //
+    lambda ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper ∧
+      schurBootstrapA1AtLevel lambda n = 0}
+
+/-- Choose a root of the next level no smaller than a given root of the
+current level. -/
+noncomputable def schurBootstrapA1AtLevel_rootStep
+    (n : ℕ)
+    (root : schurBootstrapA1RootAtLevel n) :
+    schurBootstrapA1RootAtLevel (n + 1) := by
+  let hnext :=
+    schurBootstrapA1AtLevel_next_root_exists
+      n root.1 root.property.1 root.property.2
+  let mu := Classical.choose hnext
+  have hmu := Classical.choose_spec hnext
+  refine ⟨mu, ?_⟩
+  exact ⟨⟨le_trans root.property.1.1 hmu.1.1, hmu.1.2⟩, hmu.2⟩
+
+/-- Every root step moves weakly to the right. -/
+theorem schurBootstrapA1AtLevel_rootStep_ge
+    (n : ℕ)
+    (root : schurBootstrapA1RootAtLevel n) :
+    root.1 ≤ (schurBootstrapA1AtLevel_rootStep n root).1 := by
+  change root.1 ≤ Classical.choose
+    (schurBootstrapA1AtLevel_next_root_exists
+      n root.1 root.property.1 root.property.2)
+  exact
+    (Classical.choose_spec
+      (schurBootstrapA1AtLevel_next_root_exists
+        n root.1 root.property.1 root.property.2)).1.1
+
+/-- A coherently selected root at each level, with each new root chosen
+to the right of the preceding one. -/
+noncomputable def schurBootstrapA1AtLevel_rootSequence :
+    (n : ℕ) → schurBootstrapA1RootAtLevel n
+  | 0 =>
+      ⟨schurBootstrapA1AtLevel_chosenRoot 0,
+        schurBootstrapA1AtLevel_chosenRoot_spec 0⟩
+  | n + 1 =>
+      schurBootstrapA1AtLevel_rootStep n
+        (schurBootstrapA1AtLevel_rootSequence n)
+
+/-- The selected root parameters form a nondecreasing sequence. -/
+theorem schurBootstrapA1AtLevel_rootSequence_monotone :
+    Monotone
+      (fun n : ℕ =>
+        (schurBootstrapA1AtLevel_rootSequence n).1) := by
+  apply monotone_nat_of_le_succ
+  intro n
+  change
+    (schurBootstrapA1AtLevel_rootSequence n).1 ≤
+      (schurBootstrapA1AtLevel_rootStep n
+        (schurBootstrapA1AtLevel_rootSequence n)).1
+  exact schurBootstrapA1AtLevel_rootStep_ge n
+    (schurBootstrapA1AtLevel_rootSequence n)
+
+/-- The monotone root sequence is bounded above by the bootstrap
+interval's right endpoint. -/
+theorem schurBootstrapA1AtLevel_rootSequence_bddAbove :
+    BddAbove
+      (Set.range fun n : ℕ =>
+        (schurBootstrapA1AtLevel_rootSequence n).1) := by
+  refine ⟨schurBootstrapLambdaUpper, ?_⟩
+  rintro x ⟨n, rfl⟩
+  exact (schurBootstrapA1AtLevel_rootSequence n).property.1.2
+
+/-- The coherently selected finite-level roots converge to their
+supremum. -/
+theorem schurBootstrapA1AtLevel_rootSequence_tendsto :
+    Tendsto
+      (fun n : ℕ =>
+        (schurBootstrapA1AtLevel_rootSequence n).1)
+      atTop
+      (𝓝 (⨆ n : ℕ,
+        (schurBootstrapA1AtLevel_rootSequence n).1)) :=
+  tendsto_atTop_ciSup
+    schurBootstrapA1AtLevel_rootSequence_monotone
+    schurBootstrapA1AtLevel_rootSequence_bddAbove
 
 end PhiGenesis.SpectralGap
