@@ -528,3 +528,16 @@ full narrow parameter interval: `|a_3| <= 1/500` and
 denominators. This is the proposed coarse starting box for an all-level
 denominator invariant; unconditional root existence and convergence
 are not claimed yet.
+
+### Lean: the limit of the selected A1 roots is a root of the limiting A1 characteristic
+
+`schurBootstrapA1AtLevel_rootLimit_is_root` (`PhiGenesis/SpectralGap/SchurBoundary.lean`)
+proves, with no hypotheses and with only the standard axioms (`propext`, `Classical.choice`,
+`Quot.sound`), that the supremum of the increasing sequence of selected finite-level A1 roots of
+the scalar Schur recursion is a zero of the continuous limiting A1 characteristic, in the bootstrap
+parameter interval `[schurBootstrapLambdaLower, schurBootstrapLambdaUpper]`.
+
+This is a statement about these scalar objects. It does not by itself prove that the selected
+roots are the bottom eigenvalues `λ_min(m)` of the graph operators, that `λ_min(m)` converges,
+that the root is unique in the interval, or the quadratic law. Those remain open; the next
+step is the identification of the A1 branch with the global bottom of the spectrum at every level.

@@ -41,7 +41,7 @@ returns a vector inside the nearly degenerate A1 + E cluster; its Rayleigh quoti
 |lambda_9 − lambda_8| = 8·10⁻¹⁴⁶, so lambda_9 = 1.30912892028081342188862308817081018855232425111732634343…
 is the bottom eigenvalue of the level-9 graph to about 145 digits.
 
-## Quadratic convergence
+## Quadratic increment law (observed)
 
 With Delta_m = lambda_m − lambda_(m−1):
 
@@ -54,7 +54,7 @@ With Delta_m = lambda_m − lambda_(m−1):
 | 8 | 4.0148495·10⁻⁷³ | 0.4939504899 |
 | 9 | 7.961996·10⁻¹⁴⁶ | 0.4939504899 |
 
-The ratio is constant to 10 digits from level 7 on: Delta_(m+1) = c·Delta_m² with c = 0.4939504899
+The ratio is constant to 10 digits from level 7 on: Delta_(m+1) ≈ c·Delta_m² with c = 0.4939504899
 (numerically).
 
 ## Splitting of the corner modes
