@@ -3474,7 +3474,7 @@ theorem schurBootstrapA1AtLevel_tail_bound
           ≤ |s3.2| * (1 / 2 : ℝ)^(3 + m) := hdecay (3 + m)
       _ ≤ (1 / 20000 : ℝ) * (1 / 2 : ℝ)^(3 + m) :=
         mul_le_mul_of_nonneg_right hbabs (by positivity)
-      _ = (1 / 160000 : ℝ) * (1 / 2 : ℝ)^m := by rw [pow_add]; norm_num
+      _ = (1 / 160000 : ℝ) * (1 / 2 : ℝ)^m := by rw [pow_add]; ring
   have hu_nonneg : ∀ k, 0 ≤ u k := fun k => abs_nonneg _
   have hucontract : ∀ k, u (k+1) ≤ (1/2 : ℝ) * u k := by
     intro k
@@ -3516,7 +3516,6 @@ theorem schurBootstrapA1AtLevel_tail_bound
     unfold schurBootstrapA1AtLevel
     have hk : 6+k = 3+(3+k) := by omega
     rw [hk, schurBoundaryTrajectory_add lambda initial 3 (3+k)]
-    rfl
   have hstart : schurBootstrapA1AtLevel lambda m = f 0 := by rw [hA]; simp [f]
   have hend : schurBootstrapA1AtLevel lambda (m+N) = f N := by
     rw [hA]; simp [f, Nat.add_assoc]
