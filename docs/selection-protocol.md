@@ -28,6 +28,15 @@ The cumulative ledger records 193 configuration evaluations from the documented 
 - **Carpet branch:** the early 4/4 match was reassessed against a null model; the record attributes it to a look-elsewhere effect and marks that branch abandoned.
 - **v1.0 power correction:** even a configuration selecting all four targets would not have reached the required p-value. This was documented as a limitation of that protocol rather than treated as evidence against all possible mechanisms.
 
+
+## Exploratory D₃ representation audit (not preregistered)
+
+The six barycentric-coordinate permutations were verified as graph automorphisms at levels 5–7. The first 60 positive-spectrum cluster signatures agree numerically across those levels. Corrected target clusters: 1–2 (E), 12–14 (A1 + E), 16–17 (E), 30–41 (3A1 + A2 + 4E). The “contains A1” criterion hits 12 and 40 only; the simple-A1 criterion hits none. This corrects an earlier off-by-one report that included the zero mode. The calculation is numerical, not a Lean proof or exact-arithmetic certificate. See [full D₃ audit](d3-representation-audit.md).
+
+## v1.3 ancestry/decimation archive: pending verification
+
+A prior-session summary reports a probe based on phi(lambda)=lambda(5-lambda), but the archive, runnable source, frozen inputs, and expected outputs were not present in the inspected repository snapshot. Its results are not independently verified here and are excluded from the verified result table and configuration count. Add the complete archive and reproduce it using the preregistered positive-spectrum indexing before promoting it to verified status.
+
 ## What the result means
 
 The tested families did not satisfy the preregistered selection criterion. This is a bounded negative result: it does not prove that no operator family could select the indices. It does mean the current mass formula cannot be described as a spectral prediction.
