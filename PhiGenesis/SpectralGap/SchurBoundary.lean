@@ -1,4 +1,7 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Tactic
 import Mathlib.Topology.Order.IntermediateValue
 import Mathlib.Topology.MetricSpace.Cauchy
@@ -4193,5 +4196,161 @@ theorem schurBootstrapA1AtLevel_rootLimit_is_root :
       schurBootstrapA1AtLevel_rootLimit hmem).tendsto.comp hrootsWithin
   exact tendsto_nhds_unique hlimit
     schurBootstrapA1AtLevel_rootSequence_limit_value_tendsto_zero
+
+end PhiGenesis.SpectralGap
+
+namespace PhiGenesis.SpectralGap
+
+/-- One Schur step preserves differentiability of both boundary
+coordinates whenever its two scalar pivot denominators are nonzero. -/
+private theorem schurNextPair_differentiableAt_of_hasDerivAt
+    (a b c : ℝ → ℝ) (x a' b' c' : ℝ)
+    (ha : HasDerivAt a a' x)
+    (hb : HasDerivAt b b' x)
+    (hc : HasDerivAt c c' x)
+    (hc0 : c x ≠ 0)
+    (hc3 : c x + 3 * b x ≠ 0) :
+    DifferentiableAt ℝ
+        (fun y => schurNextDiagonal (a y) (b y) (c y)) x ∧
+      DifferentiableAt ℝ
+        (fun y => schurNextOffDiagonal (b y) (c y)) x := by
+  have hcb : HasDerivAt (fun y => c y + b y) (c' + b') x :=
+    hc.add hb
+  have hc3fun :
+      HasDerivAt (fun y => c y + 3 * b y) (c' + 3 * b') x :=
+    hc.add (hb.const_mul 3)
+  have hden :
+      HasDerivAt (fun y => c y * (c y + 3 * b y)) _ x :=
+    hc.mul hc3fun
+  have hbSq : HasDerivAt (fun y => (b y) ^ 2) _ x :=
+    hb.pow 2
+  have hnumA :
+      HasDerivAt
+        (fun y => (2 * (b y) ^ 2) * (c y + b y)) _ x :=
+    (hbSq.const_mul 2).mul hcb
+  have hquotA :
+      HasDerivAt
+        (fun y =>
+          ((2 * (b y) ^ 2) * (c y + b y)) /
+            (c y * (c y + 3 * b y))) _ x :=
+    hnumA.div hden (mul_ne_zero hc0 hc3)
+  have hnextA :
+      HasDerivAt
+        (fun y => a y -
+          ((2 * (b y) ^ 2) * (c y + b y)) /
+            (c y * (c y + 3 * b y))) _ x :=
+    ha.sub hquotA
+  have hnumB :
+      HasDerivAt
+        (fun y => (-((b y) ^ 2)) * (c y - b y)) _ x :=
+    ((hbSq.const_mul (-1)).mul (hc.sub hb))
+  have hquotB :
+      HasDerivAt
+        (fun y =>
+          ((-((b y) ^ 2)) * (c y - b y)) /
+            (c y * (c y + 3 * b y))) _ x :=
+    hnumB.div hden (mul_ne_zero hc0 hc3)
+  constructor
+  · simpa [schurNextDiagonal] using hnextA.differentiableAt
+  · simpa [schurNextOffDiagonal] using hquotB.differentiableAt
+
+/-- Every finite Schur trajectory from the original state (2-lambda,1)
+is differentiable at a parameter where all preceding pivot pairs are
+nonzero. The hypothesis is finite and matches the denominators used by
+the recursive update exactly. -/
+theorem schurBoundaryTrajectory_pair_differentiableAt_of_nonzero_pivots
+    (lambda₀ : ℝ) :
+    ∀ n : ℕ,
+      (∀ k, k < n →
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ ≠ 0 ∧
+        schurMidpointPivot
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).1
+          (schurBoundaryTrajectory lambda₀ (2 - lambda₀, 1) k).2
+          lambda₀ +
+            3 * (schurBoundaryTrajectory lambda₀
+              (2 - lambda₀, 1) k).2 ≠ 0) →
+      DifferentiableAt ℝ
+        (fun lambda =>
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) n).1)
+        lambda₀ ∧
+      DifferentiableAt ℝ
+        (fun lambda =>
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) n).2)
+        lambda₀ := by
+  intro n
+  induction n with
+  | zero =>
+      intro hden
+      constructor
+      · have hA :
+            HasDerivAt (fun lambda : ℝ => 2 - lambda) (-1) lambda₀ := by
+          simpa using
+            (hasDerivAt_const lambda₀ (2 : ℝ)).sub
+              (hasDerivAt_id lambda₀)
+        simpa [schurBoundaryTrajectory] using hA.differentiableAt
+      · simpa [schurBoundaryTrajectory] using
+          (hasDerivAt_const lambda₀ (1 : ℝ)).differentiableAt
+  | succ n ih =>
+      intro hden
+      have hprev := ih (by
+        intro k hk
+        exact hden k (by omega))
+      let af : ℝ → ℝ := fun lambda =>
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) n).1
+      let bf : ℝ → ℝ := fun lambda =>
+        (schurBoundaryTrajectory lambda (2 - lambda, 1) n).2
+      let cf : ℝ → ℝ := fun lambda =>
+        schurMidpointPivot (af lambda) (bf lambda) lambda
+      have ha : HasDerivAt af (deriv af lambda₀) lambda₀ := by
+        simpa [af] using hprev.1.hasDerivAt
+      have hb : HasDerivAt bf (deriv bf lambda₀) lambda₀ := by
+        simpa [bf] using hprev.2.hasDerivAt
+      have hc : HasDerivAt cf
+          (2 * deriv af lambda₀ + 1 - deriv bf lambda₀) lambda₀ := by
+        change HasDerivAt
+          (fun lambda => 2 * af lambda + lambda - bf lambda) _ lambda₀
+        exact (ha.const_mul 2).add (hasDerivAt_id lambda₀) |>.sub hb
+      have hnonzero :
+          cf lambda₀ ≠ 0 ∧
+            cf lambda₀ + 3 * bf lambda₀ ≠ 0 := by
+        simpa [cf, af, bf] using hden n (by omega)
+      have hnext :=
+        schurNextPair_differentiableAt_of_hasDerivAt
+          af bf cf lambda₀
+          (deriv af lambda₀) (deriv bf lambda₀)
+          (2 * deriv af lambda₀ + 1 - deriv bf lambda₀)
+          ha hb hc hnonzero.1 hnonzero.2
+      constructor
+      · simpa [af, bf, cf, schurBoundaryTrajectory,
+          schurBoundaryStateStep] using hnext.1
+      · simpa [af, bf, cf, schurBoundaryTrajectory,
+          schurBoundaryStateStep] using hnext.2
+
+/-- Every finite-level bootstrap A1 characteristic is differentiable
+throughout the bootstrap interval, because all of its finite Schur pivot
+pairs are strictly positive there. -/
+theorem schurBootstrapA1AtLevel_differentiableAt
+    (n : ℕ) (lambda₀ : ℝ)
+    (hlambda₀ :
+      lambda₀ ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper) :
+    DifferentiableAt ℝ
+      (fun lambda => schurBootstrapA1AtLevel lambda n) lambda₀ := by
+  have hcoords :=
+    schurBoundaryTrajectory_pair_differentiableAt_of_nonzero_pivots
+      lambda₀ (6 + n) (by
+        intro k hk
+        exact schurBootstrap_all_pivots_nonzero lambda₀ hlambda₀ k)
+  have hsum :
+      HasDerivAt
+        (fun lambda =>
+          (schurBoundaryTrajectory lambda (2 - lambda, 1) (6 + n)).1 +
+            2 * (schurBoundaryTrajectory lambda (2 - lambda, 1)
+              (6 + n)).2) _ lambda₀ :=
+    hcoords.1.hasDerivAt.add (hcoords.2.hasDerivAt.const_mul 2)
+  simpa [schurBootstrapA1AtLevel] using hsum.differentiableAt
 
 end PhiGenesis.SpectralGap
