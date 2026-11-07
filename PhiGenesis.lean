@@ -7,6 +7,7 @@ import PhiGenesis.SpectralGap.RecursiveSierpinskiFaces
 import PhiGenesis.SpectralGap.SignedGaugeEnergy
 import PhiGenesis.SpectralGap.SignedLaplacianMatrix
 import PhiGenesis.SpectralGap.SchurBoundary
+import PhiGenesis.SpectralGap.SchurBridge
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
 import PhiGenesis.H10.GasketVertexOrder
