@@ -154,7 +154,7 @@ For the explicit local-face operator `H = D + A_s` at the central twist angle, t
 | Status | Statement |
 |---|---|
 | Proved in Lean 4 | Every real eigenvalue is at least 1 for every refinement level, so the gap does not close. |
-| Computed numerically | The bottom eigenvalue is 1.30912891862700 at level 4 and 1.30912892028081 at levels 5 to 8 (matrix dimension 366 to 9,843). |
+| Computed numerically | From an exact Schur recursion: the bottom eigenvalue is 1.30912891862700 at level 4, 1.30912892028081 at level 5 and 1.309128920280813421888623... from level 6 on, stable to about 145 digits at level 9. The increments satisfy Delta_(m+1) = c Delta_m^2 with c = 0.49395049 (levels 7 to 9). See the [note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
 | Open | That 1.30912892028081... is the exact limit, and a closed form for it. No analogue of pi is claimed. |
 
 The identification of this model with the external theta = 2 pi operator remains conditional; see the research log in that directory.

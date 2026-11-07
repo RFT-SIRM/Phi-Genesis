@@ -17,8 +17,9 @@ lambda I_3, where S_m is the ordinary Schur complement of Q_m − lambda I.
 Thus the retained corner diagonal starts at the degree inside the piece. It is S3-symmetric, with diagonal
 alpha_m and off-diagonal beta_m. Gluing three copies at three midpoints and eliminating the
 midpoints gives T_(m+1). The corner modes split into the channels A1: alpha + 2 beta − lambda = 0
-and E: alpha − beta − lambda = 0; the bottom eigenvalue is the lowest A1 root. This is the structure
-formalized in `PhiGenesis/SpectralGap/SchurBoundary.lean`.
+and E: alpha − beta − lambda = 0; the bottom eigenvalue is the lowest A1 root. The one-step formulas
+are those of `schurNextDiagonal` and `schurNextOffDiagonal` in
+`PhiGenesis/SpectralGap/SchurBoundary.lean`, where the recursion is formalized.
 
 Validation: the recursion reproduces the directly diagonalized bottom eigenvalues at levels 1 to 4
 to 40 digits (levels 3 and 4 against 40-digit inverse iteration). At level 5, direct diagonalization

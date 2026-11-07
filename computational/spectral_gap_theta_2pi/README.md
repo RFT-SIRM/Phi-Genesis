@@ -418,7 +418,7 @@ Combined with |D_(m+1)-D_m|<=2^m|b_m|, this would prove convergence of D_m and k
    evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation:
    thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly
    constant between levels 4 and 5.
-3. Prove the quadratic correction law `δ_(m+1) ≈ c·δ_m²` uniformly in the level. The derivative-transition interval certificate controls root-sampled slopes through level 14; the uniform summability estimates and infinite-level limit remain open.
+3. Prove the quadratic correction law `δ_(m+1) ≈ c·δ_m²` uniformly in the level. An exact Schur recursion ([note](HIGH_PRECISION_2026-11-06.md)) gives the bottom eigenvalue to 145 digits and shows Delta_(m+1) = c Delta_m^2 with c = 0.4939504899 from level 7 on at that precision (a numerical observation, not a proof). The derivative-transition interval certificate controls root-sampled slopes through level 14; the uniform summability estimates and infinite-level limit remain open.
 4. Close the conditional step: tie the local-face model to the external θ = 2π operator.
 
 ## 6. Reproduce
