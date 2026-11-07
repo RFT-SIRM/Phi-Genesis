@@ -3957,4 +3957,48 @@ theorem schurBootstrapA1AtLevel_chosenRoots_subseq_limit :
     tendsto_nhds_unique hlimit hresidual
   exact ⟨lambda, hlambda, φ, hφ, hroots, hzero⟩
 
+
+/-- If the level-n A1 characteristic vanishes at a parameter in the
+bootstrap interval, then the next-level characteristic has a zero between
+that parameter and the upper endpoint.  The tail increment is nonnegative
+at the old root, while the right endpoint remains strictly negative. -/
+theorem schurBootstrapA1AtLevel_next_root_exists
+    (n : ℕ)
+    (lambda : ℝ)
+    (hlambda :
+      lambda ∈ Set.Icc schurBootstrapLambdaLower
+        schurBootstrapLambdaUpper)
+    (hroot : schurBootstrapA1AtLevel lambda n = 0) :
+    ∃ mu ∈ Set.Icc lambda schurBootstrapLambdaUpper,
+      schurBootstrapA1AtLevel mu (n + 1) = 0 := by
+  have htail :=
+    schurBootstrapA1AtLevel_tail_bound lambda hlambda n 1
+  have hleft :
+      0 ≤ schurBootstrapA1AtLevel lambda (n + 1) := by
+    simpa [hroot] using htail.1
+  have hsigns := schurBootstrapEndpoints_A1_signs_all_finite_levels
+  have hright :
+      schurBootstrapA1AtLevel schurBootstrapLambdaUpper (n + 1) < 0 := by
+    simpa [schurBootstrapA1AtLevel, schurBoundaryTrajectory_add] using
+      hsigns.2 (n + 1)
+  have hle : lambda ≤ schurBootstrapLambdaUpper := hlambda.2
+  have hcontinuousAll :=
+    schurBootstrapA1AtLevel_continuousOn (n + 1)
+  have hsubset :
+      Set.Icc lambda schurBootstrapLambdaUpper ⊆
+        Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper := by
+    intro x hx
+    exact ⟨le_trans hlambda.1 hx.1, hx.2⟩
+  have hcontinuous :=
+    hcontinuousAll.mono hsubset
+  have hzero :
+      (0 : ℝ) ∈ Set.Icc
+        (schurBootstrapA1AtLevel schurBootstrapLambdaUpper (n + 1))
+        (schurBootstrapA1AtLevel lambda (n + 1)) :=
+    ⟨le_of_lt hright, hleft⟩
+  have himage :=
+    intermediate_value_Icc' hle hcontinuous
+  rcases himage hzero with ⟨mu, hmu, hvalue⟩
+  exact ⟨mu, hmu, hvalue⟩
+
 end PhiGenesis.SpectralGap
