@@ -4,6 +4,8 @@ import Mathlib.Topology.Order.IntermediateValue
 import Mathlib.Topology.MetricSpace.Cauchy
 import Mathlib.Analysis.SpecificLimits.Basic
 
+open Filter
+
 /-!
 # The three-corner Schur boundary channels
 
@@ -3562,9 +3564,8 @@ theorem schurBootstrapA1AtLevel_cauchySeq
           schurBootstrapA1AtLevel lambda m| := by
             rw [Real.dist_eq]
       _ = schurBootstrapA1AtLevel lambda m -
-            schurBootstrapA1AtLevel lambda n := by
-              rw [abs_of_nonpos]
-              linarith [htail.1]
+            schurBootstrapA1AtLevel lambda n :=
+              abs_of_nonpos (by linarith [htail.1])
       _ ≤ bound n := by
             simpa [bound] using htail.2
   have hpow :
@@ -3574,6 +3575,6 @@ theorem schurBootstrapA1AtLevel_cauchySeq
   have hbound : Tendsto bound atTop (𝓝 (0 : ℝ)) := by
     simpa [bound] using
       (tendsto_const_nhds.mul hpow)
-  exact Metric.cauchySeq_of_le_tendsto_0' bound hdist hbound
+  exact cauchySeq_of_le_tendsto_0' bound hdist hbound
 
 end PhiGenesis.SpectralGap
