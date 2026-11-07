@@ -3898,6 +3898,8 @@ theorem schurBootstrapA1AtLevel_chosenRoots_limit_tendsto_zero :
 end PhiGenesis.SpectralGap
 
 
+namespace PhiGenesis.SpectralGap
+
 /-- Every sequence of selected finite-level A1 roots has a convergent
 subsequence whose limit is a zero of the limiting characteristic.  Compactness
 keeps the roots in the bootstrap interval; the uniform tail estimate makes
@@ -3954,3 +3956,5 @@ theorem schurBootstrapA1AtLevel_chosenRoots_subseq_limit :
       schurBootstrapA1AtLevel_limit lambda = 0 :=
     tendsto_nhds_unique hlimit hresidual
   exact ⟨lambda, hlambda, φ, hφ, hroots, hzero⟩
+
+end PhiGenesis.SpectralGap
