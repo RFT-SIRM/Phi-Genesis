@@ -3844,15 +3844,24 @@ theorem schurBootstrapA1AtLevel_chosenRoot_limit_bound (n : ℕ) :
     schurBootstrapA1AtLevel_limit_tail_control
       (schurBootstrapA1AtLevel_chosenRoot n) hroot.1 n
   rw [hroot.2] at htail
+  have hnonneg :
+      0 ≤ schurBootstrapA1AtLevel_limit
+        (schurBootstrapA1AtLevel_chosenRoot n) := by
+    simpa only [sub_zero] using htail.1
+  have hupper :
+      schurBootstrapA1AtLevel_limit
+        (schurBootstrapA1AtLevel_chosenRoot n) ≤
+          (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := by
+    simpa only [sub_zero] using htail.2
   constructor
-  · simpa using htail.1
+  · exact hnonneg
   · calc
       |schurBootstrapA1AtLevel_limit
           (schurBootstrapA1AtLevel_chosenRoot n)| =
         schurBootstrapA1AtLevel_limit
           (schurBootstrapA1AtLevel_chosenRoot n) :=
-            abs_of_nonneg htail.1
-      _ ≤ (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := htail.2
+            abs_of_nonneg hnonneg
+      _ ≤ (1 / 40000 : ℝ) * (1 / 2 : ℝ) ^ n := hupper
 
 /-- Along any fixed choice of a finite-level root at every level, the value
 of the limiting characteristic tends to zero.  Thus the finite roots are
