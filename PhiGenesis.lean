@@ -17,6 +17,7 @@ import PhiGenesis.SpectralGap.SchurCornerTrajectory
 import PhiGenesis.SpectralGap.SchurInertiaBasics
 import PhiGenesis.SpectralGap.SchurInertiaStep
 import PhiGenesis.SpectralGap.SchurSpectralBounds
+import PhiGenesis.SpectralGap.SchurLambdaMin
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
 import PhiGenesis.H10.GasketVertexOrder
