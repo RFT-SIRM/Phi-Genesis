@@ -626,3 +626,18 @@ Still open: (1) nonvanishing of the pivots along the trajectory at every level (
 bootstrap box argument but not yet connected to this statement); (2) the inertia argument identifying the
 selected A1 root with the bottom eigenvalue `lambda_min(m)` at every level; (3) convergence of
 `lambda_min(m)` and the quadratic law.
+
+### Update 2026-11-07: the scalar trajectory is the graph-matrix response in the bootstrap window (Lean)
+
+`PhiGenesis/SpectralGap/SchurCornerTrajectory.lean` proves `sgCornerResponse_trajectory`: if both pivots are
+nonzero at levels `< N`, the pair `schurBoundaryTrajectory lam (2 - lam, 1) N` is the corner response of
+`Q_N - lam I`. Combined with `schurBootstrap_all_pivots_nonzero` (already in `SchurBoundary.lean`),
+`sgCornerResponse_trajectory_bootstrap` gives this unconditionally for every `lam` in the bootstrap window
+`[schurBootstrapLambdaLower, schurBootstrapLambdaUpper]` and every level `N`.
+
+This ties the scalar recursion, and hence the A1 characteristic `a_m + 2 b_m`, to the graph matrix
+`sgSignlessLaplacianMatrix N` (which is gauge-conjugate to `sgSignedLaplacianMatrix N`) for the level-0
+start state. It concerns the harmonic extension (zero interior rows), not yet the spectrum.
+
+Still open: the inertia argument that identifies the selected A1 root with the bottom eigenvalue
+`lambda_min(N)` at every level, convergence of `lambda_min(N)`, and the quadratic law.

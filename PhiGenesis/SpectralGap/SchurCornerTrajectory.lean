@@ -35,4 +35,12 @@ theorem sgCornerResponse_trajectory (lam : ℝ) :
       rw [hstep]
       exact key
 
+/-- In the bootstrap window the scalar Schur trajectory is the corner response of the
+graph matrix at every level; the pivot nonvanishing is already proved. -/
+theorem sgCornerResponse_trajectory_bootstrap (lam : ℝ)
+    (hlam : lam ∈ Set.Icc schurBootstrapLambdaLower schurBootstrapLambdaUpper) (N : ℕ) :
+    SgCornerResponse N lam (schurBoundaryTrajectory lam (2 - lam, 1) N).1
+      (schurBoundaryTrajectory lam (2 - lam, 1) N).2 :=
+  sgCornerResponse_trajectory lam N (fun n _ => schurBootstrap_all_pivots_nonzero lam hlam n)
+
 end PhiGenesis.SpectralGap
