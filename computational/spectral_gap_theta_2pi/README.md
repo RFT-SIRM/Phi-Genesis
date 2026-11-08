@@ -684,3 +684,19 @@ matrix). It is not stated for Mathlib eigenvalues of the matrix, and the passage
 smallest eigenvalue is a standard step that is not formalized here. Not proved: a closed form for the limit, the
 quadratic increment law, and any statement about levels `N < 6`. Nothing here concerns the theta = 2 pi model beyond
 the matrix `Q_N` itself.
+
+### Update 2026-11-07: the least eigenvalue of the signless Laplacian converges (Lean)
+
+`PhiGenesis/SpectralGap/SchurEigenvalue.lean` removes the Rayleigh-quotient caveat of the previous entry. With
+`sgEigenSet m = {mu | exists v != 0, Q_m v = mu v}` (the eigenvalues of `sgSignlessLaplacianMatrix m` in the usual
+sense) it proves:
+
+- `sgBottomEigenvalue_atRoot`: an A1 root `r` of level `6 + n` in the window is an eigenvalue of `Q_{6+n}` and no
+  eigenvalue is smaller (a nonnegative form vanishing at `x` has `x` in its kernel).
+- `sgChosenRoot_isLeast`: the canonical A1 root is the least element of `sgEigenSet (6 + n)`.
+- `sgLeastEigenvalue_converges`: the least eigenvalues of `Q_{6+n}` converge to a point of
+  `[schurBootstrapLambdaLower, schurBootstrapLambdaUpper]`.
+
+The statement is about the signless Laplacian `Q_N` of the level-`N` Sierpinski graph (gauge-conjugate to the signed
+matrix), levels `N >= 6`. Not proved: a closed form for the limit, the quadratic increment law, levels `N < 6`, and
+anything about the theta = 2 pi model beyond the matrix `Q_N` itself.
