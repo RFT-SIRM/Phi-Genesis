@@ -14,6 +14,9 @@ import PhiGenesis.SpectralGap.SchurSlots
 import PhiGenesis.SpectralGap.SchurGlueRows
 import PhiGenesis.SpectralGap.SchurCornerResponse
 import PhiGenesis.SpectralGap.SchurCornerTrajectory
+import PhiGenesis.SpectralGap.SchurInertiaBasics
+import PhiGenesis.SpectralGap.SchurInertiaStep
+import PhiGenesis.SpectralGap.SchurSpectralBounds
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
 import PhiGenesis.H10.GasketVertexOrder
