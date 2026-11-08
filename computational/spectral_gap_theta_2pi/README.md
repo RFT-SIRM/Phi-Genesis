@@ -641,3 +641,23 @@ start state. It concerns the harmonic extension (zero interior rows), not yet th
 
 Still open: the inertia argument that identifies the selected A1 root with the bottom eigenvalue
 `lambda_min(N)` at every level, convergence of `lambda_min(N)`, and the quadratic law.
+
+### Update 2026-11-07: certified interval for the bottom of the spectrum (Lean, quadratic-form statement)
+
+`SchurInertiaBasics.lean`, `SchurInertiaStep.lean` and `SchurSpectralBounds.lean` prove, for the signless
+Laplacian `Q_N` of the level-`N` Sierpinski graph (`sgSignlessLaplacianMatrix N`), the following statements about
+the shifted quadratic form `x^T (Q_N - lam I) x` at every level `N = 6 + n`, with `L = schurBootstrapLambdaLower`
+and `U = schurBootstrapLambdaUpper` (the 36-digit window):
+
+- `sgDirichletNonneg_bootstrap`: for every `lam` in `[L, U]` and every level, the form is nonnegative on vectors
+  vanishing at the three outer corners (induction over levels using the corner response, the algebra of one
+  gluing step and the strict positivity of all pivots).
+- `sgSpectralBounds_bootstrap`: at `lam = L` the form is nonnegative on all vectors, and at `lam = U` there is a
+  vector on which the form is negative.
+
+Consequently the bottom of the spectrum of `Q_N` lies in `[L, U)` for every `N >= 6` (width about 2e-36), stated
+here for the quadratic form; the passage to the eigenvalue of the matrix is a standard Rayleigh-quotient step that
+is not formalized in this repository.
+
+Not proved by this: that `lambda_min(N)` converges as `N` grows, that the limit equals the value in the table
+above, and the quadratic increment law. Boundedness of a sequence in an interval does not give convergence.

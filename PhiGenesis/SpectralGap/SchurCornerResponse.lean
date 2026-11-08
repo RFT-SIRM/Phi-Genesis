@@ -109,7 +109,7 @@ private theorem cr_i2R : sgChildCornerBoundaryIndex 2 TriangleCorner.rightBase =
 private theorem cr_i2A : sgChildCornerBoundaryIndex 2 TriangleCorner.apex = 2 := by
   simp [sgChildCornerBoundaryIndex]
 
-private theorem cr_outerP_left (m : Nat) :
+theorem cr_outerP_left (m : Nat) :
     sgLevelOuterCorner (m + 1) TriangleCorner.leftBase =
       sgChildVertex m 0 (sgLevelOuterCorner m TriangleCorner.leftBase) := by
   apply Subtype.ext
@@ -123,7 +123,7 @@ private theorem cr_outerP_left (m : Nat) :
   rw [h2]
   simp [sgAddOffset, sgChildOffset]
 
-private theorem cr_outerP_right (m : Nat) :
+theorem cr_outerP_right (m : Nat) :
     sgLevelOuterCorner (m + 1) TriangleCorner.rightBase =
       sgChildVertex m 1 (sgLevelOuterCorner m TriangleCorner.rightBase) := by
   apply Subtype.ext
@@ -139,7 +139,7 @@ private theorem cr_outerP_right (m : Nat) :
   · simp [sgAddOffset, sgChildOffset, pow_succ, mul_two]
   · simp [sgAddOffset, sgChildOffset]
 
-private theorem cr_outerP_apex (m : Nat) :
+theorem cr_outerP_apex (m : Nat) :
     sgLevelOuterCorner (m + 1) TriangleCorner.apex =
       sgChildVertex m 2 (sgLevelOuterCorner m TriangleCorner.apex) := by
   apply Subtype.ext
