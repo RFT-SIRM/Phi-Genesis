@@ -605,3 +605,24 @@ uniqueness for the homogeneous midpoint system under positive pivot energy.
 Still open: defining the corner response of `sgSignlessLaplacianMatrix m - lam I` at level `m`, and the
 induction step that combines the children with `schurGlue_corner_response` to obtain the corner response
 of level `m+1`; then the inertia argument identifying the A1 root with the bottom eigenvalue.
+
+### Update 2026-11-07: the Schur step is formalized for the graph matrix (Lean)
+
+`PhiGenesis/SpectralGap/SchurGlueRows.lean` and `SchurCornerResponse.lean` define the corner response
+`SgCornerResponse m lam a b` of the shifted signless matrix `Q_m - lam I`: for every choice of values `z`
+at the three outer corners there is an extension to all vertices with zero rows at all non-corner
+vertices and corner rows equal to `a z_c + b (sum z - z_c)`. Proved:
+
+- `sgCornerResponse_zero`: level 0 has response `(2 - lam, 1)`.
+- `sgCornerResponse_succ`: if `(a, b)` is a response at level `m`, `c = 2a + lam - b`, `c != 0` and
+  `c + 3b != 0`, then `(schurNextDiagonal a b c, schurNextOffDiagonal b c)` is a response at level `m + 1`.
+  The proof glues the three child extensions, handles the shared midpoints and outer corners row by row,
+  and uses the algebra of `SchurGlueAlgebra.lean`.
+
+So the scalar recursion `schurBoundaryStateStep` is formally tied to the graph matrix, provided the two
+pivots are nonzero at every level used.
+
+Still open: (1) nonvanishing of the pivots along the trajectory at every level (it is part of the
+bootstrap box argument but not yet connected to this statement); (2) the inertia argument identifying the
+selected A1 root with the bottom eigenvalue `lambda_min(m)` at every level; (3) convergence of
+`lambda_min(m)` and the quadratic law.
