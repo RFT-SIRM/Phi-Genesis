@@ -661,3 +661,26 @@ is not formalized in this repository.
 
 Not proved by this: that `lambda_min(N)` converges as `N` grows, that the limit equals the value in the table
 above, and the quadratic increment law. Boundedness of a sequence in an interval does not give convergence.
+
+### Update 2026-11-07: convergence of the bottom of the quadratic form (Lean)
+
+`PhiGenesis/SpectralGap/SchurLambdaMin.lean` proves, for the signless Laplacian `Q_N` of the level-`N` Sierpinski
+graph and levels `N = 6 + n`:
+
+- `sgRayleighAtRoot`: at every A1 root `r` of level `6 + n` in the bootstrap window, the form `x^T (Q_N - r I) x`
+  is nonnegative on all vectors and vanishes on a nonzero vector.
+- `sgRayleighMin_unique`: two such values coincide (a value that bounds the form from below and is attained on a
+  nonzero vector is unique).
+- `schurBootstrapA1Root_unique`: the A1 root of level `6 + n` in the window is unique; hence the coherently
+  selected root sequence equals the canonical choice (`..._rootSequence_eq_chosenRoot`).
+- `schurBootstrapA1AtLevel_chosenRoot_tendsto`: this sequence converges to `schurBootstrapA1AtLevel_rootLimit`,
+  which is a zero of the limiting A1 characteristic (`schurBootstrapA1AtLevel_rootLimit_is_root`).
+
+So the minimum of the Rayleigh quotient of `Q_N` (the bottom of the quadratic form) converges, and its limit lies in
+`[schurBootstrapLambdaLower, schurBootstrapLambdaUpper]`.
+
+This is a statement about the quadratic form of the matrix `sgSignlessLaplacianMatrix N` (gauge-conjugate to the signed
+matrix). It is not stated for Mathlib eigenvalues of the matrix, and the passage from the Rayleigh minimum to the
+smallest eigenvalue is a standard step that is not formalized here. Not proved: a closed form for the limit, the
+quadratic increment law, and any statement about levels `N < 6`. Nothing here concerns the theta = 2 pi model beyond
+the matrix `Q_N` itself.
