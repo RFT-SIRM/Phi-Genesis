@@ -1,6 +1,11 @@
 name: spectral-gap-high-precision
 
+# The large level-9/10 mixed-precision spectral-sector calculations run daily
+# on the default branch. This is deliberately separate from nightly-deep-tests
+# (00:00 UTC), which retains its own exploratory/statistical workload.
 on:
+  schedule:
+    - cron: "0 3 * * *" # every day at 03:00 UTC
   push:
     branches:
       - research/spectral-gap-high-precision-2026-11-06
