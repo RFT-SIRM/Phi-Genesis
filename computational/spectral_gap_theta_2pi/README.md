@@ -731,3 +731,10 @@ repository yet. The quadratic increment law and the existence of `c` therefore r
 `sgSignedLaplacianMatrix m` and the signless matrix `sgSignlessLaplacianMatrix m` have the same eigenvalues (they are
 conjugate by the diagonal gauge matrix with entries +-1; the eigenvectors are multiplied by the gauge).
 `sgSignedLeastEigenvalue_converges` restates the convergence of the least eigenvalues on levels `6 + n` for the signed matrix.
+
+### Update 2026-11-07: derivative recursion of the trajectory (Lean) and proof map
+
+`PhiGenesis/SpectralGap/SchurDerivTrajectory.lean` defines `schurDerivTrajectory` (the parameter derivatives `a_k'`, `b_k'`
+by the exact derivative recursion) and proves `schurBoundaryTrajectory_hasDerivAt` (and the bootstrap-window version): the
+trajectory components have these derivatives, given nonzero pivots. This is a technical ingredient for a possible proof of
+the quadratic law, which is still open. A proof map of everything proved so far is in `PROOF_MAP.md`.

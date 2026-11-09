@@ -4401,7 +4401,7 @@ namespace PhiGenesis.SpectralGap
 
 /-- One Schur step preserves differentiability of both boundary
 coordinates whenever its two scalar pivot denominators are nonzero. -/
-private theorem schurNextPair_differentiableAt_of_hasDerivAt
+theorem schurNextPair_differentiableAt_of_hasDerivAt
     (a b c : ℝ → ℝ) (x a' b' c' : ℝ)
     (ha : HasDerivAt a a' x)
     (hb : HasDerivAt b b' x)
@@ -4592,7 +4592,7 @@ noncomputable def schurNextOffDiagonalParameterDerivative
 Intermediate derivative values are left inferred by Lean; the explicit
 scalar formulas are recovered only after applying HasDerivAt.deriv.
 This keeps all derivative rules on the same real-field instances. -/
-private theorem schurNextPair_deriv_formula
+theorem schurNextPair_deriv_formula
     (a b c : ℝ → ℝ) (x a' b' c' : ℝ)
     (ha : HasDerivAt a a' x)
     (hb : HasDerivAt b b' x)
