@@ -700,3 +700,22 @@ sense) it proves:
 The statement is about the signless Laplacian `Q_N` of the level-`N` Sierpinski graph (gauge-conjugate to the signed
 matrix), levels `N >= 6`. Not proved: a closed form for the limit, the quadratic increment law, levels `N < 6`, and
 anything about the theta = 2 pi model beyond the matrix `Q_N` itself.
+
+### Update 2026-11-07: exact identities at the roots, and the structure of the quadratic law
+
+`PhiGenesis/SpectralGap/SchurQuadStage1.lean` proves, for a root `r` of the level-`6 + n` A1 characteristic in the
+window, with `b` the off-diagonal state `(schurBoundaryTrajectory r (2 - r, 1) (6 + n)).2`:
+
+- `sgA1_next_at_root`: `f_{n+1}(r) = -2 b r / (r - 2 b)` exactly.
+- `sgB_next_at_root`: `b_{n+1}(r) = -b^2 (r - 6 b) / ((r - 5 b)(r - 2 b))` exactly.
+- `sgA1_next_at_root_nonneg`: `f_{n+1}(r) >= 0`.
+
+Numerical evidence (not a proof; script `quadratic_law_check.py`, 800 digits): the derivative `f'` of the A1
+characteristic at the roots is `-1.29328974303` (to 12 digits) on levels 6 to 11, the ratios `delta_{m+1} / delta_m^2`
+equal `0.4939504899` from level 8 on, and `|f'| / (2 lambda)` equals the same number.
+
+Heuristic reading, not proved: with `b_{m+1} ~ -b_m^2 / lambda` and `delta_{m+1} ~ -2 b_m / |f'|` one gets
+`delta_{m+1} ~ |f'| delta_m^2 / (2 lambda)`, i.e. `c = -g'(lambda_inf) / (2 lambda_inf)` where `g` is the limiting
+A1 characteristic. Turning this into a theorem needs bounds on the parameter derivatives of the Schur states along the
+trajectory (convergence of `f_m'` and control of `f_m''`) and the asymptotics of `b_m`; none of this is in the
+repository yet. The quadratic increment law and the existence of `c` therefore remain open.
