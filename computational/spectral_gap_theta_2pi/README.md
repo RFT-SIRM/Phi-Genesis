@@ -3,7 +3,12 @@
 > **Status in one line.** For the explicit local-face operator `H = D + A_s` on the Sierpiński gasket,
 > the bottom eigenvalue is bounded below by **1 for every refinement level** (Lean 4, no `sorry`).
 > Finite-level computations show very rapid convergence near **1.3091289202808134…**.
-> The limiting value, convergence theorem, and exact characterization remain **open**.
+> Status (updated 2026-11-07; see the Lean updates at the end of this file, which supersede earlier
+> entries that list the bridge, the identification of the A1 root or convergence as open): for the
+> signless Laplacian of the level-N Sierpinski graph and its gauge-conjugate signed matrix, levels N >= 6,
+> the least eigenvalue exists, equals the unique A1 root in the 36-digit window and converges (Lean).
+> The exact limiting value and any closed form, the quadratic increment law, levels N < 6, and the link to
+> the theta = 2 pi model beyond this matrix remain **open**.
 
 This directory is a spectral-gap workstream. It is **separate** from the scalar canonical GF(2) H10
 recurrence in `computational/higher_moments_z2` and from the vertex-order formalization in
@@ -719,3 +724,10 @@ Heuristic reading, not proved: with `b_{m+1} ~ -b_m^2 / lambda` and `delta_{m+1}
 A1 characteristic. Turning this into a theorem needs bounds on the parameter derivatives of the Schur states along the
 trajectory (convergence of `f_m'` and control of `f_m''`) and the asymptotics of `b_m`; none of this is in the
 repository yet. The quadratic increment law and the existence of `c` therefore remain open.
+
+### Update 2026-11-07: the result transfers to the signed matrix (Lean)
+
+`PhiGenesis/SpectralGap/SchurSignedTransfer.lean` proves `sgSignedEigenSet_eq`: the signed local-face matrix
+`sgSignedLaplacianMatrix m` and the signless matrix `sgSignlessLaplacianMatrix m` have the same eigenvalues (they are
+conjugate by the diagonal gauge matrix with entries +-1; the eigenvectors are multiplied by the gauge).
+`sgSignedLeastEigenvalue_converges` restates the convergence of the least eigenvalues on levels `6 + n` for the signed matrix.

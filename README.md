@@ -156,7 +156,8 @@ For the explicit local-face operator `H = D + A_s` at the central twist angle, t
 | Proved in Lean 4 | Every real eigenvalue is at least 1 for every refinement level, so the gap does not close. |
 | Computed numerically | From an exact Schur recursion: the bottom eigenvalue is 1.30912891862700 at level 4, 1.30912892028081 at level 5 and 1.309128920280813421888623... from level 6 on, stable to about 145 digits at level 9. The increments satisfy Delta_(m+1) = c Delta_m^2 with c = 0.49395049 (levels 7 to 9). See the [note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
 | Open | That 1.30912892028081... is the exact limit, and a closed form for it. No analogue of pi is claimed. |
-| Open | Lean bridge from the graph matrix to the scalar Schur recursion, identification of the selected A1 roots with the bottom eigenvalue at every level, and convergence of that eigenvalue. The Lean theorem on the limit of the selected roots concerns the scalar recursion only. |
+| Proved in Lean 4 | For the signless Laplacian of the level-N Sierpinski graph and its gauge-conjugate signed matrix, levels N >= 6: the least eigenvalue exists, equals the unique A1 root in the 36-digit window [schurBootstrapLambdaLower, schurBootstrapLambdaUpper], and converges to a point of that window. |
+| Open | The quadratic increment law and the existence of its constant (numerical evidence only), levels N < 6, a closed form for the limit, and the link between this matrix and the theta = 2 pi model beyond the matrix itself. |
 
 The identification of this model with the external theta = 2 pi operator remains conditional; see the research log in that directory.
 
