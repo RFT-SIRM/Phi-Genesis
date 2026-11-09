@@ -21,6 +21,7 @@ import PhiGenesis.SpectralGap.SchurLambdaMin
 import PhiGenesis.SpectralGap.SchurEigenvalue
 import PhiGenesis.SpectralGap.SchurQuadStage1
 import PhiGenesis.SpectralGap.SchurSignedTransfer
+import PhiGenesis.SpectralGap.SchurDerivTrajectory
 import PhiGenesis.H10.BoundaryRowTransform
 import PhiGenesis.H10.GasketCoordinates
 import PhiGenesis.H10.GasketVertexOrder
