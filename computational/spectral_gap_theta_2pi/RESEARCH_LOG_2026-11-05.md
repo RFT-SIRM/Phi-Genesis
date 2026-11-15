@@ -1,11 +1,11 @@
 # Research log: uniform gap for the local-face signing (theta = 2 pi label conditional)
 
-> **Current status update — 15 November 2026.** The Lean development added after the initial 5 November investigation now proves that the least eigenvalues of the specified level-\(N\) Sierpiński signless Laplacians (and their gauge-conjugate signed matrices) converge for \(N\geq6\). The limit is enclosed in the exact rational interval \([L,U]\) of width \(2\cdot10^{-36}\), and is a zero of the limiting \(A_1\) characteristic; see the [proof map](PROOF_MAP.md). This does not identify the limit with the 145-digit finite-level \(\lambda_9\) computation, give a closed form, or prove the quadratic increment law.
+> **Current status update — 15 November 2026.** The Lean development added after the initial 5 November investigation now proves that the least eigenvalues of the specified level-$N$ Sierpiński signless Laplacians (and their gauge-conjugate signed matrices) converge for $N\geq6$. The limit is enclosed in the exact rational interval $[L,U]$ of width $2\cdot10^{-36}$, and is a zero of the limiting $A_1$ characteristic; see the [proof map](PROOF_MAP.md). This does not identify the limit with the 145-digit finite-level $\lambda_9$ computation, give a closed form, or prove the quadratic increment law.
 
 > The numbered entries below are a chronological research record. Statements such as “not proved” and “remains open” describe the state at the date of the relevant entry; they are not the current status unless repeated in the current summary above.
 
 **Date:** 5 November 2026  
-**Status at the time of the initial entry:** the analytic lower bound was proved for the explicit local-face operator \(H=D+A_s\) defined below. The interpretation of this assignment as the external \(\theta=2\pi\) model remained conditional: the cited external sg.py/gap.py sources were not present in the repository or current attachment. This model is not the pivot-zero all-hole-flux representative produced by the repository's default mobius.py solver. At that initial date, the sharper bottom value near \(1.30912892028081\) was a numerical observation; later Lean work proved convergence of the graph-matrix least-eigenvalue sequence.
+**Status at the time of the initial entry:** the analytic lower bound was proved for the explicit local-face operator $H=D+A_s$ defined below. The interpretation of this assignment as the external $\theta=2\pi$ model remained conditional: the cited external sg.py/gap.py sources were not present in the repository or current attachment. This model is not the pivot-zero all-hole-flux representative produced by the repository's default mobius.py solver. At that initial date, the sharper bottom value near $1.30912892028081$ was a numerical observation; later Lean work proved convergence of the graph-matrix least-eigenvalue sequence.
 
 This is a separate spectral-gap workstream. It is **not** the scalar canonical GF(2) H10 recurrence in computational/higher_moments_z2, and no claim is made that it proves or changes that recurrence.
 
@@ -20,37 +20,37 @@ A direct face-wise energy estimate gives a clean result without spectral decimat
 ## 2. Recursive graph and signs
 
 Use integer triangular-lattice coordinates v = (i,j), embedded as
-\[
+$$
 (i,j)\mapsto \left(i+\frac j2,\frac{\sqrt3}{2}j\right).
-\]
+$$
 At level 0 the ordered face is ((0,0),(1,0),(0,1)). To pass from level m-1 to m, take three translated copies of the previous ordered faces, in child order 0,1,2, using shifts
-\[
+$$
 (0,0),\quad (2^{m-1},0),\quad (0,2^{m-1}).
-\]
+$$
 
 For the explicit local-face assignment reconstructed from the convention flux={(f[0],f[1])}, each ordered upward face T=(a,b,c) has signed-adjacency signs s_ab=+1 on the first (horizontal) edge and s_ac=s_bc=-1 on the other two edges. In the repository convention of phi_genesis/mobius.py, signs are sigma=1-2x and the operator is L=D-A_sigma. The local-face model is exactly this operator for x=1 on every first edge (a,b) and x=0 on the other two edges, so sigma=-s and L=D+A_s. This is a specific cochain with odd flux on each elementary upward triangle; it must not be conflated with the separate pivot-zero solution of the hole-boundary-only GF(2) system.
 
 The graph edges are the union of the three edges of each elementary face. In this recursive construction there are 3^m faces; their edge sets are pairwise disjoint; every vertex is covered by at least one face; and
-\[
+$$
 |E_m|=3^{m+1},\qquad |V_m|=\frac{3^{m+1}+3}{2}.
-\]
+$$
 The integer audit is in audit_triangle_gauge.py.
 
 ## 3. Exact gauge identity
 
 Define epsilon(i,j)=(-1)^j. The first edge of each ordered face is horizontal, so its endpoints have equal j and epsilon(u)epsilon(v)=+1. On each of the other two edges, j changes by one and the product is -1. Hence, for every edge,
-\[
+$$
 s_{uv}=\varepsilon(u)\varepsilon(v).
-\]
+$$
 
 Let A_s be the signed adjacency with entries s_uv, A the ordinary adjacency, D the degree matrix, and G=diag(epsilon). With
-\[
+$$
 H_s=D+A_s,\qquad Q=D+A,
-\]
+$$
 we obtain the exact identity
-\[
+$$
 \boxed{H_s=GQG}.
-\]
+$$
 Thus the signed matrix in the supplied mats(m) convention is exactly isospectral to the signless graph Laplacian, not merely numerically close.
 
 In the connection convention H = D - A_U, this same matrix has U_uv = -s_uv. The vertex gauge epsilon sends every link to U'_uv = -1, so the connection holonomy around each elementary triangle is (-1)^3 = -1. Thus the central point is a frustrated pi-flux triangle in a gauge where the matrix is the signless Laplacian.
@@ -60,17 +60,17 @@ For the central spin representation U_uv = -s_uv I_2, the operator and gauge are
 ## 4. Uniform positive lower bound
 
 For any three vectors x_a,x_b,x_c in a complex Hilbert space, expansion gives the exact identity
-\[
+$$
 \begin{aligned}
 &\|x_a+x_b\|^2+\|x_a+x_c\|^2+\|x_b+x_c\|^2\\
 &=\|x_a\|^2+\|x_b\|^2+\|x_c\|^2
 +\|x_a+x_b+x_c\|^2\\
 &\ge \|x_a\|^2+\|x_b\|^2+\|x_c\|^2.
 \end{aligned}
-\]
+$$
 
 Because the elementary faces partition the edges and cover all vertices,
-\[
+$$
 \begin{aligned}
 \langle x,Q_mx\rangle
 &=\sum_{\{u,v\}\in E_m}\|x_u+x_v\|^2\\
@@ -78,11 +78,11 @@ Because the elementary faces partition the edges and cover all vertices,
 &\ge\sum_{T\in\mathcal F_m}\sum_{v\in T}\|x_v\|^2\\
 &\ge\sum_{v\in V_m}\|x_v\|^2.
 \end{aligned}
-\]
+$$
 Therefore, at every level and for scalar- or spinor-valued vectors,
-\[
+$$
 \boxed{Q_m\succeq I,\qquad \lambda_{\min}(H_s)\ge1.}
-\]
+$$
 
 This proves that the gap cannot close at theta = 2 pi for the stated recursive face/sign model. It does **not** prove convergence of the bottom eigenvalue to 1.30912892028081 or determine its exact limit. The argument needs only edge-disjoint triangular faces and vertex coverage.
 
@@ -472,20 +472,20 @@ A separate exact finite-level reduction has been derived for the fully symmetric
 
 When three level-m cells are glued, their three midpoint vertices are shared pairwise. The child Schur complements each contain a -λ term at a child corner, so the midpoint diagonal in the global assembled boundary matrix needs a +λ correction: each midpoint is counted in two child boundary matrices but only once in the global -λI. In the outer-corner/midpoint ordering, the assembled 6×6 matrix is
 
-\[
+$$
 \begin{pmatrix}
 a_m I_3 & b_m T\\
 b_m T^T & (2a_m+\lambda-b_m)I_3+b_mJ_3
 \end{pmatrix},
 \qquad T=J_3-I_3.
-\]
+$$
 
 Eliminating the midpoints gives the exact rational update, with c_m=2a_m+λ-b_m:
 
-\[
+$$
 a_{m+1}=a_m-\frac{2b_m^2(c_m+b_m)}{c_m(c_m+3b_m)},\qquad
 b_{m+1}=-\frac{b_m^2(c_m-b_m)}{c_m(c_m+3b_m)}.
-\]
+$$
 
 The A1 boundary-characteristic equation is a_m(λ)+2b_m(λ)=0, provided the eliminated interior block is nonsingular. The recursion is exact algebraically; numerical root continuation does not alone prove that the selected branch remains the lowest A1 eigenvalue at all levels.
 
@@ -606,23 +606,23 @@ The standalone routine was factored as `compute_roots` so the two normalization 
 
 Write the A1 characteristic as `f_m=a_m+2b_m` and set
 `c_m=2a_m+lambda-b_m`. The exact one-step identity from Section 35 is
-\[
+$$
 f_{m+1}=f_m-2b_m R_m,
 \qquad
 R_m=\frac{c_m+5b_m}{c_m+3b_m}.
-\]
+$$
 
 Differentiating with respect to the spectral parameter (primes denote this derivative) gives
-\[
+$$
 R'_m=\frac{2(c_m b'_m-b_m c'_m)}{(c_m+3b_m)^2},
 \qquad c'_m=2a'_m+1-b'_m,
-\]
+$$
 and therefore the exact derivative update
-\[
+$$
 f'_{m+1}
 =f'_m-2b'_m\frac{c_m+5b_m}{c_m+3b_m}
 -4b_m\frac{c_m b'_m-b_m c'_m}{(c_m+3b_m)^2}.
-\]
+$$
 
 This identity was checked independently against the existing forward-mode derivative implementation at 39 parameter/level pairs (levels 0–12 and lambda = 1.234, 1.309, 1.411) at 1,000 decimal digits. The largest observed discrepancy was below `2.38e-1001`. A new ordinary regression test now checks the differentiated update at the same 39 points at 100-dps working precision. The test is an implementation consistency check, not a proof of convergence.
 
@@ -651,37 +651,37 @@ These are high-precision diagnostics only. They do not prove that the derivative
 ## 41. Interval control of the A1 derivative across successive roots (2026-11-06)
 
 Let D_m=f'_m(lambda_m). Differentiating the exact scalar Schur update gives
-\[
+$$
 G_m:=f'_{m+1}(\lambda_m)-f'_m(\lambda_m)
 =-2b'_m R_m-2b_mR'_m,
-\]
+$$
 where
-\[
+$$
 R_m=\frac{c_m+5b_m}{c_m+3b_m},\qquad
 R'_m=\frac{2(c_mb'_m-b_mc'_m)}{(c_m+3b_m)^2}.
-\]
+$$
 The remaining root-motion term is
-\[
+$$
 f'_{m+1}(\lambda_{m+1})-f'_{m+1}(\lambda_m)
 =f''_{m+1}(\xi_m)(\lambda_{m+1}-\lambda_m)
-\]
+$$
 for some xi_m in the interval between the two roots.
 
 A new outward-rounded interval checker propagates second lambda derivatives through the exact rational Schur recursion. It brackets each A1 root at 10,000 decimal digits with radius 10^-9400, checks endpoint signs and a negative first derivative, and verifies all midpoint pivots and the E-channel sign. For every transition m=5,...,13, it evaluates the second derivative over an interval containing the entire segment [lambda_m, lambda_(m+1)]. The certified curvature enclosure lies inside
-\[
+$$
 -0.29<f''_{m+1}(x)<-0.07.
-\]
+$$
 
 The same interval run certifies, for each m=5,...,13,
-\[
+$$
 \frac{|G_m|}{2^m|b_m|}<0.7,\qquad
 \frac{|D_{m+1}-D_m|}{2^m|b_m|}<1,\qquad
 \frac{|b_{m+1}|}{|b_m|^2}<0.8.
-\]
+$$
 The largest upper bounds reported were approximately 0.6187181, 0.6187729, and 0.7638668. The root-sampled curvature tends numerically to
-\[
+$$
 -0.283520408592536398378348378958136777568\ldots
-\]
+$$
 but this displayed value is a numerical diagnostic; the interval claim is the coarser bound on the full root-to-root segment.
 
 The reproducible command is

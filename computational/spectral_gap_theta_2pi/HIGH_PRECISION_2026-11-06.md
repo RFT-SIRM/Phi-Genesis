@@ -1,9 +1,9 @@
 # Finite-level bottom eigenvalues of the local-face Schur model (theta = 2 pi interpretation conditional)
 
 **Date:** 6 November 2026  
-**Status of this note:** finite-level numerical computation from the exact Schur recursion in 260-digit arithmetic. The 145-digit figure below is the numerical value of the level-9 eigenvalue \(\lambda_9\), not a 145-digit evaluation of the infinite-level limit.
+**Status of this note:** finite-level numerical computation from the exact Schur recursion in 260-digit arithmetic. The 145-digit figure below is the numerical value of the level-9 eigenvalue $\lambda_9$, not a 145-digit evaluation of the infinite-level limit.
 
-**Subsequent Lean result (reviewed 15 November 2026):** the least-eigenvalue sequence of the level-\(N\) Sierpiński signless Laplacian and its gauge-conjugate signed matrix is now proved to converge for \(N\geq6\). Its limit \(\lambda_\infty\) is enclosed in the exact rational interval \([L,U]\) of width \(2\cdot10^{-36}\). See [the proof map](PROOF_MAP.md) and [SchurEigenvalue.lean](../../PhiGenesis/SpectralGap/SchurEigenvalue.lean). This later theorem proves convergence but does not identify the limit with the level-9 decimal expansion or give a closed form.
+**Subsequent Lean result (reviewed 15 November 2026):** the least-eigenvalue sequence of the level-$N$ Sierpiński signless Laplacian and its gauge-conjugate signed matrix is now proved to converge for $N\geq6$. Its limit $\lambda_\infty$ is enclosed in the exact rational interval $[L,U]$ of width $2\cdot10^{-36}$. See [the proof map](PROOF_MAP.md) and [SchurEigenvalue.lean](../../PhiGenesis/SpectralGap/SchurEigenvalue.lean). This later theorem proves convergence but does not identify the limit with the level-9 decimal expansion or give a closed form.
 
 This note **replaces** the version merged in PR #12, whose conclusions were wrong (see "Correction" below).
 
@@ -85,9 +85,9 @@ an error and is withdrawn.
 
 ## What is and is not established
 
-- **Computed numerically:** finite-level bottom eigenvalues and the \(A_1/E\) splitting from the exact Schur recursion. The level-9 \(A_1\) value is numerically stable to about 145 displayed decimal places. The calculation was validated against direct diagonalization at levels 1–5; its residual diagnostics are numerical, not an outward-rounded interval certificate.
-- **Proved in Lean 4:** every real eigenvalue of the signed graph Laplacian is at least \(1\) at every level, and the signed Laplacian is the Gram matrix of a signed incidence matrix.
-- **Proved in Lean 4 since this note was written:** for \(N\geq6\), the least eigenvalues of the signless graph Laplacians \(Q_N\), and therefore of their gauge-conjugate signed matrices, converge to \(\lambda_\infty\in[L,U]\). The limit is defined as schurBootstrapA1AtLevel_rootLimit and is a zero of the limiting \(A_1\) characteristic.
-- **Not established:** a closed form for \(\lambda_\infty\), a 145-digit certified decimal expansion of \(\lambda_\infty\), the all-level quadratic increment law, or an exact value/interpretation for its coefficient(s) \(c,c'\).
-- **Model-identification limitation:** the correspondence between this local-face matrix and the external \(\theta=2\pi\) operator remains conditional; the external sg.py/gap.py sources were not available for direct source-to-source verification.
-- A search for an integer polynomial of degree at most 8 with coefficients below \(10^6\) vanishing at \(\lambda_9\) found none. This finite search is not a proof that \(\lambda_9\) or \(\lambda_\infty\) is transcendental or non-algebraic.
+- **Computed numerically:** finite-level bottom eigenvalues and the $A_1/E$ splitting from the exact Schur recursion. The level-9 $A_1$ value is numerically stable to about 145 displayed decimal places. The calculation was validated against direct diagonalization at levels 1–5; its residual diagnostics are numerical, not an outward-rounded interval certificate.
+- **Proved in Lean 4:** every real eigenvalue of the signed graph Laplacian is at least $1$ at every level, and the signed Laplacian is the Gram matrix of a signed incidence matrix.
+- **Proved in Lean 4 since this note was written:** for $N\geq6$, the least eigenvalues of the signless graph Laplacians $Q_N$, and therefore of their gauge-conjugate signed matrices, converge to $\lambda_\infty\in[L,U]$. The limit is defined as schurBootstrapA1AtLevel_rootLimit and is a zero of the limiting $A_1$ characteristic.
+- **Not established:** a closed form for $\lambda_\infty$, a 145-digit certified decimal expansion of $\lambda_\infty$, the all-level quadratic increment law, or an exact value/interpretation for its coefficient(s) $c,c'$.
+- **Model-identification limitation:** the correspondence between this local-face matrix and the external $\theta=2\pi$ operator remains conditional; the external sg.py/gap.py sources were not available for direct source-to-source verification.
+- A search for an integer polynomial of degree at most 8 with coefficients below $10^6$ vanishing at $\lambda_9$ found none. This finite search is not a proof that $\lambda_9$ or $\lambda_\infty$ is transcendental or non-algebraic.

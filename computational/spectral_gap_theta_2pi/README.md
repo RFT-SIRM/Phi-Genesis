@@ -1,22 +1,22 @@
 # The θ = 2π spectral gap and the limiting bottom eigenvalue
 
-> **Current status (reviewed 2026-11-15).** The Lean 4 development now proves that, for every level \(N\geq6\), the least eigenvalue of the level-\(N\) Sierpiński signless Laplacian \(Q_N\) (and its gauge-conjugate signed matrix) exists, is the unique \(A_1\) Schur root in the exact rational interval below, and converges as \(N\to\infty\). The limit is the Lean-defined real number **schurBootstrapA1AtLevel_rootLimit**, and is also a zero of the limiting \(A_1\) characteristic.
+> **Current status (reviewed 2026-11-15).** The Lean 4 development now proves that, for every level $N\geq6$, the least eigenvalue of the level-$N$ Sierpiński signless Laplacian $Q_N$ (and its gauge-conjugate signed matrix) exists, is the unique $A_1$ Schur root in the exact rational interval below, and converges as $N\to\infty$. The limit is the Lean-defined real number **schurBootstrapA1AtLevel_rootLimit**, and is also a zero of the limiting $A_1$ characteristic.
 
-> **Still open:** an explicit closed form or a sharper rigorous decimal enclosure for \(\lambda_\infty\); a proof of the all-level quadratic increment law and its coefficient; and an unconditional identification of this local-face matrix with the external \(\theta=2\pi\) operator. The Lean convergence theorem applies to levels \(N\geq6\); the separate outward-rounded finite-level interval/inertia calculation covers levels 1–12.
+> **Still open:** an explicit closed form or a sharper rigorous decimal enclosure for $\lambda_\infty$; a proof of the all-level quadratic increment law and its coefficient; and an unconditional identification of this local-face matrix with the external $\theta=2\pi$ operator. The Lean convergence theorem applies to levels $N\geq6$; the separate outward-rounded finite-level interval/inertia calculation covers levels 1–12.
 
 > The dated development notes later in this file are retained as a research history. Their “still open” statements describe intermediate checkpoints and are superseded by the current summary and the [proof map](PROOF_MAP.md).
 
 The exact rational interval is
 
-\[
+$$
 L=\frac{1309128920280813421888623088170810187}{10^{36}},
 \qquad
 U=\frac{1309128920280813421888623088170810189}{10^{36}},
 \qquad
 \lambda_\infty\in[L,U].
-\]
+$$
 
-Its width is exactly \(2\cdot10^{-36}\). The finite-level value at level 9 has been computed numerically to about 145 displayed digits; those digits are **not** a certified 145-digit expansion of \(\lambda_\infty\).
+Its width is exactly $2\cdot10^{-36}$. The finite-level value at level 9 has been computed numerically to about 145 displayed digits; those digits are **not** a certified 145-digit expansion of $\lambda_\infty$.
 
 
 This directory is a spectral-gap workstream. It is **separate** from the scalar canonical GF(2) H10
@@ -43,34 +43,34 @@ The gasket graph contains triangular cycles and is non-bipartite, so its ordinar
 
 | Statement | Lean result | File |
 | --- | --- | --- |
-| The signed matrix is gauge-conjugate to the signless graph Laplacian \(Q_N=D+A\). | **sgSignedLaplacianMatrix_eq_gauge_conj** | SchurBridge.lean |
-| The scalar Schur trajectory is the corner response of \(Q_N-\lambda I\) throughout the bootstrap interval. | **sgCornerResponse_trajectory_bootstrap** | SchurCornerTrajectory.lean |
+| The signed matrix is gauge-conjugate to the signless graph Laplacian $Q_N=D+A$. | **sgSignedLaplacianMatrix_eq_gauge_conj** | SchurBridge.lean |
+| The scalar Schur trajectory is the corner response of $Q_N-\lambda I$ throughout the bootstrap interval. | **sgCornerResponse_trajectory_bootstrap** | SchurCornerTrajectory.lean |
 | Every midpoint pivot is strictly positive throughout the 36-digit bootstrap interval, so the Schur elimination is valid at every level used. | **schurBootstrap_all_pivots_pos** | SchurBoundary.lean |
 | The shifted form is nonnegative on vectors vanishing at the three outer corners. | **sgDirichletNonneg_bootstrap** | SchurInertiaStep.lean |
-| The exact lower and upper rational endpoints bound the bottom of the spectrum for every \(N\geq6\). | **sgSpectralBounds_bootstrap** | SchurSpectralBounds.lean |
-| The \(A_1\) root in the interval is unique at every level \(N=6+n\). | **schurBootstrapA1Root_unique** | SchurLambdaMin.lean |
-| The selected \(A_1\) root is the least eigenvalue of \(Q_{6+n}\). | **sgChosenRoot_isLeast** | SchurEigenvalue.lean |
-| The least eigenvalues of \(Q_{6+n}\) converge to \(\lambda_\infty\in[L,U]\). | **sgLeastEigenvalue_converges** | SchurEigenvalue.lean |
-| The limit is a zero of the uniformly limiting \(A_1\) characteristic. | **schurBootstrapA1AtLevel_rootLimit_is_root** | SchurBoundary.lean |
+| The exact lower and upper rational endpoints bound the bottom of the spectrum for every $N\geq6$. | **sgSpectralBounds_bootstrap** | SchurSpectralBounds.lean |
+| The $A_1$ root in the interval is unique at every level $N=6+n$. | **schurBootstrapA1Root_unique** | SchurLambdaMin.lean |
+| The selected $A_1$ root is the least eigenvalue of $Q_{6+n}$. | **sgChosenRoot_isLeast** | SchurEigenvalue.lean |
+| The least eigenvalues of $Q_{6+n}$ converge to $\lambda_\infty\in[L,U]$. | **sgLeastEigenvalue_converges** | SchurEigenvalue.lean |
+| The limit is a zero of the uniformly limiting $A_1$ characteristic. | **schurBootstrapA1AtLevel_rootLimit_is_root** | SchurBoundary.lean |
 | The signed and signless matrices have the same eigenvalues, so the convergence statement transfers to the signed matrix. | **sgSignedEigenSet_eq**, **sgSignedLeastEigenvalue_converges** | SchurSignedTransfer.lean |
 | The parameter derivative of the Schur trajectory is formalized. | **schurBoundaryTrajectory_hasDerivAt_bootstrap** | SchurDerivTrajectory.lean |
 
 The interval endpoints are definitions in SchurBoundary.lean:
 
-\[
+$$
 L=\frac{1309128920280813421888623088170810187}{10^{36}},
 \qquad
 U=\frac{1309128920280813421888623088170810189}{10^{36}},
 \qquad U-L=2\cdot10^{-36}.
-\]
+$$
 
 Thus the Lean result is an actual convergence theorem for the least-eigenvalue sequence, not merely boundedness or a finite-level computation. It gives an exact rational enclosure for the limit. It does not identify the limit with the level-9 numerical decimal beyond that enclosure.
 
 ## 3. What is observed numerically (not proved)
 
-The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish that the bottom eigenvalue was constant from level 5 onward. Direct high-precision quotient calculations resolve the finite-level \(A_1\) bottom through level 9 and the \(E\) mode through level 8. A separate outward-rounded interval/Schur-inertia certificate checks, for every finite level 1–12, that the \(A_1\) root is the simple global minimum and the \(E\) root is the next eigenvalue with multiplicity two. The infinite-level convergence question is no longer open: it is proved in Lean for the graph matrices at levels \(N\geq6\), as summarized in §2. What remains open is an explicit evaluation of the limit and the all-level quadratic correction law. The \(S_3\) symmetry-sector decomposition has also been checked against the complete spectrum at levels 2–5.
+The earlier 14-digit plateau was caused by ordinary floating-point resolution and did **not** establish that the bottom eigenvalue was constant from level 5 onward. Direct high-precision quotient calculations resolve the finite-level $A_1$ bottom through level 9 and the $E$ mode through level 8. A separate outward-rounded interval/Schur-inertia certificate checks, for every finite level 1–12, that the $A_1$ root is the simple global minimum and the $E$ root is the next eigenvalue with multiplicity two. The infinite-level convergence question is no longer open: it is proved in Lean for the graph matrices at levels $N\geq6$, as summarized in §2. What remains open is an explicit evaluation of the limit and the all-level quadratic correction law. The $S_3$ symmetry-sector decomposition has also been checked against the complete spectrum at levels 2–5.
 
-A focused, independent scalar Schur-root computation is documented in [HIGH_PRECISION_2026-11-06.md](HIGH_PRECISION_2026-11-06.md), with runnable source [schur_bottom_eigenvalue.py](schur_bottom_eigenvalue.py). It reproduces the finite-level \(A_1\) bottom through level 9 and resolves the \(A_1/E\) splitting. This corrected note **supersedes the erroneous high-precision conclusions merged in PR #12**: the earlier collapse and non-constant ratio came from Rayleigh quotients of double-precision vectors mixing the nearly degenerate \(A_1\) and \(E\) channels. The corrected data support a stable quadratic ratio numerically; they do not prove that the ratio has an exact all-level limit. The separate Lean theorem proves convergence of the least eigenvalues, not the quadratic law.
+A focused, independent scalar Schur-root computation is documented in [HIGH_PRECISION_2026-11-06.md](HIGH_PRECISION_2026-11-06.md), with runnable source [schur_bottom_eigenvalue.py](schur_bottom_eigenvalue.py). It reproduces the finite-level $A_1$ bottom through level 9 and resolves the $A_1/E$ splitting. This corrected note **supersedes the erroneous high-precision conclusions merged in PR #12**: the earlier collapse and non-constant ratio came from Rayleigh quotients of double-precision vectors mixing the nearly degenerate $A_1$ and $E$ channels. The corrected data support a stable quadratic ratio numerically; they do not prove that the ratio has an exact all-level limit. The separate Lean theorem proves convergence of the least eigenvalues, not the quadratic law.
 
 
 Run the reproducible calculation from the repository root:
@@ -114,7 +114,7 @@ The positive increments `δ_m = λ_m − λ_(m−1)` and their quadratic ratios 
 | 7→8 | 4.01484948291304833402·10⁻⁷³ | 0.4939504899001989529 |
 | 8→9 | 7.96199603289170721200·10⁻¹⁴⁶ | 0.49395048990019895288 |
 
-The six ratios in the spectral table extend through \(8\to9\). The exact Schur recursion below continues the same \(A_1\) boundary-root sequence through levels 10–12; the ratios \(\delta_{10}/\delta_9^2\), \(\delta_{11}/\delta_{10}^2\), and \(\delta_{12}/\delta_{11}^2\) agree numerically near \(0.49395048990019895285628827965354\ldots\). This is evidence for the proposed quadratic correction law, not a proof that the ratio has a limit or that an exact coefficient \(c\) exists. The convergence of the least-eigenvalue sequence itself is separately proved in Lean. Extrapolations from the ratios remain conditional and carry no certified error bound.
+The six ratios in the spectral table extend through $8\to9$. The exact Schur recursion below continues the same $A_1$ boundary-root sequence through levels 10–12; the ratios $\delta_{10}/\delta_9^2$, $\delta_{11}/\delta_{10}^2$, and $\delta_{12}/\delta_{11}^2$ agree numerically near $0.49395048990019895285628827965354\ldots$. This is evidence for the proposed quadratic correction law, not a proof that the ratio has a limit or that an exact coefficient $c$ exists. The convergence of the least-eigenvalue sequence itself is separately proved in Lean. Extrapolations from the ratios remain conditional and carry no certified error bound.
 
 The observed eigenvectors are concentrated near the three corners, but they do not have compact
 support: the apparent support depends on the numerical threshold used to display small components.
@@ -169,22 +169,22 @@ The `E`-to-`A1` splitting divided by `δ_m²` is approximately `0.74092573485029
 
 ### Exact A1/E boundary Schur recursion
 
-Let \(S_m(\lambda)\) be the 3×3 Schur complement of \(Q_m-\lambda I\) after eliminating every non-corner vertex. By \(S_3\) symmetry it has the form
+Let $S_m(\lambda)$ be the 3×3 Schur complement of $Q_m-\lambda I$ after eliminating every non-corner vertex. By $S_3$ symmetry it has the form
 
-\[
+$$
 S_m(\lambda)=(a_m(\lambda)-b_m(\lambda))I_3+b_m(\lambda)J_3.
-\]
+$$
 
-At level zero, \((a_0,b_0)=(2-\lambda,1)\). To pass from level \(m\) to \(m+1\), glue three level-\(m\) cells along their three midpoint vertices. Each midpoint belongs to two child boundaries, so the assembled boundary matrix receives a correction \(+\lambda\) on each midpoint diagonal: the child Schur complements each included a \(-\lambda\) term, whereas the global matrix contains it only once. With \(T=J_3-I_3\) and \(c_m=2a_m+\lambda-b_m\), eliminating the midpoints gives the exact rational recursion
+At level zero, $(a_0,b_0)=(2-\lambda,1)$. To pass from level $m$ to $m+1$, glue three level-$m$ cells along their three midpoint vertices. Each midpoint belongs to two child boundaries, so the assembled boundary matrix receives a correction $+\lambda$ on each midpoint diagonal: the child Schur complements each included a $-\lambda$ term, whereas the global matrix contains it only once. With $T=J_3-I_3$ and $c_m=2a_m+\lambda-b_m$, eliminating the midpoints gives the exact rational recursion
 
-\[
+$$
 \begin{aligned}
 a_{m+1}&=a_m-\frac{2b_m^2(c_m+b_m)}{c_m(c_m+3b_m)},\\
 b_{m+1}&=-\frac{b_m^2(c_m-b_m)}{c_m(c_m+3b_m)}.
 \end{aligned}
-\]
+$$
 
-Away from poles of the eliminated interior block, the symmetric-boundary eigenvalue condition is \(a_m(\lambda)+2b_m(\lambda)=0\). On the two-dimensional boundary subspace orthogonal to \((1,1,1)\), the all-ones matrix \(J_3\) vanishes, so the standard E-boundary eigenvalue is \(a_m(\lambda)-b_m(\lambda)\); its root satisfies \(a_m-b_m=0\). The script continues both low boundary roots from levels 1 and 2 by high-precision Newton steps. The finite-level algebraic recursion is exact; identifying either continued root as the lowest mode at every large level remains a separate spectral task.
+Away from poles of the eliminated interior block, the symmetric-boundary eigenvalue condition is $a_m(\lambda)+2b_m(\lambda)=0$. On the two-dimensional boundary subspace orthogonal to $(1,1,1)$, the all-ones matrix $J_3$ vanishes, so the standard E-boundary eigenvalue is $a_m(\lambda)-b_m(\lambda)$; its root satisfies $a_m-b_m=0$. The script continues both low boundary roots from levels 1 and 2 by high-precision Newton steps. The finite-level algebraic recursion is exact; identifying either continued root as the lowest mode at every large level remains a separate spectral task.
 
 The recursion was compared with direct dense Schur complements of the graph matrices at levels 0–4 and three regular spectral parameters (1.234, 1.309, 1.411). The maximum float64 discrepancy was below 1.4·10⁻¹⁶. Forward-mode derivatives were also compared with mpmath.diff through level 6.
 
@@ -209,34 +209,34 @@ The standard E-boundary channel is therefore obtained from the same recursion, n
 
 For levels 9–11 the ratio of this splitting to the square of the A1 increment is stable near
 0.74092573485029842928443241948031142231612216498… . Moreover, the ratio
-\((E_m-A_{1,m})/\delta_{m+1}\) is numerically 3/2 through levels 7–10, with the finite-level deviation shrinking from about 10⁻¹⁴⁴ to about 10⁻¹¹⁶¹.
+$(E_m-A_{1,m})/\delta_{m+1}$ is numerically 3/2 through levels 7–10, with the finite-level deviation shrinking from about 10⁻¹⁴⁴ to about 10⁻¹¹⁶¹.
 
 This 3/2 relation has a conditional derivation. At an A1 root, (a_m=-2b_m), so the E characteristic evaluated there is (a_m-b_m=-3b_m). The next A1 characteristic evaluated at the same point is
-\[
+$$
 f_{m+1}(\lambda_m)=-2b_m\frac{c_m+5b_m}{c_m+3b_m}\sim-2b_m.
-\]
+$$
 If the derivatives of these two characteristics approach the same nonzero limit, their root corrections are asymptotic to (3b_m/L) and (2b_m/L), respectively. Hence
-\[
+$$
 E_m-A_{1,m}\sim\frac{3}{2}\,(A_{1,m+1}-A_{1,m}).
-\]
+$$
 Combining this with the observed quadratic A1 increment pattern predicts that the E-splitting coefficient is 3/2 times the A1 coefficient. The least-eigenvalue sequence is now known to converge by Lean, but the derivative-limit and asymptotic estimates needed to prove this coefficient relation remain open.
 
-There is a useful conditional explanation for this coefficient. At a level-m root, \(a_m=-2b_m\). The recursion then gives
-\[
+There is a useful conditional explanation for this coefficient. At a level-m root, $a_m=-2b_m$. The recursion then gives
+$$
 f_{m+1}(\lambda_m)=-2b_m\frac{c_m+5b_m}{c_m+3b_m},
 \qquad
 \frac{b_{m+1}(\lambda_m)}{b_m(\lambda_m)^2}
 \longrightarrow -\frac{1}{\lambda_\infty}
-\]
-provided \(\lambda_m\to\lambda_\infty\) and \(b_m\to0\). If additionally
-\(f'_{m+1}(\lambda_m)\to L\ne0\), Taylor expansion predicts
-\[
+$$
+provided $\lambda_m\to\lambda_\infty$ and $b_m\to0$. If additionally
+$f'_{m+1}(\lambda_m)\to L\ne0$, Taylor expansion predicts
+$$
 \frac{\delta_{m+1}}{\delta_m^2}
 \longrightarrow
 \frac{1/\lambda_\infty}{-2/L}.
-\]
-Numerically, \(-2/L\approx1.54644387367797039232151350963469\ldots\), while
-\(1/\lambda_\infty\approx0.76386670900639485955066454013148\ldots\).
+$$
+Numerically, $-2/L\approx1.54644387367797039232151350963469\ldots$, while
+$1/\lambda_\infty\approx0.76386670900639485955066454013148\ldots$.
 This gives the observed coefficient near 0.493950489900198952856288… The limit and derivative hypotheses are not yet proved, so this is a route toward a proof, not the proof itself.
 
 Reproduce the level-12 Schur calculation with:
@@ -391,29 +391,29 @@ all common-window endpoint signs satisfy those hypotheses remains open.
 ### A1 derivative-transition interval certificate (levels 5–14)
 
 The derivative sequence splits into an exact Schur update and a root-motion term. With D_m=f'_m(lambda_m),
-\[
+$$
 D_{m+1}-D_m
 =
 G_m+\bigl(f'_{m+1}(\lambda_{m+1})-f'_{m+1}(\lambda_m)\bigr),
-\]
+$$
 where
-\[
+$$
 G_m=-2b'_m\frac{c_m+5b_m}{c_m+3b_m}
 -4b_m\frac{c_mb'_m-b_mc'_m}{(c_m+3b_m)^2}.
-\]
+$$
 The second term is controlled by f''_{m+1} on the full segment from lambda_m to lambda_(m+1).
 
 An outward-rounded interval calculation at 10,000 decimal digits and root-bracket radius 10^-9400 certifies transitions m=5,...,13. For every transition it checks the A1 root brackets and their order, the negative A1 derivative, the negative off-diagonal coefficient, positive midpoint pivots, and
-\[
+$$
 -0.29<f''_{m+1}(x)<-0.07
 \quad (x\in[\lambda_m,\lambda_{m+1}]).
-\]
+$$
 It also certifies the finite-level bounds
-\[
+$$
 \frac{|G_m|}{2^m|b_m|}<0.7,\qquad
 \frac{|D_{m+1}-D_m|}{2^m|b_m|}<1,\qquad
 \frac{|b_{m+1}|}{|b_m|^2}<0.8.
-\]
+$$
 The largest interval upper bounds in this run are approximately 0.6187181, 0.6187729, and 0.7638668, respectively.
 
 Reproduce the high-precision certificate with:
@@ -423,31 +423,31 @@ python computational/spectral_gap_theta_2pi/schur_derivative_certificate.py \
 ~~~
 
 These are finite-level interval certificates, not uniform estimates for every m. If the three bounds above are proved uniformly, then |b_6|<10^-36 and |b_(m+1)|<=|b_m|^2 give the conditional tail majorant
-\[
+$$
 \sum_{m=6}^{\infty}2^m|b_m|
 \le
 \frac{64\cdot10^{-36}}{1-2\cdot10^{-36}}
 <6.41\cdot10^{-35}.
-\]
+$$
 Combined with |D_(m+1)-D_m|<=2^m|b_m|, this would prove convergence of D_m and keep its limit strictly negative. The missing step is a proof that these inequalities persist at every level, not only through level 14.
 
 ## 4. What is and is not established
 
-- **Proved in Lean:** for every \(N\geq6\), the least eigenvalue \(\lambda_N\) converges to a real limit \(\lambda_\infty\), and \(\lambda_\infty\in[L,U]\), where \(U-L=2\cdot10^{-36}\). The limit is defined by schurBootstrapA1AtLevel_rootLimit and is a zero of the limiting \(A_1\) characteristic.
-- **Computed numerically:** the finite-level value \(\lambda_9\) is shown to about 145 displayed digits in [the high-precision note](HIGH_PRECISION_2026-11-06.md). These digits are not a certified 145-digit expansion of \(\lambda_\infty\).
-- **Not established:** a closed-form expression for \(\lambda_\infty\), or a sharper rigorous decimal enclosure than the exact 36-digit interval.
-- **Not established:** the all-level quadratic correction law \(\delta_{m+1}\sim c\,\delta_m^2\), the existence or exact value of \(c\), and the derivative-limit estimates that would prove it.
-- **Conditional identification:** the implemented local-face matrix is explicitly defined and its gauge relation to \(Q_N\) is formalized, but the identification with the external \(\theta=2\pi\) operator remains conditional because the cited external sg.py/gap.py sources were not present for direct source-to-source verification.
+- **Proved in Lean:** for every $N\geq6$, the least eigenvalue $\lambda_N$ converges to a real limit $\lambda_\infty$, and $\lambda_\infty\in[L,U]$, where $U-L=2\cdot10^{-36}$. The limit is defined by schurBootstrapA1AtLevel_rootLimit and is a zero of the limiting $A_1$ characteristic.
+- **Computed numerically:** the finite-level value $\lambda_9$ is shown to about 145 displayed digits in [the high-precision note](HIGH_PRECISION_2026-11-06.md). These digits are not a certified 145-digit expansion of $\lambda_\infty$.
+- **Not established:** a closed-form expression for $\lambda_\infty$, or a sharper rigorous decimal enclosure than the exact 36-digit interval.
+- **Not established:** the all-level quadratic correction law $\delta_{m+1}\sim c\,\delta_m^2$, the existence or exact value of $c$, and the derivative-limit estimates that would prove it.
+- **Conditional identification:** the implemented local-face matrix is explicitly defined and its gauge relation to $Q_N$ is formalized, but the identification with the external $\theta=2\pi$ operator remains conditional because the cited external sg.py/gap.py sources were not present for direct source-to-source verification.
 - This operator is not the pivot-zero all-hole-flux representative produced by the default mobius.py solver.
-- No analogue-of-\(\pi\) claim is made. No such definition or theorem is present.
+- No analogue-of-$\pi$ claim is made. No such definition or theorem is present.
 - The vertex-order lemmas (gasketVertexOrder_*) are combinatorial and do not establish a spectral identity.
 
 ## 5. Open problems
 
-1. **Identify \(\lambda_\infty\) more explicitly.** Find a closed form, a useful fixed-point equation with uniqueness and effective bounds, or sharper rigorously certified decimal intervals. The existence and 36-digit enclosure of the limit are already proved.
+1. **Identify $\lambda_\infty$ more explicitly.** Find a closed form, a useful fixed-point equation with uniqueness and effective bounds, or sharper rigorously certified decimal intervals. The existence and 36-digit enclosure of the limit are already proved.
 2. **Explain the corner concentration.** Derive a controlled description of the nonzero tails. The numerical evidence rules out the earlier *compactly supported eigenvector on a bounded patch* explanation: thresholded support grows as the threshold is tightened, and the bottom eigenvalue is not exactly constant between levels 4 and 5.
-3. **Prove the quadratic correction law.** Establish \(\delta_{m+1}\sim c\,\delta_m^2\) uniformly in the level and prove existence/value of \(c\). The exact Schur recursion and the finite-level derivative-transition interval certificate through level 14 provide evidence and candidate estimates, but not the required all-level derivative and summability bounds.
-4. **Close the model-identification gap.** Verify the source-to-source correspondence between this local-face matrix and the external \(\theta=2\pi\) operator.
+3. **Prove the quadratic correction law.** Establish $\delta_{m+1}\sim c\,\delta_m^2$ uniformly in the level and prove existence/value of $c$. The exact Schur recursion and the finite-level derivative-transition interval certificate through level 14 provide evidence and candidate estimates, but not the required all-level derivative and summability bounds.
+4. **Close the model-identification gap.** Verify the source-to-source correspondence between this local-face matrix and the external $\theta=2\pi$ operator.
 
 ## 6. Reproduce
 
