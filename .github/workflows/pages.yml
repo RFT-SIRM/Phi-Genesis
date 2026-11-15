@@ -110,12 +110,16 @@ jobs:
               print(f"MathJax markup OK: {filename}")
 
           verified = Path("site/verified-results/index.html").read_text(encoding="utf-8")
-          assert "phi-math-display" in verified, "Stable display math missing from verified results"
-          assert "phi-math-inline" in verified, "Stable inline math missing from verified results"
-          assert "phi-genesis.css" in verified, "Verified-results math stylesheet missing"
+          assert '<span class="arithmatex">' in verified, "Inline Arithmatex wrapper missing from verified results"
+          assert '<div class="arithmatex">' in verified, "Display Arithmatex wrapper missing from verified results"
+          assert "mathjax@3/es5/tex-mml-chtml.js" in verified, "MathJax loader missing from verified results"
+          assert "phi-genesis.css" in verified, "Verified-results stylesheet missing"
           assert "$" not in verified, "Raw dollar delimiter found in verified results"
-          assert r"\(" not in verified and r"\[" not in verified, "Raw TeX delimiter found in verified results"
-          print("Stable HTML mathematics OK: site/verified-results/index.html")
+          body = re.sub(r"<script\\b[^>]*>.*?</script>", "", verified, flags=re.I | re.S)
+          body = re.sub(r"<style\\b[^>]*>.*?</style>", "", body, flags=re.I | re.S)
+          assert body.count(r"\\(") == body.count(r"\\)"), "Unbalanced inline MathJax delimiters in verified results"
+          assert body.count(r"\\[") == body.count(r"\\]"), "Unbalanced display MathJax delimiters in verified results"
+          print("Arithmatex / MathJax markup OK: site/verified-results/index.html")
 
           for filename in ("site/spectral-limit/index.html", "site/open-problems/index.html", "site/higher-moments-z2/index.html"):
               page = Path(filename).read_text(encoding="utf-8")
