@@ -63,7 +63,7 @@ jobs:
           test -s site/interactive/index.html
           test -s site/history.html
           grep -q "Phi-Genesis" site/index.html
-          grep -q "Interactive Research Portal" site/index.html
+          grep -q "The spectral limit." site/index.html
           grep -q 'build-revision" content="2026-11-15-spectral-limit-priority-1' site/index.html
           grep -q '<canvas id="field"' site/index.html
           grep -q 'data-title=' site/index.html
@@ -75,7 +75,7 @@ jobs:
           grep -q 'data-link="selection-protocol.html"' site/index.html
           grep -q 'data-link="open-problems.html"' site/index.html
           ! grep -q 'href="../verified-results/' site/index.html
-          grep -q "Interactive Research Portal" site/interactive/index.html
+          grep -q "The spectral limit." site/interactive/index.html
           grep -q 'build-revision" content="2026-11-15-spectral-limit-priority-1' site/interactive/index.html
           grep -q '<canvas id="field"' site/interactive/index.html
           grep -q 'data-title=' site/interactive/index.html
