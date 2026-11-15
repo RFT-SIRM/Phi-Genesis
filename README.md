@@ -70,7 +70,7 @@ The interval endpoints and theorem dependencies are recorded in the [spectral-li
 
 - **Finite-level precision:** high-precision Schur calculations distinguish the $A_1$ ground state from the nearby $E$ doublet. The numerical output is kept separate from the Lean convergence theorem.
 - **Spectral decimation and gaps:** the factor-five structure and Fukushima–Shima gap patterns are reproduced with the documented corner-defect qualifications.
-- **Boundary conditions:** finite-graph $\pi$-flux calculations record how the spectrum responds to the specified twists.
+- **Boundary conditions:** finite-graph π-flux calculations record how the spectrum responds to the specified twists.
 - **Signed-Z₂ moments:** exact sparse-integer calculations are available through level 10 for the explicitly chosen representative; the observed recurrence is not yet an all-level theorem.
 - **Additional physical applications:** exploratory fits and protocol records are preserved separately. They are not assumptions, inputs, or evidence for the Schur-limit theorem.
 
@@ -211,7 +211,7 @@ $$
 
 ### 3. Boundary conditions and π-flux
 
-The project also studies signed graph operators representing $Z_2$-flux / Möbius-style boundary twists. The reported level-5 full-$\pi$-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
+The project also studies signed graph operators representing Z₂-flux / Möbius-style boundary twists. The reported level-5 full-π-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
 
 These finite-level experiments form a supporting boundary-condition workstream. They are distinct from the Schur-limit theorem and are not used as premises in its proof.
 
