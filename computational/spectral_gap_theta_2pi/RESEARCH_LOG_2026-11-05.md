@@ -1,7 +1,11 @@
 # Research log: uniform gap for the local-face signing (theta = 2 pi label conditional)
 
+> **Current status update — 15 November 2026.** The Lean development added after the initial 5 November investigation now proves that the least eigenvalues of the specified level-\(N\) Sierpiński signless Laplacians (and their gauge-conjugate signed matrices) converge for \(N\geq6\). The limit is enclosed in the exact rational interval \([L,U]\) of width \(2\cdot10^{-36}\), and is a zero of the limiting \(A_1\) characteristic; see the [proof map](PROOF_MAP.md). This does not identify the limit with the 145-digit finite-level \(\lambda_9\) computation, give a closed form, or prove the quadratic increment law.
+
+> The numbered entries below are a chronological research record. Statements such as “not proved” and “remains open” describe the state at the date of the relevant entry; they are not the current status unless repeated in the current summary above.
+
 **Date:** 5 November 2026  
-**Status:** the analytic lower bound is proved for the explicit local-face operator H = D + A_s defined below. The interpretation of this assignment as the external theta = 2 pi model remains conditional: the cited external sg.py/gap.py sources were not present in the repository or current attachment. This model is not the pivot-zero all-hole-flux representative produced by the repository's default mobius.py solver. The sharper bottom value near 1.30912892028081 remains a numerical observation, not a proved limit.
+**Status at the time of the initial entry:** the analytic lower bound was proved for the explicit local-face operator \(H=D+A_s\) defined below. The interpretation of this assignment as the external \(\theta=2\pi\) model remained conditional: the cited external sg.py/gap.py sources were not present in the repository or current attachment. This model is not the pivot-zero all-hole-flux representative produced by the repository's default mobius.py solver. At that initial date, the sharper bottom value near \(1.30912892028081\) was a numerical observation; later Lean work proved convergence of the graph-matrix least-eigenvalue sequence.
 
 This is a separate spectral-gap workstream. It is **not** the scalar canonical GF(2) H10 recurrence in computational/higher_moments_z2, and no claim is made that it proves or changes that recurrence.
 

@@ -153,14 +153,23 @@ For the explicit local-face operator `H = D + A_s` at the central twist angle, t
 
 | Status | Statement |
 |---|---|
-| Proved in Lean 4 | Every real eigenvalue is at least 1 for every refinement level, so the gap does not close. |
-| Computed numerically | From an exact Schur recursion: the bottom eigenvalue is 1.30912891862700 at level 4, 1.30912892028081 at level 5 and 1.309128920280813421888623... from level 6 on, stable to about 145 digits at level 9. The increments satisfy Delta_(m+1) = c Delta_m^2 with c = 0.49395049 (levels 7 to 9). See the [note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
-| Open | That 1.30912892028081... is the exact limit, and a closed form for it. No analogue of pi is claimed. |
-| Proved in Lean 4 | For the signless Laplacian of the level-N Sierpinski graph and its gauge-conjugate signed matrix, levels N >= 6: the least eigenvalue exists, equals the unique A1 root in the 36-digit window [schurBootstrapLambdaLower, schurBootstrapLambdaUpper], and converges to a point of that window. |
-| Open | The quadratic increment law and the existence of its constant (numerical evidence only), levels N < 6, a closed form for the limit, and the link between this matrix and the theta = 2 pi model beyond the matrix itself. |
+| Proved in Lean 4 | Every real eigenvalue of the stated signed graph Laplacian is at least \(1\) at every refinement level; the spectral gap therefore cannot close. |
+| Computed numerically | The exact finite-level Schur recursion gives bottom-eigenvalue values \(1.3091289186270032\ldots\) at level 4, \(1.3091289202808134205\ldots\) at level 5, and \(1.3091289202808134218886230881708101885523\ldots\) at level 9. The level-9 value is a finite-level numerical computation (about 145 displayed stable digits), not a 145-digit proof for the infinite-level limit. The observed quadratic ratios are numerical evidence only. See [the high-precision note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
+| Proved in Lean 4 | For every \(N\geq6\), the least eigenvalue of the level-\(N\) signless Laplacian and its gauge-conjugate signed matrix is the unique \(A_1\) root in the exact rational interval \([L,U]\), and the sequence of these least eigenvalues converges to \(\lambda_\infty\in[L,U]\). The interval has width \(2\cdot10^{-36}\). See the [Lean proof map](computational/spectral_gap_theta_2pi/PROOF_MAP.md). |
+| Computer-assisted finite-level result | Outward-rounded interval/inertia checks certify the \(A_1\) ground state and \(E\)-sector first excited doublet for levels 1–12. This is a finite-level computer-assisted certificate, not a Lean theorem about all levels. |
+| Open | An explicit closed form or a sharper rigorously certified decimal expansion of \(\lambda_\infty\); a proof of the all-level quadratic increment law and its coefficient; and an unconditional identification of this local-face matrix model with the external \(\theta=2\pi\) operator. |
 
-The identification of this model with the external theta = 2 pi operator remains conditional; see the research log in that directory.
+Here \(L\) and \(U\) are exact rationals:
 
+\[
+L=\frac{1309128920280813421888623088170810187}{10^{36}},
+\qquad
+U=\frac{1309128920280813421888623088170810189}{10^{36}},
+\qquad
+\lambda_\infty\in[L,U].
+\]
+
+The convergence theorem proves that \(\lambda_\infty\) exists and lies in this interval. It does **not** identify the limit with the 145-digit level-9 decimal expansion or provide a closed-form expression. The numerical level-9 result and the Lean convergence theorem are distinct pieces of evidence.
 ## Mathematical core
 
 ### 1. Sierpiński-gasket spectral decimation
