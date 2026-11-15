@@ -1,14 +1,16 @@
-# Phi-Genesis — Spectral Research on the Sierpiński Gasket
+# Phi-Genesis — Schur Recursion and the Limiting Spectral Constant
 
 [![Research programme](https://img.shields.io/badge/RFT--SIRM-Phi--Genesis-5b4bc4?style=for-the-badge)](https://github.com/RFT-SIRM/Phi-Genesis)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Tests](https://img.shields.io/badge/Tests-Pytest-168f83?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/RFT-SIRM/Phi-Genesis/actions)
 [![Research history](https://img.shields.io/badge/Read-Research%20History-0f766e?style=for-the-badge)](https://rft-sirm.github.io/Phi-Genesis/history.html)
 
-**Phi-Genesis is a reproducible computational research project** studying spectral properties of graph Laplacians on the Sierpiński gasket, signed Z₂-flux / π-flux boundary conditions, spectral decimation, and a proposed integer-index fermion-mass pattern. It keeps positive results, negative results, unresolved discrepancies, and the limits of each method visible.
+**Phi-Genesis is a mathematical and computational research project** on spectral operators on recursively refined Sierpiński-gasket graphs. Its principal result is an exact three-corner Schur recursion, formally connected to the graph matrices in Lean 4, together with a proof that the least-eigenvalue sequence converges to a precisely defined limit inside an exact rational interval of width $2\cdot10^{-36}$. The repository also preserves finite-level high-precision calculations and separate workstreams on spectral decimation, boundary conditions, spectral counting, and signed-graph moments.
 
 > [!IMPORTANT]
-> **Scientific status, not marketing status:** spectral and gap observations are numerical results scoped to the implemented operators and tested levels. The proposed mass-index selection rule $\{1,12,17,40\}$ has **not** been established. The formula $m=A n$ is a numerical fit, not a prediction, until an independent rule derives the indices without looking at the masses. Gate A—the full characterization of spectral-decimation exceptions for the implemented corner-degree-2 Laplacian—also remains open.
+> **Principal mathematical result:** for the specified Sierpiński-gasket graph matrices, Lean 4 proves that the least eigenvalue at every level $N\geq6$ is the unique selected $A_1$ Schur root in an exact rational interval $[L,U]$, and that these least eigenvalues converge to $\lambda_\infty\in[L,U]$.
+>
+> The interval has width $2\cdot10^{-36}$. The approximately 145-digit level-9 value is a finite-level numerical computation, not a 145-digit proof for the limit. The proof, numerical record, and remaining questions are collected in the [spectral-limit dossier](docs/spectral-limit.md).
 
 <div align="center">
 
@@ -20,30 +22,28 @@
 
 ## Contents
 
+- [Schur recursion and limiting spectral constant](docs/spectral-limit.md)
 - [At a glance](#at-a-glance)
-- [Evidence dashboard](#evidence-dashboard)
 - [Mathematical core](#mathematical-core)
 - [Key numerical results](#key-numerical-results)
-- [Mass-index audit](#mass-index-audit)
-- [Preregistered selection tests](#preregistered-selection-tests)
-- [Open problems and Gate A](#open-problems-and-gate-a)
+- [Exact finite H10 calculations](#exact-finite-h10-calculations-for-the-signed-z_2-flux-laplacian)
+- [Lean 4 formalization](#lean-4-formalization-current-verified-scope)
+- [Supplementary research archive](#supplementary-research-archive)
 - [Test and reproducibility guide](#test-and-reproducibility-guide)
 - [Repository map](#repository-map)
-- [How this connects to the wider RFT-SIRM programme](#how-this-connects-to-the-wider-rft-sirm-programme)
-- [Authorship and correspondence](#authorship-and-correspondence)
 - [Research standards and citation](#research-standards-and-citation)
 
 ## At a glance
 
-| Research question | Current answer | Evidence label |
+| Main question | Current result | Evidence |
 |---|---|---|
-| Does the Sierpiński-gasket spectrum show the expected decimation and gap structure? | Reproduced numerically on finite graph levels, with explicit corner-defect qualifications. | **NUMERICALLY REPRODUCED** |
-| Can the spectral dimension be recovered from finite-level counts? | The theoretical exponent is $d_s/2=\ln 3/\ln 5$. A theory-motivated chord estimator approaches $\ln 3/\ln(5-\sigma)$ to better than 0.1% on the reported level-9 subset with $N\ge1000$. | **NUMERICAL CONSISTENCY CHECK** |
-| Does a π-flux boundary condition open a gap? | The tested full π-flux case opens a gap; the first level-5 eigenvalue changes from approximately 0.006 to 0.46. | **NUMERICALLY REPRODUCED** |
-| Has a spectral rule independently selected $\{1,12,17,40\}$? | No. Preregistered families did not produce evidence above the specified null thresholds. | **NOT ESTABLISHED** |
-| Is $m=A n$ a predictive mass law? | Not at present: the four integer indices were chosen with the target masses in view, and no independent selection mechanism has been derived. | **FIT, NOT PREDICTION** |
-| Is Gate A closed? | No. Matched eigenvalue pairs can be at machine precision, but the full recursively generated exceptional set and complete correspondence are not yet characterized. | **OPEN** |
-| Does the project reproduce the reported η-invariant value $-4$? | No. The tested potential gives asymmetry $+1$; $-4$ was not observed in the reported checks. | **NOT REPRODUCED** |
+| Does the exact Schur recursion describe the graph-matrix boundary response? | Yes, within the stated bootstrap interval; the scalar recursion is connected to the recursively defined graph matrices. | **LEAN 4 FORMALIZED** |
+| Is the selected $A_1$ root the least eigenvalue? | Yes, uniquely in the exact interval for every level $N\geq6$. | **LEAN 4 FORMALIZED** |
+| Does the least-eigenvalue sequence converge? | Yes. Its limit $\lambda_\infty$ lies in the exact rational interval $[L,U]$, of width $2\cdot10^{-36}$. | **LEAN 4 FORMALIZED** |
+| Is the signed local-face matrix covered? | Yes. It is diagonally gauge-conjugate to the signless graph Laplacian and has the same spectrum. | **LEAN 4 FORMALIZED** |
+| Is there a uniform positive lower bound? | Every real eigenvalue of the signed matrix is at least $1$ at every refinement level. | **LEAN 4 FORMALIZED** |
+| What is the high-precision decimal? | The level-9 finite graph has a numerical value stable to about 145 displayed digits; these are not certified digits of $\lambda_\infty$. | **NUMERICAL** |
+| What remains open? | A sharper certified evaluation or analytic identification of the limit, the all-level quadratic increment law, and unconditional identification with an external $\theta=2\pi$ operator. | **OPEN** |
 
 ### Evidence labels used here
 
@@ -60,33 +60,19 @@
 
 ## Evidence dashboard
 
-<details>
-<summary><strong>Established numerically: spectral structure and boundary experiments</strong></summary>
+### Central result: the limiting least eigenvalue
 
-- **Spectral decimation:** the polynomial map $\phi(\lambda)=\lambda(5-\lambda)$ describes the expected structure, but for the implemented graph Laplacian with degree-2 corners the correspondence includes boundary/corner-defect corrections. Gate A is deliberately not marked closed.
-- **Fukushima–Shima gap structure:** forbidden spectral zones cluster around the documented decimation fixed-point region, including $\lambda\approx2.5$ and $\lambda\approx3$.
-- **Log-periodicity:** the spectrum exhibits the scale signature associated with factor-5 decimation, with period $\ln 5$ in the log-spectral variable.
-- **Weyl exponent:** the theoretical exponent is $\ln3/\ln5\approx0.6826$. Finite-level regression estimates depend on the selected window; the chord-estimator result is a separate, theory-motivated numerical consistency check.
-- **Full π-flux:** the tested level-5 first eigenvalue changes from about 0.006 to about 0.46, consistent with a gap opening in that setup.
-- **Exhaustive generation-twist search:** all $2^5=32$ level-5 configurations were checked. No configuration selected more than one of the four target indices; index 40 was not selected.
+For $Q_N=D_N+A_N$, the exact Schur boundary recursion selects a unique $A_1$ root in the rational interval $[L,U]$ for each $N\geq6$. Lean proves that this root is the least eigenvalue and that the resulting sequence converges. The signed local-face realization $H_N=D_N+A_{s,N}$ is gauge-conjugate to $Q_N$, so the same least-eigenvalue result applies to it.
 
-These are scoped to the operators, graph conventions, levels, and numerical procedures actually used. They are not a proof of a mass-index law.
+The interval endpoints and theorem dependencies are recorded in the [spectral-limit dossier](docs/spectral-limit.md) and [Lean proof map](computational/spectral_gap_theta_2pi/PROOF_MAP.md).
 
-</details>
+### Supporting research strands
 
-<details>
-<summary><strong>Negative results and caveats that must remain visible</strong></summary>
-
-- The three documented preregistered selection protocols did not establish a selection rule for $\{1,12,17,40\}$.
-- The earliest protocol, v1.0, could not reach its target significance threshold even under its best possible hit pattern. Its negative result is therefore **uninformative**. Later v1.1 and v1.2.1 protocols passed the null-only power check and still did not reach the threshold.
-- The earlier Sierpiński-carpet search produced an apparent four-index match, later identified as vulnerable to a look-elsewhere effect. It is retained in the research history rather than promoted as supporting evidence.
-- Index 1 is selected by the ratio-based gap rule very frequently under random on-site potentials (about 95% in the reported audit); index 40 appears much less often (about 3.4%). These hits do not carry equal evidential weight.
-- The top-quark index remains inconsistent across the historical estimate, the current scale formula, and the best integer fit: 1680, 1664, and 1654 respectively.
-- The reported η-invariant value $-4$ was not reproduced for the specified potential.
-- Gate A is not closed merely because a subset of predicted/observed eigenvalue pairs match to machine precision.
-
-</details>
-
+- **Finite-level precision:** high-precision Schur calculations distinguish the $A_1$ ground state from the nearby $E$ doublet. The numerical output is kept separate from the Lean convergence theorem.
+- **Spectral decimation and gaps:** the factor-five structure and Fukushima–Shima gap patterns are reproduced with the documented corner-defect qualifications.
+- **Boundary conditions:** finite-graph $\pi$-flux calculations record how the spectrum responds to the specified twists.
+- **Signed-$Z_2$ moments:** exact sparse-integer calculations are available through level 10 for the explicitly chosen representative; the observed recurrence is not yet an all-level theorem.
+- **Additional physical applications:** exploratory fits and protocol records are preserved separately. They are not assumptions, inputs, or evidence for the Schur-limit theorem.
 
 ## Exact finite H10 calculations for the signed `Z_2`-flux Laplacian
 
@@ -225,163 +211,47 @@ $$
 
 ### 3. Boundary conditions and π-flux
 
-The project studies signed graph operators representing Z₂-flux / Möbius-style boundary twists. The reported level-5 full-π-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
+The project also studies signed graph operators representing $Z_2$-flux / Möbius-style boundary twists. The reported level-5 full-$\pi$-flux calculation changes the first eigenvalue from approximately 0.006 to 0.46. Partial twists were also tested.
 
-This establishes a gap in the tested numerical setup; it does **not** establish that the target fermion indices are selected by the gap. The exhaustive 32-configuration generation-twist search reached at most one of the four target indices, and index 40 was never selected.
+These finite-level experiments form a supporting boundary-condition workstream. They are distinct from the Schur-limit theorem and are not used as premises in its proof.
 
 - [Signed-flux operator](phi_genesis/mobius.py)
-- [Exhaustive twist search](phi_genesis/mobius_selection_search.py)
-- [Twist tests](test_mobius.py)
+- [Boundary-twist tests](test_mobius.py)
 
 ---
 
 ## Key numerical results
 
-### Spectral estimates
-
-| Quantity | Reported value | Interpretation |
+| Quantity | Reported result | Interpretation |
 |---|---:|---|
-| Theoretical $d_s/2$ | $\ln3/\ln5\approx0.6826$ | Theoretical reference exponent |
-| Naive regression, level 6 | 0.7051 | About 3.3% above reference |
-| Naive regression, level 8 | 0.7019 | About 2.8% above reference |
-| Level-9 chord estimate, $N\ge1000$ | Within 0.1% of $\ln3/\ln(5-\sigma)$ | 14 sampled points; exploratory consistency check |
-| Full π-flux first eigenvalue, level 5 | About 0.46 | Compared with about 0.006 in the untwisted case |
-| Claimed η-asymmetry, specified potential | +1 | The advertised value $-4$ was not reproduced |
+| Limiting least eigenvalue | $\lambda_\infty\in[L,U]$, where $U-L=2\cdot10^{-36}$ | Exact Lean-proved enclosure |
+| Level-9 bottom eigenvalue | $1.3091289202808134218886230881708101885523\ldots$ | Finite-level numerical calculation; not the limit's certified decimal |
+| Quadratic increment ratio | Approximately $0.4939504899$ from the higher levels shown | Numerical observation only; the all-level law is open |
+| Uniform signed spectral lower bound | $\lambda\geq1$ | Lean theorem for every refinement level |
+| Theoretical spectral exponent | $d_s/2=\ln3/\ln5\approx0.6826$ | Theoretical reference value |
+| Full $\pi$-flux first eigenvalue, level 5 | About 0.46 | Finite-level boundary-condition result |
+| Signed-$Z_2$ tenth-moment residual | 12,387,360 on transitions 3→4 through 9→10 | Exact finite computation for the stated representative; no all-level theorem |
 
-### What the scale audit says
+## Supplementary research archive
 
-The current four-fermion integer fit uses $A=104.63\,\text{MeV}$. A separate expression $A=v\alpha/\Phi^6$ gives about 100.13 MeV, approximately 4.3% lower. The discrepancy is documented, not reconciled.
+Phi-Genesis also preserves an earlier exploratory application that asked whether spectral constructions could independently select integer labels used in a mass-fit study. This is a separate physical-interpretation question; it is not part of the Schur-recursion argument and does not affect the definition, proof, or value enclosure for $\lambda_\infty$.
 
-| Scale or statistic | Value | Status |
-|---|---:|---|
-| Integer-fit scale $A$ | 104.63 MeV | Fitted to the four selected masses |
-| Formula-derived scale $v\alpha/\Phi^6$ | 100.13 MeV | 4.3% below fitted value |
-| Relative spread of implied per-fermion scales | 0.58% | Descriptive fit statistic |
-| Mean error for four selected integer indices | 0.68% | In-sample agreement; not predictive validation |
-| Earlier fitted-decimal mean error | 0.87% | Different fit, not an independent test |
+The complete historical record remains available without being placed at the centre of the project:
 
----
+- [Selection protocol and versioned tests](docs/selection-protocol.md)
+- [D₃ representation audit](docs/d3-representation-audit.md)
+- [Methodology and statistical design](METHODOLOGY.md)
+- [Cumulative protocol ledger](protocol_ledger.md)
+- [Verified-results overview](docs/verified-results.md)
 
-## Mass-index audit
+## Main open mathematical questions
 
-The explored formula is
-
-$$
-\boxed{m=A\,n}
-$$
-
-where $A$ is a common scale and $n$ is an integer index. The table below reports the project's current integer fit for four heavy fermions.
-
-| Fermion | Index $n$ | Predicted mass (MeV) | Comparison mass (MeV) | Relative error |
-|---|---:|---:|---:|---:|
-| Muon ($\mu$) | 1 | 104.63 | 105.658 | 0.97% |
-| Tau ($\tau$) | 17 | 1778.71 | 1776.86 | 0.10% |
-| Charm ($c$) | 12 | 1255.56 | 1275.00 | 1.52% |
-| Bottom ($b$) | 40 | 4185.20 | 4180.00 | 0.12% |
-| **Mean** | — | — | — | **0.68%** |
-
-> [!WARNING]
-> The small mean error is not independent evidence for the index pattern. Four integers were selected with the four masses in view, then one scale was fitted. Without a rule that selects $n$ independently of those masses, the result remains a numerical match, not a prediction.
-
-### Top-quark consistency: unresolved
-
-| Candidate | $n_t$ | Origin |
-|---|---:|---|
-| Historical advertised value | 1680 | Derived using an older scale of approximately 103.63 MeV |
-| Current formula-based candidate | 1664 | $v/(\sqrt2 A)$ using $A=104.63$ MeV |
-| Current best integer fit | 1654 | round(m_t/A) using $A=104.63$ MeV |
-
-The three candidates are not interchangeable. With the current scale, using 1680 gives a top-quark error of about 1.55%, more than twice the four-fermion mean error. No single top index is asserted as correct.
-
-The index-1 triviality audit is another important caveat: under random on-site potentials, the ratio-based selection rule selects index 1 about 95% of the time, compared with about 37% for index 12, 22% for index 17, and 3.4% for index 40 in the reported experiment. A hit on index 1 is therefore much weaker evidence for a mechanism than a hit on a rare index.
-
-- [Mass-scale audit](phi_genesis/mass_check.py)
-- [Top-quark consistency tests](test_top_quark_consistency.py)
-- [Index-1 base-rate audit](test_sg_index_triviality.py)
-
----
-
-## Preregistered selection tests
-
-The central statistical question is not whether a configuration can be found that matches the target set after enough experimentation. It is whether a predeclared operator family selects $\{1,12,17,40\}$ more often than chance after accounting for all configurations searched—the **look-elsewhere effect**.
-
-| Protocol | Search rule | Configurations | Result | Power-check interpretation |
-|---|---|---:|---|---|
-| v1.0 | $k=12$, window 60 | 75 | $p=0.922$ and $0.968$ in the two null ensembles | **Uninformative negative:** even the best hit pattern could not reach the threshold |
-| v1.1 | $k=6$, window 60 | 75 | $p=0.966$ and $0.997$ | **Informative negative:** threshold was reachable; at most 2/4 targets selected, index 40 selected by none |
-| v1.2.1 | $k=8$, window 60; continuum-circle/spin-structure family | 10 | $p=0.953$ and $0.926$ | **Informative negative:** threshold was reachable; at most 1/4 target selected |
-
-Across the three protocols, the ledger records 193 configuration evaluations, plus the earlier carpet search (about 128 level-3 configurations and an unrecorded level-4 sweep). The combined count is therefore a **lower bound of about 321**, not an exact exhaustive count of every historical exploratory attempt.
-
-The carpet's early apparent 4/4 match was subsequently reassessed using null controls and the look-elsewhere effect. The record keeps that episode visible so that it cannot later be cited as clean confirmation.
-
-### Protocol rules
-
-1. State the target indices, selection statistic, null ensembles, seeds, and significance threshold before evaluation.
-2. Check statistical power using the null distribution alone. If the threshold cannot be reached, a negative result is uninformative.
-3. Use the maximum score across all configurations in a family, rather than reporting only the best-looking configuration.
-4. Account for the base rate of each target index; common hits and rare hits do not have equal evidential weight.
-5. Keep abandoned branches and exploratory attempts in the ledger, and label post-hoc analyses explicitly.
-
-**Current conclusion:** the tested families did not establish a spectral rule. This does not prove that no such rule exists; it means the tested rules failed to provide the required evidence.
-
-- [Protocol overview](PREREGISTRATION.md)
-- [v1.1 draft / record](PREREGISTRATION_v1.1_DRAFT.md)
-- [v1.2 draft / record](PREREGISTRATION_v1.2_DRAFT.md)
-- [v1.2.1 protocol](PREREGISTRATION_v1.2.1.md)
-- [Complete protocol ledger](protocol_ledger.md)
-- [Null pools, outputs, and seeds](protocol_data/)
-- [Methodology: a worked negative example](METHODOLOGY.md)
-- [Selection test code](phi_genesis/)
-
----
-
-## Open problems and Gate A
-
-<details open>
-<summary><strong>Open Problem 1 — derive the mass indices independently</strong></summary>
-
-**Question.** Can an operator invariant, boundary condition, or independently motivated construction select $n\in\{1,12,17,40\}$ before the masses are compared?
-
-**Tried:** generation-wise Z₂ twists, scalar vertex potentials, Dirichlet corner conditions, SG $\times S^1$ with lattice and continuum-circle variants, and the earlier Sierpiński-carpet search. The preregistered protocols did not establish the target rule.
-
-**Required next step:** a genuinely motivated new operator family or an analytical derivation of the indices, committed under a new preregistered protocol with a null-only power check. Repeating the same searches against the same targets would increase the look-elsewhere correction, not the evidence.
-
-</details>
-
-<details>
-<summary><strong>Open Problem 2 — finite-level estimation of the spectral exponent</strong></summary>
-
-Naive regression and sliding-window estimates vary with the log-spectral window. The level-9 chord estimator improves agreement on the reported high-count subset, but it is exploratory, has a finite sampled domain, and depends on the working decimation/count relation.
-
-The exact theoretical exponent $\ln3/\ln5$ is the reference. The open issue is a robust finite-level estimator with controlled corner corrections and a clearly stated domain—not a new determination of the theoretical exponent.
-
-</details>
-
-<details>
-<summary><strong>Gate A — characterize the complete decimation exceptional set</strong></summary>
-
-The map $\phi(\lambda)=\lambda(5-\lambda)$ is correct for the matched pairs checked, and the largest reported residual among the machine-exact subset at levels 5–7 is approximately $1.2\times10^{-14}$, $2.0\times10^{-14}$, and $5.2\times10^{-14}$, respectively.
-
-That does **not** mean every expected preimage has a one-to-one match. A broader residual threshold can include near-misses; therefore the arithmetic mean over all broadly matched pairs must not be described as machine precision. The diagnostic explicitly separates:
-- broad matches (residual below $10^{-4}$);
-- machine-exact matches (residual below $10^{-10}$);
-- near-misses that pass the broad threshold but not the machine-exact threshold.
-
-The working explanation is that the full exceptional set is recursively generated and/or affected by the implemented corner boundary. Its complete structure remains uncharacterized. The nightly check guards the observed machine-precision subset and increasing-rate trend; it does not close Gate A.
-
-</details>
-
-<details>
-<summary><strong>Open Problem 3 — light fermions and a physical bridge</strong></summary>
-
-The electron, up, down, and strange fermions are not explained by the integer-index formula in its current form. A proposed fractal/NJL-style mechanism is not implemented as a fully specified predictive model here. Any additional coupling, cutoff, or other free parameter must be counted against the masses it is meant to explain.
-
-The repository also does not define a Lagrangian and beta functions that derive the fitted scale $A$ from the electroweak scale. Without those ingredients, a renormalization-group calculation cannot be used to claim that bridge has been established.
-
-</details>
-
----
+1. Sharpen the rigorous enclosure of $\lambda_\infty$ and seek an analytic or algebraic characterization where possible.
+2. Prove the all-level quadratic increment law and identify its coefficient.
+3. Establish an unconditional source-to-source identification with the external $\theta=2\pi$ operator.
+4. Characterize the complete exceptional set in the graph's spectral-decimation correspondence.
+5. Obtain robust finite-level spectral-exponent estimates with controlled corner corrections.
+6. Prove the observed signed-$Z_2$ H10 recurrence uniformly in the level.
 
 ## Test and reproducibility guide
 
@@ -428,17 +298,17 @@ Use the workflow logs to distinguish a completed pass from a still-running job:
 - [Tests workflow](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/tests.yml)
 - [Nightly deep tests](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/nightly-deep-tests.yml)
 
-### Reproduce the v1.2.1 selection protocol
+### Reproduce the Schur spectral-limit work
 
-> [!CAUTION]
-> The protocol's Step A rewrites the committed null-pool file. If you want to preserve the repository's checked-in output unchanged, run this on a clean disposable clone or back up the file first.
+From the repository root, run the Lean formalization and the high-precision finite-level calculation:
 
 ~~~bash
-python -m phi_genesis.selection_protocol_v121 stepA
-python -m phi_genesis.selection_protocol_v121 stepB
+lake build PhiGenesis
+python -m pip install mpmath
+python computational/spectral_gap_theta_2pi/schur_bottom_eigenvalue.py
 ~~~
 
-Compare the output with `protocol_data/results_v1_2_1.json` and the written protocol/ledger.
+The Lean target checks the formal theorem. The Python script computes finite-level values and diagnostics; it does not certify the infinite-level limit. See the [proof map](computational/spectral_gap_theta_2pi/PROOF_MAP.md) and [high-precision note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md).
 
 ### Reproduce the finite-level estimator studies
 
@@ -473,7 +343,7 @@ Phi-Genesis is part of a family of related research repositories. Their topics a
 
 ### Mathematical relationship: explicit, not assumed
 
-The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies spectral properties of signed Z₂-flux Laplacians and an exploratory mass-index pattern. A rigorous bridge between these constructions has **not** been established in this repository.
+The fourth-moment theorem and Phi-Genesis investigate different operators and observables. The former concerns a specified non-Abelian SU(2) connection and a trace defect; Phi-Genesis studies the Schur recursion, limiting least eigenvalue, and separate signed-graph computational workstreams. A rigorous bridge between these constructions has **not** been established in this repository.
 
 The dissertation is useful context and a source of related mathematical questions, not a shortcut around Phi-Genesis's own unresolved tests.
 
@@ -504,7 +374,7 @@ This repository aims to make the computational record auditable:
 5. **Distinguish evidence types.** Passing a test supports only the assertions that test actually executes.
 6. **Do not silently promote claims.** A fit is not a prediction; a finite computation is not an all-level proof; related projects are not automatically equivalent.
 
-If you use this code or cite the reported numerical results, cite the repository and identify the commit, environment, and relevant protocol/data version. Acknowledge explicitly that the mass-index formula currently lacks an independent selection rule.
+If you use this code or cite the reported numerical results, cite the repository and identify the commit, environment, and relevant protocol/data version. Keep supplementary physical applications separate from the mathematical proof chain and state their own evidence boundaries.
 
 - [Repository](https://github.com/RFT-SIRM/Phi-Genesis)
 - [Citation and author metadata](CITATION.cff)

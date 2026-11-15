@@ -1,93 +1,87 @@
 # Research Map — Phi-Genesis
 
-![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Evidence standard](https://img.shields.io/badge/standard-evidence--first-168f83?style=flat-square)
+![RFT-SIRM](https://img.shields.io/badge/RFT--SIRM-Research-174ea6?style=flat-square) ![Phi-Genesis](https://img.shields.io/badge/Phi--Genesis-Spectral%20Research-147fba?style=flat-square) ![Lean 4](https://img.shields.io/badge/Lean%204-formalized-168f83?style=flat-square)
 
+Phi-Genesis studies the spectral theory of recursively refined Sierpiński-gasket graph operators. Its central mathematical result is the Lean 4 proof that the least eigenvalues selected by an exact three-corner Schur recursion converge to a limit enclosed by a rational interval of width $2\cdot10^{-36}$.
 
-Phi-Genesis is the spectral-computation branch of the RFT-SIRM research programme. It investigates spectral decimation, spectral gaps, finite-level spectral counts, and whether a proposed set of integer indices can be selected by a spectral rule on Sierpiński-gasket graph approximations.
+The [spectral-limit dossier](spectral-limit.md) is the main entry point. The [interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/) is a visual guide; the source repository and proof files remain authoritative.
 
-This map is an evidence-first guide to the project. The [interactive portal](https://rft-sirm.github.io/Phi-Genesis/interactive/) is a visual overview; the source repository, code, preregistration and ledger remain authoritative.
-
-## Research strands
+## Main proof path
 
 <div class="grid cards" markdown>
 
--   :material-graph-outline:{ .lg .middle } **1. Sierpiński-gasket spectrum**
+-   :material-graph-outline:{ .lg .middle } **1. Graph operator and gauge equivalence**
 
     ---
 
-    Graph Laplacians, spectral decimation, Fukushima–Shima gaps and the role of corner-defect corrections.
+    The signed local-face matrix is diagonally gauge-conjugate to the signless graph Laplacian $Q_N=D_N+A_N$.
 
-    [Read verified results](verified-results.md)
+    [Read the formal result](spectral-limit.md#1-operator-and-graph-sequence)
 
--   :material-chart-bell-curve:{ .lg .middle } **2. Spectral dimension and counting**
-
-    ---
-
-    Weyl counting, finite-level estimates and the sensitivity of regression fits to the log-periodic window.
-
-    [Read Open Problem #2](open-problems.md#2-finite-level-convergence-of-the-spectral-exponent)
-
--   :material-tune-vertical:{ .lg .middle } **3. Boundary twists and gap selection**
+-   :material-vector-polyline:{ .lg .middle } **2. Exact Schur boundary recursion**
 
     ---
 
-    Möbius / π-flux boundary conditions, generation twists and tests of candidate index-selection rules.
+    Eliminating the interior vertices leaves a three-corner boundary response described by two scalar coefficients.
 
-    [Read the protocol audit](selection-protocol.md)
+    [Read the recursion dossier](spectral-limit.md#2-exact-three-corner-schur-recursion)
 
--   :material-clipboard-check-outline:{ .lg .middle } **4. Preregistered search**
-
-    ---
-
-    The target indices \(\{1,12,17,40\}\), null ensembles, power checks and cumulative search ledger.
-
-    [Inspect protocol results](selection-protocol.md)
-
--   :material-scale-balance:{ .lg .middle } **5. Claim and evidence control**
+-   :material-function-variant:{ .lg .middle } **3. Least-eigenvalue identification**
 
     ---
 
-    Distinguish a numerical fit, a reproducible finite-level computation, a conjecture and a theorem.
+    The selected $A_1$ root is unique in the exact rational interval and equals the least eigenvalue for every $N\geq6$.
 
-    [Read the evidence policy](verified-results.md#how-to-read-the-evidence)
+    [Read the Lean proof map](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/computational/spectral_gap_theta_2pi/PROOF_MAP.md)
 
--   :material-console:{ .lg .middle } **6. Reproduction**
+-   :material-chart-timeline-variant:{ .lg .middle } **4. Limiting spectral constant**
 
     ---
 
-    Test commands, fixed-seed protocol runs and the scripts used for the finite-level estimator study.
+    The least-eigenvalue sequence converges to $\lambda_\infty\in[L,U]$, with exact interval width $2\cdot10^{-36}$.
 
-    [Reproduce the work](reproducibility.md)
+    [Read the convergence theorem](spectral-limit.md#3-the-lean-convergence-theorem)
+
+-   :material-calculator-variant:{ .lg .middle } **5. High-precision finite-level calculations**
+
+    ---
+
+    The finite-level Schur calculation resolves the nearby low-lying symmetry channels and provides numerical values; it does not replace the Lean limit theorem.
+
+    [Read the numerical note](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md)
+
+-   :material-console:{ .lg .middle } **6. Reproduction and remaining work**
+
+    ---
+
+    Rebuild the formal development, reproduce numerical calculations, and review the open asymptotic and model-identification questions.
+
+    [Reproduce the work](reproducibility.md) · [Open problems](open-problems.md)
 
 </div>
 
-## Current research status
+## Supporting research strands
 
-**Documented release:** v2.2.1. The repository records reproducible numerical observations and negative results, but does not claim a derived selection rule for the target mass indices.
-
-| Question | Current status | What the status means |
+| Strand | Description | Record |
 |---|---|---|
-| Spectral decimation | Supported with stated corrections | The factor-5 structure is subject to corner-defect corrections for the graph Laplacian used here. |
-| Fukushima–Shima gaps | Numerically reproduced | Finite-level computations support the documented gap structure. |
-| π-flux boundary conditions | Gap observed in tested cases | This does not by itself select the target mass indices. |
-| Selection of \(\{1,12,17,40\}\) | Not found | Preregistered families did not meet the specified criterion after look-elsewhere correction. |
-| Spectral exponent estimation | Partly characterised; open | The theoretical exponent is known, but finite-window estimates depend on estimator and window choice. |
-| η-invariant claim from RFT-String v8.7 | Not reproduced | The reported value −4 was not observed in the tested cases. |
+| Spectral decimation | Factor-five scaling with graph-boundary corrections and a still-open full exceptional-set characterization | [Verified results](verified-results.md) |
+| Spectral dimension | Theoretical exponent and finite-level estimator studies | [Open problems](open-problems.md#2-finite-level-convergence-of-the-spectral-exponent) |
+| Boundary conditions | Finite-level signed and $\pi$-flux experiments | [Verified results](verified-results.md) |
+| Signed-$Z_2$ moments | Exact finite-level tenth-moment computations for a specified representative | [H10 research note](higher-moments-z2.md) |
+| Historical physical applications | Separate exploratory records, not part of the Schur proof chain | [Research archive](selection-protocol.md) |
+
+## Current theorem status
+
+| Claim | Status |
+|---|---|
+| Signed/signless gauge equivalence | Proved in Lean 4 |
+| Uniform lower bound $\lambda\geq1$ for the signed matrix | Proved in Lean 4 at every level |
+| Unique selected $A_1$ root equals the least eigenvalue | Proved in Lean 4 for $N\geq6$ |
+| Least-eigenvalue convergence and exact rational enclosure | Proved in Lean 4 |
+| About 145 displayed digits at level 9 | High-precision finite-level calculation |
+| All-level quadratic increment law | Open |
+| Unconditional external $\theta=2\pi$ operator identification | Open |
 
 ## Reading order
 
-1. Start with [Verified Results](verified-results.md) for the claims and their limits.
-2. Read the [Selection Protocol](selection-protocol.md) and [Open Problems](open-problems.md) to understand negative results and remaining work.
-3. Use [Reproducibility](reproducibility.md) to rerun the relevant tests.
-4. Check the original [README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md), [methodology](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/METHODOLOGY.md), [protocol ledger](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/protocol_ledger.md), and [preregistration v1.2.1](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/PREREGISTRATION_v1.2.1.md).
-
-## Scope boundary
-
-Phi-Genesis is not a formal proof repository for Evgeny's Theorem, and its computational status does not inherit the Lean verification status of that separate theorem. The theorem and this spectral audit concern different operators, observables and evidence types. See the [project README](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/README.md#scope-relation-to-evgenys-theorem).
-
----
-
-<div class="phi-doc-nav">
-<strong>Explore Phi-Genesis</strong><br>
-<a href="https://rft-sirm.github.io/Phi-Genesis/interactive/">Interactive portal</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/research-map.html">Research map</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/verified-results.html">Verified results</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/open-problems.html">Open problems</a> · <a href="https://rft-sirm.github.io/Phi-Genesis/reproducibility.html">Reproducibility</a> · <a href="https://github.com/RFT-SIRM/Evgeny-s-Theory-of-Everything/blob/main/DISSERTATION.md">Dissertation</a> · <a href="https://github.com/RFT-SIRM/Phi-Genesis">Source repository</a>
-</div>
+Start with the [spectral-limit dossier](spectral-limit.md), then inspect the [Lean proof map](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/computational/spectral_gap_theta_2pi/PROOF_MAP.md), [high-precision note](https://github.com/RFT-SIRM/Phi-Genesis/blob/main/computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md), and [verified results](verified-results.md). The [research archive](selection-protocol.md) contains separate exploratory workstreams and their provenance.

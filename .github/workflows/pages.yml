@@ -45,7 +45,7 @@ jobs:
 
       - name: Add .html aliases for branch-based GitHub Pages
         run: |
-          for page in research-home research-map verified-results open-problems selection-protocol reproducibility data-and-provenance methodology protocol-ledger preregistration; do
+          for page in spectral-limit research-home research-map verified-results open-problems selection-protocol reproducibility data-and-provenance methodology protocol-ledger preregistration; do
             test -s "site/${page}/index.html"
             cp "site/${page}/index.html" "site/${page}.html"
           done
@@ -64,22 +64,26 @@ jobs:
           test -s site/history.html
           grep -q "Phi-Genesis" site/index.html
           grep -q "Interactive Research Portal" site/index.html
-          grep -q 'build-revision" content="2026-10-17-ultracore-shell-phi-genesis-root-1' site/index.html
+          grep -q 'build-revision" content="2026-11-15-spectral-limit-priority-1' site/index.html
           grep -q '<canvas id="field"' site/index.html
           grep -q 'data-title=' site/index.html
           grep -q 'href="verified-results.html"' site/index.html
+          grep -q 'href="spectral-limit.html"' site/index.html
+          grep -q 'data-link="spectral-limit.html"' site/index.html
           grep -q 'data-link="research-map.html"' site/index.html
           grep -q 'data-link="verified-results.html"' site/index.html
           grep -q 'data-link="selection-protocol.html"' site/index.html
           grep -q 'data-link="open-problems.html"' site/index.html
           ! grep -q 'href="../verified-results/' site/index.html
           grep -q "Interactive Research Portal" site/interactive/index.html
-          grep -q 'build-revision" content="2026-11-03-h10-math-audit-1' site/interactive/index.html
+          grep -q 'build-revision" content="2026-11-15-spectral-limit-priority-1' site/interactive/index.html
           grep -q '<canvas id="field"' site/interactive/index.html
           grep -q 'data-title=' site/interactive/index.html
           grep -q "Phi-Genesis" site/interactive/index.html
           grep -q 'href="../history.html"' site/interactive/index.html
           grep -q 'href="../verified-results.html"' site/interactive/index.html
+          grep -q 'href="../spectral-limit.html"' site/interactive/index.html
+          grep -q 'data-link="../spectral-limit.html"' site/interactive/index.html
           grep -q 'href="../research-map.html"' site/interactive/index.html
           grep -q 'data-link="../research-map.html"' site/interactive/index.html
           grep -q 'data-link="../verified-results.html"' site/interactive/index.html
@@ -113,7 +117,7 @@ jobs:
           assert r"\(" not in verified and r"\[" not in verified, "Raw TeX delimiter found in verified results"
           print("Stable HTML mathematics OK: site/verified-results/index.html")
 
-          for filename in ("site/open-problems/index.html", "site/higher-moments-z2/index.html"):
+          for filename in ("site/spectral-limit/index.html", "site/open-problems/index.html", "site/higher-moments-z2/index.html"):
               page = Path(filename).read_text(encoding="utf-8")
               has_mathjax = "mathjax@3/es5/tex-mml-chtml.js" in page or "mathjax@3/es5/tex-chtml.js" in page
               assert has_mathjax, f"MathJax loader missing from generated documentation: {filename}"

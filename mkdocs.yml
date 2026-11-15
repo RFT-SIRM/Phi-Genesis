@@ -61,8 +61,8 @@ extra_javascript:
 nav:
   - Home: index.md
   - Interactive Portal: interactive.md
+  - Spectral Limit: spectral-limit.md
   - Research Map: research-map.md
-  - Application Programmes: application-programmes.md
   - Ecosystem Control: ecosystem-control.md
   - History: history.md
   - Origin Chronology: origin-chronology.md
@@ -73,21 +73,23 @@ nav:
   - Architecture:
       - Overview: architecture.md
       - Computational Architecture: computational-architecture.md
+  - Mathematics:
+      - Research Home: research-home.md
+      - Verified Results: verified-results.md
+      - Open Problems: open-problems.md
   - Foundations:
       - Overview: foundations.md
-      - Research Home & Mathematical Anchor: research-home.md
       - Research Dissertation: dissertation.md
-      - Verified Results: verified-results.md
       - Signed-Z2 H10: higher-moments-z2.md
-      - Methodology: methodology.md
       - Glossary: glossary.md
-  - Strategy:
+  - Research Archive:
       - Overview: strategy.md
+      - Historical Applications: application-programmes.md
       - Selection Protocol: selection-protocol.md
       - D₃ Representation Audit: d3-representation-audit.md
+      - Methodology: methodology.md
       - Preregistration: preregistration.md
       - Protocol Ledger: protocol-ledger.md
-      - Open Problems: open-problems.md
   - Implementation:
       - Overview: implementation.md
       - Changelog: changelog.md
