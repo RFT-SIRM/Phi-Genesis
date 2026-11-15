@@ -24,11 +24,11 @@ Write $\lambda_N$ for their common least eigenvalue.
 
 ## 2. Exact three-corner Schur recursion
 
-Eliminating the interior vertices leaves a three-corner boundary response. By the $S_3$ symmetry of the boundary, it is described by a diagonal coefficient $\alpha_N(\lambda)$ and an off-diagonal coefficient $\beta_N(\lambda)$. The distinguished scalar characteristic is
+Eliminating the interior vertices leaves a three-corner boundary response. By the $S_3$ symmetry of the boundary, it is described by a diagonal coefficient $\alpha_N(\lambda)$ and an off-diagonal coefficient $\beta_N(\lambda)$. The distinguished scalar characteristic is the constant-boundary channel:
 
-$$
-F_N(\lambda)=\alpha_N(\lambda)+2\beta_N(\lambda)-\lambda.
-$$
+$
+F_N(\lambda)=a_N(\lambda)+2b_N(\lambda).
+$
 
 The exact Schur update is connected to the actual recursively assembled graph matrices. The formal proof covers the midpoint pivots, the boundary-response bridge, and the nonnegativity/inertia argument needed to identify the selected root with the least eigenvalue.
 
