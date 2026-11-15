@@ -229,8 +229,8 @@ These finite-level experiments form a supporting boundary-condition workstream. 
 | Quadratic increment ratio | Approximately $0.4939504899$ from the higher levels shown | Numerical observation only; the all-level law is open |
 | Uniform signed spectral lower bound | $\lambda\geq1$ | Lean theorem for every refinement level |
 | Theoretical spectral exponent | $d_s/2=\ln3/\ln5\approx0.6826$ | Theoretical reference value |
-| Full $\pi$-flux first eigenvalue, level 5 | About 0.46 | Finite-level boundary-condition result |
-| Signed-$Z_2$ tenth-moment residual | 12,387,360 on transitions 3→4 through 9→10 | Exact finite computation for the stated representative; no all-level theorem |
+| Full π-flux first eigenvalue, level 5 | About 0.46 | Finite-level boundary-condition result |
+| Signed-Z₂ tenth-moment residual | 12,387,360 on transitions 3→4 through 9→10 | Exact finite computation for the stated representative; no all-level theorem |
 
 ## Supplementary research archive
 
@@ -251,7 +251,7 @@ The complete historical record remains available without being placed at the cen
 3. Establish an unconditional source-to-source identification with the external $\theta=2\pi$ operator.
 4. Characterize the complete exceptional set in the graph's spectral-decimation correspondence.
 5. Obtain robust finite-level spectral-exponent estimates with controlled corner corrections.
-6. Prove the observed signed-$Z_2$ H10 recurrence uniformly in the level.
+6. Prove the observed signed-Z₂ H10 recurrence uniformly in the level.
 
 ## Test and reproducibility guide
 
