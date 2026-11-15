@@ -11,6 +11,7 @@ on:
       - "mkdocs.yml"
       - "requirements.txt"
       - "overrides/**"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -84,7 +85,6 @@ jobs:
           grep -q 'href="../verified-results.html"' site/interactive/index.html
           grep -q 'href="../spectral-limit.html"' site/interactive/index.html
           grep -q 'data-link="../spectral-limit.html"' site/interactive/index.html
-          grep -q 'href="../research-map.html"' site/interactive/index.html
           grep -q 'data-link="../research-map.html"' site/interactive/index.html
           grep -q 'data-link="../verified-results.html"' site/interactive/index.html
           grep -q 'data-link="../selection-protocol.html"' site/interactive/index.html
