@@ -5,6 +5,7 @@
 
 ## Unreleased — research-history archive
 
+- Added `computational/spectral_gap_theta_2pi/PRECISION_RECORD.md` and a README section recording the finite-level precision tiers (1,250-digit Schur recursion, 2,450-digit interval/inertia certificate, 10,000-digit derivative certificate) and their scope; documented the daily $A_1$/$E$ campaign and how to read a green run.
 - Added `docs/history.html`, an interactive, filterable chronology of the research question, exploratory carpet result and its look-elsewhere reassessment, preregistered protocol versions, power-check correction, base-rate audit, and current bounded conclusions.
 - Added cross-links to the methodology, protocol ledger, preregistration records, Evgeny's Theorem, Evgeny's Theory of Everything, and UltraCore-RFT. The archive distinguishes numerical evidence from machine-checked results and does not present the mass-index formula as a prediction.
 - Linked the historical archive from the README; the existing live results page and scientific records remain intact.
