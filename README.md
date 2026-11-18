@@ -161,13 +161,13 @@ The convergence theorem proves that $\lambda_\infty$ exists and lies in this int
 
 The workflow [`spectral-gap-high-precision`](https://github.com/RFT-SIRM/Phi-Genesis/actions/workflows/spectral-gap-high-precision.yml) runs every day at 03:00 UTC. It runs three independent jobs, each with 360 working decimal digits, a linear-solve target of $10^{-210}$ and 250 outer inverse iterations: the $A_1$ bottom at level 9, the $A_1$ bottom at level 10, and the $E$-sector bottom at level 9. Each job stores its log as an artifact. The purpose is to test the two predictions of the observed quadratic laws one level further: the level-10 increment $\delta_{10}=\lambda_{10}-\lambda_9\approx3\times10^{-291}$ and the level-9 splitting $E_9-A_{1,9}$, which is expected on the same scale.
 
-| Job | Sector | Level | Status |
-|---|---|---|---|
-| `a1-level-nine` | $A_1$ | 9 | Daily; the committed value is in [the high-precision note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
-| `a1-level-ten` | $A_1$ | 10 | Daily; a completed run is recorded below. **Not promoted to a result.** |
-| `e-level-nine` | $E$ | 9 | Daily; **no value from this job is recorded in this repository.** |
+| Job | Sector | Level | Final outer residual, run of 17 Nov 2026 | Status |
+|---|---|---|---|---|
+| `a1-level-nine` | $A_1$ | 9 | $9.2\times10^{-144}$ | Daily. The committed value is in [the high-precision note](computational/spectral_gap_theta_2pi/HIGH_PRECISION_2026-11-06.md). |
+| `a1-level-ten` | $A_1$ | 10 | $1.1\times10^{-143}$ | Daily. **Not promoted to a result.** |
+| `e-level-nine` | $E$ | 9 | $2.7\times10^{-143}$ | Daily. **No decimal value from this job is committed to this repository.** |
 
-**How to read a green run.** A green job means only that the process exited normally. For the recorded level-10 $A_1$ run (GitHub Actions run #8, 3 h 1 min, sector dimension 14,768 of a 88,575-vertex graph), the final outer residual was $1.0\times10^{-143}$ and the linear-solve residual stayed at $1.3\times10^{-217}$. The printed eigenvalue therefore cannot be trusted beyond roughly 143 digits, while $\delta_{10}$ lies near $10^{-291}$. The run neither confirms nor refutes the level-10 increment, and neither does it resolve the $E_9-A_{1,9}$ splitting, which needs the same precision. Agreement of the level-10 digits with level 9 up to the resolved precision is consistent with the prediction but is not evidence for it. The same criterion applies to every later run of these jobs.
+**How to read a green run.** A green job means only that the process exited normally. In the recorded run all three jobs finished with a final outer residual of about $10^{-143}$ (the level-10 $A_1$ job took about 3 hours, sector dimension 14,768 of a graph with 88,575 vertices; its linear-solve residual stayed at about $1.3\times10^{-217}$). The printed eigenvalues therefore cannot be trusted beyond roughly 143 digits, while $\delta_{10}$ and the splitting $E_9-A_{1,9}$ are both expected near $10^{-291}$. The run neither confirms nor refutes either prediction. Agreement of the level-10 digits with level 9 up to the resolved precision is consistent with the predictions but is not evidence for them. The same criterion applies to every later run of these jobs.
 
 **What would settle it (not done).** Resolving a quantity near $10^{-291}$ needs a linear-solve target safely below it (above 300 digits instead of 210), correspondingly higher working precision, and more outer iterations than the 250 that left a residual of $10^{-143}$. Whether that fits within the 355-minute job limit of a hosted runner has not been tested.
 
