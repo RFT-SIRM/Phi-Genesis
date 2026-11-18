@@ -395,7 +395,7 @@ The dissertation is useful context and a source of related mathematical question
 
 ## Authorship and correspondence
 
-**Evgeniy Zaprudnov**  
+**Evgeny Zaprudnov**  
 *Research author · RFT-SIRM*
 
 For research correspondence, use [evgeniyzaprudnov@gmail.com](mailto:evgeniyzaprudnov@gmail.com?subject=Phi-Genesis%20research%20enquiry). For machine-readable citation and author metadata, see [`CITATION.cff`](CITATION.cff).
